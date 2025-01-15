@@ -27,11 +27,13 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "DMErrorHandling",
+            path: "Sources",
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
         .testTarget(
             name: "DMErrorHandlingTests",
             dependencies: ["DMErrorHandling"],
+            path: "Tests",
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
     ]

@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2FC9A6EF2D382C5E00A8763D /* DMErrorHandling in Frameworks */ = {isa = PBXBuildFile; productRef = 2FC9A6EE2D382C5E00A8763D /* DMErrorHandling */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		2F9A4B892D3677E70046FDE6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2FC9A6EF2D382C5E00A8763D /* DMErrorHandling in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = DMErrorHandlingSPMExample;
 			packageProductDependencies = (
+				2FC9A6EE2D382C5E00A8763D /* DMErrorHandling */,
 			);
 			productName = DMErrorHandlingSPMExample;
 			productReference = 2F9A4B782D3677E60046FDE6 /* DMErrorHandlingSPMExample.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = 2F9A4B6F2D3677E60046FDE6;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2FC9A6ED2D382C5E00A8763D /* XCLocalSwiftPackageReference "../../DMErrorHandling" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2F9A4B792D3677E60046FDE6 /* Products */;
 			projectDirPath = "";
@@ -558,6 +567,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		2FC9A6ED2D382C5E00A8763D /* XCLocalSwiftPackageReference "../../DMErrorHandling" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../DMErrorHandling;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2FC9A6EE2D382C5E00A8763D /* DMErrorHandling */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DMErrorHandling;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2F9A4B702D3677E60046FDE6 /* Project object */;
 }

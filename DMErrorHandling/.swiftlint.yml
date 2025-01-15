@@ -3,7 +3,7 @@ included:
   - Plugins
   - Source
   - Tests
-  - Package.swift
+#  - Package.swift
 excluded:
   - Tests/DMErrorHandlingTests/Resources
 
