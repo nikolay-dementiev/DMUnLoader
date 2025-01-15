@@ -3,15 +3,15 @@
 
 import PackageDescription
 
-// swiftlint:disable:next explicit_acl explicit_type_interface explicit_top_level_acl prefixed_toplevel_constant
-let package = Package(
+// swiftlint:disable:next explicit_type_interface prefixed_toplevel_constant missing_docs
+public let package = Package(
     name: "DMErrorHandling",
     platforms: [
         .macOS(.v10_13),
         .iOS(.v12),
         .tvOS(.v12),
         .watchOS(.v4),
-        .visionOS(.v1)
+        .visionOS(.v1),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
