@@ -3,8 +3,7 @@
 
 import PackageDescription
 
-// swiftlint:disable:next explicit_type_interface prefixed_toplevel_constant missing_docs
-public let package = Package(
+let package = Package(
     name: "DMErrorHandling",
     platforms: [
         .macOS(.v10_13),
