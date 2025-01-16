@@ -3,7 +3,6 @@ Pod::Spec.new do |s|
   s.name             = 'DMErrorHandling'
   s.version          = '0.1.0'
   s.summary          = 'Error handling SDK'
-  #s.swift_version    = '5.6'
   s.description      = <<-DESC
   
 TODO: Add long description of the pod here.
