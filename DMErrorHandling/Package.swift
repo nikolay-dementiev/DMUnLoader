@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "DMErrorHandling",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v10_13),
         .iOS(.v12),
