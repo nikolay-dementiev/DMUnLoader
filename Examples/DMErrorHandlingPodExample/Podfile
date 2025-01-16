@@ -1,13 +1,27 @@
-use_frameworks!
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '12.0'
 
-platform :ios, '10.0'
+def shared_pods_for_testing
+  pod 'Quick', '~> 6.1.0'
+  pod 'Nimble', '~> 11.2.1'
+end
 
-target '${POD_NAME}_Example' do
-  pod '${POD_NAME}', :path => '../'
+target 'DMErrorHandlingPodExample' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
 
-  target '${POD_NAME}_Tests' do
+  pod 'DMErrorHandling', path: '../../DMErrorHandling/'
+
+  # Pods for DMErrorHandlingPodExample
+
+  target 'DMErrorHandlingPodExampleTests' do
     inherit! :search_paths
-
-    ${INCLUDED_PODS}
+    
+    shared_pods_for_testing
   end
+
+  target 'DMErrorHandlingPodExampleUITests' do
+    shared_pods_for_testing
+  end
+
 end

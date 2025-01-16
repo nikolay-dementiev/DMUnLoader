@@ -1,0 +1,27 @@
+PODS:
+  - DMErrorHandling (0.1.0)
+  - Nimble (11.2.2)
+  - Quick (6.1.0)
+
+DEPENDENCIES:
+  - DMErrorHandling (from `../../DMErrorHandling/`)
+  - Nimble (~> 11.2.1)
+  - Quick (~> 6.1.0)
+
+SPEC REPOS:
+  trunk:
+    - Nimble
+    - Quick
+
+EXTERNAL SOURCES:
+  DMErrorHandling:
+    :path: "../../DMErrorHandling/"
+
+SPEC CHECKSUMS:
+  DMErrorHandling: 8dfa7baac10cb7ba0f999b32ea6b3bc4edce4ad9
+  Nimble: 01a944d4d07eab73617dfd4b32ac9f7152ac34de
+  Quick: 6676ffb409bf04abba2ff23902af2407bfc6ac90
+
+PODFILE CHECKSUM: 7aecd6e30800cea303c212b87ea044b46148e5ec
+
+COCOAPODS: 1.16.2
