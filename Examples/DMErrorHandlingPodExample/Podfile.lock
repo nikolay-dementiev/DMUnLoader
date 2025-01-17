@@ -1,16 +1,16 @@
 PODS:
-  - DMErrorHandling (0.1.0)
+  - DMErrorHandling (0.1.1)
 
 DEPENDENCIES:
-  - DMErrorHandling (from `../../DMErrorHandling/`)
+  - DMErrorHandling (from `../../DMErrorHandlingSDK/`)
 
 EXTERNAL SOURCES:
   DMErrorHandling:
-    :path: "../../DMErrorHandling/"
+    :path: "../../DMErrorHandlingSDK/"
 
 SPEC CHECKSUMS:
-  DMErrorHandling: 8dfa7baac10cb7ba0f999b32ea6b3bc4edce4ad9
+  DMErrorHandling: d2e92e89748cf8021cb978d23251edc6ed6df529
 
-PODFILE CHECKSUM: dfef6a1acf8004652a843e7c318eb3b1b39aa93f
+PODFILE CHECKSUM: 3927e38321850792be4aeb52f326f8123523349b
 
 COCOAPODS: 1.16.2

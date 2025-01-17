@@ -6,11 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		2FC9A6F22D38317C00A8763D /* DMErrorHandling in Frameworks */ = {isa = PBXBuildFile; productRef = 2FC9A6F12D38317C00A8763D /* DMErrorHandling */; };
-		2FC9A6F52D3831E800A8763D /* DMErrorHandling in Frameworks */ = {isa = PBXBuildFile; productRef = 2FC9A6F42D3831E800A8763D /* DMErrorHandling */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		2F9A4B892D3677E70046FDE6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -53,15 +48,6 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		2F9A4B752D3677E60046FDE6 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				2FC9A6F22D38317C00A8763D /* DMErrorHandling in Frameworks */,
-				2FC9A6F52D3831E800A8763D /* DMErrorHandling in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		2F9A4B852D3677E70046FDE6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -107,12 +93,12 @@
 			buildConfigurationList = 2F9A4B9C2D3677E70046FDE6 /* Build configuration list for PBXNativeTarget "DMErrorHandlingSPMExample" */;
 			buildPhases = (
 				2F9A4B742D3677E60046FDE6 /* Sources */,
-				2F9A4B752D3677E60046FDE6 /* Frameworks */,
 				2F9A4B762D3677E60046FDE6 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2F6EA16A2D3A98AD00ED3FAA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2F9A4B7A2D3677E60046FDE6 /* DMErrorHandlingSPMExample */,
@@ -121,6 +107,9 @@
 			packageProductDependencies = (
 				2FC9A6F12D38317C00A8763D /* DMErrorHandling */,
 				2FC9A6F42D3831E800A8763D /* DMErrorHandling */,
+				2FECF1012D3A78DC00A213C5 /* DMErrorHandling */,
+				2F6EA1552D3A95F600ED3FAA /* DMErrorHandling */,
+				2F6EA1682D3A987E00ED3FAA /* DMErrorHandling */,
 			);
 			productName = DMErrorHandlingSPMExample;
 			productReference = 2F9A4B782D3677E60046FDE6 /* DMErrorHandlingSPMExample.app */;
@@ -205,7 +194,7 @@
 			mainGroup = 2F9A4B6F2D3677E60046FDE6;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2FC9A6F32D3831E800A8763D /* XCLocalSwiftPackageReference "../../DMErrorHandling" */,
+				2F6EA1672D3A987E00ED3FAA /* XCLocalSwiftPackageReference "../../DMErrorHandlingSDK" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2F9A4B792D3677E60046FDE6 /* Products */;
@@ -268,6 +257,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2F6EA16A2D3A98AD00ED3FAA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 2F6EA1692D3A98AD00ED3FAA /* DMErrorHandling */;
+		};
 		2F9A4B8A2D3677E70046FDE6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2F9A4B772D3677E60046FDE6 /* DMErrorHandlingSPMExample */;
@@ -406,7 +399,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 0.0.1;
 				DEVELOPMENT_ASSET_PATHS = "\"DMErrorHandlingSPMExample/Preview Content\"";
 				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
 				ENABLE_PREVIEWS = YES;
@@ -416,11 +409,12 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandling.DMErrorHandlingSPMExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -435,7 +429,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 0.0.1;
 				DEVELOPMENT_ASSET_PATHS = "\"DMErrorHandlingSPMExample/Preview Content\"";
 				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
 				ENABLE_PREVIEWS = YES;
@@ -445,11 +439,12 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandling.DMErrorHandlingSPMExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -466,7 +461,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandling.DMErrorHandlingSPMExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -485,7 +480,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandling.DMErrorHandlingSPMExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -503,6 +498,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandling.DMErrorHandlingSPMExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -520,6 +516,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandling.DMErrorHandlingSPMExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -572,18 +569,35 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		2FC9A6F32D3831E800A8763D /* XCLocalSwiftPackageReference "../../DMErrorHandling" */ = {
+		2F6EA1672D3A987E00ED3FAA /* XCLocalSwiftPackageReference "../../DMErrorHandlingSDK" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../DMErrorHandling;
+			relativePath = ../../DMErrorHandlingSDK;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2F6EA1552D3A95F600ED3FAA /* DMErrorHandling */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DMErrorHandling;
+		};
+		2F6EA1682D3A987E00ED3FAA /* DMErrorHandling */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DMErrorHandling;
+		};
+		2F6EA1692D3A98AD00ED3FAA /* DMErrorHandling */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F6EA1672D3A987E00ED3FAA /* XCLocalSwiftPackageReference "../../DMErrorHandlingSDK" */;
+			productName = DMErrorHandling;
+		};
 		2FC9A6F12D38317C00A8763D /* DMErrorHandling */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DMErrorHandling;
 		};
 		2FC9A6F42D3831E800A8763D /* DMErrorHandling */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DMErrorHandling;
+		};
+		2FECF1012D3A78DC00A213C5 /* DMErrorHandling */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DMErrorHandling;
 		};

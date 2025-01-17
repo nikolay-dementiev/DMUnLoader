@@ -4,10 +4,12 @@ def shared_pods_for_testing
 #  pod 'Nimble', '~> 11.2.1'
 end
 
+platform :ios, '15.0'
+
 target 'DMErrorHandlingPodExample' do
   use_frameworks!
 
-  pod 'DMErrorHandling', path: '../../DMErrorHandling/'
+  pod 'DMErrorHandling', path: '../../DMErrorHandlingSDK/'
 #  pod 'DMErrorHandling' , '~> 1.0.0'
 
   target 'DMErrorHandlingPodExampleTests' do
@@ -19,5 +21,12 @@ target 'DMErrorHandlingPodExample' do
   target 'DMErrorHandlingPodExampleUITests' do
     shared_pods_for_testing
   end
+end
 
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+    end
+  end
 end
