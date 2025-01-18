@@ -17,7 +17,7 @@ import WatchKit
 /// e.g. iOS, watchOS,...
 ///
 @MainActor
-public protocol DeviceParameters {
+internal protocol DeviceParameters {
     static var deviceScreenSize: CGSize { get }
 }
 

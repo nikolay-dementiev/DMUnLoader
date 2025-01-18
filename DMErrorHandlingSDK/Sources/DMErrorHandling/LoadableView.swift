@@ -18,9 +18,17 @@ public struct LoadableView<T, U: View>: View {
     @ViewBuilder let onSuccess: (T) -> U
     let onRetry: (() -> Void)?
     
+    public let loadingViewScene: LoadingViewScene = NativeProgressView()
+    
+    @State private var isLoading: Bool = true
+    
     public var body: some View {
+        self
+            .disabled(self.isLoading)
+            .blur(radius: self.isLoading ? 3 : 0)
+        
         switch element {
-        case .loading: LoadingView()
+        case .loading: loadingViewScene.getLoadingView()//LoadingView()//LoadingView(sceneDelegate: DMProgressLoadingView(isShowing: $isLoading, content: { self }))
         case .failure(let error): ErrorView(error: error, onRetry: onRetry)
         case .success(let value): onSuccess(value)
         }

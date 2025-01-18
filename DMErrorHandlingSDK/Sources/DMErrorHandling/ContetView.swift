@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct ContentView: View {
+internal struct ContentView: View {
     
     @State var shown = false
     @State var message = ""
@@ -50,7 +50,7 @@ public struct ContentView: View {
             }.blur(radius: shown ? 30 : 0)
             
             if shown {
-                AlertView(shown: $shown, /*closureA: $c, */isSuccess: isSuccess, message: message)
+                AlertView(/*shown: $shown, closureA: $c, isSuccess: isSuccess, */ message: message)
             }
             
         }

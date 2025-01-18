@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct ErrorView: View {
+internal struct ErrorView: View {
     let error: Error
     let onRetry: (() -> Void)?
     
