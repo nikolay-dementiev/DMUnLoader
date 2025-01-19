@@ -1,5 +1,7 @@
 // swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
+//
+// good 3rd party Activity indicators: https://github.com/MojtabaHs/ActivityIndicator-SwiftUI
 
 import PackageDescription
 
@@ -31,6 +33,7 @@ let package = Package(
         .target(
             name: "DMErrorHandling",
             path: "Sources",
+            exclude: ["Deprecated"],
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
         .testTarget(

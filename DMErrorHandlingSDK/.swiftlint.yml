@@ -6,23 +6,22 @@ included:
 #  - Package.swift
 excluded:
   - Tests/DMErrorHandlingTests/Resources
+  - Source/Deprecated
 
 # Enabled/disabled rules
 analyzer_rules:
-  - unused_declaration
-  - unused_import
-opt_in_rules:
   - all
-disabled_rules:
- # deprecated rules ++
-  - inert_defer
-  - unused_capture_list
- # deprecated rules --
-
-#  - anonymous_argument_in_multiline_closure
-#  - async_without_await
+#  - unused_declaration
+#  - unused_import
+#  
+#  - type_name
+#  - force_cast
+#  - force_try
+#  - variable_name
+##  - variable_name_min_length
+##  - anonymous_argument_in_multiline_closure
+##  - async_without_await
 #  - conditional_returns_on_newline
-  - contrasted_opening_brace
 #  - convenience_type
 #  - discouraged_optional_collection
 #  - explicit_acl
@@ -30,22 +29,21 @@ disabled_rules:
 #  - explicit_top_level_acl
 #  - explicit_type_interface
 #  - file_types_order
-#  - force_unwrapping
+##  - force_unwrapping
 #  - function_default_parameter_at_end
-#  - indentation_width
+##  - indentation_width
 #  - missing_docs
 #  - multiline_arguments
 #  - multiline_arguments_brackets
-#  - multiline_function_chains
+##  - multiline_function_chains
 #  - multiline_parameters_brackets
 #  - no_extension_access_modifier
 #  - no_grouping_extension
 #  - no_magic_numbers
 #  - one_declaration_per_file
-#  - prefer_key_path # Re-enable once we are on Swift 6.
+##  - prefer_key_path # Re-enable once we are on Swift 6.
 #  - prefer_nimble
 #  - prefixed_toplevel_constant
-  - required_deinit
 #  - sorted_enum_cases
 #  - strict_fileprivate
 #  - switch_case_on_newline
@@ -53,6 +51,16 @@ disabled_rules:
 #  - trailing_closure
 #  - type_contents_order
 #  - vertical_whitespace_between_cases
+
+opt_in_rules:
+  - all
+disabled_rules:
+ # deprecated rules ++
+  - inert_defer
+  - unused_capture_list
+ # deprecated rules --
+  - contrasted_opening_brace
+  - required_deinit
 
 # Configurations
 attributes:
@@ -67,6 +75,19 @@ balanced_xctest_lifecycle: &unit_test_configuration
 closure_body_length:
     warning: 50
     error: 100
+#variable_name:
+#  warning: 45
+#  error: 60
+type_name:
+  min_length: 4
+  max_length:
+    warning: 40
+    error: 50
+  excluded: iPhone
+#  allowed_symbols: ["_"]
+file_length:
+  warning: 500
+
 empty_xctest_method: *unit_test_configuration
 file_name:
   excluded:
@@ -80,6 +101,8 @@ function_body_length: 60
 identifier_name:
   excluded:
     - id
+    - URL
+    - GlobalAPIKey
 large_tuple: 3
 number_separator:
   minimum_length: 5

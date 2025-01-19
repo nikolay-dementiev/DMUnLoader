@@ -8,13 +8,13 @@
 
 import SwiftUI
 
-struct DMProgressLoadingView<Content>: View, LoadingViewScene where Content: View {
-//struct DMProgressLoadingView: View, LoadingViewScene {
+//struct DMProgressLoadingView<Content>: View, LoadingViewScene where Content: View {
+internal struct DMProgressLoadingView: View, LoadingViewScene {
     
-    @Binding var isShowing: Bool
-    var content: () -> Content
+    @Binding internal var isShowing: Bool
+//    var content: () -> Content
     
-    var body: some View {
+    internal var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .center) {
                 
@@ -41,10 +41,12 @@ struct DMProgressLoadingView<Content>: View, LoadingViewScene where Content: Vie
 }
 
 #Preview {
-    DMProgressLoadingView(isShowing: .constant(true)) {
-        List(["1", "2", "3", "4", "5"], id: \.self) { row in
-            Text(row)
-        }.navigationBarTitle(Text("A List"), displayMode: .large)
-//        EmptyView()
-    }
+//    DMProgressLoadingView(isShowing: .constant(true)) {
+//        List(["1", "2", "3", "4", "5"], id: \.self) { row in
+//            Text(row)
+//        }.navigationBarTitle(Text("A List"), displayMode: .large)
+    //EmptyView()
+//      }
+//
+    DMProgressLoadingView(isShowing: .constant(true))
 }
