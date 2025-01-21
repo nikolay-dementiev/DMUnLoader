@@ -11,7 +11,7 @@ import SwiftUI
 struct DMErrorHandlingSPMExampleApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            DMErrorHandlingContentView()
         }
     }
 }

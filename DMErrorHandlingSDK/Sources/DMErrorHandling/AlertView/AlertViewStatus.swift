@@ -11,7 +11,7 @@ public enum AlertViewStatus: RawRepresentable {
     
     public typealias RawValue = AlertViewStatusRawValue
     
-    case loadable(Loadable<Any>)
+    case loadable(LoadableType)
     case unknown
     
     public var rawValue: RawValue {
