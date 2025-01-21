@@ -9,8 +9,8 @@ platform :ios, '15.0'
 target 'DMErrorHandlingPodExample' do
   use_frameworks!
 
-  pod 'DMErrorHandling', path: '../../DMErrorHandlingSDK/'
-#  pod 'DMErrorHandling' , '~> 1.0.0'
+  pod 'DMErrorHandling', path: '../../'
+#  pod 'DMErrorHandling' , '~> 0.1.0'
 
   target 'DMErrorHandlingPodExampleTests' do
     inherit! :search_paths

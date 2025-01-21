@@ -98,7 +98,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				2F6EA16A2D3A98AD00ED3FAA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2F9A4B7A2D3677E60046FDE6 /* DMErrorHandlingSPMExample */,
@@ -110,6 +109,7 @@
 				2FECF1012D3A78DC00A213C5 /* DMErrorHandling */,
 				2F6EA1552D3A95F600ED3FAA /* DMErrorHandling */,
 				2F6EA1682D3A987E00ED3FAA /* DMErrorHandling */,
+				2F4183F62D3F7FC4008748D2 /* DMErrorHandling */,
 			);
 			productName = DMErrorHandlingSPMExample;
 			productReference = 2F9A4B782D3677E60046FDE6 /* DMErrorHandlingSPMExample.app */;
@@ -194,7 +194,7 @@
 			mainGroup = 2F9A4B6F2D3677E60046FDE6;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2F6EA1672D3A987E00ED3FAA /* XCLocalSwiftPackageReference "../../DMErrorHandlingSDK" */,
+				2F4183F52D3F7FC4008748D2 /* XCLocalSwiftPackageReference "../../../DMErrorHandling" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2F9A4B792D3677E60046FDE6 /* Products */;
@@ -257,10 +257,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		2F6EA16A2D3A98AD00ED3FAA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 2F6EA1692D3A98AD00ED3FAA /* DMErrorHandling */;
-		};
 		2F9A4B8A2D3677E70046FDE6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2F9A4B772D3677E60046FDE6 /* DMErrorHandlingSPMExample */;
@@ -569,24 +565,23 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		2F6EA1672D3A987E00ED3FAA /* XCLocalSwiftPackageReference "../../DMErrorHandlingSDK" */ = {
+		2F4183F52D3F7FC4008748D2 /* XCLocalSwiftPackageReference "../../../DMErrorHandling" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../DMErrorHandlingSDK;
+			relativePath = ../../../DMErrorHandling;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2F4183F62D3F7FC4008748D2 /* DMErrorHandling */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DMErrorHandling;
+		};
 		2F6EA1552D3A95F600ED3FAA /* DMErrorHandling */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DMErrorHandling;
 		};
 		2F6EA1682D3A987E00ED3FAA /* DMErrorHandling */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = DMErrorHandling;
-		};
-		2F6EA1692D3A98AD00ED3FAA /* DMErrorHandling */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2F6EA1672D3A987E00ED3FAA /* XCLocalSwiftPackageReference "../../DMErrorHandlingSDK" */;
 			productName = DMErrorHandling;
 		};
 		2FC9A6F12D38317C00A8763D /* DMErrorHandling */ = {
