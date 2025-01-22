@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DMErrorHandling'
-  s.version          = '0.1.3'
+  s.version          = '0.1.4'
   s.summary          = 'Error handling SDK'
   s.description      = <<-DESC
   
@@ -20,6 +20,7 @@ TODO: Add long description of the pod here.
   s.source           = { :git => 'https://github.com/nikolay-dementiev/DMErrorHandling.git', :tag => "v#{s.version}" }
   s.ios.deployment_target = '15.0'
   s.source_files = 'Sources/**/*.{swift,h,m,c}'
+  s.exclude_files = 'Examples/**', 'Sources/Deprecated/'
   s.weak_framework = "XCTest"
   s.requires_arc = true
   
