@@ -2,7 +2,7 @@
 //  DMErrorHandlingPodExampleUITestsLaunchTests.swift
 //  DMErrorHandlingPodExampleUITests
 //
-//  Created by Nikolay Dementiev on 16.01.2025.
+//  Created by Nikolay Dementiev on 22.01.2025.
 //
 
 import XCTest
