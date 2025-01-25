@@ -22,7 +22,7 @@ public protocol DMLoadingViewSettings {
     
     var loadingContainerForegroundColor: Color { get }
     
-    var deviceParameters: DeviceParameters { get }
+//    var deviceParameters: DeviceParameters { get }
 }
 
 //default implementation of settings
@@ -39,7 +39,7 @@ internal struct DMLoadingDefaultViewSettings: DMLoadingViewSettings {
     
     internal let loadingContainerForegroundColor: Color
     
-    internal var deviceParameters: DeviceParameters
+//    internal var deviceParameters: DeviceParameters
     
     public init(loadingText: String = "Loading...",
                 loadingTextAlignment: TextAlignment = .center,
@@ -49,8 +49,10 @@ internal struct DMLoadingDefaultViewSettings: DMLoadingViewSettings {
                 loadingTextLinePadding: EdgeInsets? = nil, //can't use extension's init due to it's has `internal` access lewel
                 progressIndicatorSize: ControlSize = .large,
                 progressIndicatorTintColor: Color? = .white,
-                loadingContainerForegroundColor: Color = Color.primary,
-                deviceParameters: DeviceParameters = DMDeviceParameters()) {
+                loadingContainerForegroundColor: Color = Color.primary
+                //,
+//                deviceParameters: DeviceParameters = DMDeviceParameters()
+    ) {
         
         self.loadingText = loadingText
         self.loadingTextAlignment = loadingTextAlignment
@@ -65,7 +67,7 @@ internal struct DMLoadingDefaultViewSettings: DMLoadingViewSettings {
         
         self.loadingContainerForegroundColor = loadingContainerForegroundColor
         
-        self.deviceParameters = deviceParameters
+//        self.deviceParameters = deviceParameters
     }
 }
 
@@ -82,7 +84,11 @@ internal struct DMNativeProgressView: View, LoadingViewScene {
     }
     
     internal var body: some View {
-        let geometry = type(of: settingsProvider.deviceParameters).deviceScreenSize
+        //let geometry = type(of: settingsProvider.deviceParameters).deviceScreenSize
+        
+        //TODO: Need to provide correct devise SIZE
+        let geometry = CGSize(width: 300, height: 300)
+        
         ZStack(alignment: .center) {
             
             let minSize = min(geometry.width - 20,

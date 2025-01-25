@@ -30,17 +30,15 @@ public struct LoadingView: View {
                     VStack(spacing: 20) {
                         switch loadingManager.loadableState {
                         case .loading:
-//                            ProgressView()
-//                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-//                            Text("Завантаження...")
-//                                .font(.headline)
-//                                .foregroundColor(.white)
+                            /*
+                             ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            Text("Завантаження...")
+                                .font(.headline)
+                                .foregroundColor(.white)
                             
-                            
+                            */
                             loadingViewScene.getLoadingView()
-                            
-//                            DMNativeProgressView()
-                            
                         case .failure(let error, let onRetry):
                             VStack {
                                 Image(systemName: "exclamationmark.triangle")

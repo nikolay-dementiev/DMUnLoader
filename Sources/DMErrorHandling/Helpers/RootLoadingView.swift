@@ -17,7 +17,12 @@ public struct RootLoadingView<Content: View>: View {
     }
     
     public var body: some View {
-        content
+//        GeometryReader { proxy in
+//            self
+//                .environment(\.mainWindowSize, proxy.size)
+//        }
+        
+        return content
             .environmentObject(loadingManager)
             .autoLoading(loadingManager) // Автоматичне додавання оверлею
     }
