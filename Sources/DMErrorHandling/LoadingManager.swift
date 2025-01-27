@@ -7,7 +7,19 @@
 
 import Foundation
 
-//// ViewModel to save loading state
+public protocol LoadingManagerSettings {
+    var autoHideDelay: Duration { get }
+}
+
+internal struct LoadingManagerDefaultSettings: LoadingManagerSettings {
+    let autoHideDelay: Duration
+    
+    internal init(autoHideDelay: Duration = .seconds(2)) {
+        self.autoHideDelay = autoHideDelay
+    }
+}
+
+/// ViewModel to save loading state
 //TODO: make LoadingManager as @Sendable
 public final class LoadingManager: ObservableObject {
     public let settings: LoadingManagerSettings
@@ -73,86 +85,79 @@ public final class LoadingManager: ObservableObject {
     }
 }
 
-public protocol LoadingManagerSettings {
-    var autoHideDelay: Duration { get }
-}
+//TODO: swap realization `LoadingManager`
+//use modern approaches:  (Task / Async \ Await)/ See code below
 
-internal struct LoadingManagerDefaultSettings: LoadingManagerSettings {
-    let autoHideDelay: Duration
+/*
+public final class LoadingManager: ObservableObject {
+    public let settings: LoadingManagerSettings
+    @Published private(set) public var loadableState: LoadableType = .none
     
-    internal init(autoHideDelay: Duration = .seconds(2)) {
-        self.autoHideDelay = autoHideDelay
+    private var inactivityTask: Task<Void, Never>?
+    
+    public init(loadableState: LoadableType = .none,
+                settings: LoadingManagerSettings? = nil) {
+        
+        self.loadableState = loadableState
+        self.settings = settings ?? LoadingManagerDefaultSettings()
+    }
+    
+    public func showLoading() {
+        setState(.loading)
+    }
+    
+    public func showSuccess(_ message: Any) {
+        setState(.success(message))
+        startAutoHide()
+    }
+    
+    public func showFailure(_ error: Error, onRetry: (() -> Void)? = nil) {
+        setState(.failure(error: error, onRetry: onRetry))
+        startAutoHide()
+    }
+    
+    public func hide() {
+        setState(.none)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func setState(_ state: LoadableType) {
+        cancelAutoHide()
+        
+        Task { @MainActor in
+            self.loadableState = state
+        }
+    }
+    
+    private func startAutoHide() {
+        inactivityTask = Task {
+            do {
+                try await Task.sleep(for: settings.autoHideDelay)
+                
+                // If the task was canceled, complete without taking any action
+                try Task.checkCancellation()
+                
+                await hideOnMain()
+           } catch {
+                guard !(error is CancellationError) else {
+                    return
+                }
+                print("Auto-hide task failed with error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func cancelAutoHide() {
+        inactivityTask?.cancel()
+        inactivityTask = nil
+    }
+    
+    private func hideOnMain() async {
+        await MainActor.run {
+            hide()
+            print("hide: Close after `\(settings.autoHideDelay)` seconds of inactivity")
+        }
     }
 }
-//
-//public final class LoadingManager: ObservableObject {
-//    public let settings: LoadingManagerSettings
-//    @Published private(set) public var loadableState: LoadableType = .none
-//    
-//    private var inactivityTask: Task<Void, Never>?
-//    
-//    public init(loadableState: LoadableType = .none,
-//                settings: LoadingManagerSettings? = nil) {
-//        
-//        self.loadableState = loadableState
-//        self.settings = settings ?? LoadingManagerDefaultSettings()
-//    }
-//    
-//    public func showLoading() {
-//        setState(.loading)
-//    }
-//    
-//    public func showSuccess(_ message: Any) {
-//        setState(.success(message))
-//        startAutoHide()
-//    }
-//    
-//    public func showFailure(_ error: Error, onRetry: (() -> Void)? = nil) {
-//        setState(.failure(error: error, onRetry: onRetry))
-//        startAutoHide()
-//    }
-//    
-//    public func hide() {
-//        setState(.none)
-//    }
-//    
-//    // MARK: - Private Methods
-//    
-//    private func setState(_ state: LoadableType) {
-//        cancelAutoHide()
-//        
-//        Task { @MainActor in
-//            self.loadableState = state
-//        }
-//    }
-//    
-//    private func startAutoHide() {
-//        inactivityTask = Task {
-//            do {
-//                try await Task.sleep(for: settings.autoHideDelay)
-//                
-//                // If the task was canceled, complete without taking any action
-//                try Task.checkCancellation()
-//                
-//                await hideOnMain()
-//           } catch {
-//                guard !(error is CancellationError) else {
-//                    return
-//                }
-//                print("Auto-hide task failed with error: \(error.localizedDescription)")
-//            }
-//        }
-//    }
-//    
-//    private func cancelAutoHide() {
-//        inactivityTask?.cancel()
-//        inactivityTask = nil
-//    }
-//    
-//    private func hideOnMain() async {
-//        await MainActor.run {
-//            hide()
-//            print("hide: Close after `\(settings.autoHideDelay)` seconds of inactivity")
-//        }
-//    }
-//}
+*/

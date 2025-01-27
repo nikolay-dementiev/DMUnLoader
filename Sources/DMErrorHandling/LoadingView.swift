@@ -7,17 +7,23 @@
 
 import SwiftUI
 
-public struct LoadingView: View {
+internal struct LoadingView: View {
     
     @ObservedObject private(set) internal var loadingManager: LoadingManager
     
-    public let loadingViewScene: LoadingViewScene = DMNativeProgressView()
+    //TODO: need to push it to client's classes - so the cliet's App cant use it's
+    //own classes and provide correct data
+    private(set) internal var loadingViewScene: LoadingViewScene = DMNativeProgressView()
+    private(set) internal var errorViewScene: ((Error, (() -> Void)?) -> ErrorViewScene)? = nil
+    
+    
+    
     
     internal init(loadingManager: LoadingManager) {
         self.loadingManager = loadingManager
     }
     
-    public var body: some View {
+    internal var body: some View {
         ZStack {
             switch loadingManager.loadableState {
             case .none :
@@ -38,8 +44,10 @@ public struct LoadingView: View {
                                 .foregroundColor(.white)
                             
                             */
+                            
                             loadingViewScene.getLoadingView()
                         case .failure(let error, let onRetry):
+                            /*
                             VStack {
                                 Image(systemName: "exclamationmark.triangle")
                                     .resizable()
@@ -57,7 +65,15 @@ public struct LoadingView: View {
                                     .cornerRadius(8)
                                 }
                             }
+                            */
                             
+//
+//                            errorViewScene = {
+//                                ErrorView(error: $0, onRetry: $1)
+//                            }(error, onRetry)
+//    
+//                            errorViewScene.getErrorView()
+                            ErrorView(error: error, onRetry: onRetry)
                         case .success(let message):
                             VStack {
                                 Image(systemName: "checkmark.circle.fill")

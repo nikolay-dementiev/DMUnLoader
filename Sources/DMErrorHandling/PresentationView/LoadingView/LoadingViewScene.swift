@@ -15,16 +15,24 @@ public protocol LoadingViewScene {
     
     //TODO: Get rid of `AnyView` -> wrap it somehow
     func getLoadingView() -> AnyView
+    
+//    @MainActor
+//    init(settingsProvider: DMLoadingViewSettings)
 }
 
 ///This extension provide default implementation of `View` as loading indicatior by itself
-public extension LoadingViewScene where Self: View {
+internal extension LoadingViewScene where Self: View {
     func getLoadingView() -> AnyView {
         AnyView(self)
     }
+    
+//    @MainActor @ViewBuilder
+//    static func `init`() -> some View {
+//        Self.init(settingsProvider: getSettingsProvider())
+//    }
 }
 
-public extension LoadingViewScene {
+internal extension LoadingViewScene {
     static func getSettingsProvider() -> DMLoadingViewSettings {
         DMLoadingDefaultViewSettings()
     }
