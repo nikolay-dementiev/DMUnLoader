@@ -8,8 +8,8 @@
 import SwiftUICore
 
 // Modifier to add LoadingView to any View
-public struct LoadingModifier: ViewModifier {
-    @ObservedObject internal var loadingManager: LoadingManager
+public struct LoadingModifier<Provider: LoadingViewProvider>: ViewModifier {
+    @ObservedObject internal var loadingManager: LoadingManager<Provider>
     
     public func body(content: Content) -> some View {
         ZStack {

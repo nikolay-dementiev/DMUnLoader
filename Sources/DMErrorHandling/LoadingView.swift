@@ -7,19 +7,19 @@
 
 import SwiftUI
 
-internal struct LoadingView: View {
+internal struct LoadingView<Provider: LoadingViewProvider>: View {
     
-    @ObservedObject private(set) internal var loadingManager: LoadingManager
+    @ObservedObject private(set) internal var loadingManager: LoadingManager<Provider>
     
-    //TODO: need to push it to client's classes - so the cliet's App cant use it's
-    //own classes and provide correct data
-    private(set) internal var loadingViewScene: LoadingViewScene = DMNativeProgressView()
-    private(set) internal var errorViewScene: ((Error, (() -> Void)?) -> ErrorViewScene)? = nil
-    
-    
+//    //TODO: need to push it to client's classes - so the cliet's App cant use it's
+//    //own classes and provide correct data
+//    private(set) internal var loadingViewScene: LoadingViewScene = DMNativeProgressView()
+//    private(set) internal var errorViewScene: ((Error, (() -> Void)?) -> ErrorViewScene)? = nil
     
     
-    internal init(loadingManager: LoadingManager) {
+    
+    
+    internal init(loadingManager: LoadingManager<Provider>) {
         self.loadingManager = loadingManager
     }
     
@@ -45,7 +45,8 @@ internal struct LoadingView: View {
                             
                             */
                             
-                            loadingViewScene.getLoadingView()
+//                            loadingViewScene.getLoadingView()
+                            loadingManager.provider.getLoadingView()
                         case .failure(let error, let onRetry):
                             /*
                             VStack {
@@ -73,8 +74,12 @@ internal struct LoadingView: View {
 //                            }(error, onRetry)
 //    
 //                            errorViewScene.getErrorView()
-                            ErrorView(error: error, onRetry: onRetry)
-                        case .success(let message):
+                            
+//                            ErrorView(error: error, onRetry: onRetry)
+                            loadingManager.provider.getErrorView(error: error,
+                                                                 onRetry: onRetry)
+                        case .success(let object):
+                            /*
                             VStack {
                                 Image(systemName: "checkmark.circle.fill")
                                     .resizable()
@@ -83,7 +88,10 @@ internal struct LoadingView: View {
                                 Text("\(message as? String ?? "Успішно!")")
                                     .foregroundColor(.white)
                             }
+                            */
                             
+//                            SuccessView(assosiatedObject: object)
+                            loadingManager.provider.getSuccessView(message: object)
                         case .none:
                             EmptyView()
                         }

@@ -19,18 +19,29 @@ internal struct LoadingManagerDefaultSettings: LoadingManagerSettings {
     }
 }
 
+//public protocol LoadingManagerProtocol: ObservableObject {
+//    var loadableState: LoadableType { get }
+//    func showLoading()
+//    func showSuccess(_ message: Any)
+//    func showFailure(_ error: Error, onRetry: (() -> Void)?)
+//    func hide()
+//}
+
 /// ViewModel to save loading state
 //TODO: make LoadingManager as @Sendable
-public final class LoadingManager: ObservableObject {
+public final class LoadingManager<Provider: LoadingViewProvider>: ObservableObject {
     public let settings: LoadingManagerSettings
+    public let provider: Provider
     
     @Published internal(set) public var loadableState: LoadableType = .none
     private var inactivityTimer: Timer?
     
     public init(loadableState: LoadableType = .none,
-                settings: LoadingManagerSettings? = nil) {
+                settings: LoadingManagerSettings? = nil,
+                provider: Provider = DefaultLoadingViewProvider()) {
         self.loadableState = loadableState
         self.settings = settings ?? LoadingManagerDefaultSettings()
+        self.provider = provider
     }
     
     public func showLoading() {

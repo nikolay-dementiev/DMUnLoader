@@ -152,9 +152,15 @@ import DMErrorHandling
 //    }
 //}
 
-struct ContentView: View {
-    @EnvironmentObject var loadingManager: LoadingManager
-
+struct ContentView<Provider: LoadingViewProvider>: View {
+    @EnvironmentObject var loadingManager: LoadingManager<Provider>
+    
+    private let provider: Provider
+    
+    public init(provider: Provider) {
+        self.provider = provider
+    }
+    
     var body: some View {
         VStack {
             Text("Основний вміст")

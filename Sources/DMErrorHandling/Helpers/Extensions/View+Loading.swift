@@ -8,21 +8,19 @@
 import SwiftUI
 
 public extension View {
-    func autoLoading(_ loadingManager: LoadingManager) -> some View {
-        
-        //reading the size from where the window is created:
-        //WindowGroup {
-//                GeometryReader { proxy in
-//                    self
-//                        .environment(\.mainWindowSize, proxy.size)
-//                }
-           // }
-        
-        return self
+//    func autoLoading(_ loadingManager: LoadingManager) -> some View {
+//        
+//        return self
+//            .environmentObject(loadingManager)
+//            .modifier(
+//                LoadingModifier(loadingManager: loadingManager)
+//            )
+//    }
+    
+    func autoLoading<Provider: LoadingViewProvider>(_ loadingManager: LoadingManager<Provider>) -> some View {
+        self
             .environmentObject(loadingManager)
-            .modifier(
-                LoadingModifier(loadingManager: loadingManager)
-            )
+            .modifier(LoadingModifier(loadingManager: loadingManager))
     }
 }
 

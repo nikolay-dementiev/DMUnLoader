@@ -7,13 +7,19 @@
 
 import SwiftUICore
 
-public struct RootLoadingView<Content: View>: View {
-    @StateObject private var loadingManager = LoadingManager()
+public struct RootLoadingView<Content: View, Provider: LoadingViewProvider>: View {
+    @StateObject private var loadingManager: LoadingManager<Provider>
     
-    let content: Content
+    private let content: (Provider) -> Content
+    private let provider: Provider
     
-    public init(@ViewBuilder content: () -> Content) {
-        self.content = content()
+    public init(
+        provider: Provider = DefaultLoadingViewProvider(),
+        @ViewBuilder content: @escaping (Provider) -> Content
+    ) {
+        _loadingManager = StateObject(wrappedValue: LoadingManager(provider: provider))
+        self.content = content
+        self.provider = provider
     }
     
     public var body: some View {
@@ -22,7 +28,7 @@ public struct RootLoadingView<Content: View>: View {
 //                .environment(\.mainWindowSize, proxy.size)
 //        }
         
-        return content
+        return content(provider)
             .environmentObject(loadingManager)
             .autoLoading(loadingManager) // Автоматичне додавання оверлею
     }
