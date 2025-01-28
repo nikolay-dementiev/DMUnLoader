@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 public protocol LoadingManagerSettings {
     var autoHideDelay: Duration { get }
@@ -19,14 +20,6 @@ internal struct LoadingManagerDefaultSettings: LoadingManagerSettings {
     }
 }
 
-//public protocol LoadingManagerProtocol: ObservableObject {
-//    var loadableState: LoadableType { get }
-//    func showLoading()
-//    func showSuccess(_ message: Any)
-//    func showFailure(_ error: Error, onRetry: (() -> Void)?)
-//    func hide()
-//}
-
 /// ViewModel to save loading state
 //TODO: make LoadingManager as @Sendable
 public final class LoadingManager<Provider: LoadingViewProvider>: ObservableObject {
@@ -34,7 +27,7 @@ public final class LoadingManager<Provider: LoadingViewProvider>: ObservableObje
     public let provider: Provider
     
     @Published internal(set) public var loadableState: LoadableType = .none
-    private var inactivityTimer: Timer?
+    private var inactivityTimerCancellable: AnyCancellable?
     
     public init(loadableState: LoadableType = .none,
                 settings: LoadingManagerSettings? = nil,
@@ -57,8 +50,6 @@ public final class LoadingManager<Provider: LoadingViewProvider>: ObservableObje
     }
     
     public func showFailure(_ error: Error, onRetry: (() -> Void)? = nil) {
-        //TODO: maybe need to inject `startInactivityTimer` into `onRetry` block
-        
         startInactivityTimer()
         
         loadableState = .failure(error: error, onRetry: onRetry)
@@ -79,10 +70,12 @@ public final class LoadingManager<Provider: LoadingViewProvider>: ObservableObje
     private func startInactivityTimer() {
         stopInactivityTimer()
         let interval: TimeInterval = settings.autoHideDelay.timeInterval
-        inactivityTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
-            print(#function + ": hide: Close form after `\(interval)` second(/s) of inactivity")
-            self?.hide()
-        }
+        inactivityTimerCancellable = Timer.publish(every: interval, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                print(#function + ": hide: Close form after `\(interval)` second(/s) of inactivity")
+                self?.hide()
+            }
     }
     
     // Reset the timer
@@ -92,7 +85,7 @@ public final class LoadingManager<Provider: LoadingViewProvider>: ObservableObje
     
     // Stopping the timer
     private func stopInactivityTimer() {
-        inactivityTimer?.invalidate()
+        inactivityTimerCancellable?.cancel()
     }
 }
 
