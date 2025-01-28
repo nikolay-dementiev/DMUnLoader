@@ -14,7 +14,7 @@ public enum DMAppError: DMError {
     case resourceError(type: ResourceError)
     case network(type: NetworkError)
 //    case invalidInput
-    case custom(errorDescription: String?)
+    case custom(_ errorDescription: String?)
     
     case generalError(DMError)
 }

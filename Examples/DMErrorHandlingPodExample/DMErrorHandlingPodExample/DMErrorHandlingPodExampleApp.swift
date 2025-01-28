@@ -10,8 +10,6 @@ import DMErrorHandling
 
 @main
 struct DMErrorHandlingPodExampleApp: App {
-//    @StateObject private var loadingManager = LoadingManager()
-    
     var body: some Scene {
         WindowGroup {
             DMRootLoadingView { provider in

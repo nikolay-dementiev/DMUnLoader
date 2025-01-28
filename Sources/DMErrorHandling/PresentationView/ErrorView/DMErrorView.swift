@@ -40,7 +40,6 @@ internal struct DMErrorView: View, DMErrorViewScene {
     
     //@Environment(\.presentationMode) private var presentationMode
 
-    
     /// provides an initializer for instance.
     /// - Parameter settingsProvider: the settings used to set this view.
     /// In case this parameter is not provided - it will be used as default settings by calling
@@ -64,14 +63,10 @@ internal struct DMErrorView: View, DMErrorViewScene {
                 .foregroundColor(.red)
             
             if let errorText = settingsProvider.errorText {
-                Text(errorText)
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
+                ErrorText(errorText)
             }
             
-            Text(error.localizedDescription)
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
+            ErrorText(error.localizedDescription)
             
             HStack {
                 //TODO: connect CloseButtonView and check layout
@@ -79,19 +74,45 @@ internal struct DMErrorView: View, DMErrorViewScene {
                 CloseButtonView {
                     self.presentationMode.wrappedValue.dismiss()
                 }*/
-                Button("Close", action: onClose)
-                .padding()
-                .background(Color.white)
-                .cornerRadius(8)
+                ActionButton(text: "Close", action: onClose)
 
                 //TODO: obtain all variables from `settingsProvider`
                 if let onRetry = onRetry {
-                    Button("Retry", action: onRetry)
-                    .padding()
-                    .background(Color.white)
-                    .cornerRadius(8)
+                    ActionButton(text: "Retry", action: onRetry)
                 }
             }
+        }
+    }
+    
+    private struct ActionButton: View {
+        let action: () -> Void
+        let buttonText: String
+        
+        internal init(text buttonText: String, action: @escaping () -> Void) {
+            self.action = action
+            self.buttonText = buttonText
+        }
+        
+        var body: some View {
+            Button(buttonText, action: action)
+            .padding()
+            .background(Color.white)
+            .cornerRadius(8)
+        }
+    }
+    
+    private struct ErrorText: View {
+        let errorText: String
+        
+        internal init(_ errorText: String) {
+            self.errorText = errorText
+        }
+        
+        var body: some View {
+            Text(errorText)
+                .foregroundColor(.white)
+                .multilineTextAlignment(.center)
+                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
         }
     }
 }

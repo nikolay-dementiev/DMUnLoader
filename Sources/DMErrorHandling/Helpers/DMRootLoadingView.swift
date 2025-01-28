@@ -1,5 +1,5 @@
 //
-//  RootLoadingView.swift
+//  DMRootLoadingView.swift
 //  DMErrorHandling
 //
 //  Created by Nikolay Dementiev on 24.01.2025.

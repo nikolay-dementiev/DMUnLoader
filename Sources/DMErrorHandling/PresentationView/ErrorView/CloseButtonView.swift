@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/*
 internal struct CloseButtonView: View {
     
     internal var action: @MainActor () -> Void
@@ -27,3 +28,4 @@ internal struct CloseButtonView: View {
         .accessibilityRemoveTraits(.isImage)
     }
 }
+*/
