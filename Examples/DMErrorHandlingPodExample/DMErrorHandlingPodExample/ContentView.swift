@@ -8,59 +8,100 @@
 import SwiftUI
 import DMErrorHandling
 
-struct ContentView<Provider: DMLoadingViewProvider>: View {
-    @EnvironmentObject var loadingManager: DMLoadingManager<Provider>
-    
-    private let provider: Provider
-    
-    public init(provider: Provider) {
-        self.provider = provider
-    }
-    
+// loading with default setting
+struct ContentViewDefaultSettings: View {
     var body: some View {
-        VStack {
-            Text("Main content")
-                .padding()
-
-            Button("Show downloads") {
-                startLoadingAction()
-            }
-            
-            Button("Simulate an error") {
-                let error = DMAppError.custom("Some test Error occured!")
-                loadingManager.showFailure(error,
-                                           onRetry: {
-                    startLoadingAction()
-                })
-            }
-
-            Button("Simulate success") {
-                loadingManager.showSuccess("Data successfully loaded!")
-            }
-
-            Button("Hide downloads") {
-                loadingManager.hide()
-            }
-        }
-        
-        //#2
-//        .autoLoading(loadingManager)
-    }
-    
-    private func startLoadingAction() {
-        loadingManager.showLoading()
-        Task {
-            await simulateTask()
-        }
-    }
-
-    private func simulateTask() async {
-        try? await Task.sleep(for: .seconds(6))
-        await MainActor.run {
-            loadingManager.showSuccess("Successfully completed!")
+        DMRootLoadingView { provider in
+            LoadingContentView(provider: provider)
         }
     }
 }
+
+// loading with custom setting
+struct ContentViewCustomSettings: View {
+    
+    var body: some View {
+        DMRootLoadingView(provider: CustomDMLoadingViewProvider()) { provider in
+            LoadingContentView(provider: provider)
+        }
+    }
+    
+    private struct CustomDMLoadingViewProvider: DMLoadingViewProvider {
+        @MainActor
+        public func getLoadingView() -> some View {
+            VStack {
+                Text("Some custom loading text...")
+                    .lineLimit(2)
+                    .padding()
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.orange)
+                    .layoutPriority(1)
+                ProgressView()
+                    .controlSize(.large)
+                    .progressViewStyle(.circular) // .linear
+                    .tint(.indigo)
+            }
+            .frame(minWidth: 100,
+                   maxWidth: 150,
+                   minHeight: 100,
+                   maxHeight: 150)
+            .fixedSize()
+            .foregroundColor(.cyan)
+        }
+        
+        @MainActor
+        func getErrorView(error: Error,
+                          onRetry: (() -> Void)?,
+                          onClose: @escaping () -> Void) -> some View {
+            VStack {
+                Image(systemName: "person.fill.questionmark")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(.yellow)
+                
+                Text("Some Error text")
+                    .foregroundColor(.yellow)
+                    .opacity(0.9)
+                    .multilineTextAlignment(.center)
+                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                
+                Text(error.localizedDescription)
+                    .foregroundColor(.yellow)
+                    .opacity(0.8)
+                    .multilineTextAlignment(.center)
+                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                
+                HStack {
+                    Button("Close this", action: onClose)
+                        .padding()
+                        .background(.yellow.opacity(0.7))
+                        .cornerRadius(8)
+                    
+                    if let onRetry = onRetry {
+                        Button("Retry this", action: onRetry)
+                            .padding()
+                            .background(.yellow.opacity(0.7))
+                            .cornerRadius(8)
+                    }
+                }
+            }
+        }
+        
+        @MainActor
+        func getSuccessView(message: Any) -> some View {
+            VStack {
+                Image(systemName: "message.circle.fill")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(.green)
+                Text("All task finished!")
+                    .foregroundColor(.white)
+            }
+        }
+    }
+}
+
+
 
 //#Preview {
 //    ContentView()

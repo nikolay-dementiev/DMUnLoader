@@ -1,0 +1,63 @@
+//
+//  File.swift
+//  DMErrorHandlingPodExample
+//
+//  Created by Nikolay Dementiev on 28.01.2025.
+//
+
+import SwiftUI
+import DMErrorHandling
+
+internal struct LoadingContentView<Provider: DMLoadingViewProvider>: View {
+    @EnvironmentObject var loadingManager: DMLoadingManager<Provider>
+    
+    private let provider: Provider
+    
+    public init(provider: Provider) {
+        self.provider = provider
+    }
+    
+    var body: some View {
+        VStack {
+            Text("Main content")
+                .padding()
+
+            Button("Show downloads") {
+                startLoadingAction()
+            }
+            
+            Button("Simulate an error") {
+                let error = DMAppError.custom("Some test Error occured!")
+                loadingManager.showFailure(error,
+                                           onRetry: {
+                    startLoadingAction()
+                })
+            }
+
+            Button("Simulate success") {
+                loadingManager.showSuccess("Data successfully loaded!")
+            }
+
+            Button("Hide downloads") {
+                loadingManager.hide()
+            }
+        }
+        
+        //#2
+//        .autoLoading(loadingManager)
+    }
+    
+    private func startLoadingAction() {
+        loadingManager.showLoading()
+        Task {
+            await simulateTask()
+        }
+    }
+
+    private func simulateTask() async {
+        try? await Task.sleep(for: .seconds(6))
+        await MainActor.run {
+            loadingManager.showSuccess("Successfully completed!")
+        }
+    }
+}

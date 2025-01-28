@@ -23,19 +23,14 @@ public protocol DMLoadingViewProvider {
     func getSuccessView(message: Any) -> SuccessViewType
 }
 
-/// Default provider implementation
-public struct DefaultDMLoadingViewProvider: DMLoadingViewProvider {
-    public init() {
-        
-    }
-    
+public extension DMLoadingViewProvider {
     @MainActor
-    public func getLoadingView() -> some View {
+    func getLoadingView() -> some View {
         DMProgressView()
     }
     
     @MainActor
-    public func getErrorView(error: Error,
+    func getErrorView(error: Error,
                              onRetry: (() -> Void)?,
                              onClose: @escaping () -> Void) -> some View {
         DMErrorView(error: error,
@@ -44,7 +39,14 @@ public struct DefaultDMLoadingViewProvider: DMLoadingViewProvider {
     }
     
     @MainActor
-    public func getSuccessView(message: Any) -> some View {
+    func getSuccessView(message: Any) -> some View {
         DMSuccessView(assosiatedObject: message)
+    }
+}
+
+/// Default provider implementation
+public struct DefaultDMLoadingViewProvider: DMLoadingViewProvider {
+    public init() {
+        
     }
 }
