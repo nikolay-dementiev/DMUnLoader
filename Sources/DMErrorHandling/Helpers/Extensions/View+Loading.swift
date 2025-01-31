@@ -16,12 +16,8 @@ public extension View {
             .modifier(DMLoadingModifier(loadingManager: loadingManager, provider: provider))
     }
     
-//    func autoLoadingNew<Provider: DMLoadingViewProvider>(_ loadingManager: DMLoadingManager,
-//                                                         provider: Provider,
-//                                                         id: UUID) -> some View {
-//        self
-//            .environmentObject(loadingManager)
-//            .environmentObject(provider)
-//            .modifier(DMLoadingModifier(loadingManager: loadingManager, provider: provider))
-//    }
+    internal func rootLoading() -> some View {
+        self
+            .modifier(DMRootLoadingModifier())
+    }
 }

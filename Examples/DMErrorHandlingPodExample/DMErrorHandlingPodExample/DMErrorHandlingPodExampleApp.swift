@@ -12,14 +12,18 @@ import DMErrorHandling
 struct DMErrorHandlingPodExampleApp: App {
     var body: some Scene {
         WindowGroup {
-            DMRootLoadingView { _, _ in
-                MainTabView()
+            DMRootLoadingView {
+//                ZStack {
+                    MainTabView()
+                    
+//                    BlockingView()
+//                        .allowsHitTesting(true)
+//                }
             }
         }
     }
     
     private struct MainTabView: View {
-//        @StateObject private var provider = CustomDMLoadingViewProvider()
         var body: some View {
             TabView {
                 ContentViewDefaultSettings()
@@ -37,4 +41,11 @@ struct DMErrorHandlingPodExampleApp: App {
 }
 
 
+//struct BlockingView: View {
+//    var body: some View {
+//        Color.gray.opacity(0.001) // Blocks interactions by giving a transparent background
+//            .ignoresSafeArea()
+//            //.allowsHitTesting(true) // Forbids any pressing
+//    }
+//}
 
