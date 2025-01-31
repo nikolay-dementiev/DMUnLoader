@@ -22,6 +22,8 @@ internal struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings {
 
 /// ViewModel to save loading state
 //TODO: make LoadingManager as @Sendable
+
+@MainActor
 public final class DMLoadingManager<Provider: DMLoadingViewProvider>: ObservableObject {
     public let settings: DMLoadingManagerSettings
     public let provider: Provider
@@ -69,13 +71,17 @@ public final class DMLoadingManager<Provider: DMLoadingViewProvider>: Observable
     // Start inactivity timer
     private func startInactivityTimer() {
         stopInactivityTimer()
-        inactivityTimerCancellable = Timer.publish(every: settings.autoHideDelay.timeInterval,
-                                                   on: .main,
-                                                   in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                self?.hide()
+
+        inactivityTimerCancellable = Deferred {
+            Future<Void, Never> { promise in
+                promise(.success(()))
             }
+        }
+        .delay(for: .seconds(settings.autoHideDelay.timeInterval),
+               scheduler: RunLoop.main)
+        .sink(receiveValue: { [weak self] _ in
+            self?.hide()
+        })
     }
     
     // Reset the timer
@@ -86,5 +92,6 @@ public final class DMLoadingManager<Provider: DMLoadingViewProvider>: Observable
     // Stopping the timer
     private func stopInactivityTimer() {
         inactivityTimerCancellable?.cancel()
+        inactivityTimerCancellable = nil
     }
 }

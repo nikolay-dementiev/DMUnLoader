@@ -48,7 +48,9 @@ internal struct DMLoadingView<Provider: DMLoadingViewProvider>: View {
             }
         }.onTapGesture {
             switch loadingManager.loadableState {
-            case .success, .failure, .none:
+            case .success,
+                    .failure,
+                    .none:
                 loadingManager.hide()
             case .loading:
                 break

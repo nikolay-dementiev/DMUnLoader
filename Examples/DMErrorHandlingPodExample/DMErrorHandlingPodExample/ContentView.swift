@@ -19,11 +19,12 @@ struct ContentViewDefaultSettings: View {
 
 // loading with custom setting
 struct ContentViewCustomSettings: View {
+    @StateObject private var loadingManager = DMLoadingManager(provider: CustomDMLoadingViewProvider())
     
     var body: some View {
-        DMRootLoadingView(provider: CustomDMLoadingViewProvider()) { provider in
-            LoadingContentView(provider: provider)
-        }
+        let provider = CustomDMLoadingViewProvider()
+        LoadingContentView(provider: loadingManager.provider)
+            .autoLoading(loadingManager)
     }
     
     private struct CustomDMLoadingViewProvider: DMLoadingViewProvider {

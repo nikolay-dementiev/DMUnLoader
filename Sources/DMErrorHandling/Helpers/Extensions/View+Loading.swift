@@ -13,4 +13,5 @@ public extension View {
             .environmentObject(loadingManager)
             .modifier(DMLoadingModifier(loadingManager: loadingManager))
     }
+    
 }
