@@ -98,7 +98,16 @@ internal final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
                 .foregroundColor(.white)
         }
     }
+    
+    //Settings
+    
+    var loadingManagerSettings: DMLoadingManagerSettings { CustomLoadingManagerSettings() }
+    
+    private struct CustomLoadingManagerSettings: DMLoadingManagerSettings {
+        var autoHideDelay: Duration = .seconds(4)
+    }
 }
+
 
 
 //#Preview {

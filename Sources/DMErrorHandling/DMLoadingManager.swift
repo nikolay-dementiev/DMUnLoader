@@ -20,12 +20,14 @@ internal struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings {
     }
 }
 
-/// ViewModel to save loading state
+
 //TODO: make LoadingManager as @Sendable
 
+/// ViewModel to save loading state
 @MainActor
 public final class DMLoadingManager: ObservableObject {
     public let settings: DMLoadingManagerSettings
+    private let loadableStateSubject = PassthroughSubject<DMLoadableType, Never>()
     
     @Published internal(set) public var loadableState: DMLoadableType = .none {
         willSet {
@@ -39,12 +41,10 @@ public final class DMLoadingManager: ObservableObject {
     
     private var inactivityTimerCancellable: AnyCancellable?
     
-    private let loadableStateSubject = PassthroughSubject<DMLoadableType, Never>()
-    
-    public init(loadableState: DMLoadableType = .none,
-                settings: DMLoadingManagerSettings? = nil) {
+    public init(state loadableState: DMLoadableType,
+                settings: DMLoadingManagerSettings) {
         self.loadableState = loadableState
-        self.settings = settings ?? DMLoadingManagerDefaultSettings()
+        self.settings = settings
     }
     
     public func showLoading() {

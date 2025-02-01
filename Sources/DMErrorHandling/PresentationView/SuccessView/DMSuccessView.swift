@@ -25,13 +25,13 @@ internal struct DMSuccessDefaultViewSettings: DMSuccessViewSettings {
     }
 }
 
-internal struct DMSuccessView: View, DMSuccessViewScene {
+internal struct DMSuccessView: View {
     
     internal let assosiatedObject: Any?
     internal let settingsProvider: DMSuccessViewSettings
     
-    internal init(assosiatedObject: Any? = nil,
-                  settingsProvider: DMSuccessViewSettings = Self.getSettingsProvider()) {
+    internal init(settings settingsProvider: DMSuccessViewSettings,
+                  assosiatedObject: Any? = nil) {
         self.assosiatedObject = assosiatedObject
         self.settingsProvider = settingsProvider
     }

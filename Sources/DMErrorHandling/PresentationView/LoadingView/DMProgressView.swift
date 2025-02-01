@@ -71,7 +71,7 @@ internal struct DMLoadingDefaultViewSettings: DMLoadingViewSettings {
     }
 }
 
-internal struct DMProgressView: View, DMLoadingViewScene {
+internal struct DMProgressView: View {
     
     internal let settingsProvider: DMLoadingViewSettings
     
@@ -79,7 +79,7 @@ internal struct DMProgressView: View, DMLoadingViewScene {
     /// - Parameter settingsProvider: the settings used to set this view.
     /// In case this parameter is not provided - it will be used as default settings by calling
     /// `Self.getSettingsProvider()` by `LoadingViewScene` protocol responsibility
-    internal init(settingsProvider: DMLoadingViewSettings = Self.getSettingsProvider()) {
+    internal init(settings settingsProvider: DMLoadingViewSettings) {
         self.settingsProvider = settingsProvider
     }
     

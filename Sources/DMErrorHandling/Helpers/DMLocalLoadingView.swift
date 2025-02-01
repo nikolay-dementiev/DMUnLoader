@@ -18,7 +18,8 @@ public struct DMLocalLoadingView<Content: View, Provider: DMLoadingViewProvider>
                 @ViewBuilder content: @escaping () -> Content) {
         self.content = content
         self.provider = provider
-        _loadingManager = StateObject(wrappedValue: DMLoadingManager())
+        _loadingManager = StateObject(wrappedValue: DMLoadingManager(state: .none,
+                                                                     settings: provider.loadingManagerSettings))
         
         /*
         subscribeToGloabalLoadingManagers(localManager: loadingManager,

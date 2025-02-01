@@ -21,26 +21,54 @@ public protocol DMLoadingViewProvider: ObservableObject {
                       onClose: @escaping () -> Void) -> ErrorViewType
     @MainActor
     func getSuccessView(message: Any) -> SuccessViewType
+    
+    //Settings
+    var loadingManagerSettings: DMLoadingManagerSettings { get }
+    
+    //Next settings are uses only for default screens!
+    var loadingViewSettings: DMLoadingViewSettings { get }
+    var errorViewSettings: DMErrorViewSettings { get }
+    var successViewSettings: DMSuccessViewSettings { get }
 }
 
 public extension DMLoadingViewProvider {
     @MainActor
     func getLoadingView() -> some View {
-        DMProgressView()
+        DMProgressView(settings: loadingViewSettings)
     }
     
     @MainActor
     func getErrorView(error: Error,
-                             onRetry: (() -> Void)?,
-                             onClose: @escaping () -> Void) -> some View {
-        DMErrorView(error: error,
+                      onRetry: (() -> Void)?,
+                      onClose: @escaping () -> Void) -> some View {
+        DMErrorView(settings: errorViewSettings,
+                    error: error,
                     onRetry: onRetry,
                     onClose: onClose)
     }
     
     @MainActor
     func getSuccessView(message: Any) -> some View {
-        DMSuccessView(assosiatedObject: message)
+        DMSuccessView(settings: successViewSettings,
+                      assosiatedObject: message)
+    }
+    
+    //Settings
+    
+    var loadingManagerSettings: DMLoadingManagerSettings {
+        DMLoadingManagerDefaultSettings()
+    }
+    
+    var loadingViewSettings: DMLoadingViewSettings {
+        DMLoadingDefaultViewSettings()
+    }
+    
+    var errorViewSettings: DMErrorViewSettings {
+        DMErrorDefaultViewSettings()
+    }
+    
+    var successViewSettings: DMSuccessViewSettings {
+        DMSuccessDefaultViewSettings()
     }
 }
 

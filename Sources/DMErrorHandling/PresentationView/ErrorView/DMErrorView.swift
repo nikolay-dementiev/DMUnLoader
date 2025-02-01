@@ -30,21 +30,19 @@ internal struct DMErrorDefaultViewSettings: DMErrorViewSettings {
 //https://developer.apple.com/videos/play/wwdc2021/10119
 //https://developer.apple.com/videos/play/wwdc2019/238
 
-internal struct DMErrorView: View, DMErrorViewScene {
+internal struct DMErrorView: View {
     
     internal let settingsProvider: DMErrorViewSettings
     
     internal let error: Error
     internal let onRetry: (() -> Void)?
     internal let onClose: () -> Void
-    
-    //@Environment(\.presentationMode) private var presentationMode
 
     /// provides an initializer for instance.
     /// - Parameter settingsProvider: the settings used to set this view.
     /// In case this parameter is not provided - it will be used as default settings by calling
     /// `Self.getSettingsProvider()` by `LoadingViewScene` protocol responsibility
-    internal init(settingsProvider: DMErrorViewSettings = Self.getSettingsProvider(),
+    internal init(settings settingsProvider: DMErrorViewSettings,
                   error: Error,
                   onRetry: (() -> Void)? = nil,
                   onClose: @escaping () -> Void) {
