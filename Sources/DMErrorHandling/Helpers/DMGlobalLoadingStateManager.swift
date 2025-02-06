@@ -11,8 +11,6 @@ public final class GlobalLoadingStateManager: ObservableObject, Observable {
     @Published internal(set) public var loadableState: DMLoadableType = .none
     
     internal var isLoading: Bool {
-        print("GlobalLoadingStateManager: \(loadableState == .loading)")
-        
         return loadableState == .loading
     }
     

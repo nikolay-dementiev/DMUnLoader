@@ -11,8 +11,6 @@ internal struct DMRootLoadingModifier: ViewModifier {
     @ObservedObject var globalLoadingStateManager: GlobalLoadingStateManager
     
     public func body(content: Content) -> some View {
-        
-        print("DMRootLoadingModifier: \(globalLoadingStateManager.isLoading)")
         return ZStack {
             content
             
@@ -26,9 +24,7 @@ internal struct DMRootLoadingModifier: ViewModifier {
 
 private struct BlockingView: View {
     var body: some View {
-//        Color.gray.opacity(0.001)
-//            .ignoresSafeArea()
-        Color.green
+        Color.gray.opacity(0.001)
             .ignoresSafeArea()
     }
 }

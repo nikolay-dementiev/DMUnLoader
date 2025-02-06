@@ -12,13 +12,12 @@ import DMErrorHandling
 final class MainTabViewControllerUIKit: UITabBarController {
     
     private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
-    private var cancellable: AnyCancellable?
     
     internal init(manager: GlobalLoadingStateManager? = nil) {
         self.globalLoadingManager = manager
         super.init(nibName: nil, bundle: nil)
     }
-    
+   
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -27,11 +26,7 @@ final class MainTabViewControllerUIKit: UITabBarController {
         super.viewDidLoad()
         setupTabs()
         
-        cancellable = globalLoadingManager.$loadableState
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                self?.handleLoadingStateChange(state)
-            }
+        subscribeToLoadingStateChange(from: globalLoadingManager)
     }
     
     private func setupTabs() {
@@ -52,10 +47,6 @@ final class MainTabViewControllerUIKit: UITabBarController {
         viewControllers = [defaultVC, customVC]
     }
     
-    private func handleLoadingStateChange(_ state: DMLoadableType) {
-        view.isUserInteractionEnabled = state != .loading
-    }
-    
     private func createNavController(
         viewController: UIViewController,
         title: String,
@@ -67,6 +58,12 @@ final class MainTabViewControllerUIKit: UITabBarController {
         navController.navigationBar.prefersLargeTitles = true
         viewController.navigationItem.title = title
         return navController
+    }
+}
+
+extension MainTabViewControllerUIKit: DMViewControllerTopLevel {
+    func handleLoadingStateChange(_ state: DMErrorHandling.DMLoadableType) {
+        view.isUserInteractionEnabled = state != .loading
     }
 }
 

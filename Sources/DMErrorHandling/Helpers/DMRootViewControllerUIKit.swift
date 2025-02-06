@@ -36,23 +36,6 @@ public final class DMRootViewControllerUIKit<ContentView: UIView>: UIViewControl
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-//        // Create a new UIKit view
-//        let newViewToApply = contentView
-//        
-//        guard let newViewToApply else {
-//            print(#function, "Error!: `targetView` is not provided !!!")
-//            return
-//        }
-//        
-//        // Creating a SwiftUI view
-//        let rootView = DMRootLoadingView { _ in
-//            // Using UIKit Views as Content for Root SwiftUI Views
-//            DMWrappedViewUIKit(uiView: newViewToApply)
-//        }
-//        
-//        // Making custom `binding` to obtain the Loading Manager object
-//        self.getLoadingManager = rootView.getLoadingManager
-        
         // Creating UIHostingController
         let hostingController = UIHostingController(rootView: rootContentView)
         self.hostingController = hostingController
