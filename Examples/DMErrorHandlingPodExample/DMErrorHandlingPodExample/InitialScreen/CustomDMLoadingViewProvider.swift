@@ -1,45 +1,30 @@
 //
-//  ContentView.swift
+//  CustomDMLoadingViewProvider.swift
 //  DMErrorHandlingPodExample
 //
-//  Created by Nikolay Dementiev on 22.01.2025.
+//  Created by Nikolay Dementiev on 03.02.2025.
 //
 
 import SwiftUI
 import DMErrorHandling
 
-// loading with default setting
-struct ContentViewDefaultSettings: View {
-    var body: some View {
-        DMLocalLoadingView(provider: DefaultDMLoadingViewProvider()) {
-            LoadingContentView()
-        }
-    }
-}
-
-// loading with custom setting
-struct ContentViewCustomSettings: View {
-    var body: some View {
-        DMLocalLoadingView(provider: CustomDMLoadingViewProvider()) {
-            LoadingContentView()
-        }
-    }
-}
-
 internal final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
+    
+    private let mainColor: Color = .yellow
+    
     @MainActor
-    public func getLoadingView() -> some View {
+    func getLoadingView() -> some View {
         VStack {
-            Text("Some custom loading text...")
+            Text("loading %$#")
                 .lineLimit(2)
                 .padding()
                 .multilineTextAlignment(.center)
-                .foregroundColor(.orange)
+                .foregroundColor(mainColor.opacity(0.8))
                 .layoutPriority(1)
             ProgressView()
                 .controlSize(.large)
                 .progressViewStyle(.circular) // .linear
-                .tint(.indigo)
+                .tint(mainColor)
         }
         .frame(minWidth: 100,
                maxWidth: 150,
@@ -57,16 +42,16 @@ internal final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
             Image(systemName: "person.fill.questionmark")
                 .resizable()
                 .frame(width: 30, height: 30)
-                .foregroundColor(.yellow)
+                .foregroundColor(mainColor)
             
             Text("Some Error text")
-                .foregroundColor(.yellow)
+                .foregroundColor(mainColor)
                 .opacity(0.9)
                 .multilineTextAlignment(.center)
                 .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
             
             Text(error.localizedDescription)
-                .foregroundColor(.yellow)
+                .foregroundColor(mainColor)
                 .opacity(0.8)
                 .multilineTextAlignment(.center)
                 .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
@@ -74,32 +59,18 @@ internal final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
             HStack {
                 Button("Close this", action: onClose)
                     .padding()
-                    .background(.yellow.opacity(0.7))
+                    .background(mainColor.opacity(0.7))
                     .cornerRadius(8)
                 
                 if let onRetry = onRetry {
                     Button("Retry this", action: onRetry)
                         .padding()
-                        .background(.yellow.opacity(0.7))
+                        .background(mainColor.opacity(0.7))
                         .cornerRadius(8)
                 }
             }
         }
     }
-    
-    /*
-    @MainActor
-    func getSuccessView(message: Any) -> some View {
-        VStack {
-            Image(systemName: "message.circle.fill")
-                .resizable()
-                .frame(width: 50, height: 50)
-                .foregroundColor(.green)
-            Text("All task finished!")
-                .foregroundColor(.white)
-        }
-    }
-    */
     
     //Settings
     
@@ -110,12 +81,6 @@ internal final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
     }
     
     var successViewSettings: DMSuccessViewSettings {
-        DMSuccessDefaultViewSettings(successImageProperties: SuccessImageProperties(foregroundColor: .orange))
+        DMSuccessDefaultViewSettings(successImageProperties: SuccessImageProperties(foregroundColor: mainColor.opacity(0.7)))
     }
 }
-
-
-
-//#Preview {
-//    ContentView()
-//}

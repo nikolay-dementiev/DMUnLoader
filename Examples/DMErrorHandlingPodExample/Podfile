@@ -5,6 +5,7 @@ def shared_pods_for_testing
 end
 
 platform :ios, '17.0'
+project 'DMErrorHandlingPodExample.xcodeproj', 'Debug-UIKitApp' => :debug, 'Debug-SwiftUIApp' => :debug
 
 target 'DMErrorHandlingPodExample' do
   use_frameworks!

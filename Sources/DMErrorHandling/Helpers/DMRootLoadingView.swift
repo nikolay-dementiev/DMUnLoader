@@ -8,18 +8,26 @@
 import SwiftUICore
 
 public struct DMRootLoadingView<Content: View>: View {
-    private let content: () -> Content
+    private let content: (GlobalLoadingStateManager) -> Content
     
-    @StateObject private var globalLoadingStateManager = GlobalLoadingStateManager()
+    //uses for UIKit's approach to obtain Loading Manager object
+    private(set) internal var getLoadingManager: () -> GlobalLoadingStateManager
     
-    public init(
-        @ViewBuilder content: @escaping () -> Content
-    ) {
+    @StateObject private var globalLoadingStateManager: GlobalLoadingStateManager
+    
+    public init(@ViewBuilder content: @escaping (GlobalLoadingStateManager) -> Content) {
         self.content = content
+        
+        let newLoadingManager = GlobalLoadingStateManager()
+        self.getLoadingManager = {
+            newLoadingManager
+        }
+        _globalLoadingStateManager = StateObject(wrappedValue: newLoadingManager)
     }
     
     public var body: some View {
-        return content()
+        return content(globalLoadingStateManager)
             .rootLoading(globalManager: globalLoadingStateManager)
+            .ignoresSafeArea()
     }
 }

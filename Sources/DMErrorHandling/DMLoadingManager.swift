@@ -22,7 +22,7 @@ internal struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings {
 
 /// ViewModel to save loading state
 @MainActor
-public final class DMLoadingManager: ObservableObject {
+public final class DMLoadingManager: Identifiable, ObservableObject {
     public let id: UUID
     public let settings: DMLoadingManagerSettings
     private let loadableStateSubject = PassthroughSubject<DMLoadableType, Never>()
@@ -95,5 +95,16 @@ public final class DMLoadingManager: ObservableObject {
     private func stopInactivityTimer() {
         inactivityTimerCancellable?.cancel()
         inactivityTimerCancellable = nil
+    }
+}
+
+extension DMLoadingManager: Hashable {
+    nonisolated public static func == (lhs: DMLoadingManager,
+                                       rhs: DMLoadingManager) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    nonisolated public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

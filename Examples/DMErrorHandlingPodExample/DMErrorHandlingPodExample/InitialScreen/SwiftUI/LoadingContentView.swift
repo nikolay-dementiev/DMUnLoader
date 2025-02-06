@@ -36,9 +36,6 @@ internal struct LoadingContentView: View {
                 loadingManager.hide()
             }
         }
-        
-        //#2
-//        .autoLoading(loadingManager)
     }
     
     private func startLoadingAction() {
