@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5C5290F2BC0BC9452248875A /* Pods_DMErrorHandlingPodExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB4C4CD90A35D155592B5D0 /* Pods_DMErrorHandlingPodExample.framework */; };
+		2F380B942D56526300820047 /* DMErrorHandling in Frameworks */ = {isa = PBXBuildFile; productRef = 2F380B932D56526300820047 /* DMErrorHandling */; };
+		2FD5981B2D5671D30021AA92 /* Pods_DMErrorHandlingPodExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB4C4CD90A35D155592B5D0 /* Pods_DMErrorHandlingPodExample.framework */; };
+		2FD5981C2D5671D30021AA92 /* Pods_DMErrorHandlingPodExample.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9BB4C4CD90A35D155592B5D0 /* Pods_DMErrorHandlingPodExample.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		61DC0AEFA94FB40FE1DB77DE /* Pods_DMErrorHandlingPodExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03B6E18C00C8318CC1C37DEF /* Pods_DMErrorHandlingPodExampleTests.framework */; };
 		D73CAD6BC9A6127309F38D4C /* Pods_DMErrorHandlingPodExample_DMErrorHandlingPodExampleUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89E4F1DACEAB109A7368A8BC /* Pods_DMErrorHandlingPodExample_DMErrorHandlingPodExampleUITests.framework */; };
 /* End PBXBuildFile section */
@@ -29,25 +31,51 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		2FD598182D5670210021AA92 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				2FD5981C2D5671D30021AA92 /* Pods_DMErrorHandlingPodExample.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		00F7987969F44E8374E8A2A4 /* Pods-DMErrorHandlingPodExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.release.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		03B6E18C00C8318CC1C37DEF /* Pods_DMErrorHandlingPodExampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DMErrorHandlingPodExampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		10AD245F1C5239743E638AF2 /* Pods-DMErrorHandlingPodExample.debug-swiftui-spm.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-swiftui-spm.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-swiftui-spm.xcconfig"; sourceTree = "<group>"; };
 		22E6FD4825052BE1D8FFD335 /* Pods-DMErrorHandlingPodExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		23C3FB6B6C7404BB83C9DA48 /* Pods-DMErrorHandlingPodExample.debug-swiftui-pod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-swiftui-pod.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-swiftui-pod.xcconfig"; sourceTree = "<group>"; };
 		25F1B4FC31CAB5F5163F5732 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		2A7EEF62F13518AA6E981F8F /* Pods-DMErrorHandlingPodExampleTests.debug-uikit-spm.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-uikit-spm.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-uikit-spm.xcconfig"; sourceTree = "<group>"; };
 		2FA647602D40F00000BB3D6F /* DMErrorHandlingPodExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DMErrorHandlingPodExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FA647702D40F00200BB3D6F /* DMErrorHandlingPodExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DMErrorHandlingPodExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FA6477A2D40F00200BB3D6F /* DMErrorHandlingPodExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DMErrorHandlingPodExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		31E63D3E87D06A8E8263DC50 /* Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig"; sourceTree = "<group>"; };
 		49FC01391F2FE3D699788C39 /* Pods-DMErrorHandlingPodExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug.xcconfig"; sourceTree = "<group>"; };
 		57EEDA333D98365450DB30A3 /* Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig"; sourceTree = "<group>"; };
+		7148E5CF67EB11DA6122FBD9 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit-spm.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit-spm.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit-spm.xcconfig"; sourceTree = "<group>"; };
 		77D18D5AD889A1FC0303FB09 /* Pods-DMErrorHandlingPodExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.release.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.release.xcconfig"; sourceTree = "<group>"; };
+		889F9681295630086257BCFC /* Pods-DMErrorHandlingPodExample.debug-uikit-pod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-uikit-pod.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-uikit-pod.xcconfig"; sourceTree = "<group>"; };
 		89E4F1DACEAB109A7368A8BC /* Pods_DMErrorHandlingPodExample_DMErrorHandlingPodExampleUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DMErrorHandlingPodExample_DMErrorHandlingPodExampleUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		94CCBBE420F4F164260A9942 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.release.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.release.xcconfig"; sourceTree = "<group>"; };
+		9BAB79F198DD6875ACE27B9C /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit-pod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit-pod.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit-pod.xcconfig"; sourceTree = "<group>"; };
 		9BB4C4CD90A35D155592B5D0 /* Pods_DMErrorHandlingPodExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DMErrorHandlingPodExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F36CFAB10C74C69FC557763 /* Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig"; sourceTree = "<group>"; };
 		A229952AC4BBC4794D7515BD /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig"; sourceTree = "<group>"; };
+		B27DFE73D6C03E43CE1663FB /* Pods-DMErrorHandlingPodExample.debug-uikit-spm.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-uikit-spm.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-uikit-spm.xcconfig"; sourceTree = "<group>"; };
 		C40B0B8C5DBC07B0BCBEDFC0 /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig"; sourceTree = "<group>"; };
+		D8A4AF1C117786BAA448852A /* Pods-DMErrorHandlingPodExampleTests.debug-uikit-pod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-uikit-pod.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-uikit-pod.xcconfig"; sourceTree = "<group>"; };
+		DCC9FAC500B8BE24873248EB /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui-pod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui-pod.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui-pod.xcconfig"; sourceTree = "<group>"; };
+		E24F78BEAB8380CD3D23F436 /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui-pod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-swiftui-pod.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-swiftui-pod.xcconfig"; sourceTree = "<group>"; };
 		E717907693AE4F958E12A419 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig"; sourceTree = "<group>"; };
+		ED09BC1740F0C57A024B409D /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui-spm.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui-spm.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui-spm.xcconfig"; sourceTree = "<group>"; };
+		F21DE2462296A219C0A3079F /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui-spm.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-swiftui-spm.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-swiftui-spm.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -73,7 +101,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C5290F2BC0BC9452248875A /* Pods_DMErrorHandlingPodExample.framework in Frameworks */,
+				2FD5981B2D5671D30021AA92 /* Pods_DMErrorHandlingPodExample.framework in Frameworks */,
+				2F380B942D56526300820047 /* DMErrorHandling in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +140,18 @@
 				A229952AC4BBC4794D7515BD /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig */,
 				57EEDA333D98365450DB30A3 /* Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig */,
 				C40B0B8C5DBC07B0BCBEDFC0 /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig */,
+				889F9681295630086257BCFC /* Pods-DMErrorHandlingPodExample.debug-uikit-pod.xcconfig */,
+				B27DFE73D6C03E43CE1663FB /* Pods-DMErrorHandlingPodExample.debug-uikit-spm.xcconfig */,
+				23C3FB6B6C7404BB83C9DA48 /* Pods-DMErrorHandlingPodExample.debug-swiftui-pod.xcconfig */,
+				10AD245F1C5239743E638AF2 /* Pods-DMErrorHandlingPodExample.debug-swiftui-spm.xcconfig */,
+				9BAB79F198DD6875ACE27B9C /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit-pod.xcconfig */,
+				7148E5CF67EB11DA6122FBD9 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit-spm.xcconfig */,
+				DCC9FAC500B8BE24873248EB /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui-pod.xcconfig */,
+				ED09BC1740F0C57A024B409D /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui-spm.xcconfig */,
+				D8A4AF1C117786BAA448852A /* Pods-DMErrorHandlingPodExampleTests.debug-uikit-pod.xcconfig */,
+				2A7EEF62F13518AA6E981F8F /* Pods-DMErrorHandlingPodExampleTests.debug-uikit-spm.xcconfig */,
+				E24F78BEAB8380CD3D23F436 /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui-pod.xcconfig */,
+				F21DE2462296A219C0A3079F /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui-spm.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -155,14 +196,17 @@
 			buildConfigurationList = 2FA647842D40F00200BB3D6F /* Build configuration list for PBXNativeTarget "DMErrorHandlingPodExample" */;
 			buildPhases = (
 				7C4D5C4605F5ED9198883A23 /* [CP] Check Pods Manifest.lock */,
+				2FD597A82D565DA80021AA92 /* POD-SPM Switcher */,
 				2FA6475C2D40F00000BB3D6F /* Sources */,
 				2FA6475D2D40F00000BB3D6F /* Frameworks */,
 				2FA6475E2D40F00000BB3D6F /* Resources */,
 				64204641080E03FF8667E67C /* [CP] Embed Pods Frameworks */,
+				2FD598182D5670210021AA92 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2FD5981A2D5670690021AA92 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				2FA647622D40F00000BB3D6F /* DMErrorHandlingPodExample */,
@@ -249,6 +293,9 @@
 			);
 			mainGroup = 2FA647572D40F00000BB3D6F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2F380B922D56526300820047 /* XCLocalSwiftPackageReference "../../../DMErrorHandling" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2FA647612D40F00000BB3D6F /* Products */;
 			projectDirPath = "";
@@ -302,6 +349,25 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		2FD597A82D565DA80021AA92 /* POD-SPM Switcher */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "POD-SPM Switcher";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo \"=== POD<->SPM Switcher SCRIPT STARTED ===\"\n\necho \"Current configuration: $CONFIGURATION\"\necho \"PODS_CONFIGURATION_BUILD_DIR: $PODS_CONFIGURATION_BUILD_DIR\"\necho \"BUILT_PRODUCTS_DIR: $BUILT_PRODUCTS_DIR\"\necho \"FRAMEWORKS_FOLDER_PATH: $FRAMEWORKS_FOLDER_PATH\"\n\nif [ \"$CONFIGURATION\" = \"Debug-UIKit-POD\" ] || [ \"$CONFIGURATION\" = \"Debug-SwiftUI-POD\" ]; then\n    echo \"=== COCOAPODS CONFIGURATION DETECTED ===\"\n    echo \"Including Pods framework for CocoaPods configuration\"\n    \n    # Path to the Pods framework directory\n    FRAMEWORKS_DIR=\"${PODS_CONFIGURATION_BUILD_DIR}/Pods_DMErrorHandlingPodExample\"\n    echo \"FRAMEWORKS_DIR: $FRAMEWORKS_DIR\"\n    \n    if [ -d \"$FRAMEWORKS_DIR\" ]; then\n        echo \"Copying Pods framework to build directory...\"\n        cp -R \"$FRAMEWORKS_DIR\" \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n        echo \"Copy completed successfully\"\n    else\n        echo \"❌ Error: Pods framework directory not found at $FRAMEWORKS_DIR\"\n        echo \"Check if CocoaPods is properly installed for this configuration\"\n        exit 1\n    fi\n\nelse\n    echo \"=== NON-COCOAPODS CONFIGURATION DETECTED ===\"\n    echo \"Excluding Pods framework for SPM configuration\"\n    \n    #echo \"Cleaning up CocoaPods files for non-CocoaPods configuration\"\n    #rm -rf \"${PODS_ROOT}\"\n    \n    # Path to the Pods framework in build directory\n    FRAMEWORK_PATH=\"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Pods_DMErrorHandlingPodExample.framework\"\n    echo \"FRAMEWORK_PATH: $FRAMEWORK_PATH\"\n    \n    if [ -d \"$FRAMEWORK_PATH\" ]; then\n        echo \"Found existing Pods framework - removing it...\"\n        rm -rf \"$FRAMEWORK_PATH\"\n        echo \"Removal completed successfully\"\n    else\n        echo \"ℹ️ Pods framework not found at $FRAMEWORK_PATH\"\n        echo \"No action needed\"\n    fi\nfi\n\necho \"=== POD<->SPM Switcher SCRIPT COMPLETED ===\"\n";
 		};
 		64204641080E03FF8667E67C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -423,10 +489,296 @@
 			target = 2FA6475F2D40F00000BB3D6F /* DMErrorHandlingPodExample */;
 			targetProxy = 2FA6477B2D40F00200BB3D6F /* PBXContainerItemProxy */;
 		};
+		2FD5981A2D5670690021AA92 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 2FD598192D5670690021AA92 /* DMErrorHandling */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		2F29A98C2D50E95E00AB71A9 /* Debug-UIKit */ = {
+		2F29A98C2D50E95E00AB71A9 /* Debug-UIKit-POD */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Pods-DMErrorHandlingPodExample\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_LDFLAGS[arch=*]" = (
+					"$(inherited)",
+					"\"-framework \\\"Pods_DMErrorHandlingPodExample\\\"\"",
+				);
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited) \"UIKIT_APP\"";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = "Debug-UIKit-POD";
+		};
+		2F29A98D2D50E95E00AB71A9 /* Debug-UIKit-POD */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 889F9681295630086257BCFC /* Pods-DMErrorHandlingPodExample.debug-uikit-pod.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 0.0.21;
+				DEVELOPMENT_ASSET_PATHS = "\"DMErrorHandlingPodExample/Preview Content\"";
+				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "-DUSE_COCOAPODS";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug-UIKit-POD";
+		};
+		2F29A98E2D50E95E00AB71A9 /* Debug-UIKit-POD */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D8A4AF1C117786BAA448852A /* Pods-DMErrorHandlingPodExampleTests.debug-uikit-pod.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExampleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMErrorHandlingPodExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DMErrorHandlingPodExample";
+			};
+			name = "Debug-UIKit-POD";
+		};
+		2F29A98F2D50E95E00AB71A9 /* Debug-UIKit-POD */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9BAB79F198DD6875ACE27B9C /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit-pod.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExampleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DMErrorHandlingPodExample;
+			};
+			name = "Debug-UIKit-POD";
+		};
+		2F29A9902D50E97A00AB71A9 /* Debug-SwiftUI-POD */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				"FRAMEWORK_SEARCH_PATHS[arch=*]" = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Pods-DMErrorHandlingPodExample\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_LDFLAGS[arch=*]" = (
+					"$(inherited)",
+					"\"-framework \\\"Pods_DMErrorHandlingPodExample\\\"\"",
+				);
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited) \"SWIFTUI_APP\"";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = "Debug-SwiftUI-POD";
+		};
+		2F29A9912D50E97A00AB71A9 /* Debug-SwiftUI-POD */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 23C3FB6B6C7404BB83C9DA48 /* Pods-DMErrorHandlingPodExample.debug-swiftui-pod.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 0.0.21;
+				DEVELOPMENT_ASSET_PATHS = "\"DMErrorHandlingPodExample/Preview Content\"";
+				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "-DUSE_COCOAPODS";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug-SwiftUI-POD";
+		};
+		2F29A9922D50E97A00AB71A9 /* Debug-SwiftUI-POD */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E24F78BEAB8380CD3D23F436 /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui-pod.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExampleTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMErrorHandlingPodExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DMErrorHandlingPodExample";
+			};
+			name = "Debug-SwiftUI-POD";
+		};
+		2F29A9932D50E97A00AB71A9 /* Debug-SwiftUI-POD */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DCC9FAC500B8BE24873248EB /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui-pod.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExampleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DMErrorHandlingPodExample;
+			};
+			name = "Debug-SwiftUI-POD";
+		};
+		2F380B952D56535500820047 /* Debug-UIKit-SPM */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -487,11 +839,11 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited) \"UIKIT_APP\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = "Debug-UIKit";
+			name = "Debug-UIKit-SPM";
 		};
-		2F29A98D2D50E95E00AB71A9 /* Debug-UIKit */ = {
+		2F380B962D56535500820047 /* Debug-UIKit-SPM */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 31E63D3E87D06A8E8263DC50 /* Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig */;
+			baseConfigurationReference = B27DFE73D6C03E43CE1663FB /* Pods-DMErrorHandlingPodExample.debug-uikit-spm.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -511,17 +863,18 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "-DUSE_SPM";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = "Debug-UIKit";
+			name = "Debug-UIKit-SPM";
 		};
-		2F29A98E2D50E95E00AB71A9 /* Debug-UIKit */ = {
+		2F380B972D56535500820047 /* Debug-UIKit-SPM */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 57EEDA333D98365450DB30A3 /* Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig */;
+			baseConfigurationReference = 2A7EEF62F13518AA6E981F8F /* Pods-DMErrorHandlingPodExampleTests.debug-uikit-spm.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -537,11 +890,11 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMErrorHandlingPodExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DMErrorHandlingPodExample";
 			};
-			name = "Debug-UIKit";
+			name = "Debug-UIKit-SPM";
 		};
-		2F29A98F2D50E95E00AB71A9 /* Debug-UIKit */ = {
+		2F380B982D56535500820047 /* Debug-UIKit-SPM */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E717907693AE4F958E12A419 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig */;
+			baseConfigurationReference = 7148E5CF67EB11DA6122FBD9 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit-spm.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -556,9 +909,9 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = DMErrorHandlingPodExample;
 			};
-			name = "Debug-UIKit";
+			name = "Debug-UIKit-SPM";
 		};
-		2F29A9902D50E97A00AB71A9 /* Debug-SwiftUI */ = {
+		2F380B992D56537300820047 /* Debug-SwiftUI-SPM */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -619,11 +972,11 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited) \"SWIFTUI_APP\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = "Debug-SwiftUI";
+			name = "Debug-SwiftUI-SPM";
 		};
-		2F29A9912D50E97A00AB71A9 /* Debug-SwiftUI */ = {
+		2F380B9A2D56537300820047 /* Debug-SwiftUI-SPM */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9F36CFAB10C74C69FC557763 /* Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig */;
+			baseConfigurationReference = 10AD245F1C5239743E638AF2 /* Pods-DMErrorHandlingPodExample.debug-swiftui-spm.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -643,17 +996,18 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "-DUSE_SPM";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = "Debug-SwiftUI";
+			name = "Debug-SwiftUI-SPM";
 		};
-		2F29A9922D50E97A00AB71A9 /* Debug-SwiftUI */ = {
+		2F380B9B2D56537300820047 /* Debug-SwiftUI-SPM */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C40B0B8C5DBC07B0BCBEDFC0 /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig */;
+			baseConfigurationReference = F21DE2462296A219C0A3079F /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui-spm.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -669,11 +1023,11 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMErrorHandlingPodExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DMErrorHandlingPodExample";
 			};
-			name = "Debug-SwiftUI";
+			name = "Debug-SwiftUI-SPM";
 		};
-		2F29A9932D50E97A00AB71A9 /* Debug-SwiftUI */ = {
+		2F380B9C2D56537300820047 /* Debug-SwiftUI-SPM */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A229952AC4BBC4794D7515BD /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig */;
+			baseConfigurationReference = ED09BC1740F0C57A024B409D /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui-spm.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -688,70 +1042,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = DMErrorHandlingPodExample;
 			};
-			name = "Debug-SwiftUI";
-		};
-		2FA647822D40F00200BB3D6F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-			};
-			name = Debug;
+			name = "Debug-SwiftUI-SPM";
 		};
 		2FA647832D40F00200BB3D6F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -809,36 +1100,6 @@
 			};
 			name = Release;
 		};
-		2FA647852D40F00200BB3D6F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 49FC01391F2FE3D699788C39 /* Pods-DMErrorHandlingPodExample.debug.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 0.0.21;
-				DEVELOPMENT_ASSET_PATHS = "\"DMErrorHandlingPodExample/Preview Content\"";
-				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExample;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
 		2FA647862D40F00200BB3D6F /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 77D18D5AD889A1FC0303FB09 /* Pods-DMErrorHandlingPodExample.release.xcconfig */;
@@ -861,6 +1122,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "-DUSE_COCOAPODS";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -868,26 +1130,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
-		};
-		2FA647882D40F00200BB3D6F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 22E6FD4825052BE1D8FFD335 /* Pods-DMErrorHandlingPodExampleTests.debug.xcconfig */;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExampleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMErrorHandlingPodExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DMErrorHandlingPodExample";
-			};
-			name = Debug;
 		};
 		2FA647892D40F00200BB3D6F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -908,25 +1150,6 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMErrorHandlingPodExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DMErrorHandlingPodExample";
 			};
 			name = Release;
-		};
-		2FA6478B2D40F00200BB3D6F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 25F1B4FC31CAB5F5163F5732 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExampleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = DMErrorHandlingPodExample;
-			};
-			name = Debug;
 		};
 		2FA6478C2D40F00200BB3D6F /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -953,9 +1176,10 @@
 		2FA6475B2D40F00000BB3D6F /* Build configuration list for PBXProject "DMErrorHandlingPodExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2FA647822D40F00200BB3D6F /* Debug */,
-				2F29A98C2D50E95E00AB71A9 /* Debug-UIKit */,
-				2F29A9902D50E97A00AB71A9 /* Debug-SwiftUI */,
+				2F29A98C2D50E95E00AB71A9 /* Debug-UIKit-POD */,
+				2F380B952D56535500820047 /* Debug-UIKit-SPM */,
+				2F29A9902D50E97A00AB71A9 /* Debug-SwiftUI-POD */,
+				2F380B992D56537300820047 /* Debug-SwiftUI-SPM */,
 				2FA647832D40F00200BB3D6F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -964,9 +1188,10 @@
 		2FA647842D40F00200BB3D6F /* Build configuration list for PBXNativeTarget "DMErrorHandlingPodExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2FA647852D40F00200BB3D6F /* Debug */,
-				2F29A98D2D50E95E00AB71A9 /* Debug-UIKit */,
-				2F29A9912D50E97A00AB71A9 /* Debug-SwiftUI */,
+				2F29A98D2D50E95E00AB71A9 /* Debug-UIKit-POD */,
+				2F380B962D56535500820047 /* Debug-UIKit-SPM */,
+				2F29A9912D50E97A00AB71A9 /* Debug-SwiftUI-POD */,
+				2F380B9A2D56537300820047 /* Debug-SwiftUI-SPM */,
 				2FA647862D40F00200BB3D6F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -975,9 +1200,10 @@
 		2FA647872D40F00200BB3D6F /* Build configuration list for PBXNativeTarget "DMErrorHandlingPodExampleTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2FA647882D40F00200BB3D6F /* Debug */,
-				2F29A98E2D50E95E00AB71A9 /* Debug-UIKit */,
-				2F29A9922D50E97A00AB71A9 /* Debug-SwiftUI */,
+				2F29A98E2D50E95E00AB71A9 /* Debug-UIKit-POD */,
+				2F380B972D56535500820047 /* Debug-UIKit-SPM */,
+				2F29A9922D50E97A00AB71A9 /* Debug-SwiftUI-POD */,
+				2F380B9B2D56537300820047 /* Debug-SwiftUI-SPM */,
 				2FA647892D40F00200BB3D6F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -986,15 +1212,35 @@
 		2FA6478A2D40F00200BB3D6F /* Build configuration list for PBXNativeTarget "DMErrorHandlingPodExampleUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2FA6478B2D40F00200BB3D6F /* Debug */,
-				2F29A98F2D50E95E00AB71A9 /* Debug-UIKit */,
-				2F29A9932D50E97A00AB71A9 /* Debug-SwiftUI */,
+				2F29A98F2D50E95E00AB71A9 /* Debug-UIKit-POD */,
+				2F380B982D56535500820047 /* Debug-UIKit-SPM */,
+				2F29A9932D50E97A00AB71A9 /* Debug-SwiftUI-POD */,
+				2F380B9C2D56537300820047 /* Debug-SwiftUI-SPM */,
 				2FA6478C2D40F00200BB3D6F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		2F380B922D56526300820047 /* XCLocalSwiftPackageReference "../../../DMErrorHandling" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../../DMErrorHandling;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2F380B932D56526300820047 /* DMErrorHandling */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DMErrorHandling;
+		};
+		2FD598192D5670690021AA92 /* DMErrorHandling */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F380B922D56526300820047 /* XCLocalSwiftPackageReference "../../../DMErrorHandling" */;
+			productName = DMErrorHandling;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2FA647582D40F00000BB3D6F /* Project object */;
 }

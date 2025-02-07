@@ -6,7 +6,11 @@
 //
 
 import UIKit
+#if USE_COCOAPODS
 import DMErrorHandling
+#elseif USE_SPM
+import DMErrorHandling
+#endif
 
 final class ContentViewDefaultSettingsUIKit<CV: LoadingContentViewUIKit, LVP: DMLoadingViewProvider>: DMLocalLoadingViewUIKit<CV, LVP> {
     

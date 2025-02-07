@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DMErrorHandling"
-               BuildableName = "DMErrorHandling"
-               BlueprintName = "DMErrorHandling"
-               ReferencedContainer = "container:">
+               BlueprintIdentifier = "2FA6475F2D40F00000BB3D6F"
+               BuildableName = "DMErrorHandlingPodExample.app"
+               BlueprintName = "DMErrorHandlingPodExample"
+               ReferencedContainer = "container:DMErrorHandlingPodExample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -31,19 +31,31 @@
       shouldAutocreateTestPlan = "YES">
       <Testables>
          <TestableReference
-            skipped = "NO">
+            skipped = "NO"
+            parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DMErrorHandlingTests"
-               BuildableName = "DMErrorHandlingTests"
-               BlueprintName = "DMErrorHandlingTests"
-               ReferencedContainer = "container:">
+               BlueprintIdentifier = "2FA6476F2D40F00200BB3D6F"
+               BuildableName = "DMErrorHandlingPodExampleTests.xctest"
+               BlueprintName = "DMErrorHandlingPodExampleTests"
+               ReferencedContainer = "container:DMErrorHandlingPodExample.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2FA647792D40F00200BB3D6F"
+               BuildableName = "DMErrorHandlingPodExampleUITests.xctest"
+               BlueprintName = "DMErrorHandlingPodExampleUITests"
+               ReferencedContainer = "container:DMErrorHandlingPodExample.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Debug-SwiftUI-POD"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -52,6 +64,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "2FA6475F2D40F00000BB3D6F"
+            BuildableName = "DMErrorHandlingPodExample.app"
+            BlueprintName = "DMErrorHandlingPodExample"
+            ReferencedContainer = "container:DMErrorHandlingPodExample.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -59,15 +81,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DMErrorHandling"
-            BuildableName = "DMErrorHandling"
-            BlueprintName = "DMErrorHandling"
-            ReferencedContainer = "container:">
+            BlueprintIdentifier = "2FA6475F2D40F00000BB3D6F"
+            BuildableName = "DMErrorHandlingPodExample.app"
+            BlueprintName = "DMErrorHandlingPodExample"
+            ReferencedContainer = "container:DMErrorHandlingPodExample.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -6,7 +6,11 @@
 //
 
 import UIKit
+#if USE_COCOAPODS
 import DMErrorHandling
+#elseif USE_SPM
+import DMErrorHandling
+#endif
 
 final class LoadingContentViewUIKit: UIView {
     var loadingManager: DMLoadingManager!

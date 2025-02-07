@@ -6,7 +6,11 @@
 //
 
 import SwiftUI
+#if USE_COCOAPODS
 import DMErrorHandling
+#elseif USE_SPM
+import DMErrorHandling
+#endif
 
 internal final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
     
