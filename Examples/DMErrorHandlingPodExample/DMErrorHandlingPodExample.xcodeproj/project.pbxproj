@@ -32,6 +32,7 @@
 /* Begin PBXFileReference section */
 		00F7987969F44E8374E8A2A4 /* Pods-DMErrorHandlingPodExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.release.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		03B6E18C00C8318CC1C37DEF /* Pods_DMErrorHandlingPodExampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DMErrorHandlingPodExampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FA92DE8B411504F952FC7E6 /* Pods-DMErrorHandlingPodExample.debug-pod-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-pod-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-pod-uikit.xcconfig"; sourceTree = "<group>"; };
 		22E6FD4825052BE1D8FFD335 /* Pods-DMErrorHandlingPodExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		25F1B4FC31CAB5F5163F5732 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		2FA647602D40F00000BB3D6F /* DMErrorHandlingPodExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DMErrorHandlingPodExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -40,29 +41,40 @@
 		31E63D3E87D06A8E8263DC50 /* Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig"; sourceTree = "<group>"; };
 		49FC01391F2FE3D699788C39 /* Pods-DMErrorHandlingPodExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug.xcconfig"; sourceTree = "<group>"; };
 		57EEDA333D98365450DB30A3 /* Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig"; sourceTree = "<group>"; };
+		5E60DD0C73CF30E39DCF562F /* Pods-DMErrorHandlingPodExampleTests.debug-pod-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-pod-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-pod-swiftui.xcconfig"; sourceTree = "<group>"; };
+		5EE4E61592975A1405E71488 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-pod-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-pod-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-pod-uikit.xcconfig"; sourceTree = "<group>"; };
 		77D18D5AD889A1FC0303FB09 /* Pods-DMErrorHandlingPodExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.release.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.release.xcconfig"; sourceTree = "<group>"; };
 		89E4F1DACEAB109A7368A8BC /* Pods_DMErrorHandlingPodExample_DMErrorHandlingPodExampleUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DMErrorHandlingPodExample_DMErrorHandlingPodExampleUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		938FF8881F5CF0DF6199FC96 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-pod-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-pod-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-pod-swiftui.xcconfig"; sourceTree = "<group>"; };
 		94CCBBE420F4F164260A9942 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.release.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.release.xcconfig"; sourceTree = "<group>"; };
 		9BB4C4CD90A35D155592B5D0 /* Pods_DMErrorHandlingPodExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DMErrorHandlingPodExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F36CFAB10C74C69FC557763 /* Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig"; sourceTree = "<group>"; };
 		A229952AC4BBC4794D7515BD /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig"; sourceTree = "<group>"; };
+		B89EFE22B299BBE15E2E570E /* Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig"; sourceTree = "<group>"; };
 		C40B0B8C5DBC07B0BCBEDFC0 /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig"; sourceTree = "<group>"; };
+		E4817D36DC0B29CACF8811EA /* Pods-DMErrorHandlingPodExampleTests.debug-pod-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-pod-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-pod-uikit.xcconfig"; sourceTree = "<group>"; };
 		E717907693AE4F958E12A419 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2FA647622D40F00000BB3D6F /* DMErrorHandlingPodExample */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = DMErrorHandlingPodExample;
 			sourceTree = "<group>";
 		};
 		2FA647732D40F00200BB3D6F /* DMErrorHandlingPodExampleTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = DMErrorHandlingPodExampleTests;
 			sourceTree = "<group>";
 		};
 		2FA6477D2D40F00200BB3D6F /* DMErrorHandlingPodExampleUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = DMErrorHandlingPodExampleUITests;
 			sourceTree = "<group>";
 		};
@@ -111,6 +123,12 @@
 				A229952AC4BBC4794D7515BD /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig */,
 				57EEDA333D98365450DB30A3 /* Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig */,
 				C40B0B8C5DBC07B0BCBEDFC0 /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig */,
+				1FA92DE8B411504F952FC7E6 /* Pods-DMErrorHandlingPodExample.debug-pod-uikit.xcconfig */,
+				B89EFE22B299BBE15E2E570E /* Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig */,
+				5EE4E61592975A1405E71488 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-pod-uikit.xcconfig */,
+				938FF8881F5CF0DF6199FC96 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-pod-swiftui.xcconfig */,
+				E4817D36DC0B29CACF8811EA /* Pods-DMErrorHandlingPodExampleTests.debug-pod-uikit.xcconfig */,
+				5E60DD0C73CF30E39DCF562F /* Pods-DMErrorHandlingPodExampleTests.debug-pod-swiftui.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -426,7 +444,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		2F29A98C2D50E95E00AB71A9 /* Debug-UIKit */ = {
+		2F29A98C2D50E95E00AB71A9 /* Debug-POD-UIKit */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -487,11 +505,11 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited) \"UIKIT_APP\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = "Debug-UIKit";
+			name = "Debug-POD-UIKit";
 		};
-		2F29A98D2D50E95E00AB71A9 /* Debug-UIKit */ = {
+		2F29A98D2D50E95E00AB71A9 /* Debug-POD-UIKit */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 31E63D3E87D06A8E8263DC50 /* Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig */;
+			baseConfigurationReference = 1FA92DE8B411504F952FC7E6 /* Pods-DMErrorHandlingPodExample.debug-pod-uikit.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -517,11 +535,11 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = "Debug-UIKit";
+			name = "Debug-POD-UIKit";
 		};
-		2F29A98E2D50E95E00AB71A9 /* Debug-UIKit */ = {
+		2F29A98E2D50E95E00AB71A9 /* Debug-POD-UIKit */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 57EEDA333D98365450DB30A3 /* Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig */;
+			baseConfigurationReference = E4817D36DC0B29CACF8811EA /* Pods-DMErrorHandlingPodExampleTests.debug-pod-uikit.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -537,11 +555,11 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMErrorHandlingPodExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DMErrorHandlingPodExample";
 			};
-			name = "Debug-UIKit";
+			name = "Debug-POD-UIKit";
 		};
-		2F29A98F2D50E95E00AB71A9 /* Debug-UIKit */ = {
+		2F29A98F2D50E95E00AB71A9 /* Debug-POD-UIKit */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E717907693AE4F958E12A419 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig */;
+			baseConfigurationReference = 5EE4E61592975A1405E71488 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-pod-uikit.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -556,9 +574,9 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = DMErrorHandlingPodExample;
 			};
-			name = "Debug-UIKit";
+			name = "Debug-POD-UIKit";
 		};
-		2F29A9902D50E97A00AB71A9 /* Debug-SwiftUI */ = {
+		2F29A9902D50E97A00AB71A9 /* Debug-POD-SwiftUI */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -619,11 +637,11 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited) \"SWIFTUI_APP\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = "Debug-SwiftUI";
+			name = "Debug-POD-SwiftUI";
 		};
-		2F29A9912D50E97A00AB71A9 /* Debug-SwiftUI */ = {
+		2F29A9912D50E97A00AB71A9 /* Debug-POD-SwiftUI */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9F36CFAB10C74C69FC557763 /* Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig */;
+			baseConfigurationReference = B89EFE22B299BBE15E2E570E /* Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -649,11 +667,11 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = "Debug-SwiftUI";
+			name = "Debug-POD-SwiftUI";
 		};
-		2F29A9922D50E97A00AB71A9 /* Debug-SwiftUI */ = {
+		2F29A9922D50E97A00AB71A9 /* Debug-POD-SwiftUI */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C40B0B8C5DBC07B0BCBEDFC0 /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig */;
+			baseConfigurationReference = 5E60DD0C73CF30E39DCF562F /* Pods-DMErrorHandlingPodExampleTests.debug-pod-swiftui.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -669,11 +687,11 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMErrorHandlingPodExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DMErrorHandlingPodExample";
 			};
-			name = "Debug-SwiftUI";
+			name = "Debug-POD-SwiftUI";
 		};
-		2F29A9932D50E97A00AB71A9 /* Debug-SwiftUI */ = {
+		2F29A9932D50E97A00AB71A9 /* Debug-POD-SwiftUI */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A229952AC4BBC4794D7515BD /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig */;
+			baseConfigurationReference = 938FF8881F5CF0DF6199FC96 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-pod-swiftui.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -688,7 +706,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = DMErrorHandlingPodExample;
 			};
-			name = "Debug-SwiftUI";
+			name = "Debug-POD-SwiftUI";
 		};
 /* End XCBuildConfiguration section */
 
@@ -696,38 +714,38 @@
 		2FA6475B2D40F00000BB3D6F /* Build configuration list for PBXProject "DMErrorHandlingPodExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2F29A98C2D50E95E00AB71A9 /* Debug-UIKit */,
-				2F29A9902D50E97A00AB71A9 /* Debug-SwiftUI */,
+				2F29A98C2D50E95E00AB71A9 /* Debug-POD-UIKit */,
+				2F29A9902D50E97A00AB71A9 /* Debug-POD-SwiftUI */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug-UIKit";
+			defaultConfigurationName = "Debug-POD-UIKit";
 		};
 		2FA647842D40F00200BB3D6F /* Build configuration list for PBXNativeTarget "DMErrorHandlingPodExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2F29A98D2D50E95E00AB71A9 /* Debug-UIKit */,
-				2F29A9912D50E97A00AB71A9 /* Debug-SwiftUI */,
+				2F29A98D2D50E95E00AB71A9 /* Debug-POD-UIKit */,
+				2F29A9912D50E97A00AB71A9 /* Debug-POD-SwiftUI */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug-UIKit";
+			defaultConfigurationName = "Debug-POD-UIKit";
 		};
 		2FA647872D40F00200BB3D6F /* Build configuration list for PBXNativeTarget "DMErrorHandlingPodExampleTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2F29A98E2D50E95E00AB71A9 /* Debug-UIKit */,
-				2F29A9922D50E97A00AB71A9 /* Debug-SwiftUI */,
+				2F29A98E2D50E95E00AB71A9 /* Debug-POD-UIKit */,
+				2F29A9922D50E97A00AB71A9 /* Debug-POD-SwiftUI */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug-UIKit";
+			defaultConfigurationName = "Debug-POD-UIKit";
 		};
 		2FA6478A2D40F00200BB3D6F /* Build configuration list for PBXNativeTarget "DMErrorHandlingPodExampleUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2F29A98F2D50E95E00AB71A9 /* Debug-UIKit */,
-				2F29A9932D50E97A00AB71A9 /* Debug-SwiftUI */,
+				2F29A98F2D50E95E00AB71A9 /* Debug-POD-UIKit */,
+				2F29A9932D50E97A00AB71A9 /* Debug-POD-SwiftUI */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug-UIKit";
+			defaultConfigurationName = "Debug-POD-UIKit";
 		};
 /* End XCConfigurationList section */
 	};
