@@ -124,48 +124,4 @@ internal struct AppDelegateHelper {
             return nil
         }
     }
-    
-//    static func getDependencyManager() -> String? {
-//        let fileManager = FileManager.default
-//
-//        // Get the path to the project root directory
-//        guard let resourcePath = Bundle.main.resourcePath,
-//              let resourceURL = URL(string: resourcePath),
-//              let projectRootURL = resourceURL.deletingLastPathComponent().absoluteString.removingPercentEncoding else {
-//            print("Failed to determine the project root directory.")
-//            return nil
-//        }
-//
-//        let projectRoot = projectRootURL.replacingOccurrences(of: "file://", with: "") // Remove "file://" prefix
-//
-//        // Construct the full path to the .dependency_manager file
-//        let dependencyFilePath = "\(projectRoot)/.dependency_manager"
-//
-//        // Check if the file exists
-//        if !fileManager.fileExists(atPath: dependencyFilePath) {
-//            print("File not found at path: \(dependencyFilePath)")
-//            return nil
-//        }
-//
-//        do {
-//            // Read the file contents
-//            let fileContents = try String(contentsOfFile: dependencyFilePath, encoding: .utf8)
-//
-//            // Extract the value of DEPENDENCY_MANAGER
-//            if let range = fileContents.range(of: "DEPENDENCY_MANAGER=", options: .caseInsensitive) {
-//                let startIndex = fileContents.index(range.upperBound, offsetBy: 0)
-//                let remainingString = fileContents[startIndex...]
-//
-//                // Trim whitespace and newlines to extract the value
-//                let value = remainingString.split(separator: "\n").first?.trimmingCharacters(in: .whitespacesAndNewlines)
-//                return value
-//            } else {
-//                print("DEPENDENCY_MANAGER key not found in file.")
-//                return nil
-//            }
-//        } catch {
-//            print("Error reading .dependency_manager file: \(error)")
-//            return nil
-//        }
-//    }
 }
