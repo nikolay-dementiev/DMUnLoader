@@ -1,0 +1,68 @@
+
+platform :ios, '17.0'
+
+# Define a helper to read the DEPENDENCY_MANAGER from a file or environment variable
+def dependency_manager
+  # Read from the environment variable if provided
+  return ENV['DEPENDENCY_MANAGER'] if ENV['DEPENDENCY_MANAGER']
+
+  # Read from the .dependency_manager file if it exists
+  if File.exist?('.dependency_manager')
+    File.readlines('.dependency_manager').each do |line|
+      if line.start_with?('DEPENDENCY_MANAGER=')
+        return line.strip.split('=').last
+      end
+    end
+  end
+
+  # Default to 'POD' if no value is found
+  'POD'
+end
+
+# Define a helper to check if the dependency manager is 'POD'
+def is_pod_configuration
+  dependency_manager == 'POD'
+end
+
+# Save the current dependency manager to a file (optional)
+def save_dependency_manager(manager)
+  File.write('.dependency_manager', "DEPENDENCY_MANAGER=#{manager}")
+end
+
+# Print the DEPENDENCY_MANAGER being used
+current_dependency_manager = dependency_manager
+puts ">>> Using DEPENDENCY_MANAGER: `#{current_dependency_manager}` <<< "
+
+def clean_xcode_project
+  puts "Cleaning Xcode project..."
+
+  # List all schemes in the workspace
+  schemes = `xcodebuild -workspace DMErrorHandlingPodSPMExample.xcworkspace -list`.lines.grep(/Schemes:/).first.split(':').last.split
+
+  # Clean each scheme
+  schemes.each do |scheme|
+    puts "Cleaning scheme: #{scheme}"
+    system("xcodebuild clean -workspace DMErrorHandlingPodSPMExample.xcworkspace -scheme #{scheme}")
+  end
+
+  puts "Removing DerivedData..."
+  derived_data_path = File.expand_path('~/Library/Developer/Xcode/DerivedData')
+  system("rm -rf #{derived_data_path}")
+
+  puts "Cleanup complete!"
+end
+
+# Run cleanup before installing pods
+clean_xcode_project
+
+# Main target configuration
+target 'DMErrorHandlingPodSPMExample' do
+  # Conditionally include the DMErrorHandling pod
+  if is_pod_configuration
+    use_frameworks!
+    pod 'DMErrorHandling', path: '../../'
+  end
+end
+
+# Save the dependency manager to a file (optional, if you want to persist it)
+save_dependency_manager(current_dependency_manager)

@@ -1,0 +1,34 @@
+{
+  "name": "DMErrorHandling",
+  "version": "0.1.25",
+  "summary": "Error handling SDK",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/nikolay-dementiev/DMErrorHandling",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "Nikolay Dementiev": "nikolas.dementiev@gmail.com"
+  },
+  "platforms": {
+    "ios": "17.0",
+    "watchos": "7.0"
+  },
+  "source": {
+    "git": "https://github.com/nikolay-dementiev/DMErrorHandling.git",
+    "tag": "v0.1.25"
+  },
+  "source_files": "Sources/**/*.{swift,h,m,c}",
+  "exclude_files": [
+    "Examples/**",
+    "Sources/Deprecated/"
+  ],
+  "weak_frameworks": "XCTest",
+  "requires_arc": true,
+  "cocoapods_version": ">= 1.4.0",
+  "swift_versions": [
+    "5.0"
+  ],
+  "swift_version": "5.0"
+}
