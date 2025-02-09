@@ -7,48 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1D301A1E8CEB11A241FAE7DE /* Pods_DMErrorHandlingPodExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7383DAAC81A0C89263EE7088 /* Pods_DMErrorHandlingPodExample.framework */; };
 		2F5A624A2D57CCA900AA32BA /* DMErrorHandling in Frameworks */ = {isa = PBXBuildFile; productRef = 2F5A62492D57CCA900AA32BA /* DMErrorHandling */; };
+		EA9E8C851D2351FB2E60ECD0 /* libPods-DMErrorHandlingPodExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B8C3303FA99AC3198B03B284 /* libPods-DMErrorHandlingPodExample.a */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		2FA647712D40F00200BB3D6F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2FA647582D40F00000BB3D6F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2FA6475F2D40F00000BB3D6F;
-			remoteInfo = DMErrorHandlingPodExample;
-		};
-		2FA6477B2D40F00200BB3D6F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2FA647582D40F00000BB3D6F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2FA6475F2D40F00000BB3D6F;
-			remoteInfo = DMErrorHandlingPodExample;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		00F7987969F44E8374E8A2A4 /* Pods-DMErrorHandlingPodExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.release.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		1FA92DE8B411504F952FC7E6 /* Pods-DMErrorHandlingPodExample.debug-pod-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-pod-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-pod-uikit.xcconfig"; sourceTree = "<group>"; };
-		22E6FD4825052BE1D8FFD335 /* Pods-DMErrorHandlingPodExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
-		25F1B4FC31CAB5F5163F5732 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		2FA647602D40F00000BB3D6F /* DMErrorHandlingPodExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DMErrorHandlingPodExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2FA647702D40F00200BB3D6F /* DMErrorHandlingPodExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DMErrorHandlingPodExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2FA6477A2D40F00200BB3D6F /* DMErrorHandlingPodExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DMErrorHandlingPodExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		31E63D3E87D06A8E8263DC50 /* Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig"; sourceTree = "<group>"; };
 		49FC01391F2FE3D699788C39 /* Pods-DMErrorHandlingPodExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug.xcconfig"; sourceTree = "<group>"; };
-		57EEDA333D98365450DB30A3 /* Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig"; sourceTree = "<group>"; };
-		7383DAAC81A0C89263EE7088 /* Pods_DMErrorHandlingPodExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DMErrorHandlingPodExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		77D18D5AD889A1FC0303FB09 /* Pods-DMErrorHandlingPodExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.release.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.release.xcconfig"; sourceTree = "<group>"; };
 		85D2F721A9A20F9ED88F6A0B /* Pods-DMErrorHandlingPodExample.debug-spm-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-spm-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-spm-uikit.xcconfig"; sourceTree = "<group>"; };
-		94CCBBE420F4F164260A9942 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.release.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.release.xcconfig"; sourceTree = "<group>"; };
 		9F36CFAB10C74C69FC557763 /* Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig"; sourceTree = "<group>"; };
-		A229952AC4BBC4794D7515BD /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig"; sourceTree = "<group>"; };
 		B89EFE22B299BBE15E2E570E /* Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig"; sourceTree = "<group>"; };
-		C40B0B8C5DBC07B0BCBEDFC0 /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExampleTests/Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig"; sourceTree = "<group>"; };
+		B8C3303FA99AC3198B03B284 /* libPods-DMErrorHandlingPodExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DMErrorHandlingPodExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC87B92D5B3FC7B609EF5472 /* Pods-DMErrorHandlingPodExample.debug-spm-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-spm-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-spm-swiftui.xcconfig"; sourceTree = "<group>"; };
-		E717907693AE4F958E12A419 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests/Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -59,20 +32,6 @@
 			path = DMErrorHandlingPodExample;
 			sourceTree = "<group>";
 		};
-		2FA647732D40F00200BB3D6F /* DMErrorHandlingPodExampleTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			path = DMErrorHandlingPodExampleTests;
-			sourceTree = "<group>";
-		};
-		2FA6477D2D40F00200BB3D6F /* DMErrorHandlingPodExampleUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			path = DMErrorHandlingPodExampleUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,21 +40,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F5A624A2D57CCA900AA32BA /* DMErrorHandling in Frameworks */,
-				1D301A1E8CEB11A241FAE7DE /* Pods_DMErrorHandlingPodExample.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2FA6476D2D40F00200BB3D6F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2FA647772D40F00200BB3D6F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				EA9E8C851D2351FB2E60ECD0 /* libPods-DMErrorHandlingPodExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,16 +52,8 @@
 			children = (
 				49FC01391F2FE3D699788C39 /* Pods-DMErrorHandlingPodExample.debug.xcconfig */,
 				77D18D5AD889A1FC0303FB09 /* Pods-DMErrorHandlingPodExample.release.xcconfig */,
-				25F1B4FC31CAB5F5163F5732 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug.xcconfig */,
-				94CCBBE420F4F164260A9942 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.release.xcconfig */,
-				22E6FD4825052BE1D8FFD335 /* Pods-DMErrorHandlingPodExampleTests.debug.xcconfig */,
-				00F7987969F44E8374E8A2A4 /* Pods-DMErrorHandlingPodExampleTests.release.xcconfig */,
 				31E63D3E87D06A8E8263DC50 /* Pods-DMErrorHandlingPodExample.debug-uikit.xcconfig */,
 				9F36CFAB10C74C69FC557763 /* Pods-DMErrorHandlingPodExample.debug-swiftui.xcconfig */,
-				E717907693AE4F958E12A419 /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-uikit.xcconfig */,
-				A229952AC4BBC4794D7515BD /* Pods-DMErrorHandlingPodExample-DMErrorHandlingPodExampleUITests.debug-swiftui.xcconfig */,
-				57EEDA333D98365450DB30A3 /* Pods-DMErrorHandlingPodExampleTests.debug-uikit.xcconfig */,
-				C40B0B8C5DBC07B0BCBEDFC0 /* Pods-DMErrorHandlingPodExampleTests.debug-swiftui.xcconfig */,
 				1FA92DE8B411504F952FC7E6 /* Pods-DMErrorHandlingPodExample.debug-pod-uikit.xcconfig */,
 				B89EFE22B299BBE15E2E570E /* Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig */,
 				85D2F721A9A20F9ED88F6A0B /* Pods-DMErrorHandlingPodExample.debug-spm-uikit.xcconfig */,
@@ -129,8 +66,6 @@
 			isa = PBXGroup;
 			children = (
 				2FA647622D40F00000BB3D6F /* DMErrorHandlingPodExample */,
-				2FA647732D40F00200BB3D6F /* DMErrorHandlingPodExampleTests */,
-				2FA6477D2D40F00200BB3D6F /* DMErrorHandlingPodExampleUITests */,
 				2FA647612D40F00000BB3D6F /* Products */,
 				1EADCDD4FF8EB9DDDFC365AD /* Pods */,
 				3B42E53268E896EF029E14F1 /* Frameworks */,
@@ -141,8 +76,6 @@
 			isa = PBXGroup;
 			children = (
 				2FA647602D40F00000BB3D6F /* DMErrorHandlingPodExample.app */,
-				2FA647702D40F00200BB3D6F /* DMErrorHandlingPodExampleTests.xctest */,
-				2FA6477A2D40F00200BB3D6F /* DMErrorHandlingPodExampleUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -150,7 +83,7 @@
 		3B42E53268E896EF029E14F1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				7383DAAC81A0C89263EE7088 /* Pods_DMErrorHandlingPodExample.framework */,
+				B8C3303FA99AC3198B03B284 /* libPods-DMErrorHandlingPodExample.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -166,7 +99,6 @@
 				2FA6475C2D40F00000BB3D6F /* Sources */,
 				2FA6475D2D40F00000BB3D6F /* Frameworks */,
 				2FA6475E2D40F00000BB3D6F /* Resources */,
-				6CBA2828A70AB5DA8A10A63E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -179,48 +111,6 @@
 			productName = DMErrorHandlingPodExample;
 			productReference = 2FA647602D40F00000BB3D6F /* DMErrorHandlingPodExample.app */;
 			productType = "com.apple.product-type.application";
-		};
-		2FA6476F2D40F00200BB3D6F /* DMErrorHandlingPodExampleTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2FA647872D40F00200BB3D6F /* Build configuration list for PBXNativeTarget "DMErrorHandlingPodExampleTests" */;
-			buildPhases = (
-				2FA6476C2D40F00200BB3D6F /* Sources */,
-				2FA6476D2D40F00200BB3D6F /* Frameworks */,
-				2FA6476E2D40F00200BB3D6F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2FA647722D40F00200BB3D6F /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				2FA647732D40F00200BB3D6F /* DMErrorHandlingPodExampleTests */,
-			);
-			name = DMErrorHandlingPodExampleTests;
-			productName = DMErrorHandlingPodExampleTests;
-			productReference = 2FA647702D40F00200BB3D6F /* DMErrorHandlingPodExampleTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		2FA647792D40F00200BB3D6F /* DMErrorHandlingPodExampleUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2FA6478A2D40F00200BB3D6F /* Build configuration list for PBXNativeTarget "DMErrorHandlingPodExampleUITests" */;
-			buildPhases = (
-				2FA647762D40F00200BB3D6F /* Sources */,
-				2FA647772D40F00200BB3D6F /* Frameworks */,
-				2FA647782D40F00200BB3D6F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2FA6477C2D40F00200BB3D6F /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				2FA6477D2D40F00200BB3D6F /* DMErrorHandlingPodExampleUITests */,
-			);
-			name = DMErrorHandlingPodExampleUITests;
-			productName = DMErrorHandlingPodExampleUITests;
-			productReference = 2FA6477A2D40F00200BB3D6F /* DMErrorHandlingPodExampleUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -263,8 +153,6 @@
 			projectRoot = "";
 			targets = (
 				2FA6475F2D40F00000BB3D6F /* DMErrorHandlingPodExample */,
-				2FA6476F2D40F00200BB3D6F /* DMErrorHandlingPodExampleTests */,
-				2FA647792D40F00200BB3D6F /* DMErrorHandlingPodExampleUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -277,40 +165,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2FA6476E2D40F00200BB3D6F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2FA647782D40F00200BB3D6F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6CBA2828A70AB5DA8A10A63E /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7C4D5C4605F5ED9198883A23 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -343,34 +200,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2FA6476C2D40F00200BB3D6F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2FA647762D40F00200BB3D6F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		2FA647722D40F00200BB3D6F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2FA6475F2D40F00000BB3D6F /* DMErrorHandlingPodExample */;
-			targetProxy = 2FA647712D40F00200BB3D6F /* PBXContainerItemProxy */;
-		};
-		2FA6477C2D40F00200BB3D6F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2FA6475F2D40F00000BB3D6F /* DMErrorHandlingPodExample */;
-			targetProxy = 2FA6477B2D40F00200BB3D6F /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2F29A98C2D50E95E00AB71A9 /* Debug-UIKit */ = {
@@ -463,43 +293,6 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = "Debug-UIKit";
-		};
-		2F29A98E2D50E95E00AB71A9 /* Debug-UIKit */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExampleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMErrorHandlingPodExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DMErrorHandlingPodExample";
-			};
-			name = "Debug-UIKit";
-		};
-		2F29A98F2D50E95E00AB71A9 /* Debug-UIKit */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExampleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = DMErrorHandlingPodExample;
 			};
 			name = "Debug-UIKit";
 		};
@@ -596,43 +389,6 @@
 			};
 			name = "Debug-SwiftUI";
 		};
-		2F29A9922D50E97A00AB71A9 /* Debug-SwiftUI */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExampleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMErrorHandlingPodExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DMErrorHandlingPodExample";
-			};
-			name = "Debug-SwiftUI";
-		};
-		2F29A9932D50E97A00AB71A9 /* Debug-SwiftUI */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KQ5WJ6ZC4G;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dementievnikolay.DMErrorHandlingPodExample.DMErrorHandlingPodExampleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = DMErrorHandlingPodExample;
-			};
-			name = "Debug-SwiftUI";
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -650,24 +406,6 @@
 			buildConfigurations = (
 				2F29A98D2D50E95E00AB71A9 /* Debug-UIKit */,
 				2F29A9912D50E97A00AB71A9 /* Debug-SwiftUI */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug-UIKit";
-		};
-		2FA647872D40F00200BB3D6F /* Build configuration list for PBXNativeTarget "DMErrorHandlingPodExampleTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2F29A98E2D50E95E00AB71A9 /* Debug-UIKit */,
-				2F29A9922D50E97A00AB71A9 /* Debug-SwiftUI */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = "Debug-UIKit";
-		};
-		2FA6478A2D40F00200BB3D6F /* Build configuration list for PBXNativeTarget "DMErrorHandlingPodExampleUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2F29A98F2D50E95E00AB71A9 /* Debug-UIKit */,
-				2F29A9932D50E97A00AB71A9 /* Debug-SwiftUI */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Debug-UIKit";

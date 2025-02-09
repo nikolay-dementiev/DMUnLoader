@@ -1,8 +1,0 @@
-//
-//  Debug-POD.xcconfig
-//  DMErrorHandlingPodExample
-//
-//  Created by Nikolay Dementiev on 08.02.2025.
-//
-
-OTHER_LDFLAGS = $(inherited) -framework Pods_DMErrorHandlingPodExample
