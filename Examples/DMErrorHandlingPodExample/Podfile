@@ -1,248 +1,113 @@
 
 platform :ios, '17.0'
 
-## Define the dependency manager based on the environment variable
-#dependency_manager = ENV['DEPENDENCY_MANAGER'] || 'POD' # Default to POD if not specified
-#
-#target 'DMErrorHandlingPodExample' do
-#  # Conditionally include the DMErrorHandling pod for CocoaPods
-#  if dependency_manager == 'POD'
-#    pod 'DMErrorHandling', path: '../../'
-#    
-#    post_install do |installer|
-#      puts "Using CocoaPods as the dependency manager..."
-#      
-#      # Remove the SPM package reference from the project file
-#      remove_spm_dependency(installer)
-#      
-#      # Apply xcconfig files
-#      apply_xcconfig_files(installer)
-#    end
-#  else
-#    puts "Using Swift Package Manager as the dependency manager..."
-#    
-#    # Add the SPM package reference to the project file
-#    add_spm_dependency(installer)
-#    
-#    # Apply xcconfig files
-#    apply_xcconfig_files(installer)
-#  end
-#end
-#
-## Helper method to apply xcconfig files
-#def apply_xcconfig_files(installer)
-#  config_base_path = File.expand_path('DMErrorHandlingPodExample/Configuration', __dir__)
-#  
-#  installer.pods_project.targets.each do |target|
-#    target.build_configurations.each do |config|
-#      case config.name
-#      when 'Debug-POD-UIKit', 'Debug-POD-SwiftUI'
-#        xcconfig_path = File.join(config_base_path, 'Debug-POD.xcconfig')
-#      when 'Debug-SPM-UIKit', 'Debug-SPM-SwiftUI'
-#        xcconfig_path = File.join(config_base_path, 'Debug-SPM.xcconfig')
-#      else
-#        next
-#      end
-#      
-#      if File.exist?(xcconfig_path)
-#        config.base_configuration_reference = installer.pods_project.new_file(xcconfig_path)
-#      else
-#        puts "Warning: xcconfig file not found at path: #{xcconfig_path}"
-#      end
-#    end
-#  end
-#end
-#
-## Helper method to remove SPM dependency
-#def remove_spm_dependency(installer)
-#  project_path = installer.pods_project.path
-#  pbxproj_path = File.join(project_path, 'project.pbxproj')
-#  
-#  # Read the project file
-#  project_content = File.read(pbxproj_path)
-#  
-#  # Remove references to the SPM package
-#  if project_content.include?('DMErrorHandling')
-#    project_content.gsub!(/\/\* DMErrorHandling \*\/.*?;[\r\n]+/, '')
-#    project_content.gsub!(/\/\* DMErrorHandling.swiftmodule \*\/.*?;[\r\n]+/, '')
-#    project_content.gsub!(/\/\* DMErrorHandling.framework \*\/.*?;[\r\n]+/, '')
-#    
-#    # Write the modified content back to the project file
-#    File.write(pbxproj_path, project_content)
-#    puts "Removed SPM dependency for DMErrorHandling."
-#  else
-#    puts "No SPM dependency found for DMErrorHandling."
-#  end
-#end
-#
-## Helper method to add SPM dependency
-#def add_spm_dependency(installer)
-#  # Open Xcode and manually add the SPM package via the GUI
-#  puts "Please add the DMErrorHandling package via Xcode's 'Add Packages' menu."
-#  puts "Path to DMErrorHandling: ../../"
-#end
+# Define a helper to read the DEPENDENCY_MANAGER from a file or environment variable
+def dependency_manager
+  # Read from the environment variable if provided
+  return ENV['DEPENDENCY_MANAGER'] if ENV['DEPENDENCY_MANAGER']
 
-## Define the dependency manager based on the environment variable
-#dependency_manager = ENV['DEPENDENCY_MANAGER'] || 'POD' # Default to POD if not specified
-#
-#target 'DMErrorHandlingPodExample' do
-#  # Conditionally include the DMErrorHandling pod for CocoaPods
-#  if dependency_manager == 'POD'
-#    pod 'DMErrorHandling', path: '../../'
-#    
-#    # Remove the SPM package if it exists
-#    post_install do |installer|
-#      puts "Using CocoaPods as the dependency manager..."
-#      
-#      # Remove the SPM package reference
-#      system("xcodebuild -removePackageDependency DMErrorHandling")
-#      
-#      # Apply xcconfig files
-#      apply_xcconfig_files(installer)
-#    end
-#  else
-#    # For SPM, ensure the pod is not included
-#    puts "Using Swift Package Manager as the dependency manager..."
-#    
-#    # Add the SPM package if it doesn't exist
-#    system("xcodebuild -addPackageDependency DMErrorHandling --path ../../")
-#    
-#    # Apply xcconfig files
-#    post_install do |installer|
-#      apply_xcconfig_files(installer)
-#    end
-#  end
-#end
-#
-## Helper method to apply xcconfig files
-#def apply_xcconfig_files(installer)
-#  config_base_path = File.expand_path('DMErrorHandlingPodExample/Configuration', __dir__)
-#  
-#  installer.pods_project.targets.each do |target|
-#    target.build_configurations.each do |config|
-#      case config.name
-#      when 'Debug-POD-UIKit', 'Debug-POD-SwiftUI'
-#        xcconfig_path = File.join(config_base_path, 'Debug-POD.xcconfig')
-#      when 'Debug-SPM-UIKit', 'Debug-SPM-SwiftUI'
-#        xcconfig_path = File.join(config_base_path, 'Debug-SPM.xcconfig')
-#      else
-#        next
-#      end
-#      
-#      if File.exist?(xcconfig_path)
-#        config.base_configuration_reference = installer.pods_project.new_file(xcconfig_path)
-#      else
-#        puts "Warning: xcconfig file not found at path: #{xcconfig_path}"
-#      end
-#    end
-#  end
-#end
+  # Read from the .dependency_manager file if it exists
+  if File.exist?('.dependency_manager')
+    File.readlines('.dependency_manager').each do |line|
+      if line.start_with?('DEPENDENCY_MANAGER=')
+        return line.strip.split('=').last
+      end
+    end
+  end
 
-
-# Default to POD if not specified
-
-# Define a helper to check the dependency manager
-def is_pod_configuration
-  (ENV['DEPENDENCY_MANAGER'] || 'POD') == 'POD'
+  # Default to 'POD' if no value is found
+  'POD'
 end
 
+# Define a helper to check if the dependency manager is 'POD'
+def is_pod_configuration
+  dependency_manager == 'POD'
+end
+
+# Save the current dependency manager to a file (optional)
+def save_dependency_manager(manager)
+  File.write('.dependency_manager', "DEPENDENCY_MANAGER=#{manager}")
+end
+
+# Print the DEPENDENCY_MANAGER being used
+current_dependency_manager = dependency_manager
+puts ">>> Using DEPENDENCY_MANAGER: `#{current_dependency_manager}` <<< "
+
+def clean_xcode_project
+  puts "Cleaning Xcode project..."
+
+  # List all schemes in the workspace
+  schemes = `xcodebuild -workspace DMErrorHandlingPodExample.xcworkspace -list`.lines.grep(/Schemes:/).first.split(':').last.split
+
+  # Clean each scheme
+  schemes.each do |scheme|
+    puts "Cleaning scheme: #{scheme}"
+    system("xcodebuild clean -workspace DMErrorHandlingPodExample.xcworkspace -scheme #{scheme}")
+  end
+
+  puts "Removing DerivedData..."
+  derived_data_path = File.expand_path('~/Library/Developer/Xcode/DerivedData')
+  system("rm -rf #{derived_data_path}")
+
+  puts "Cleanup complete!"
+end
+
+# Run cleanup before installing pods
+clean_xcode_project
+
+# Main target configuration
 target 'DMErrorHandlingPodExample' do
   # Conditionally include the DMErrorHandling pod
   if is_pod_configuration
     use_frameworks!
     pod 'DMErrorHandling', path: '../../'
   end
-
-#  post_install do |installer|
-#    # Define the base path to the xcconfig files
-#    config_base_path = File.expand_path('DMErrorHandlingPodExample/Configuration', __dir__)
-#
-#    installer.pods_project.targets.each do |target|
-#      target.build_configurations.each do |config|
-#        case config.name
-#        when 'Debug-POD-UIKit', 'Debug-POD-SwiftUI'
-##          xcconfig_path = File.join(config_base_path, 'Debug-POD.xcconfig')
-#xcconfig_path = ""
-#        when 'Debug-SPM-UIKit', 'Debug-SPM-SwiftUI'
-#          xcconfig_path = File.join(config_base_path, 'Debug-SPM.xcconfig')
-#        else
-#          next # Skip if no matching configuration is found
-#        end
-#
-#        # Ensure the xcconfig file exists before referencing it
-#        if File.exist?(xcconfig_path)
-#          config.base_configuration_reference = installer.pods_project.new_file(xcconfig_path)
-#        else
-#          puts "Warning: xcconfig file not found at path: `#{xcconfig_path}`"
-#        end
-#      end
-#    end
-#  end
 end
 
+# Save the dependency manager to a file (optional, if you want to persist it)
+save_dependency_manager(current_dependency_manager)
 
-## Define a helper to check the current configuration
-#def is_pod_configuration(config_name)
-#  config_name.start_with?('Debug-POD') #|| config_name.start_with?('Release-POD')
+
+## Define a helper to check the dependency manager
+#def is_pod_configuration
+#  (ENV['DEPENDENCY_MANAGER'] || 'POD') == 'POD'
 #end
 #
 #target 'DMErrorHandlingPodExample' do
 #  # Conditionally include the DMErrorHandling pod
-#  if is_pod_configuration(ENV['CONFIGURATION'])
+#  if is_pod_configuration
+#    use_frameworks!
 #    pod 'DMErrorHandling', path: '../../'
-#    #  pod 'DMErrorHandling' , '~> 0.1.0'
 #  end
 #
-#  # Post-install hook
-#  post_install do |installer|
-#    # Define the base path to the xcconfig files
-#    config_base_path = File.expand_path('DMErrorHandlingPodExample/Configuration', __dir__)
+##  post_install do |installer|
+##    # Define the base path to the xcconfig files
+##    config_base_path = File.expand_path('DMErrorHandlingPodExample/Configuration', __dir__)
+##
+##    installer.pods_project.targets.each do |target|
+##      target.build_configurations.each do |config|
+##        case config.name
+##        when 'Debug-POD-UIKit', 'Debug-POD-SwiftUI'
+###          xcconfig_path = File.join(config_base_path, 'Debug-POD.xcconfig')
+##xcconfig_path = ""
+##        when 'Debug-SPM-UIKit', 'Debug-SPM-SwiftUI'
+##          xcconfig_path = File.join(config_base_path, 'Debug-SPM.xcconfig')
+##        else
+##          next # Skip if no matching configuration is found
+##        end
+##
+##        # Ensure the xcconfig file exists before referencing it
+##        if File.exist?(xcconfig_path)
+##          config.base_configuration_reference = installer.pods_project.new_file(xcconfig_path)
+##        else
+##          puts "Warning: xcconfig file not found at path: `#{xcconfig_path}`"
+##        end
+##      end
+##    end
+##  end
 #
-#    # Iterate over all targets in the Pods project
-#    installer.pods_project.targets.each do |target|
-#      target.build_configurations.each do |config|
-#        # Apply custom xcconfig for CocoaPods configurations
-#        case config.name
-#        when 'Debug-POD-UIKit', 'Debug-POD-SwiftUI'
-#          xcconfig_path = File.join(config_base_path, 'Debug-POD.xcconfig')
-#        when 'Debug-SPM-UIKit', 'Debug-SPM-SwiftUI'
-#          xcconfig_path = File.join(config_base_path, 'Debug-SPM.xcconfig')
-#        else
-#          next # Skip if no matching configuration is found
-#        end
-#
-#        # Ensure the xcconfig file exists before referencing it
-#        if File.exist?(xcconfig_path)
-#          config.base_configuration_reference = installer.pods_project.new_file(xcconfig_path)
-#        else
-#          puts "Warning: xcconfig file not found at path: #{xcconfig_path}"
-#        end
-#      end
-#    end
-#  end
-#  
-#
-#  post_install do |installer|
-#    installer.pods_project.targets.each do |target|
-#      target.build_configurations.each do |config|
-#        case config.name
-#        when 'Debug-POD-UIKit', 'Debug-POD-SwiftUI'
-#          xcconfig_path = File.join('Config', 'Debug-POD.xcconfig')
-#        when 'Debug-SPM-UIKit', 'Debug-SPM-SwiftUI'
-#          xcconfig_path = File.join('Config', 'Debug-SPM.xcconfig')
-#        else
-#          next
-#        end
-#
-#        if File.exist?(xcconfig_path)
-#          config.base_configuration_reference = installer.pods_project.new_file(xcconfig_path)
-#        else
-#          puts "Warning: xcconfig file not found at path: #{xcconfig_path}"
-#        end
-#      end
-#    end
-#  end
 #end
+
 
 #def shared_pods_for_testing
 ##  pod 'Quick', '~> 6.1.0'

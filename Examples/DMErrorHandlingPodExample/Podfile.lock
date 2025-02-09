@@ -1,3 +1,16 @@
-PODFILE CHECKSUM: be21f016c6f26df8b0fa3c431260a48d53f589f2
+PODS:
+  - DMErrorHandling (0.1.25)
+
+DEPENDENCIES:
+  - DMErrorHandling (from `../../`)
+
+EXTERNAL SOURCES:
+  DMErrorHandling:
+    :path: "../../"
+
+SPEC CHECKSUMS:
+  DMErrorHandling: 02ef5a2601bf12ed4edb791aa0d1aeab4764caee
+
+PODFILE CHECKSUM: e5aa01b509e1476b7dc62c9706c38ef004406f17
 
 COCOAPODS: 1.16.2
