@@ -17,7 +17,7 @@ final class ContentViewCustomSettingsUIKit<CV: LoadingContentViewUIKit, LVP: DML
                    innerView: innerView,
                    manager: manager)
         
-        innerView.loadingManager = self.loadingManager
+        innerView.configure(loadingManager: loadingManager)
     }
     
     @MainActor required init?(coder: NSCoder) {

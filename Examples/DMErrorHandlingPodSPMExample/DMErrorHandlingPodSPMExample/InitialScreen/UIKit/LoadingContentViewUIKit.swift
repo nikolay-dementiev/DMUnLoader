@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import Combine
 import DMErrorHandling
 
 final class LoadingContentViewUIKit: UIView {
-    var loadingManager: DMLoadingManager!
+    private let viewModel = LoadingContentViewModel()
+    private var cancellables = Set<AnyCancellable>()
     
     private let stackView = UIStackView()
     private let titleLabel = UILabel()
@@ -17,11 +19,15 @@ final class LoadingContentViewUIKit: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        bindViewModel()
     }
     
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setupUI()
+        fatalError("Not implemented")
+    }
+    
+    func configure(loadingManager: DMLoadingManager?) {
+        viewModel.configure(loadingManager: loadingManager)
     }
     
     private func setupUI() {
@@ -40,10 +46,10 @@ final class LoadingContentViewUIKit: UIView {
         stackView.addArrangedSubview(titleLabel)
         
         // Buttons
-        addButton(title: "Show downloads", action: #selector(startLoadingAction))
-        addButton(title: "Simulate an error", action: #selector(simulateError))
-        addButton(title: "Simulate success", action: #selector(simulateSuccess))
-        addButton(title: "Hide downloads", action: #selector(hideLoading))
+        addButton(title: "Show downloads", action: #selector(viewModel.showDownloads))
+        addButton(title: "Simulate an error", action: #selector(viewModel.simulateAnError))
+        addButton(title: "Simulate success", action: #selector(viewModel.simulateSuccess))
+        addButton(title: "Hide downloads", action: #selector(viewModel.hideLoading))
         
         // Constraints
         NSLayoutConstraint.activate([
@@ -56,34 +62,16 @@ final class LoadingContentViewUIKit: UIView {
     private func addButton(title: String, action: Selector) {
         let button = UIButton(type: .system)
         button.setTitle(title, for: .normal)
-        button.addTarget(self, action: action, for: .touchUpInside)
+        button.addTarget(viewModel, action: action, for: .touchUpInside)
         stackView.addArrangedSubview(button)
     }
     
-    @objc private func startLoadingAction() {
-        loadingManager.showLoading()
-        simulateTask()
-    }
-    
-    @objc private func simulateError() {
-        let error = DMAppError.custom("Some test Error occured!")
-        loadingManager.showFailure(error, onRetry: DMButtonAction(startLoadingAction).retry(2))
-    }
-    
-    @objc private func simulateSuccess() {
-        loadingManager.showSuccess("Data successfully loaded!")
-    }
-    
-    @objc private func hideLoading() {
-        loadingManager.hide()
-    }
-    
-    private func simulateTask() {
-        Task {
-            try? await Task.sleep(for: .seconds(6))
-            await MainActor.run {
-                loadingManager.showSuccess("Successfully completed!")
+    private func bindViewModel() {
+        viewModel.$isReady
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isReady in
+                self?.isUserInteractionEnabled = isReady
             }
-        }
+            .store(in: &cancellables)
     }
 }
