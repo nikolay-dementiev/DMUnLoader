@@ -16,13 +16,13 @@ internal struct DMErrorView: View {
     internal let settingsProvider: DMErrorViewSettings
     
     internal let error: Error
-    internal let onRetry: (() -> Void)?
-    internal let onClose: () -> Void
+    internal let onRetry: DMAction?
+    internal let onClose: DMAction
 
     internal init(settings settingsProvider: DMErrorViewSettings,
                   error: Error,
-                  onRetry: (() -> Void)? = nil,
-                  onClose: @escaping () -> Void) {
+                  onRetry: DMAction? = nil,
+                  onClose: DMAction) {
         self.settingsProvider = settingsProvider
         self.error = error
         self.onRetry = onRetry
@@ -49,11 +49,11 @@ internal struct DMErrorView: View {
             
             HStack {
                 ActionButton(settings: settingsProvider.actionButtonCloseSettings,
-                             action: onClose)
+                             action: onClose.simpleAction)
 
                 if let onRetry = onRetry {
                     ActionButton(settings: settingsProvider.actionButtonRetrySettings,
-                                 action: onRetry)
+                                 action: onRetry.simpleAction)
                 }
             }
         }

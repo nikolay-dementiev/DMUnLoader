@@ -36,8 +36,8 @@ internal final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
     
     @MainActor
     func getErrorView(error: Error,
-                      onRetry: (() -> Void)?,
-                      onClose: @escaping () -> Void) -> some View {
+                      onRetry: DMAction?,
+                      onClose: DMAction) -> some View {
         VStack {
             Image(systemName: "person.fill.questionmark")
                 .resizable()
@@ -57,13 +57,13 @@ internal final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
                 .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
             
             HStack {
-                Button("Close this", action: onClose)
+                Button("Close this", action: onClose.simpleAction)
                     .padding()
                     .background(mainColor.opacity(0.7))
                     .cornerRadius(8)
                 
                 if let onRetry = onRetry {
-                    Button("Retry this", action: onRetry)
+                    Button("Retry this", action: onRetry.simpleAction)
                         .padding()
                         .background(mainColor.opacity(0.7))
                         .cornerRadius(8)

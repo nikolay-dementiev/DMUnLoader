@@ -7,7 +7,7 @@
 
 import SwiftUICore
 
-// This protocol responsible to provide settings for `DMErrorView`
+// This protocol responsible to provide view settings for `DMErrorView`
 public protocol DMErrorViewSettings {
     var errorText: String? { get }
     var actionButtonCloseSettings: ActionButtonSettings { get }

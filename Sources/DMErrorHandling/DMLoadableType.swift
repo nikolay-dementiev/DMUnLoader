@@ -9,7 +9,7 @@ public enum DMLoadableType: Hashable, RawRepresentable {
     public typealias RawValue = String
     
     case loading
-    case failure(error: Error, onRetry: (() -> Void)? = nil)
+    case failure(error: Error, onRetry: DMAction? = nil)
     case success(DMLoadableTypeSuccess)
     case none
     

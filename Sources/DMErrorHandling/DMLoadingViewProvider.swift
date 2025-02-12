@@ -17,8 +17,8 @@ public protocol DMLoadingViewProvider: ObservableObject {
     func getLoadingView() -> LoadingViewType
     @MainActor
     func getErrorView(error: Error,
-                      onRetry: (() -> Void)?,
-                      onClose: @escaping () -> Void) -> ErrorViewType
+                      onRetry: DMAction?,
+                      onClose: DMAction) -> ErrorViewType
     @MainActor
     func getSuccessView(object: DMLoadableTypeSuccess) -> SuccessViewType
     
@@ -39,8 +39,8 @@ public extension DMLoadingViewProvider {
     
     @MainActor
     func getErrorView(error: Error,
-                      onRetry: (() -> Void)?,
-                      onClose: @escaping () -> Void) -> some View {
+                      onRetry: DMAction?,
+                      onClose: DMAction) -> some View {
         DMErrorView(settings: errorViewSettings,
                     error: error,
                     onRetry: onRetry,

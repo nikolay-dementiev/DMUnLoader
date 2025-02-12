@@ -10,45 +10,20 @@ import DMErrorHandling
 
 internal struct LoadingContentView: View {
     @EnvironmentObject var loadingManager: DMLoadingManager
-    
+    @StateObject var viewModel = LoadingContentViewModel()
+
     var body: some View {
         VStack {
             Text(AppDelegateHelper.appDescriprtion)
                 .padding()
 
-            Button("Show downloads") {
-                startLoadingAction()
-            }
+            Button("Show downloads", action: viewModel.showDownloads)
+            Button("Simulate an error", action: viewModel.simulateAnError)
+            Button("Simulate success", action: viewModel.simulateSuccess)
+            Button("Hide downloads", action: viewModel.hideLoading)
             
-            Button("Simulate an error") {
-                let error = DMAppError.custom("Some test Error occured!")
-                loadingManager.showFailure(error,
-                                           onRetry: {
-                    startLoadingAction()
-                })
-            }
-
-            Button("Simulate success") {
-                loadingManager.showSuccess("Data successfully loaded!")
-            }
-
-            Button("Hide downloads") {
-                loadingManager.hide()
-            }
-        }
-    }
-    
-    private func startLoadingAction() {
-        loadingManager.showLoading()
-        Task {
-            await simulateTask()
-        }
-    }
-
-    private func simulateTask() async {
-        try? await Task.sleep(for: .seconds(6))
-        await MainActor.run {
-            loadingManager.showSuccess("Successfully completed!")
-        }
+        }.onAppear {
+            viewModel.configure(loadingManager: loadingManager)
+        }.disabled(!viewModel.isReady)
     }
 }
