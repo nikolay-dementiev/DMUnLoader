@@ -67,9 +67,7 @@ final class LoadingContentViewUIKit: UIView {
     
     @objc private func simulateError() {
         let error = DMAppError.custom("Some test Error occured!")
-        loadingManager.showFailure(error) { [weak self] in
-            self?.startLoadingAction()
-        }
+        loadingManager.showFailure(error, onRetry: DMButtonAction(startLoadingAction).retry(2))
     }
     
     @objc private func simulateSuccess() {

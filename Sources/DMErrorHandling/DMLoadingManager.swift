@@ -58,7 +58,7 @@ public final class DMLoadingManager: Identifiable, ObservableObject {
         loadableState = .success(message)
     }
     
-    public func showFailure(_ error: Error, onRetry: (() -> Void)? = nil) {
+    public func showFailure(_ error: Error, onRetry: DMAction? = nil) {
         startInactivityTimer()
         
         loadableState = .failure(error: error, onRetry: onRetry)
