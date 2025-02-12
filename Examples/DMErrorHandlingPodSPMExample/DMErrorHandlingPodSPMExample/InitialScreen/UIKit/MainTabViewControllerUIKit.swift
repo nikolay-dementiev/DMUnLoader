@@ -71,6 +71,7 @@ extension MainTabViewControllerUIKit: DMViewControllerTopLevel {
 }
 
 // MARK: - View Controllers for tabs
+
 final class DefaultSettingsViewController: UIViewController {
     private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
     
