@@ -10,7 +10,7 @@ import SwiftUICore
 public struct DMRootLoadingView<Content: View>: View {
     private let content: (GlobalLoadingStateManager) -> Content
     
-    //uses for UIKit's approach to obtain Loading Manager object
+    // uses for UIKit's approach to obtain Loading Manager object
     private(set) internal var getLoadingManager: () -> GlobalLoadingStateManager
     
     @StateObject private var globalLoadingStateManager: GlobalLoadingStateManager

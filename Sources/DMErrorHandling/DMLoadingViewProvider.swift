@@ -22,10 +22,10 @@ public protocol DMLoadingViewProvider: ObservableObject {
     @MainActor
     func getSuccessView(object: DMLoadableTypeSuccess) -> SuccessViewType
     
-    //Settings
+    // Settings
     var loadingManagerSettings: DMLoadingManagerSettings { get }
     
-    //Next settings are uses only for default screens!
+    // Next settings are uses only for default screens!
     var loadingViewSettings: DMLoadingViewSettings { get }
     var errorViewSettings: DMErrorViewSettings { get }
     var successViewSettings: DMSuccessViewSettings { get }
