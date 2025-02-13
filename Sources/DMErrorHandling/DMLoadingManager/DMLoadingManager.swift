@@ -8,18 +8,6 @@
 import Foundation
 import Combine
 
-public protocol DMLoadingManagerSettings {
-    var autoHideDelay: Duration { get }
-}
-
-internal struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings {
-    let autoHideDelay: Duration
-    
-    internal init(autoHideDelay: Duration = .seconds(2)) {
-        self.autoHideDelay = autoHideDelay
-    }
-}
-
 /// ViewModel to save loading state
 @MainActor
 public final class DMLoadingManager: Identifiable, ObservableObject {
