@@ -12,6 +12,8 @@ import DMErrorHandling
 /// This class also defines settings for the `DMLoadingManager`, including success view configurations.
 internal final class CustomDMLoadingViewProvider: DMLoadingViewProviderProtocol {
     
+    public var id: UUID = UUID()
+    
     /// The main color used for styling the loading and error views.
     /// This color is applied to text, icons, and buttons for consistency.
     private let mainColor: Color = .yellow

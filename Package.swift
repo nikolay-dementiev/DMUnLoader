@@ -41,6 +41,9 @@ let package = Package(
                 /*,"Examples"*/
                      /*,"Sources/DMErrorHandling/Helpers/Extensions"*/
             ],
+//            swiftSettings: [
+//                            .define("TEST", .when(configuration: .debug))
+//                            ],
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
         .testTarget(
@@ -51,6 +54,9 @@ let package = Package(
                            ,"ViewInspector"
                           ],
             path: "Tests",
+//            swiftSettings: [
+//                            .define("TEST") // Add the TEST flag for the test target
+//                            ],
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
     ]

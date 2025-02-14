@@ -11,11 +11,14 @@ import Combine
 /// Modifier to add LoadingView to any View
 internal struct DMLoadingModifier<Provider: DMLoadingViewProviderProtocol,
                                   LLM: DMLoadingManagerInteralProtocol>: ViewModifier {
-    @ObservedObject internal var loadingManager: LLM
+// #if TEST
+//    internal let inspection = Inspection<Self>()
+// #endif
     
+    @ObservedObject internal var loadingManager: LLM
     internal var provider: Provider
     
-    public func body(content: Content) -> some View {
+    internal func body(content: Content) -> some View {
         let isLoading = loadingManager.loadableState != .none
         
         return ZStack {
@@ -26,5 +29,8 @@ internal struct DMLoadingModifier<Provider: DMLoadingViewProviderProtocol,
             DMLoadingView(loadingManager: loadingManager,
                           provider: provider)
         }
+// #if TEST
+//        .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
+// #endif
     }
 }

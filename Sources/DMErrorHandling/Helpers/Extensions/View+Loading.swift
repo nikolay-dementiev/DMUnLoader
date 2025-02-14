@@ -10,11 +10,13 @@ import SwiftUI
 public extension View {
     internal func autoLoading<Provider: DMLoadingViewProviderProtocol,
                               LLM: DMLoadingManagerInteralProtocol>
-    (_ loadingManager: LLM, provider: Provider) -> some View {
+    (_ loadingManager: LLM,
+     provider: Provider,
+     modifier: DMLoadingModifier<Provider, LLM>? = nil) -> some View {
         self
             .environmentObject(loadingManager)
             .environmentObject(provider)
-            .modifier(DMLoadingModifier(loadingManager: loadingManager, provider: provider))
+            .modifier(modifier ?? DMLoadingModifier(loadingManager: loadingManager, provider: provider))
     }
     
     internal func subscribeToGloabalLoadingManagers<GLM: GlobalLoadingStateManagerInternalProtocol,

@@ -14,7 +14,7 @@ public struct DMLocalLoadingView<Content: View, Provider: DMLoadingViewProviderP
     @StateObject internal var loadingManager: DMLoadingManager
     @Environment(\.globalLoadingManager) internal var globalLoadingManager
     
-    //uses for UIKit's approach to obtain Loading Manager object
+    // uses for UIKit's approach to obtain Loading Manager object
     private(set) internal var getLoadingManager: () -> DMLoadingManager
 
     public init(provider: Provider,

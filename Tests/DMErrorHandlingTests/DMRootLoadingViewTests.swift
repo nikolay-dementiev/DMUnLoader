@@ -49,6 +49,7 @@ final class DMRootLoadingViewTests: XCTestCase {
                 // Inspect the root view to trigger rendering
 //                let inspectedView = try hostingController.rootView.inspect()
                 let inspectedView = try rootLoadingView.inspect()
+                // try inspectedView.callOnAppear()
                 
                 // Find the Text view inside DMRootLoadingView
                 _ = try inspectedView.find(ViewType.Text.self)

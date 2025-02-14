@@ -8,10 +8,12 @@
 import SwiftUI
 
 /// Protocol for configuring LoadingView
-public protocol DMLoadingViewProviderProtocol: ObservableObject {
+public protocol DMLoadingViewProviderProtocol: ObservableObject, Identifiable, Hashable {
     associatedtype LoadingViewType: View
     associatedtype ErrorViewType: View
     associatedtype SuccessViewType: View
+    
+    var id: UUID { get }
     
     @MainActor
     func getLoadingView() -> LoadingViewType
@@ -72,9 +74,22 @@ public extension DMLoadingViewProviderProtocol {
     }
 }
 
+extension DMLoadingViewProviderProtocol {
+    nonisolated public static func == (lhs: Self,
+                                       rhs: Self) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    nonisolated public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
 /// Default provider implementation
 public final class DefaultDMLoadingViewProvider: DMLoadingViewProviderProtocol {
+    public var id: UUID
+    
     public init() {
-        
+        self.id = UUID()
     }
 }

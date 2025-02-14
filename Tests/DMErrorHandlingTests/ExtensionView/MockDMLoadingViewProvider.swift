@@ -14,7 +14,9 @@ final class MockDMLoadingViewProvider: DMLoadingViewProviderProtocol {
     typealias LoadingViewType = Text
     typealias ErrorViewType = Text
     typealias SuccessViewType = Text
-
+    
+    public var id: UUID = UUID()
+    
     @MainActor
     func getLoadingView() -> LoadingViewType {
         Text("Mock Loading View")
