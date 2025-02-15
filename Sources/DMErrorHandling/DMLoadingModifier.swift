@@ -11,9 +11,9 @@ import Combine
 /// Modifier to add LoadingView to any View
 internal struct DMLoadingModifier<Provider: DMLoadingViewProviderProtocol,
                                   LLM: DMLoadingManagerInteralProtocol>: ViewModifier {
-// #if TEST
-//    internal let inspection = Inspection<Self>()
-// #endif
+ #if DEBUG
+    internal let inspection: Inspection<Self>? = getInspectionIfAvailable()
+ #endif
     
     @ObservedObject internal var loadingManager: LLM
     internal var provider: Provider
@@ -29,10 +29,11 @@ internal struct DMLoadingModifier<Provider: DMLoadingViewProviderProtocol,
             DMLoadingView(loadingManager: loadingManager,
                           provider: provider)
         }
-/*
- #if TEST
-        .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
+
+ #if DEBUG
+        .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in
+            inspection?.visit(self, $0)
+        }
  #endif
-*/
     }
 }

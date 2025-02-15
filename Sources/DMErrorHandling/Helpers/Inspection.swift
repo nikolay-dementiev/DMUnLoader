@@ -21,12 +21,18 @@ internal final class Inspection<V>: @unchecked Sendable {
     }
 }
 
-internal struct InspectionModifier: ViewModifier {
-    
-    internal let inspection = Inspection<Self>()
-    
-    internal func body(content: Content) -> some View {
-        content
-            .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
+internal extension ViewModifier {
+    static func getInspectionIfAvailable() -> Inspection<Self>? {
+        return SchemaArguments.isInspectionEnabled ? Inspection<Self>() : nil
     }
+}
+
+internal extension View {
+    static func getInspectionIfAvailable() -> Inspection<Self>? {
+        return SchemaArguments.isInspectionEnabled ? Inspection<Self>() : nil
+    }
+}
+
+struct EmptyPublisher {
+    let notice = PassthroughSubject<UInt, Never>()
 }

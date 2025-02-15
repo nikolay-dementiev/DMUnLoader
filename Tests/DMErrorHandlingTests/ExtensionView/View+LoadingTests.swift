@@ -13,67 +13,12 @@ import ViewInspector
 @MainActor
 final class ExtensionViewTests: XCTestCase {
     
-    func testAutoLoading() throws {
-        
-        defer {
-            ViewHosting.expel()
-        }
-        
-        // Create mocks
-        let loadingManager = MockDMLoadingManager()
-        let provider = MockDMLoadingViewProvider()
-        
-        // Create a test view
-        let testView = EnvironmentAutoLoadingTestView()
-        
-        // Inspect the view hierarchy
-        let expEnvironment = testView.inspection.inspect { view in
-            
-            let loadingManagerFromView = try view.actualView().loadingManager
-            XCTAssertNotNil(loadingManagerFromView,
-                            "DMLoadingManager should be available in the environment")
-            
-            let providerFromView = try view.actualView().provider
-            XCTAssertNotNil(providerFromView,
-                            "DMLoadingViewProvider should be available in the environment")
-            
-            XCTAssertEqual(loadingManagerFromView.id,
-                           loadingManager.id,
-                           "DMLoadingManager ids' is not the same in the environment!")
-            
-            XCTAssertEqual(providerFromView.id,
-                           provider.id, 
-                           "DMLoadingViewProvider ids' is not the same in the environment!")
-        }
-        
-        /*
-        let loadingModifier = DMLoadingModifier(loadingManager: loadingManager,
-                                                provider: provider)
-        let inspectionModifier = InspectionModifier()
-        */
-        
-        ViewHosting.host(view: testView
-            .autoLoading(loadingManager,
-                         provider: provider)
-                /*.modifier(inspectionModifier)*/)
-        
-        wait(for: [expEnvironment], timeout: 0.1)
-        
-        // TODO: Need to somehow test ViewModifiers' without adding `inspection` inside real object!
-        /*
-        let expModifier = inspectionModifier.inspection.inspect(after: 0.2) { modifier in
-            try modifier.viewModifierContent()
-            modifier.actualView()
-            let loadingManagerFromModifier = try modifier.actualView().loadingManager
-            XCTAssertNotNil(loadingManagerFromModifier, "DMLoadingManager should be available in the modifier")
-            
-            XCTAssertEqual(loadingManagerFromModifier.id,
-                           loadingManager.id,
-                           "DMLoadingManager ids' is not the same in the modifier!")
-        }
-        
-        wait(for: [expModifier], timeout: 0.25)
-        */
+    func testAutoLoadingWithNoneInitialState() throws {
+        try checkAutoLoading(loadableState: .none)
+    }
+    
+    func testAutoLoadingWithLoadingInitialState() throws {
+        try checkAutoLoading(loadableState: .loading)
     }
     
     func testSubscribeToGlobalLoadingManagers() {
@@ -84,19 +29,18 @@ final class ExtensionViewTests: XCTestCase {
         
         // Create mocks
         /*
-        let localManager = MockDMLoadingManager()
-        let globalManager = MockGlobalLoadingStateManager(loadableState: .none,
-                                                          subscribeToLoadingManagers: { managers in
-        },
-                                                          unsubscribeFromLoadingManager: { manager in
-            
-        })
-        */
+         let localManager = MockDMLoadingManager()
+         let globalManager = MockGlobalLoadingStateManager(loadableState: .none,
+         subscribeToLoadingManagers: { managers in
+         },
+         unsubscribeFromLoadingManager: { manager in
+         
+         })
+         */
         
-
         // Call the function
         Text("Test View").subscribeToGloabalLoadingManagers(localManager: localManager, globalManager: globalManager)
-
+        
         // Verify subscription
         XCTAssertFalse(globalManager.isLoading, "Global manager should reflect the initial state of the local manager")
         
@@ -109,14 +53,14 @@ final class ExtensionViewTests: XCTestCase {
     func testUnsubscribeFromLoadingManager() {
         // Create mocks
         /*
-        let localManager = MockDMLoadingManager()
-        let globalManager = MockGlobalLoadingStateManager()
-        */
+         let localManager = MockDMLoadingManager()
+         let globalManager = MockGlobalLoadingStateManager()
+         */
         
         let provider = MockDMLoadingViewProvider()
         let localManager = DMLoadingManager(state: .none, settings: provider.loadingManagerSettings)
         let globalManager = GlobalLoadingStateManager()
-
+        
         // Subscribe first
         globalManager.subscribeToLoadingManagers(localManager)
         XCTAssertTrue(globalManager.isLoading == false, "Global manager should reflect the initial state of the local manager")
@@ -124,7 +68,7 @@ final class ExtensionViewTests: XCTestCase {
         // Trigger a state change in the local manager
         localManager.showLoading()
         XCTAssertTrue(globalManager.isLoading, "Global manager should reflect the loading state of the local manager")
-
+        
         // Unsubscribe
         let lastGlobalManagerStatusBeforeUnscribe = globalManager.isLoading
         Text("Test View").unsubscribeFromLoadingManager(localManager: localManager, globalManager: globalManager)
@@ -144,13 +88,13 @@ final class ExtensionViewTests: XCTestCase {
         // Create mocks
         let localManager = MockDMLoadingManager()
         let globalManager: MockGlobalLoadingStateManager? = nil
-
+        
         // Call the function without a global manager
         Text("Test View").unsubscribeFromLoadingManager(localManager: localManager,
                                                         globalManager: globalManager)
-
+        
     }
-
+    
     func testSubscribeToGlobalLoadingManagersWithoutGlobalManager() {
         // Create mocks
         let localManager = MockDMLoadingManager()
@@ -173,16 +117,16 @@ final class ExtensionViewTests: XCTestCase {
         
         // Create a mock global manager
         /*
-        let globalManager = MockGlobalLoadingStateManager(loadableState: .none,
-                                                          subscribeToLoadingManagers: { managers in
-        },
-                                                          unsubscribeFromLoadingManager: { manager in
-            
-        })
-        */
+         let globalManager = MockGlobalLoadingStateManager(loadableState: .none,
+         subscribeToLoadingManagers: { managers in
+         },
+         unsubscribeFromLoadingManager: { manager in
+         
+         })
+         */
         
         let globalManager = GlobalLoadingStateManager()
-
+        
         // Create a test view
         let testView = EnvironmentRootLoadingTestView()
         
@@ -200,9 +144,86 @@ final class ExtensionViewTests: XCTestCase {
         ViewHosting.host(view: testView
             .rootLoading(globalManager: globalManager))
         
+        
         wait(for: [expEnvironment], timeout: 0.1)
         
-        // TODO: Need to somehow test ViewModifiers' without adding `inspection` inside real object!
+        // TODO: Need to check existence of BlockingView in ViewStack (content)
+    }
+    
+    // swiftlint:disable:next function_body_length
+    private func checkAutoLoading(loadableState: DMLoadableType) throws {
+        defer {
+            ViewHosting.expel()
+        }
+        
+        // Create mocks
+        let loadingManager = MockDMLoadingManager(loadableState: loadableState)
+        let provider = MockDMLoadingViewProvider()
+        
+        // Create a test view
+        let testView = EnvironmentAutoLoadingTestView()
+        
+        // Inspect the view hierarchy
+        let expEnvironment = testView.inspection.inspect { view in
+            
+            let loadingManagerFromView = try view.actualView().loadingManager
+            XCTAssertNotNil(loadingManagerFromView,
+                            "DMLoadingManager should be available in the environment")
+            
+            let providerFromView = try view.actualView().provider
+            XCTAssertNotNil(providerFromView,
+                            "DMLoadingViewProvider should be available in the environment")
+            
+            XCTAssertEqual(loadingManagerFromView.id,
+                           loadingManager.id,
+                           "DMLoadingManager ids' is not the same in the environment!")
+            
+            XCTAssertEqual(providerFromView.id,
+                           provider.id,
+                           "DMLoadingViewProvider ids' is not the same in the environment!")
+        }
+        
+        let loadingModifier = DMLoadingModifier(loadingManager: loadingManager,
+                                                provider: provider)
+        ViewHosting.host(view: testView
+            .autoLoading(loadingManager,
+                         provider: provider,
+                         modifier: loadingModifier))
+        wait(for: [expEnvironment], timeout: 0.1)
+        
+        if let expModifier = loadingModifier.inspection?.inspect(after: 0.1, { modifier in
+            let loadingManagerFromModifier = try modifier.actualView().loadingManager
+            // modifier.viewModifierContent()
+            
+            XCTAssertNotNil(loadingManagerFromModifier, "DMLoadingManager should be available in the modifier")
+            
+            XCTAssertEqual(loadingManagerFromModifier.id,
+                           loadingManager.id,
+                           "DMLoadingManager ids' is not the same in the modifier!")
+            
+            let childDMLoadingView = try? modifier
+                .implicitAnyView()
+                .find(DMLoadingView<MockDMLoadingViewProvider, MockDMLoadingManager>.self)
+                .actualView()
+            XCTAssertNotNil(childDMLoadingView, "DMLoadingView should be available in the modifier's content")
+            XCTAssertEqual(childDMLoadingView?.loadingManager.id,
+                           loadingManager.id,
+                           "DMLoadingManager ids' is not the same in the DMLoadingView!")
+            
+            let loadingContentViewFromModifier = try modifier.implicitAnyView().zStack().first
+            let isLoading = loadingManagerFromModifier.loadableState != .none
+            XCTAssertEqual(loadingContentViewFromModifier?.isDisabled(),
+                           isLoading,
+                           "DMLoadingView's content should be disabled when loading (loadableState != .none)!")
+            
+            let correctBlurValue: CGFloat = isLoading ? 2 : 0
+            XCTAssertEqual(try loadingContentViewFromModifier?.blur().radius,
+                           correctBlurValue,
+                           // swiftlint:disable:next line_length
+                           "DMLoadingView's content `blur` radius should be set to `\(correctBlurValue)` when loading (loadableState != .none)!")
+        }) {
+            wait(for: [expModifier], timeout: 0.15)
+        }
     }
 }
 

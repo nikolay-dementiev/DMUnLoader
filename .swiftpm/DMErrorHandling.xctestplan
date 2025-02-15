@@ -1,0 +1,28 @@
+{
+  "configurations" : [
+    {
+      "id" : "E4A50470-AD79-4CE3-93EA-879EC1C196AD",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "--enable-inspection"
+      }
+    ]
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "DMErrorHandlingTests",
+        "name" : "DMErrorHandlingTests"
+      }
+    }
+  ],
+  "version" : 1
+}
