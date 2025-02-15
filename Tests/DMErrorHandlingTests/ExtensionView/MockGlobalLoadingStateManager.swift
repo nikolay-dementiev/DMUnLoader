@@ -10,6 +10,7 @@ import Combine
 @testable import DMErrorHandling
 
 final class MockGlobalLoadingStateManager: GlobalLoadingStateManagerInternalProtocol {
+    let id: UUID
     @Published public var loadableState: DMLoadableType = .none
     
     var isLoading: Bool {
@@ -19,10 +20,12 @@ final class MockGlobalLoadingStateManager: GlobalLoadingStateManagerInternalProt
     private let subscribeToLoadingManagersBlock: (_ managerIds: [any DMLoadingManagerInteralProtocol]) -> Void
     private let unsubscribeFromLoadingManagerBlock: (_ managerId: any DMLoadingManagerInteralProtocol) -> Void
     
-    init(loadableState: DMLoadableType,
+    init(id: UUID = UUID(),
+         loadableState: DMLoadableType,
          subscribeToLoadingManagers: @escaping (_ loadingManagers: [any DMLoadingManagerInteralProtocol]) -> Void,
          unsubscribeFromLoadingManager: @escaping (_ manager: any DMLoadingManagerInteralProtocol) -> Void) {
         
+        self.id = id
         self.loadableState = loadableState
         self.subscribeToLoadingManagersBlock = subscribeToLoadingManagers
         self.unsubscribeFromLoadingManagerBlock = unsubscribeFromLoadingManager

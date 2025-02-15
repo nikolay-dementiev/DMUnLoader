@@ -4,7 +4,7 @@
 //
 //  Created by Nikolay Dementiev on 14.02.2025.
 //
-//check  for details: https://github.com/nalexn/ViewInspector/blob/0.10.2/guide.md
+// check  for details: https://github.com/nalexn/ViewInspector/blob/0.10.2/guide.md
 
 @preconcurrency import Combine
 import SwiftUI

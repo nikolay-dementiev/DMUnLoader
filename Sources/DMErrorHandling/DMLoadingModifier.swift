@@ -29,8 +29,10 @@ internal struct DMLoadingModifier<Provider: DMLoadingViewProviderProtocol,
             DMLoadingView(loadingManager: loadingManager,
                           provider: provider)
         }
-// #if TEST
-//        .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
-// #endif
+/*
+ #if TEST
+        .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
+ #endif
+*/
     }
 }

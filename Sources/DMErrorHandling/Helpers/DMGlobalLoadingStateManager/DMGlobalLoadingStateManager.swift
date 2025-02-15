@@ -9,6 +9,7 @@ import Combine
 import Foundation
 
 public final class GlobalLoadingStateManager: GlobalLoadingStateManagerInternalProtocol {
+    let id: UUID = UUID()
     @Published internal(set) public var loadableState: DMLoadableType = .none
     
     internal var isLoading: Bool {
