@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-//TODO: adopt all for accesssability
-//https://developer.apple.com/videos/play/wwdc2021/10119
-//https://developer.apple.com/videos/play/wwdc2019/238
+// TODO: adopt all for accesssability
+// https://developer.apple.com/videos/play/wwdc2021/10119
+// https://developer.apple.com/videos/play/wwdc2019/238
 
 internal struct DMErrorView: View {
     
@@ -95,8 +95,3 @@ internal struct DMErrorView: View {
         }
     }
 }
-
-//#Preview {
-//    ErrorView(error: DMAppError.custom(errorDescription: "Some error Test"),
-//              onRetry: nil)
-//}

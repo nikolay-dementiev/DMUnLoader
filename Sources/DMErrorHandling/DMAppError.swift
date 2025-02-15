@@ -46,7 +46,6 @@ extension DMAppError: LocalizedError {
     }
 }
 
-
 // MARK: - Connection Errors
 /// Connection Errors Enums
 /// It pass-through any URLErrors that happen and add its own
@@ -67,10 +66,12 @@ extension DMAppError {
         ///    When `URLResponse` is not `HTTPURLResponse`.
         case invalidResponseType(URLResponse)
 
-        ///    Status code is in `200...299` range, but response body is empty. This can be both valid and invalid, depending on HTTP method and/or specific behavior of the service being called.
+        ///    Status code is in `200...299` range, but response body is empty. This can be both
+        ///    valid and invalid, depending on HTTP method and/or specific behavior of the service being called.
         case noResponseData(HTTPURLResponse)
 
-        ///    Status code is `400` or higher thus return the entire `HTTPURLResponse` and `Data` so caller can figure out what happened.
+        ///    Status code is `400` or higher thus return the entire `HTTPURLResponse` and `Data`
+        ///    so caller can figure out what happened.
         case endpointError(HTTPURLResponse, Data?)
         
         /// custom error

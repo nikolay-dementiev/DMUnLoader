@@ -45,17 +45,8 @@ internal struct DMProgressView: View {
                    maxHeight: geometry.height / 2)
             .fixedSize()
             .foregroundColor(settingsProvider.loadingContainerForegroundColor)
-            //.debugLog("VStack")
+            // .debugLog("VStack")
         }
-        //.debugLog("ZStack")
+        // .debugLog("ZStack")
     }
 }
-
-//#Preview {
-//    DMNativeProgressView(settingsProvider: DMLoadingDefaultViewSettings(loadingText: "Some very long loading text here; and even more than that text is the reason for that..."))
-//}
-//
-//#Preview {
-//    DMNativeProgressView(settingsProvider: DMLoadingDefaultViewSettings(loadingText: "Loading"))
-//}
-

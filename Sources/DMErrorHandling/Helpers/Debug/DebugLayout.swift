@@ -56,9 +56,9 @@ internal extension View {
     
     func printChanges() -> Self {
 #if DEBUG
+        // swiftlint:disable:next redundant_discardable_let
         let _ = Self._printChanges()
 #endif
         return self
     }
 }
-

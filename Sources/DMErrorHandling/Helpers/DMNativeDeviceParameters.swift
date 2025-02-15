@@ -11,7 +11,6 @@ import UIKit
 import WatchKit
 #endif
 
-
 /// This protocol provide all parameters spesific for any device type
 /// which this SDK support
 /// e.g. iOS, watchOS,...
@@ -21,7 +20,6 @@ import WatchKit
 public protocol DMDeviceParameters {
     static var deviceScreenSize: CGSize { get }
 }
-
 
 /// This object provide implementation for all parameters spesific for any device type
 /// which this SDK support

@@ -5,6 +5,7 @@
 //  Created by Nikolay Dementiev on 24.01.2025.
 //
 
+/*
 import Foundation
 
 @propertyWrapper
@@ -50,3 +51,4 @@ internal final class Atomic<ValueType> {
         }
     }
 }
+*/

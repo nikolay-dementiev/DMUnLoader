@@ -16,7 +16,7 @@ public struct CustomSizeView {
         self.alignment = alignment
     }
     
-    var width: CGFloat? = nil
-    var height: CGFloat? = nil
+    var width: CGFloat?
+    var height: CGFloat?
     var alignment: Alignment = .center
 }

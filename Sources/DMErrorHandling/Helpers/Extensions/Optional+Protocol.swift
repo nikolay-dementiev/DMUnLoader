@@ -67,7 +67,6 @@ internal extension Optional where Wrapped == String {
     }
 }
 
-
 @objc
 fileprivate extension NSString {
     static let nullEvent: String = "<null>"

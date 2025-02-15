@@ -7,7 +7,7 @@
 
 import Foundation
 
-//Composition of Action
+// Composition of Action
 
 public protocol DMAction {
     typealias ResultType = Result<Copyable, Error>
