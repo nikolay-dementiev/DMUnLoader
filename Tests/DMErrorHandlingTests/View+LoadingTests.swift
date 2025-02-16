@@ -187,7 +187,6 @@ final class ExtensionViewTests: XCTestCase {
         // TODO: Need to check existence of BlockingView in ViewStack (content)
     }
     
-    // swiftlint:disable:next function_body_length
     private func checkAutoLoading(loadableState: DMLoadableType) throws {
         defer {
             ViewHosting.expel()
