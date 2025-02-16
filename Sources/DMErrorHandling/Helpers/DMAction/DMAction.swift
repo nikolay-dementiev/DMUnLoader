@@ -7,12 +7,6 @@
 
 import Foundation
 
-// Composition of Action
-
-public protocol DMActionResultValueProtocol: Copyable {
-    var attemptCount: UInt? { get }
-}
-
 public protocol DMAction {
     typealias ResultType = Result<Copyable, Error>
     typealias ActionType = (@escaping (ResultType) -> Void) -> Void

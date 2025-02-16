@@ -7,6 +7,9 @@
 
 import Foundation
 
+public protocol DMActionResultValueProtocol: Copyable {
+    var attemptCount: UInt? { get }
+}
 
 public extension DMActionResultValueProtocol {
     var attemptCount: UInt? { nil }

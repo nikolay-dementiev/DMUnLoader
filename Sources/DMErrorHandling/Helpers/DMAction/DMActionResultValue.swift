@@ -5,7 +5,6 @@
 //  Created by Nikolay Dementiev on 16.02.2025.
 //
 
-
 public struct DMActionResultValue: DMActionResultValueProtocol {
     public let attemptCount: UInt?
     public let value: Copyable
