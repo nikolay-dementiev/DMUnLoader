@@ -33,6 +33,6 @@ internal extension View {
     }
 }
 
-struct EmptyPublisher {
+internal struct EmptyPublisher {
     let notice = PassthroughSubject<UInt, Never>()
 }
