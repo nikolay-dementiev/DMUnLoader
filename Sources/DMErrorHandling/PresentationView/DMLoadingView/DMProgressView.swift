@@ -8,6 +8,13 @@
 
 import SwiftUI
 
+internal enum DMProgressViewOwnSettings {
+    static let containerViewTag: Int = 2102
+    static let progressViewTag: Int = 2203
+    static let textTag: Int = 2204
+    static let vStackViewTag = 2205
+}
+
 internal struct DMProgressView: View {
     
     internal let settingsProvider: DMLoadingViewSettings
@@ -33,11 +40,13 @@ internal struct DMProgressView: View {
                     .font(loadingTextProperties.font)
                     .lineLimit(loadingTextProperties.lineLimit)
                     .padding(loadingTextProperties.linePadding)
+                    .tag(DMProgressViewOwnSettings.textTag)
                 ProgressView()
                     .controlSize(progressIndicatorProperties.size)
                     .progressViewStyle(.circular) // .linear
                     .tint(progressIndicatorProperties.tintColor)
                     .layoutPriority(1)
+                    .tag(DMProgressViewOwnSettings.progressViewTag)
             }
             .frame(minWidth: minSize,
                    maxWidth: geometry.width / 2,
@@ -45,8 +54,8 @@ internal struct DMProgressView: View {
                    maxHeight: geometry.height / 2)
             .fixedSize()
             .foregroundColor(settingsProvider.loadingContainerForegroundColor)
-            // .debugLog("VStack")
+            .tag(DMProgressViewOwnSettings.vStackViewTag)
         }
-        // .debugLog("ZStack")
+        .tag(DMProgressViewOwnSettings.containerViewTag)
     }
 }
