@@ -11,11 +11,16 @@ import Combine
 
 final class DMLoadingManagerTests: XCTestCase {
         
-    var cancellables: Set<AnyCancellable> = []
+    private var cancellables: Set<AnyCancellable> = []
+    @WeakElements private var weakLoadingManager = [DMLoadingManager]()
     
     override func tearDown() {
         cancellables.removeAll()
         super.tearDown()
+        
+        XCTAssertEqual(weakLoadingManager.count,
+                       0,
+                       "Loading manager should not be deallocated")
     }
     
     // Initialization
@@ -23,6 +28,7 @@ final class DMLoadingManagerTests: XCTestCase {
     func testInitialization() {
         let settings = MockDMLoadingManagerSettings()
         let manager = DMLoadingManager(state: .none, settings: settings)
+        weakLoadingManager.append(manager)
         
         // Ensure that the initial state is `.none`
         XCTAssertEqual(manager.loadableState,
@@ -35,6 +41,7 @@ final class DMLoadingManagerTests: XCTestCase {
     func testDMLoadingManagerConformsToHashable() {
         let settings = MockDMLoadingManagerSettings()
         let manager = DMLoadingManager(state: .none, settings: settings)
+        weakLoadingManager.append(manager)
         
         // Check if DMLoadingManager conforms to Hashable
         XCTAssertTrue((manager as Any) is (any Hashable), "DMLoadingManager should conform to Hashable")
@@ -45,6 +52,7 @@ final class DMLoadingManagerTests: XCTestCase {
     func testDMLoadingManagerConformsToIdentifiable() {
         let settings = MockDMLoadingManagerSettings()
         let manager = DMLoadingManager(state: .none, settings: settings)
+        weakLoadingManager.append(manager)
         
         // Check if DMLoadingManager conforms to Identifiable
         XCTAssertTrue((manager as Any) is (any Identifiable), "DMLoadingManager should conform to Identifiable")
@@ -55,6 +63,7 @@ final class DMLoadingManagerTests: XCTestCase {
     func testDMLoadingManagerConformsToObservableObject() {
         let settings = MockDMLoadingManagerSettings()
         let manager = DMLoadingManager(state: .none, settings: settings)
+        weakLoadingManager.append(manager)
         
         // Check if DMLoadingManager conforms to ObservableObject
         XCTAssertTrue((manager as Any) is (any ObservableObject), "DMLoadingManager should conform to ObservableObject")
@@ -69,6 +78,9 @@ final class DMLoadingManagerTests: XCTestCase {
         let manager1 = DMLoadingManager(state: .none, settings: settings)
         let manager2 = DMLoadingManager(state: .none, settings: settings)
         
+        weakLoadingManager.append(manager1)
+        weakLoadingManager.append(manager2)
+        
         // Verify that the IDs are unique
         XCTAssertNotEqual(manager1.id, manager2.id, "DMLoadingManager instances should have unique IDs")
     }
@@ -82,6 +94,9 @@ final class DMLoadingManagerTests: XCTestCase {
         // Create two DMLoadingManager instances with the same ID
         let manager1 = DMLoadingManager(id: newTheSameID, state: .none, settings: settings)
         let manager2 = DMLoadingManager(id: newTheSameID, state: .none, settings: settings)
+        
+        weakLoadingManager.append(manager1)
+        weakLoadingManager.append(manager2)
         
         // Verify equality
         XCTAssertEqual(manager1, manager2, "DMLoadingManager instances with the same ID should be equal")
@@ -100,6 +115,7 @@ final class DMLoadingManagerTests: XCTestCase {
         let secondsAutoHideDelay: Double = 0.2
         let settings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
         let manager = DMLoadingManager(state: .none, settings: settings)
+        weakLoadingManager.append(manager)
         
         // Observe changes to loadableState
         manager.$loadableState
@@ -126,6 +142,7 @@ final class DMLoadingManagerTests: XCTestCase {
         let secondsAutoHideDelay: Double = 0.2
         let settings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
         let manager = DMLoadingManager(state: .none, settings: settings)
+        weakLoadingManager.append(manager)
         
         // Observe changes to loadableState
         manager.$loadableState
@@ -155,6 +172,7 @@ final class DMLoadingManagerTests: XCTestCase {
         let secondsAutoHideDelay: Double = 0.2
         let settings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
         let manager = DMLoadingManager(state: .none, settings: settings)
+        weakLoadingManager.append(manager)
         
         // Observe changes to loadableState
         manager.$loadableState
@@ -187,6 +205,7 @@ final class DMLoadingManagerTests: XCTestCase {
         let secondsAutoHideDelay: Double = 0.05
         let settings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
         let manager = DMLoadingManager(state: .none, settings: settings)
+        weakLoadingManager.append(manager)
         
         // Trigger the showSuccess method to start the inactivity timer
         manager.showSuccess("Test Message")
@@ -211,6 +230,7 @@ final class DMLoadingManagerTests: XCTestCase {
         let secondsAutoHideDelay: Double = 0.03
         let settings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
         let manager = DMLoadingManager(state: .none, settings: settings)
+        weakLoadingManager.append(manager)
         
         // Observe changes to loadableState
         manager.$loadableState
