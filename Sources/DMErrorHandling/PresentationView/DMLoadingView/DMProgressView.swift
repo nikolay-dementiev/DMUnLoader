@@ -1,8 +1,7 @@
 //
-//  DMNativeProgressView.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 19.01.2025.
+//  Created by Mykola Dementiev
 //
 // take a look for details: https://stackoverflow.com/a/56496896/6643923
 

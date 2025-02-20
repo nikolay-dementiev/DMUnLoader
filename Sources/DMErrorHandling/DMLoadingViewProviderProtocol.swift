@@ -1,8 +1,7 @@
 //
-//  File.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 28.01.2025.
+//  Created by Mykola Dementiev
 //
 
 import SwiftUI

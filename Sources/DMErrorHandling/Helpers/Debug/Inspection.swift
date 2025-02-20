@@ -1,8 +1,7 @@
 //
-//  Inspection.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 14.02.2025.
+//  Created by Mykola Dementiev
 //
 // check  for details: https://github.com/nalexn/ViewInspector/blob/0.10.2/guide.md
 

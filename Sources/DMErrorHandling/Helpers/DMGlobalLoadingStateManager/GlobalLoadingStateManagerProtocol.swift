@@ -1,8 +1,7 @@
 //
-//  GlobalLoadingStateManagerProtocol.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 14.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import Foundation

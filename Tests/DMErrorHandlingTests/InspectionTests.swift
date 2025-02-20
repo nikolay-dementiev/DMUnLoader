@@ -1,8 +1,7 @@
 //
-//  InspectionTests.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 18.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import XCTest

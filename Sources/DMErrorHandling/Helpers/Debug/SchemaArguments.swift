@@ -1,8 +1,7 @@
 //
-//  File.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 15.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import Foundation

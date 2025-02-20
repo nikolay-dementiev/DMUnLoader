@@ -1,8 +1,7 @@
 //
-//  File.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 16.01.2025.
+//  Created by Mykola Dementiev
 //
 
 import SwiftUI
@@ -10,6 +9,18 @@ import SwiftUI
 // TODO: adopt all for accesssability
 // https://developer.apple.com/videos/play/wwdc2021/10119
 // https://developer.apple.com/videos/play/wwdc2019/238
+
+internal enum DMErrorViewOwnSettings {
+    static let containerVStackViewTag: Int = 3010
+    static let imageViewTag: Int = 3020
+    static let errorTextFormProviderContainerViewTag: Int = 3030
+    static let errorTextViewTag: Int = 3031
+    static let errorTextFormExeptionContainerViewTag: Int = 3040
+    static let buttonContainersHStackViewTag: Int = 3050
+    static let actionButtonCloseViewTag: Int = 3051
+    static let actionButtonRetryViewTag: Int = 3052
+    static let actionButtonButtoViewTag: Int = 3059
+}
 
 internal struct DMErrorView: View {
     
@@ -38,25 +49,32 @@ internal struct DMErrorView: View {
                 .frame(width: imageSettings.frameSize.width,
                        height: imageSettings.frameSize.height)
                 .foregroundColor(imageSettings.foregroundColor)
+                .tag(DMErrorViewOwnSettings.imageViewTag)
             
             if let errorText = settingsProvider.errorText {
                 ErrorText(errorText,
                           settings: settingsProvider.errorTextSettings)
+                .tag(DMErrorViewOwnSettings.errorTextFormProviderContainerViewTag)
             }
             
             ErrorText(error.localizedDescription,
                       settings: settingsProvider.errorTextSettings)
+            .tag(DMErrorViewOwnSettings.errorTextFormExeptionContainerViewTag)
             
             HStack {
                 ActionButton(settings: settingsProvider.actionButtonCloseSettings,
                              action: onClose.simpleAction)
+                .tag(DMErrorViewOwnSettings.actionButtonCloseViewTag)
 
                 if let onRetry = onRetry {
                     ActionButton(settings: settingsProvider.actionButtonRetrySettings,
                                  action: onRetry.simpleAction)
+                    .tag(DMErrorViewOwnSettings.actionButtonRetryViewTag)
                 }
             }
+            .tag(DMErrorViewOwnSettings.buttonContainersHStackViewTag)
         }
+        .tag(DMErrorViewOwnSettings.containerVStackViewTag)
     }
     
     private struct ActionButton: View {
@@ -70,10 +88,12 @@ internal struct DMErrorView: View {
         }
         
         var body: some View {
-            Button(settings.text, action: action)
+            Button(settings.text,
+                   action: action)
             .padding()
             .background(settings.backgroundColor)
             .cornerRadius(settings.cornerRadius)
+            .tag(DMErrorViewOwnSettings.actionButtonButtoViewTag)
         }
     }
     
@@ -92,6 +112,7 @@ internal struct DMErrorView: View {
                 .foregroundColor(settings.foregroundColor)
                 .multilineTextAlignment(settings.multilineTextAlignment)
                 .padding(settings.padding)
+                .tag(DMErrorViewOwnSettings.errorTextViewTag)
         }
     }
 }

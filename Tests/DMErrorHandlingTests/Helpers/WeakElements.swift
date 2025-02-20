@@ -1,8 +1,7 @@
 //
-//  Weak.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 19.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import Foundation

@@ -1,8 +1,7 @@
 //
-//  DMProgressViewTests.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 19.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import XCTest
@@ -16,7 +15,7 @@ final class DMProgressViewTests: XCTestCase {
     
     @MainActor
     func testInitialization() {
-        let settingsProvider = MockSettingsProvider()
+        let settingsProvider = MockLoadingViewSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
         XCTAssertNotNil(view.settingsProvider,
@@ -27,7 +26,7 @@ final class DMProgressViewTests: XCTestCase {
     
     @MainActor
     func testRendersContainerView() throws {
-        let settingsProvider = MockSettingsProvider()
+        let settingsProvider = MockLoadingViewSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
         let containerView = try view
@@ -40,7 +39,7 @@ final class DMProgressViewTests: XCTestCase {
     
     @MainActor
     func testRendersVStack() throws {
-        let settingsProvider = MockSettingsProvider()
+        let settingsProvider = MockLoadingViewSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
         let vStack = try view
@@ -53,7 +52,7 @@ final class DMProgressViewTests: XCTestCase {
     
     @MainActor
     func testRendersText() throws {
-        let settingsProvider = MockSettingsProvider()
+        let settingsProvider = MockLoadingViewSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
         let text = try view
@@ -67,7 +66,7 @@ final class DMProgressViewTests: XCTestCase {
     
     @MainActor
     func testRendersProgressView() throws {
-        let settingsProvider = MockSettingsProvider()
+        let settingsProvider = MockLoadingViewSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
         let progressView = try view
@@ -82,7 +81,7 @@ final class DMProgressViewTests: XCTestCase {
     
     @MainActor
     func testAppliesTextProperties() throws {
-        let settingsProvider = MockSettingsProvider()
+        let settingsProvider = MockLoadingViewSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
         let text = try view
@@ -109,7 +108,7 @@ final class DMProgressViewTests: XCTestCase {
     
     @MainActor
     func testAppliesProgressViewProperties() throws {
-        let settingsProvider = MockSettingsProvider()
+        let settingsProvider = MockLoadingViewSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
         let progressView = try view
@@ -139,7 +138,7 @@ final class DMProgressViewTests: XCTestCase {
     
     @MainActor
     func testRespectsLayoutConstraints() throws {
-        let settingsProvider = MockSettingsProvider()
+        let settingsProvider = MockLoadingViewSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
         let geometry = settingsProvider.frameGeometrySize

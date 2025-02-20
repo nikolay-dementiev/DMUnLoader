@@ -1,8 +1,7 @@
 //
-//  ContentViewDefaultSettings.swift
 //  DMErrorHandlingPodExample
 //
-//  Created by Nikolay Dementiev on 03.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import SwiftUI

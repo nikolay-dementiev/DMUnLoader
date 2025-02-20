@@ -1,8 +1,7 @@
 //
-//  DMGlobalLoadingStateManager.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 01.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import Combine

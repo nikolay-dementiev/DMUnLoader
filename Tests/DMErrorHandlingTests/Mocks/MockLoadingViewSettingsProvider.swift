@@ -1,14 +1,13 @@
 //
-//  MockSettingsProvider.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 19.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import SwiftUICore
 @testable import DMErrorHandling
 
-struct MockSettingsProvider: DMLoadingViewSettings {
+struct MockLoadingViewSettingsProvider: DMLoadingViewSettings {
     var frameGeometrySize: CGSize = CGSize(width: 200,
                                            height: 200)
     

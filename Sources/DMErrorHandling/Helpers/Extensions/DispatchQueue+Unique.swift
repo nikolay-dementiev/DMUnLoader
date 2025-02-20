@@ -1,8 +1,7 @@
 //
-//  DispatchQueue+Unique.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 14.02.2025.
+//  Created by Mykola Dementiev
 //
 // for more detail, please visit: https://stackoverflow.com/a/39983813/6643923
 

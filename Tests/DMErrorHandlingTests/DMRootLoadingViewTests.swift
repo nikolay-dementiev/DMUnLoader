@@ -1,8 +1,7 @@
 //
-//  DMRootLoadingViewTests.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 12.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import SwiftUI

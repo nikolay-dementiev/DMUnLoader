@@ -1,8 +1,7 @@
 //
-//  DMViewControllerTopLevel.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 06.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import Combine

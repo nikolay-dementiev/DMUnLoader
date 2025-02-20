@@ -1,8 +1,7 @@
 //
-//  DeviceParameters.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 17.01.2025.
+//  Created by Mykola Dementiev
 //
 
 #if os(iOS)

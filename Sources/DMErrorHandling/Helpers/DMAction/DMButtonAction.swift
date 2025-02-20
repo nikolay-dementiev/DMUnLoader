@@ -1,8 +1,7 @@
 //
-//  DMButtonAction.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 16.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import Foundation

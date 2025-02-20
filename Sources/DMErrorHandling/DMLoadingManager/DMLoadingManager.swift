@@ -1,8 +1,7 @@
 //
-//  DMLoadingManager.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 24.01.2025.
+//  Created by Mykola Dementiev
 //
 
 import Foundation
