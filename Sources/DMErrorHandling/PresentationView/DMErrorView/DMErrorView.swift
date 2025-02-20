@@ -63,12 +63,12 @@ internal struct DMErrorView: View {
             
             HStack {
                 ActionButton(settings: settingsProvider.actionButtonCloseSettings,
-                             action: onClose.simpleAction)
+                             action: onClose)
                 .tag(DMErrorViewOwnSettings.actionButtonCloseViewTag)
 
                 if let onRetry = onRetry {
                     ActionButton(settings: settingsProvider.actionButtonRetrySettings,
-                                 action: onRetry.simpleAction)
+                                 action: onRetry)
                     .tag(DMErrorViewOwnSettings.actionButtonRetryViewTag)
                 }
             }
@@ -76,20 +76,23 @@ internal struct DMErrorView: View {
         }
         .tag(DMErrorViewOwnSettings.containerVStackViewTag)
     }
+}
+
+internal extension DMErrorView {
     
-    private struct ActionButton: View {
-        let action: () -> Void
+    struct ActionButton: View {
+        let action: DMAction
         let settings: ActionButtonSettings
         
         internal init(settings: ActionButtonSettings,
-                      action: @escaping () -> Void) {
+                      action: DMAction) {
             self.action = action
             self.settings = settings
         }
         
         var body: some View {
             Button(settings.text,
-                   action: action)
+                   action: action.simpleAction)
             .padding()
             .background(settings.backgroundColor)
             .cornerRadius(settings.cornerRadius)
@@ -97,7 +100,7 @@ internal struct DMErrorView: View {
         }
     }
     
-    private struct ErrorText: View {
+    struct ErrorText: View {
         let errorText: String
         let settings: ErrorTextSettings
         
