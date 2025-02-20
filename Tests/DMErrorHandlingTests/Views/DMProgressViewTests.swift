@@ -30,7 +30,6 @@ final class DMProgressViewTests: XCTestCase {
         let settingsProvider = MockSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
-        // Find the container view by tag
         let containerView = try view
             .inspect()
             .find(viewWithTag: DMProgressViewOwnSettings.containerViewTag)
@@ -44,7 +43,6 @@ final class DMProgressViewTests: XCTestCase {
         let settingsProvider = MockSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
-        // Find the VStack by tag
         let vStack = try view
             .inspect()
             .find(viewWithTag: DMProgressViewOwnSettings.vStackViewTag)
@@ -58,7 +56,6 @@ final class DMProgressViewTests: XCTestCase {
         let settingsProvider = MockSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
-        // Find the Text view by tag
         let text = try view
             .inspect()
             .find(viewWithTag: DMProgressViewOwnSettings.textTag)
@@ -73,7 +70,6 @@ final class DMProgressViewTests: XCTestCase {
         let settingsProvider = MockSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
-        // Find the ProgressView by tag
         let progressView = try view
             .inspect()
             .find(viewWithTag: DMProgressViewOwnSettings.progressViewTag)
@@ -89,13 +85,11 @@ final class DMProgressViewTests: XCTestCase {
         let settingsProvider = MockSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
-        // Find the Text view by tag
         let text = try view
             .inspect()
             .find(viewWithTag: DMProgressViewOwnSettings.textTag)
             .text()
         
-        // Verify text properties
         XCTAssertEqual(try text.string(),
                        "Loading...",
                        "The Text view should display the correct text")
@@ -118,7 +112,6 @@ final class DMProgressViewTests: XCTestCase {
         let settingsProvider = MockSettingsProvider()
         let view = DMProgressView(settings: settingsProvider)
         
-        // Find the ProgressView by tag
         let progressView = try view
             .inspect()
             .find(viewWithTag: DMProgressViewOwnSettings.progressViewTag)
@@ -126,16 +119,20 @@ final class DMProgressViewTests: XCTestCase {
         
         let progressViewStyle = try? progressView.progressViewStyle() as? CircularProgressViewStyle
         XCTAssertNotNil(progressViewStyle,
-                        "The ProgressView should have `CircularProgressViewStyle`")
+                        "The ProgressView should be `CircularProgressViewStyle` type")
         
-        // Verify ProgressView properties
-//        XCTAssertEqual(try progressView.controlSize(),
-//                       .regular,
-//                       "The ProgressView should have the correct control size")
-        
+        let progressViewLayoutPriority = try? progressView.layoutPriority()
+        XCTAssertEqual(progressViewLayoutPriority,
+                       1,
+                       "The ProgressView should have layout priority equal `1`")
         XCTAssertEqual(try progressView.tint(),
                        .green,
                        "The ProgressView should have the correct tint color")
+        /* Not implemented in ViewInspector for iOS
+        XCTAssertEqual(try progressView.controlSize(),
+                       .regular,
+                       "The ProgressView should have the correct control size")
+        */
     }
     
     // MARK: Layout Tests
@@ -150,21 +147,28 @@ final class DMProgressViewTests: XCTestCase {
                           geometry.height - 20,
                           30)
         
-        // Find the VStack by tag
-        let vStack = try view.inspect().find(viewWithTag: DMProgressViewOwnSettings.vStackViewTag)
+        let vStack = try view
+            .inspect()
+            .find(viewWithTag: DMProgressViewOwnSettings.vStackViewTag)
+            .vStack()
         
-        // Verify frame constraints
-//        XCTAssertEqual(try vStack.minimumWidth(),
-//                       minSize,
-//                       "The VStack should have the correct minimum width")
-//        XCTAssertEqual(try vStack.maximumWidth(),
-//                       geometry.width / 2,
-//                       "The VStack should have the correct maximum width")
-//        XCTAssertEqual(try vStack.minimumHeight(),
-//                       minSize,
-//                       "The VStack should have the correct minimum height")
-//        XCTAssertEqual(try vStack.maximumHeight(),
-//                       geometry.height / 2,
-//                       "The VStack should have the correct maximum height")
+        let flexFrame = try? vStack.flexFrame()
+        
+        XCTAssertEqual(flexFrame?.minWidth,
+                       minSize,
+                       "The VStack should have the correct minimum width")
+        XCTAssertEqual(flexFrame?.maxWidth,
+                       geometry.width / 2,
+                       "The VStack should have the correct maximum width")
+        XCTAssertEqual(flexFrame?.minHeight,
+                       minSize,
+                       "The VStack should have the correct minimum height")
+        XCTAssertEqual(flexFrame?.maxHeight,
+                       geometry.height / 2,
+                       "The VStack should have the correct maximum height")
+        
+        XCTAssertEqual(try? vStack.foregroundColor(),
+                       settingsProvider.loadingContainerForegroundColor,
+                       "The foreground color of the VStack should match the loading container foreground color")
     }
 }

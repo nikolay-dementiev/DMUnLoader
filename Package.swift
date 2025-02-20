@@ -7,13 +7,9 @@ import PackageDescription
 
 let package = Package(
     name: "DMErrorHandling",
-//    defaultLocalization: "en",
     platforms: [
-//        .macOS(.v10_13),
         .iOS(.v17),
-//        .tvOS(.v12),
         .watchOS(.v7),
-//        .visionOS(.v1),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -26,9 +22,6 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/GayleDunham/SwiftLintPlugin.git", branch: "main"),
         .package(url: "https://github.com/nalexn/ViewInspector", from: "0.10.1")
-//        ,
-//        .package(url: "https://github.com/Quick/Quick.git", from: "7.0.0"),
-//        .package(url: "https://github.com/Quick/Nimble.git", from: "12.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -38,25 +31,15 @@ let package = Package(
             path: "Sources",
             exclude: [
                 "Deprecated"
-                /*,"Examples"*/
-                     /*,"Sources/DMErrorHandling/Helpers/Extensions"*/
             ],
-//            swiftSettings: [
-//                            .define("TEST", .when(configuration: .debug))
-//                            ],
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
         .testTarget(
             name: "DMErrorHandlingTests",
             dependencies: ["DMErrorHandling"
-//                           ,"Nimble",
-//                           ,"Quick"
                            ,"ViewInspector"
                           ],
             path: "Tests",
-//            swiftSettings: [
-//                            .define("TEST") // Add the TEST flag for the test target
-//                            ],
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
     ]
