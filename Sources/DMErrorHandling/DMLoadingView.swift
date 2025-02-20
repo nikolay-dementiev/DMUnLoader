@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-private enum DMLoadingViewOwnSettings {
+internal enum DMLoadingViewOwnSettings {
     static let emptyViewTag: Int = 0001
     static let defaultViewTag: Int = 0102
     static let loadingViewTag: Int = 0203

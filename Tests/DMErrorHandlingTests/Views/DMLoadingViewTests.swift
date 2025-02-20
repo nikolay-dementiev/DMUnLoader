@@ -47,7 +47,9 @@ final class DMLoadingViewTests: XCTestCase {
         ViewHosting.host(view: testView)
         
         if let expEnvironment = testView.inspection?.inspect({ view in
-            let noneStateView = try? view.implicitAnyView().find(viewWithTag: 0001)
+            let noneStateView = try? view
+                .implicitAnyView()
+                .find(viewWithTag: DMLoadingViewOwnSettings.emptyViewTag)
             XCTAssertNotNil(noneStateView,
                             "The body should render an EmptyView for .none state")
         }) {
@@ -76,11 +78,16 @@ final class DMLoadingViewTests: XCTestCase {
         ViewHosting.host(view: testView)
         
         if let expEnvironment = testView.inspection?.inspect({ view in
-            let defaultStateView = try? view.implicitAnyView().find(viewWithTag: 0102).zStack()
+            let defaultStateView = try? view
+                .implicitAnyView()
+                .find(viewWithTag: DMLoadingViewOwnSettings.defaultViewTag)
+                .zStack()
             XCTAssertNotNil(defaultStateView,
                             "The body should render the default ZStack as a container")
             
-            let loadingStateView = try? view.implicitAnyView().find(viewWithTag: 0203)
+            let loadingStateView = try? view
+                .implicitAnyView()
+                .find(viewWithTag: DMLoadingViewOwnSettings.loadingViewTag)
             XCTAssertNotNil(loadingStateView,
                             "The body should render the Loading view for .loading state")
         }) {
@@ -113,11 +120,16 @@ final class DMLoadingViewTests: XCTestCase {
         ViewHosting.host(view: testView)
         
         if let expEnvironment = testView.inspection?.inspect({ view in
-            let defaultStateView = try? view.implicitAnyView().find(viewWithTag: 0102).zStack()
+            let defaultStateView = try? view
+                .implicitAnyView()
+                .find(viewWithTag: DMLoadingViewOwnSettings.defaultViewTag)
+                .zStack()
             XCTAssertNotNil(defaultStateView,
                             "The body should render the default ZStack as a container")
             
-            let failureStateView = try? view.implicitAnyView().find(viewWithTag: 0304)
+            let failureStateView = try? view
+                .implicitAnyView()
+                .find(viewWithTag: DMLoadingViewOwnSettings.failureViewTag)
             XCTAssertNotNil(failureStateView,
                             "The body should render the ErrorView view for .failure state")
         }) {
@@ -148,11 +160,16 @@ final class DMLoadingViewTests: XCTestCase {
         ViewHosting.host(view: testView)
         
         if let expEnvironment = testView.inspection?.inspect({ view in
-            let defaultStateView = try? view.implicitAnyView().find(viewWithTag: 0102).zStack()
+            let defaultStateView = try? view
+                .implicitAnyView()
+                .find(viewWithTag: DMLoadingViewOwnSettings.defaultViewTag)
+                .zStack()
             XCTAssertNotNil(defaultStateView,
                             "The body should render the default ZStack as a container")
             
-            let successStateView = try? view.implicitAnyView().find(viewWithTag: 0405)
+            let successStateView = try? view
+                .implicitAnyView()
+                .find(viewWithTag: DMLoadingViewOwnSettings.successViewTag)
             XCTAssertNotNil(successStateView,
                             "The body should render the SuccessView view for .success state")
         }) {
@@ -181,7 +198,9 @@ final class DMLoadingViewTests: XCTestCase {
         ViewHosting.host(view: testView)
         
         if let expEnvironment = testView.inspection?.inspect({ view in
-            let tapGestureView = try? view.implicitAnyView().find(viewWithTag: 0515)
+            let tapGestureView = try? view
+                .implicitAnyView()
+                .find(viewWithTag: DMLoadingViewOwnSettings.tapGestureViewTag)
             XCTAssertNotNil(tapGestureView,
                             "The body should render a tap gesture view")
             
@@ -191,6 +210,7 @@ final class DMLoadingViewTests: XCTestCase {
             XCTAssertEqual(loadingManager.loadableState,
                            .none,
                            "The loadingManager should change the state to .none")
+
         }) {
             wait(for: [expEnvironment], timeout: 0.022)
         } else {
@@ -215,7 +235,9 @@ final class DMLoadingViewTests: XCTestCase {
         ViewHosting.host(view: testView)
         
         if let expEnvironment = testView.inspection?.inspect({ view in
-            let tapGestureView = try? view.implicitAnyView().find(viewWithTag: 0515)
+            let tapGestureView = try? view
+                .implicitAnyView()
+                .find(viewWithTag: DMLoadingViewOwnSettings.tapGestureViewTag)
             XCTAssertNotNil(tapGestureView,
                             "The body should render a tap gesture view")
             
