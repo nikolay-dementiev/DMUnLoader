@@ -7,8 +7,8 @@
 import SwiftUICore
 
 public struct CustomSizeView {
-    public init(width: CGFloat? = nil,
-                height: CGFloat? = nil,
+    public init(width: CGFloat,
+                height: CGFloat,
                 alignment: Alignment = .center) {
         self.width = width
         self.height = height

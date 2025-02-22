@@ -95,15 +95,15 @@ final class DMLoadingViewTests: XCTestCase {
         let testedView = try? testView.inspect()
         XCTAssertNotNil(testedView, "The view should be rendered")
         
-        let defaultStateView = try? testedView?
+        let testedViewImplicitAnyView = try? testedView?
             .implicitAnyView()
+        let defaultStateView = try? testedViewImplicitAnyView?
             .find(viewWithTag: DMLoadingViewOwnSettings.defaultViewTag)
             .zStack()
         XCTAssertNotNil(defaultStateView,
                         "The body should render the default ZStack as a container")
         
-        let failureStateView = try? testedView?
-            .implicitAnyView()
+        let failureStateView = try? testedViewImplicitAnyView?
             .find(viewWithTag: DMLoadingViewOwnSettings.failureViewTag)
         XCTAssertNotNil(failureStateView,
                         "The body should render the ErrorView view for .failure state")

@@ -8,5 +8,5 @@ import Foundation
 @testable import DMErrorHandling
 
 struct MockDMLoadableTypeSuccess: DMLoadableTypeSuccess {
-    var description: String = "MockDMLoadableTypeSuccess"
+    var description: String = "Success!"
 }
