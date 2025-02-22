@@ -30,6 +30,15 @@ final class MockGlobalLoadingStateManager: GlobalLoadingStateManagerInternalProt
         self.unsubscribeFromLoadingManagerBlock = unsubscribeFromLoadingManager
     }
     
+    convenience init(id: UUID = UUID(),
+                     loadableState: DMLoadableType) {
+        
+        self.init(id: id,
+                  loadableState: loadableState,
+                  subscribeToLoadingManagers: { _ in },
+                  unsubscribeFromLoadingManager: { _ in })
+    }
+    
     @MainActor
     func subscribeToLoadingManagers<LLM: DMLoadingManagerInteralProtocol>(_ loadingManagers: LLM...) {
         subscribeToLoadingManagersBlock(loadingManagers)
