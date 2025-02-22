@@ -47,7 +47,8 @@ final class DMRootLoadingViewTests: XCTestCase {
         let inspectedView = try rootLoadingView.inspect()
         
         // Find the Text view inside DMRootLoadingView
-        _ = try inspectedView.find(ViewType.Text.self)
+        _ = try inspectedView
+            .find(ViewType.Text.self)
         
         // Verify that the GlobalLoadingStateManager was passed to the content
         XCTAssertNotNil(capturedManager, "GlobalLoadingStateManager was not passed to the content")
@@ -64,7 +65,9 @@ final class DMRootLoadingViewTests: XCTestCase {
         
         let rootLoadingView = makeTestRootView(content: contentView)
         
-        let inspectedView = try rootLoadingView.inspect().find(ViewType.Text.self)
+        let inspectedView = try rootLoadingView
+            .inspect()
+            .find(ViewType.Text.self)
         let text = try inspectedView.string()
         
         // Ensure that the text "Test Content" is present
