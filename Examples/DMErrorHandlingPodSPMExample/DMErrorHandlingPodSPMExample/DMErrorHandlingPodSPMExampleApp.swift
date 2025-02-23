@@ -1,8 +1,7 @@
 //
-//  DMErrorHandlingPodSPMExampleApp.swift
 //  DMErrorHandlingPodExample
 //
-//  Created by Nikolay Dementiev on 22.01.2025.
+//  Created by Mykola Dementiev
 //
 
 
@@ -51,6 +50,7 @@ struct DMErrorHandlingPodSPMExampleApp: App {
         }
     }
 }
+
 #endif
 
 
@@ -65,7 +65,7 @@ internal struct AppDelegateHelper {
         appDescriprtion += "\nFramework: `SwiftUI`"
 #endif
         
-        appDescriprtion += "\nUses dependency manager: `\(getDependencyManager() ?? "???")`"
+        appDescriprtion += "\nDependency manager: `\(getDependencyManager() ?? "???")`"
     }
     
     static func addAppDescriprtion(_ newString: String) {

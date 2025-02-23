@@ -1,23 +1,28 @@
 //
-//  File.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 22.01.2025.
+//  Created by Mykola Dementiev
 //
 
 import SwiftUI
 
 public extension View {
-    func autoLoading<Provider: DMLoadingViewProvider>(_ loadingManager: DMLoadingManager,
-                                                      provider: Provider) -> some View {
+    internal func autoLoading<Provider: DMLoadingViewProviderProtocol,
+                              LLM: DMLoadingManagerInteralProtocol>
+    (_ loadingManager: LLM,
+     provider: Provider,
+     modifier: DMLoadingModifier<Provider, LLM>? = nil) -> some View {
         self
             .environmentObject(loadingManager)
             .environmentObject(provider)
-            .modifier(DMLoadingModifier(loadingManager: loadingManager, provider: provider))
+            .modifier(modifier ?? DMLoadingModifier(loadingManager: loadingManager, provider: provider))
     }
     
-    internal func subscribeToGloabalLoadingManagers(localManager localLoadingManager: DMLoadingManager,
-                                                    globalManager globalLoadingManager: GlobalLoadingStateManager?) {
+    internal func subscribeToGloabalLoadingManagers<GLM: GlobalLoadingStateManagerInternalProtocol,
+                                                    LLM: DMLoadingManagerInteralProtocol>
+    (localManager localLoadingManager: LLM,
+     globalManager globalLoadingManager: GLM?) {
+        
         guard let globalLoadingManager else {
             print("\(#function): @Environment(\\.gloabalLoadingManager) doesn't contains required value")
             return
@@ -26,8 +31,11 @@ public extension View {
         globalLoadingManager.subscribeToLoadingManagers(localLoadingManager)
     }
     
-    internal func unsubscribeFromLoadingManager(localManager localLoadingManager: DMLoadingManager,
-                                                globalManager globalLoadingManager: GlobalLoadingStateManager?) {
+    internal func unsubscribeFromLoadingManager<GLM: GlobalLoadingStateManagerInternalProtocol,
+                                                LLM: DMLoadingManagerInteralProtocol>
+    (localManager localLoadingManager: LLM,
+     globalManager globalLoadingManager: GLM?) {
+        
         guard let globalLoadingManager else {
             print("\(#function): @Environment(\\.gloabalLoadingManager) doesn't contains required value")
             return
@@ -36,7 +44,8 @@ public extension View {
         globalLoadingManager.unsubscribeFromLoadingManager(localLoadingManager)
     }
     
-    internal func rootLoading(globalManager globalLoadingManager: GlobalLoadingStateManager) -> some View {
+    internal func rootLoading<GLM: GlobalLoadingStateManagerInternalProtocol>
+    (globalManager globalLoadingManager: GLM) -> some View where GLM: GlobalLoadingStateManager {
         self
             .environment(\.globalLoadingManager, globalLoadingManager)
             .modifier(DMRootLoadingModifier(globalLoadingStateManager: globalLoadingManager))

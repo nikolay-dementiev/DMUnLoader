@@ -1,20 +1,23 @@
 //
-//  LoadingWrapper.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 01.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import SwiftUI
 
-public struct DMLocalLoadingView<Content: View, Provider: DMLoadingViewProvider>: View {
+public struct DMLocalLoadingView<Content: View, Provider: DMLoadingViewProviderProtocol>: View {
     private let provider: Provider
     private let content: () -> Content
+    
+#if DEBUG
+   internal let inspection: Inspection<Self>? = getInspectionIfAvailable()
+#endif
     
     @StateObject internal var loadingManager: DMLoadingManager
     @Environment(\.globalLoadingManager) internal var globalLoadingManager
     
-    //uses for UIKit's approach to obtain Loading Manager object
+    // uses for UIKit's approach to obtain Loading Manager object
     private(set) internal var getLoadingManager: () -> DMLoadingManager
 
     public init(provider: Provider,
@@ -42,5 +45,10 @@ public struct DMLocalLoadingView<Content: View, Provider: DMLoadingViewProvider>
                 unsubscribeFromLoadingManager(localManager: loadingManager,
                                               globalManager: globalLoadingManager)
             }
+#if DEBUG
+           .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in
+               inspection?.visit(self, $0)
+           }
+#endif
     }
 }

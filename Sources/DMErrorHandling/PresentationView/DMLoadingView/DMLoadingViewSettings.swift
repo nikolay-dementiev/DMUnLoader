@@ -1,8 +1,7 @@
 //
-//  DMLoadingViewSettings.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 03.02.2025.
+//  Created by Mykola Dementiev
 //
 import SwiftUICore
 
@@ -14,7 +13,7 @@ public protocol DMLoadingViewSettings {
     var frameGeometrySize: CGSize { get }
 }
 
-///Default `Loading` settings implementation
+/// Default `Loading` settings implementation
 public struct DMLoadingDefaultViewSettings: DMLoadingViewSettings {
     public let loadingTextProperties: LoadingTextProperties
     public let progressIndicatorProperties: ProgressIndicatorProperties

@@ -1,10 +1,13 @@
 //
-//  DebugLayout.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 25.01.2025.
+//  Created by Mykola Dementiev
 //
 
+/*
+ 
+ Uncomment it only when needed!
+ 
 import SwiftUI
 
 internal struct DebugLayout: Layout {
@@ -56,9 +59,10 @@ internal extension View {
     
     func printChanges() -> Self {
 #if DEBUG
+        // swiftlint:disable:next redundant_discardable_let
         let _ = Self._printChanges()
 #endif
         return self
     }
 }
-
+*/

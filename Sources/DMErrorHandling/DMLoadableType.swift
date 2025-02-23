@@ -1,8 +1,7 @@
 //
-//  DMLoadableType.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 16.01.2025.
+//  Created by Mykola Dementiev
 //
 
 public enum DMLoadableType: Hashable, RawRepresentable {

@@ -1,8 +1,7 @@
 //
-//  DMViewControllerTopLevel.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 06.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import Combine
@@ -13,23 +12,40 @@ public protocol DMViewControllerTopLevel: AnyObject {
     var cancellableTopLevelView: Set<AnyCancellable> { get set }
 }
 
+internal extension DMViewControllerTopLevel {
+    var subscribedObjects: NSHashTable<AnyObject> {
+        get {
+            DMViewControllerTopLevelSubscriptionHolder
+                .shared
+                .subscribedObjects
+        }
+        set {
+            DMViewControllerTopLevelSubscriptionHolder
+                .shared
+                .subscribedObjects = newValue
+        }
+    }
+}
+
 public extension DMViewControllerTopLevel {
     var cancellableTopLevelView: Set<AnyCancellable> {
         get {
-            DMViewControllerTopLevelSubscriptionHolder.shared.cancellableTopLevelView
+            DMViewControllerTopLevelSubscriptionHolder
+                .shared
+                .cancellableTopLevelView
         }
         set(newValue) {
-            let existingCancellables = DMViewControllerTopLevelSubscriptionHolder.shared.cancellableTopLevelView
-            
-            // Only add new elements that are not already in the global set
-            let newCancellables = newValue.subtracting(existingCancellables)
-            
-            // Merge into the global storage
-            DMViewControllerTopLevelSubscriptionHolder.shared.cancellableTopLevelView.formUnion(newCancellables)
+            DMViewControllerTopLevelSubscriptionHolder
+                .shared
+                .cancellableTopLevelView = newValue
         }
     }
     
     func subscribeToLoadingStateChange(from manager: GlobalLoadingStateManager) {
+        guard !subscribedObjects.contains(self) else {
+            return
+        }
+        
         manager.$loadableState
             .receive(on: DispatchQueue.main)
             .removeDuplicates()
@@ -37,11 +53,14 @@ public extension DMViewControllerTopLevel {
                 self?.handleLoadingStateChange(state)
             }
             .store(in: &cancellableTopLevelView)
+        
+        subscribedObjects.add(self)
     }
 }
 
-fileprivate struct DMViewControllerTopLevelSubscriptionHolder {
+private struct DMViewControllerTopLevelSubscriptionHolder {
     nonisolated(unsafe) static var shared = Self()
     
     var cancellableTopLevelView: Set<AnyCancellable> = []
+    var subscribedObjects = NSHashTable<AnyObject>.weakObjects()
 }

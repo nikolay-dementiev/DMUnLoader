@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		2F5A624A2D57CCA900AA32BA /* DMErrorHandling in Frameworks */ = {isa = PBXBuildFile; productRef = 2F5A62492D57CCA900AA32BA /* DMErrorHandling */; };
 		2FEE98DB2D58EA7100DB112D /* .dependency_manager in Resources */ = {isa = PBXBuildFile; fileRef = 2FEE98DA2D58EA7100DB112D /* .dependency_manager */; };
-		84CC1D405550155488890602 /* Pods_DMErrorHandlingPodSPMExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9B7B3D8208205D1AA6129E5 /* Pods_DMErrorHandlingPodSPMExample.framework */; };
+		E6655D68CE6CCE62836D7A91 /* Pods_DMErrorHandlingPodSPMExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D5C9D9594DB4B1A7318AAA47 /* Pods_DMErrorHandlingPodSPMExample.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,13 +24,15 @@
 		B89EFE22B299BBE15E2E570E /* Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-pod-swiftui.xcconfig"; sourceTree = "<group>"; };
 		B9DF017FE30821BE1680E02B /* Pods-DMErrorHandlingPodSPMExample.debug-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodSPMExample.debug-uikit.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodSPMExample/Pods-DMErrorHandlingPodSPMExample.debug-uikit.xcconfig"; sourceTree = "<group>"; };
 		CFA0C0796F6DBE14855DFB4A /* Pods-DMErrorHandlingPodSPMExample.debug-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodSPMExample.debug-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodSPMExample/Pods-DMErrorHandlingPodSPMExample.debug-swiftui.xcconfig"; sourceTree = "<group>"; };
-		D9B7B3D8208205D1AA6129E5 /* Pods_DMErrorHandlingPodSPMExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DMErrorHandlingPodSPMExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5C9D9594DB4B1A7318AAA47 /* Pods_DMErrorHandlingPodSPMExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DMErrorHandlingPodSPMExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC87B92D5B3FC7B609EF5472 /* Pods-DMErrorHandlingPodExample.debug-spm-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DMErrorHandlingPodExample.debug-spm-swiftui.xcconfig"; path = "Target Support Files/Pods-DMErrorHandlingPodExample/Pods-DMErrorHandlingPodExample.debug-spm-swiftui.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2FA647622D40F00000BB3D6F /* DMErrorHandlingPodSPMExample */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
 			path = DMErrorHandlingPodSPMExample;
 			sourceTree = "<group>";
 		};
@@ -42,7 +44,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F5A624A2D57CCA900AA32BA /* DMErrorHandling in Frameworks */,
-				84CC1D405550155488890602 /* Pods_DMErrorHandlingPodSPMExample.framework in Frameworks */,
+				E6655D68CE6CCE62836D7A91 /* Pods_DMErrorHandlingPodSPMExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,7 +90,7 @@
 		3B42E53268E896EF029E14F1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D9B7B3D8208205D1AA6129E5 /* Pods_DMErrorHandlingPodSPMExample.framework */,
+				D5C9D9594DB4B1A7318AAA47 /* Pods_DMErrorHandlingPodSPMExample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -104,7 +106,7 @@
 				2FA6475C2D40F00000BB3D6F /* Sources */,
 				2FA6475D2D40F00000BB3D6F /* Frameworks */,
 				2FA6475E2D40F00000BB3D6F /* Resources */,
-				6ED22A3889643632AA788B79 /* [CP] Embed Pods Frameworks */,
+				7F9EF240BD296C443D1790D8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -143,7 +145,7 @@
 			mainGroup = 2FA647572D40F00000BB3D6F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2F5A62482D57CCA900AA32BA /* XCLocalSwiftPackageReference "../../../DMErrorHandling" */,
+				2F5A62482D57CCA900AA32BA /* XCLocalSwiftPackageReference "DMErrorHandling" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2FA647612D40F00000BB3D6F /* Products */;
@@ -167,23 +169,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6ED22A3889643632AA788B79 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DMErrorHandlingPodSPMExample/Pods-DMErrorHandlingPodSPMExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DMErrorHandlingPodSPMExample/Pods-DMErrorHandlingPodSPMExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DMErrorHandlingPodSPMExample/Pods-DMErrorHandlingPodSPMExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7C4D5C4605F5ED9198883A23 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -204,6 +189,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7F9EF240BD296C443D1790D8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DMErrorHandlingPodSPMExample/Pods-DMErrorHandlingPodSPMExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DMErrorHandlingPodSPMExample/Pods-DMErrorHandlingPodSPMExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DMErrorHandlingPodSPMExample/Pods-DMErrorHandlingPodSPMExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -429,7 +431,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		2F5A62482D57CCA900AA32BA /* XCLocalSwiftPackageReference "../../../DMErrorHandling" */ = {
+		2F5A62482D57CCA900AA32BA /* XCLocalSwiftPackageReference "DMErrorHandling" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../../DMErrorHandling;
 		};

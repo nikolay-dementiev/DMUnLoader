@@ -1,8 +1,7 @@
 //
-//  MainTabViewControllerUIKit.swift
 //  DMErrorHandlingPodExample
 //
-//  Created by Nikolay Dementiev on 03.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import UIKit
@@ -13,7 +12,7 @@ final class MainTabViewControllerUIKit: UITabBarController {
     
     private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
     
-    internal init(manager: GlobalLoadingStateManager? = nil) {
+    internal init(manager: GlobalLoadingStateManager) {
         self.globalLoadingManager = manager
         super.init(nibName: nil, bundle: nil)
     }
@@ -71,6 +70,7 @@ extension MainTabViewControllerUIKit: DMViewControllerTopLevel {
 }
 
 // MARK: - View Controllers for tabs
+
 final class DefaultSettingsViewController: UIViewController {
     private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
     

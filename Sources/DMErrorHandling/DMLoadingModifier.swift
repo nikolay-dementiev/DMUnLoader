@@ -1,20 +1,23 @@
 //
-//  DMLoadingModifier.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 24.01.2025.
+//  Created by Mykola Dementiev
 //
 
 import SwiftUICore
 import Combine
 
 /// Modifier to add LoadingView to any View
-internal struct DMLoadingModifier<Provider: DMLoadingViewProvider>: ViewModifier {
-    @ObservedObject internal var loadingManager: DMLoadingManager
+internal struct DMLoadingModifier<Provider: DMLoadingViewProviderProtocol,
+                                  LLM: DMLoadingManagerInteralProtocol>: ViewModifier {
+ #if DEBUG
+    internal let inspection: Inspection<Self>? = getInspectionIfAvailable()
+ #endif
     
+    @ObservedObject internal var loadingManager: LLM
     internal var provider: Provider
     
-    public func body(content: Content) -> some View {
+    internal func body(content: Content) -> some View {
         let isLoading = loadingManager.loadableState != .none
         
         return ZStack {
@@ -25,5 +28,11 @@ internal struct DMLoadingModifier<Provider: DMLoadingViewProvider>: ViewModifier
             DMLoadingView(loadingManager: loadingManager,
                           provider: provider)
         }
+
+ #if DEBUG
+        .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in
+            inspection?.visit(self, $0)
+        }
+ #endif
     }
 }

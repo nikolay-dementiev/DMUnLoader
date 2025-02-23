@@ -1,8 +1,7 @@
 //
-//  RootViewController.swift
 //  DMErrorHandlingPodExample
 //
-//  Created by Nikolay Dementiev on 03.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import UIKit
@@ -11,26 +10,32 @@ import SwiftUI
 public final class DMRootViewControllerUIKit<ContentView: UIView>: UIViewController {
     
     private var hostingController: UIHostingController<DMRootLoadingView<DMWrappedViewUIKit<ContentView>>>?
-    private var rootContentView: DMRootLoadingView<DMWrappedViewUIKit<ContentView>>
+    private(set) internal var rootContentView: DMRootLoadingView<DMWrappedViewUIKit<ContentView>>
     
     // Making custom `binding` to obtain the Loading Manager object
     public var getLoadingManager: () -> GlobalLoadingStateManager {
         rootContentView.getLoadingManager
     }
     
-    public init(contentView: ContentView = UIView()) {
-        // Creating a SwiftUI view
-        let rootView = DMRootLoadingView { _ in
-            // Using UIKit Views as Content for Root SwiftUI Views
-            DMWrappedViewUIKit(uiView: contentView)
-        }
-        self.rootContentView = rootView
+    public init(rootContentView: DMRootLoadingView<DMWrappedViewUIKit<ContentView>>) {
+        self.rootContentView = rootContentView
         
         super.init(nibName: nil, bundle: nil)
     }
     
+    public convenience init(contentView: ContentView = UIView()) {
+        // Creating a SwiftUI view
+        let rootContentView = DMRootLoadingView { _ in
+            // Using UIKit Views as Content for Root SwiftUI Views
+            DMWrappedViewUIKit(uiView: contentView)
+        }
+        
+        self.init(rootContentView: rootContentView)
+    }
+    
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        print("init(coder:) has not been implemented")
+        return nil
     }
     
     public override func viewDidLoad() {

@@ -1,15 +1,14 @@
 //
-//  Optional+Protocol.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 03.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import Foundation
 
 internal protocol OptionalProtocol {
     func isSomeValue() -> Bool
-    func unwrapValue() -> Any
+    func unwrapValue() throws -> Any
 }
 
 extension Optional: OptionalProtocol {
@@ -22,12 +21,26 @@ extension Optional: OptionalProtocol {
         }
     }
 
-    func unwrapValue() -> Any {
+    func unwrapValue() throws -> Any {
         switch self {
         case .none:
-            preconditionFailure("trying to unwrap nil")
+            throw OptionalError.unwrappingNil
         case .some(let unwrapped):
             return unwrapped
+        }
+    }
+    
+    private func unwrapUsingProtocol<ObjType>(_ any: ObjType) -> Any {
+        guard let optional = any as? OptionalProtocol,
+                optional.isSomeValue() else {
+            return any
+        }
+        
+        do {
+            let unwrapedValue = try optional.unwrapValue()
+            return unwrapUsingProtocol(unwrapedValue)
+        } catch {
+            return any
         }
     }
 }
@@ -36,14 +49,6 @@ internal extension Optional where Wrapped: Collection {
     var isNilOrEmpty: Bool {
         return self?.isEmpty ?? true
     }
-}
-
-fileprivate func unwrapUsingProtocol<ObjType>(_ any: ObjType) -> Any {
-    guard let optional = any as? OptionalProtocol,
-            optional.isSomeValue() else {
-        return any
-    }
-    return unwrapUsingProtocol(optional.unwrapValue())
 }
 
 internal extension Optional where Wrapped == String {
@@ -67,6 +72,9 @@ internal extension Optional where Wrapped == String {
     }
 }
 
+internal enum OptionalError: Error {
+    case unwrappingNil
+}
 
 @objc
 fileprivate extension NSString {

@@ -1,6 +1,6 @@
 {
   "name": "DMErrorHandling",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "summary": "Error handling SDK",
   "description": "TODO: Add long description of the pod here.",
   "homepage": "https://github.com/nikolay-dementiev/DMErrorHandling",
@@ -17,7 +17,7 @@
   },
   "source": {
     "git": "https://github.com/nikolay-dementiev/DMErrorHandling.git",
-    "tag": "v0.1.25"
+    "tag": "v0.1.26"
   },
   "source_files": "Sources/**/*.{swift,h,m,c}",
   "exclude_files": [

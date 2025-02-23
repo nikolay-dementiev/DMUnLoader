@@ -1,8 +1,7 @@
 //
-//  DMErrorViewSettings.swift
 //  DMErrorHandling
 //
-//  Created by Nikolay Dementiev on 03.02.2025.
+//  Created by Mykola Dementiev
 //
 
 import SwiftUICore
@@ -16,7 +15,7 @@ public protocol DMErrorViewSettings {
     var errorImageSettings: ErrorImageSettings { get }
 }
 
-///Default `Error` settings implementation
+/// Default `Error` settings implementation
 public struct DMErrorDefaultViewSettings: DMErrorViewSettings {
     public let errorText: String?
     public let actionButtonCloseSettings: ActionButtonSettings
@@ -28,6 +27,7 @@ public struct DMErrorDefaultViewSettings: DMErrorViewSettings {
                 actionButtonCloseSettings: ActionButtonSettings = ActionButtonSettings(text: "Close"),
                 actionButtonRetrySettings: ActionButtonSettings = ActionButtonSettings(text: "Retry"),
                 errorTextSettings: ErrorTextSettings = ErrorTextSettings(),
+                // swiftlint:disable:next line_length
                 errorImageSettings: ErrorImageSettings = ErrorImageSettings(image: Image(systemName: "exclamationmark.triangle"))) {
         
         self.errorText = errorText
