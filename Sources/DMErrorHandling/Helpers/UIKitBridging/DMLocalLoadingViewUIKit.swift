@@ -7,7 +7,8 @@
 import SwiftUI
 import UIKit
 
-open class DMLocalLoadingViewUIKit<UIKitView: UIView, Provider: DMLoadingViewProviderProtocol>: UIView {
+open class DMLocalLoadingViewUIKit<UIKitView: UIView,
+                                    Provider: DMLoadingViewProviderProtocol>: UIView {
     private typealias HostingContent = DMLocalLoadingView<DMWrappedViewUIKit<UIKitView>, Provider>
     private let hostingController: UIHostingController<AnyView>
     
@@ -30,15 +31,9 @@ open class DMLocalLoadingViewUIKit<UIKitView: UIView, Provider: DMLoadingViewPro
     }
     
     required public init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        print("init(coder:) has not been implemented")
+        return nil
     }
-    
-    /*
-    // Content updates (if necessary)
-    public func updateContent(provider: Provider, view: View) {
-        hostingController.rootView = Self.makeSwiftUIView(provider: provider, view: view)
-    }
-    */
 
     private func setupUI() {
         guard let view = hostingController.view else { return }
