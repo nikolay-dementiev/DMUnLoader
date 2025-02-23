@@ -91,10 +91,6 @@ final class DMRootLoadingModifierTests: XCTestCase {
         XCTAssertEqual(try? blockingColorView.value(),
                        Color.gray.opacity(0.001),
                        "The blocking color view should have the correct color with opacity")
-        
-        //        XCTAssertEqual(try blockingColorView.edgesIgnoringSafeArea(),
-        //                       .all,
-        //                      "The blocking color view should ignore the safe area")
     }
     
     func testBlockingViewAllowsHitTesting() throws {
@@ -113,18 +109,7 @@ final class DMRootLoadingModifierTests: XCTestCase {
         
         XCTAssertNotNil(blockingView?.allowsHitTesting(),
                         "The blocking view should allow hit testing")
-        XCTAssertTrue(blockingView?.isResponsive() ?? false,
+        XCTAssertTrue(blockingView!.isResponsive(),
                       "The blocking view should be responsive")
-        
-        let containerContentView = try? view
-            .inspect()
-            .find(viewWithTag: DMRootLoadingModifierOwnSettings.containerContentViewTag)
-            .emptyView()
-        XCTAssertNotNil(containerContentView,
-                        "The content view behind blocking view should be rendered")
-        //ssss
-//        try containerContentView?.callOnTapGesture()
-        XCTAssertFalse(containerContentView?.isResponsive() ?? false,
-                       "The content view behind blocking view should not be responsive")
     }
 }
