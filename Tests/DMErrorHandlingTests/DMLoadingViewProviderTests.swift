@@ -7,6 +7,7 @@
 import XCTest
 @testable import DMErrorHandling
 import SwiftUI
+import DMAction
 
 final class DMLoadingViewProviderTests: XCTestCase {
     

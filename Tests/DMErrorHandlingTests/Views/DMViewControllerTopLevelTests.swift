@@ -8,6 +8,7 @@ import XCTest
 @testable import DMErrorHandling
 import Combine
 import UIKit
+import DMAction
 
 final class DMViewControllerTopLevelTests: XCTestCase {
     

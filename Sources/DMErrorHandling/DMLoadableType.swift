@@ -4,6 +4,8 @@
 //  Created by Mykola Dementiev
 //
 
+import DMAction
+
 public enum DMLoadableType: Hashable, RawRepresentable {
     public typealias RawValue = String
     

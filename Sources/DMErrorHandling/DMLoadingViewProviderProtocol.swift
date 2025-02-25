@@ -5,6 +5,7 @@
 //
 
 import SwiftUI
+import DMAction
 
 /// Protocol for configuring LoadingView
 public protocol DMLoadingViewProviderProtocol: ObservableObject, Identifiable, Hashable {

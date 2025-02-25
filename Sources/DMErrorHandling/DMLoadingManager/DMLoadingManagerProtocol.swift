@@ -6,6 +6,7 @@
 
 import Foundation
 import Combine
+import DMAction
 
 @MainActor
 public protocol DMLoadingManagerProtocol: Identifiable, ObservableObject {

@@ -6,6 +6,7 @@
 
 import XCTest
 @testable import DMErrorHandling
+import DMAction
 
 final class DMLoadableTypeTests: XCTestCase {
     
