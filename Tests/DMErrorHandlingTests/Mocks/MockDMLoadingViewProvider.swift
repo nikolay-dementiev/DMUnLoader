@@ -8,6 +8,7 @@ import SwiftUI
 import XCTest
 import Combine
 @testable import DMErrorHandling
+import DMAction
 
 final class MockDMLoadingViewProvider: DMLoadingViewProviderProtocol {
     typealias LoadingViewType = Text

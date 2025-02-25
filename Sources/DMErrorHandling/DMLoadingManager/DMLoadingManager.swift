@@ -6,6 +6,7 @@
 
 import Foundation
 import Combine
+import DMAction
 
 /// ViewModel to handle loading state
 @MainActor
