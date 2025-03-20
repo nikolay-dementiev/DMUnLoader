@@ -8,7 +8,6 @@ import XCTest
 @testable import DMErrorHandling
 import SwiftUI
 import ViewInspector
-import DMAction
 
 final class DMErrorViewTests: XCTestCase {
     

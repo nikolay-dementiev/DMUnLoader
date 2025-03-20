@@ -6,26 +6,51 @@
 
 import Foundation
 
+/// A protocol representing an error type that conforms to both `Error` and `LocalizedError`.
+/// This allows errors to provide localized descriptions for user-facing messages.
 public protocol DMError: Error, LocalizedError {
 }
 
+/// An enumeration representing various types of application-specific errors.
+/// Conforms to `DMError` and provides localized descriptions for each case.
 public enum DMAppError: DMError {
+    
+    /// Indicates an error related to resource availability or access.
+    /// - Parameter type: The specific type of resource error.
     case resourceError(type: ResourceError)
+    
+    /// Indicates an error related to network operations.
+    /// - Parameter type: The specific type of network error.
     case network(type: NetworkError)
+    
+    /// Represents a custom error with an optional description.
+    /// - Parameter errorDescription: A custom error message.
     case custom(_ errorDescription: String?)
     
+    /// Wraps a general error conforming to `DMError`.
+    /// - Parameter error: The underlying error.
     case generalError(DMError)
 }
 
+/// Extensions for `DMAppError` to define associated types and localized error descriptions.
 public extension DMAppError {
+    
+    /// An enumeration representing errors related to resource access.
     enum ResourceError: DMError {
+        /// Indicates that the requested resource is not available.
         case notAvailable
+        
+        /// Wraps an underlying error related to resource access.
+        /// - Parameter error: The underlying error.
         case error(Error)
     }
 }
 
-/// Localized error
+/// Conformance to `LocalizedError` for `DMAppError`.
 extension DMAppError: LocalizedError {
+    
+    /// Provides a localized description for the error.
+    /// - Returns: A string describing the error in a user-friendly manner.
     public var errorDescription: String? {
         switch self {
         case .resourceError(let type):
@@ -40,51 +65,69 @@ extension DMAppError: LocalizedError {
     }
 }
 
-// MARK: - Connection Errors
-/// Connection Errors Enums
-/// It pass-through any URLErrors that happen and add its own
+// MARK: Connection Errors
+
+/// An enumeration representing errors related to network operations.
+/// It includes pass-through `URLError` cases and custom network-related errors.
 extension DMAppError {
     public enum NetworkError: DMError {
-        ///    When network conditions are so bad that after `maxRetries` the request did not succeed.
+        
+        /// Indicates that the network is inaccessible due to poor conditions after multiple retries.
         case inaccessible
-
-        ///    `URLSession` errors are passed-through, handle as appropriate.
+        
+        /// Wraps a `URLError` from `URLSession`.
+        /// - Parameter urlError: The underlying `URLError`.
         case urlError(URLError)
-
-        ///    URLSession returned an `Error` object which is not `URLError`
+        
+        /// Wraps a general `Error` object that is not a `URLError`.
+        /// - Parameter error: The underlying error.
         case generalError(Swift.Error)
-
-        ///    When no `URLResponse` is returned but also no `URLError` or any other `Error` instance.
+        
+        /// Indicates that no response was received from the server.
         case noResponse
-
-        ///    When `URLResponse` is not `HTTPURLResponse`.
+        
+        /// Indicates that the response type is invalid (not an `HTTPURLResponse`).
+        /// - Parameter response: The invalid response.
         case invalidResponseType(URLResponse)
-
-        ///    Status code is in `200...299` range, but response body is empty. This can be both
-        ///    valid and invalid, depending on HTTP method and/or specific behavior of the service being called.
+        
+        /// Indicates that the server returned an empty response body for a valid status code.
+        /// - Parameter httpResponse: The `HTTPURLResponse` with no data.
         case noResponseData(HTTPURLResponse)
-
-        ///    Status code is `400` or higher thus return the entire `HTTPURLResponse` and `Data`
-        ///    so caller can figure out what happened.
+        
+        /// Indicates an endpoint error with a status code of 400 or higher.
+        /// - Parameters:
+        ///   - httpResponse: The `HTTPURLResponse` containing the status code.
+        ///   - data: Optional response data.
         case endpointError(HTTPURLResponse, Data?)
         
-        /// custom error
+        /// Represents a custom network error with an optional error code and description.
+        /// - Parameters:
+        ///   - errorCode: An optional error code.
+        ///   - errorDescription: An optional error message.
         case custom(errorCode: Int?, errorDescription: String?)
     }
 }
 
-// Extend NSError to conform to DMError
+// MARK: - Extend NSError to Conform to DMError
+
+/// Extends `NSError` to conform to `DMError` and `LocalizedError`.
 extension NSError: @retroactive LocalizedError {
-    // Implement LocalizedError's `errorDescription`
+    
+    /// Provides a localized description for the error.
+    /// - Returns: A string describing the error in a user-friendly manner.
     public var errorDescription: String? {
         return self.localizedDescription
     }
 }
 extension NSError: DMError { }
 
-// MARK: - Localized error text
+// MARK: - Localized Error Text
 
+/// Conformance to `LocalizedError` for `DMAppError.NetworkError`.
 extension DMAppError.NetworkError: LocalizedError {
+    
+    /// Provides a localized description for the network error.
+    /// - Returns: A string describing the error in a user-friendly manner.
     public var errorDescription: String? {
         switch self {
         case .inaccessible:
@@ -107,7 +150,11 @@ extension DMAppError.NetworkError: LocalizedError {
     }
 }
 
+/// Conformance to `LocalizedError` for `DMAppError.ResourceError`.
 extension DMAppError.ResourceError: LocalizedError {
+    
+    /// Provides a localized description for the resource error.
+    /// - Returns: A string describing the error in a user-friendly manner.
     public var errorDescription: String? {
         switch self {
         case .notAvailable:

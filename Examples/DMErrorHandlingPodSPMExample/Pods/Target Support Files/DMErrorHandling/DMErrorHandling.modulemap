@@ -1,6 +1,0 @@
-framework module DMErrorHandling {
-  umbrella header "DMErrorHandling-umbrella.h"
-
-  export *
-  module * { export * }
-}
