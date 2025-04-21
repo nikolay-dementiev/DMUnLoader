@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DMErrorHandling'
-  s.version          = '0.1.24'
+  s.version          = '0.1.28'
   s.summary          = 'Error handling SDK'
   s.description      = <<-DESC
   
@@ -29,6 +29,8 @@ TODO: Add long description of the pod here.
   else
     s.swift_version = '5.0'
   end
+  s.frameworks = 'UIKit', 'SwiftUI'
+  s.dependency 'DMAction'
   
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'

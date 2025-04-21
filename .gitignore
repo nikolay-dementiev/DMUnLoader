@@ -60,4 +60,5 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
-/Examples/DMErrorHandlingPodExample/Pods
+/Examples/DMErrorHandlingPodSPMExample/Pods
+/Examples/DMErrorHandlingPodSPMExample/build

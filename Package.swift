@@ -7,13 +7,9 @@ import PackageDescription
 
 let package = Package(
     name: "DMErrorHandling",
-//    defaultLocalization: "en",
     platforms: [
-//        .macOS(.v10_13),
-        .iOS(.v16),
-//        .tvOS(.v12),
+        .iOS(.v17),
         .watchOS(.v7),
-//        .visionOS(.v1),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -25,27 +21,24 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/GayleDunham/SwiftLintPlugin.git", branch: "main"),
-        .package(url: "https://github.com/Quick/Quick.git", from: "7.0.0"),
-        .package(url: "https://github.com/Quick/Nimble.git", from: "12.0.0")
+        .package(url: "https://github.com/nalexn/ViewInspector", from: "0.10.1"),
+        .package(url: "https://github.com/nikolay-dementiev/DMAction.git", branch: "main")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "DMErrorHandling",
+            dependencies: ["DMAction"],
             path: "Sources",
-            exclude: [
-                "Deprecated",
-                "Examples"
-                     /*,"Sources/DMErrorHandling/Helpers/Extensions"*/
-            ],
+            sources: ["DMErrorHandling"],
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
         .testTarget(
             name: "DMErrorHandlingTests",
             dependencies: ["DMErrorHandling",
-                           "Nimble",
-                           "Quick"],
+                           "ViewInspector",
+                           "DMAction"],
             path: "Tests",
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
