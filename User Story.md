@@ -21,7 +21,7 @@ so that users can understand what is happening in the app at any given moment, i
 ### `Error` State:
 1. If an error occurs during an operation, the client should be notified so it can use this library to display an `Error` Screen.
 2. The `Error` Screen must include:
-- A clear error message explaining what went wrong (e.g., "Failed to load data. Please check your internet connection.").
+- A clear **localized** error message explaining what went wrong (e.g., "Failed to load data. Please check your internet connection.").
 - An option to retry the operation. The user should be allowed to retry the operation 0+ times (i.e. configurable number of attempts) before showing the error again.
 
 ### `Success` State
@@ -70,3 +70,11 @@ The `Success` Screen then displays a **default** success image (e.g., a checkmar
 #### Notes on Null View
 - A `null` view is useful when the app does not require any initial content or when the UI is dynamically populated based on user actions or external data.
 - In a `null` view, the screen remains visually empty or hidden until another state (e.g., Loading, Error, or Success) is triggered.
+
+#### Key Localization Considerations
+- Default Screens: All text displayed on default screens (e.g., `Loading`, `Error`, `Success`) must be localized based on the user's language settings. The library should provide built-in support for multiple languages ( en, fr, ...) or pick localized string from developer's interface if that value is available (developer should provide dictionary with localized text strings for various keys that uses in library) **TODO!!!**.
+> e.g.:
+```
+"loading_in_progress": "Loading..."
+```
+- Custom Screens: If developers provide their own implementations for any state screen, they are responsible for ensuring that all text is properly localized. The library **will not handle localization for custom implementations**.
