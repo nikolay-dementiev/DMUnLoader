@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "494DB115-546E-4998-A8B2-241400D3C8F7",
+      "id" : "D06DD5A5-9748-4B39-8D8B-5837ECB982D4",
       "name" : "Test Scheme Action",
       "options" : {
 
@@ -9,21 +9,7 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : {
-      "targets" : [
-        {
-          "containerPath" : "container:",
-          "identifier" : "DMErrorHandling",
-          "name" : "DMErrorHandling"
-        }
-      ]
-    },
-    "commandLineArgumentEntries" : [
-      {
-        "argument" : "--enable-inspection"
-      }
-    ],
-    "testExecutionOrdering" : "random"
+
   },
   "testTargets" : [
     {
