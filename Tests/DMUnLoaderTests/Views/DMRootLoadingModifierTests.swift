@@ -15,7 +15,7 @@ final class DMRootLoadingModifierTests: XCTestCase {
     
     @MainActor
     func testInitialization() {
-        let globalLoadingStateManager = MockGlobalLoadingStateManager(loadableState: .none)
+        let globalLoadingStateManager = MockGlobalLoadingStateManager(loadableState: .idle)
         let modifier = DMRootLoadingModifier(globalLoadingStateManager: globalLoadingStateManager)
         
         XCTAssertNotNil(modifier.globalLoadingStateManager,
@@ -26,7 +26,7 @@ final class DMRootLoadingModifierTests: XCTestCase {
     
     @MainActor
     func testRendersContainerView() throws {
-        let globalLoadingStateManager = MockGlobalLoadingStateManager(loadableState: .none)
+        let globalLoadingStateManager = MockGlobalLoadingStateManager(loadableState: .idle)
         let modifier = DMRootLoadingModifier(globalLoadingStateManager: globalLoadingStateManager)
         
         let view = EmptyView().modifier(modifier)
@@ -40,7 +40,7 @@ final class DMRootLoadingModifierTests: XCTestCase {
     }
     
     func testDoesNotRenderBlockingViewWhenNotLoading() throws {
-        let globalLoadingStateManager = MockGlobalLoadingStateManager(loadableState: .none)
+        let globalLoadingStateManager = MockGlobalLoadingStateManager(loadableState: .idle)
         // isLoading == false
         
         let modifier = DMRootLoadingModifier(globalLoadingStateManager: globalLoadingStateManager)

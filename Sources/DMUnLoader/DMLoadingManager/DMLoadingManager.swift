@@ -24,7 +24,7 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     
     /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
     /// - Note: This property is thread-safe and emits changes via `loadableStateSubject`.
-    @Published internal(set) public var loadableState: DMLoadableType = .none {
+    @Published internal(set) public var loadableState: DMLoadableType = .idle {
         willSet {
             loadableStateSubject.send(newValue)
         }
@@ -110,7 +110,7 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     ///   loadingManager.hide()
     ///   ```
     public func hide() {
-        loadableState = .none
+        loadableState = .idle
     }
     
     // MARK: Timer Management

@@ -19,7 +19,7 @@ public final class GlobalLoadingStateManager: GlobalLoadingStateManagerInternalP
     
     /// The current global loadable state, representing the combined state of all subscribed loading managers.
     /// - Note: This property is thread-safe and emits changes via Combine's `@Published`.
-    @Published internal(set) public var loadableState: DMLoadableType = .none
+    @Published internal(set) public var loadableState: DMLoadableType = .idle
     
     /// Indicates whether any of the subscribed loading managers are currently in a loading state.
     /// - Returns: `true` if the global state is `.loading`; otherwise, `false`.

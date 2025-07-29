@@ -25,7 +25,7 @@ public enum DMLoadableType: Hashable, RawRepresentable {
     case success(DMLoadableTypeSuccess)
     
     /// Indicates that no operation is currently active.
-    case none
+    case idle
     
     /// The raw value representation of the `DMLoadableType` instance.
     /// - Returns: A string describing the current state.
@@ -46,7 +46,7 @@ public enum DMLoadableType: Hashable, RawRepresentable {
             rawValueForReturn = "Error: `\(error)`"
         case .success(let message):
             rawValueForReturn = "Success: `\(message.description)`"
-        case .none:
+        case .idle:
             rawValueForReturn = "None"
         }
         

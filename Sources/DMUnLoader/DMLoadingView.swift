@@ -60,7 +60,7 @@ internal struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
         ZStack {
             let loadableState = loadingManager.loadableState
             switch loadableState {
-            case .none:
+            case .idle:
                 EmptyView()
                     .tag(DMLoadingViewOwnSettings.emptyViewTag)
             case .failure, .loading, .success:
@@ -94,7 +94,7 @@ internal struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
             switch loadingManager.loadableState {
             case .success,
                     .failure,
-                    .none:
+                    .idle:
                 loadingManager.hide()
             case .loading:
                 break

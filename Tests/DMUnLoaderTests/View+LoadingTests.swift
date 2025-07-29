@@ -69,7 +69,7 @@ final class ExtensionViewTests: XCTestCase {
     func testSubscribeToGlobalLoadingManagers() {
         
         let provider = MockDMLoadingViewProvider()
-        let localManager = DMLoadingManager(state: .none, settings: provider.loadingManagerSettings)
+        let localManager = DMLoadingManager(state: .idle, settings: provider.loadingManagerSettings)
         let globalManager = GlobalLoadingStateManager()
         
         // Create mocks
@@ -103,7 +103,7 @@ final class ExtensionViewTests: XCTestCase {
          */
         
         let provider = MockDMLoadingViewProvider()
-        let localManager = DMLoadingManager(state: .none, settings: provider.loadingManagerSettings)
+        let localManager = DMLoadingManager(state: .idle, settings: provider.loadingManagerSettings)
         let globalManager = GlobalLoadingStateManager()
         
         // Subscribe first
@@ -267,7 +267,7 @@ final class ExtensionViewTests: XCTestCase {
                        line: line)
         
         let loadingContentViewFromModifier = try modifier.zStack().first
-        let isLoading = loadingManagerFromModifier.loadableState != .none
+        let isLoading = loadingManagerFromModifier.loadableState != .idle
         XCTAssertEqual(loadingContentViewFromModifier?.isDisabled(),
                        isLoading,
                        "DMLoadingView's content should be disabled when loading (loadableState != .none)!",

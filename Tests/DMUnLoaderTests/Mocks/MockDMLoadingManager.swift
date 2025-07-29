@@ -13,13 +13,13 @@ final class MockDMLoadingManager: DMLoadingManagerInteralProtocol {
     public let id: UUID
     public let settings: DMLoadingManagerSettings
     
-    @Published public var loadableState: DMLoadableType = .none
+    @Published public var loadableState: DMLoadableType = .idle
     public var loadableStatePublisher: AnyPublisher<DMLoadableType, Never> {
         $loadableState.eraseToAnyPublisher()
     }
     
     internal init(id: UUID = UUID(),
-                  loadableState: DMLoadableType = .none,
+                  loadableState: DMLoadableType = .idle,
                   settings: DMLoadingManagerSettings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(0.2))) {
         self.id = id
         self.settings = settings
@@ -39,6 +39,6 @@ final class MockDMLoadingManager: DMLoadingManagerInteralProtocol {
     }
     
     public func hide() {
-        loadableState = .none
+        loadableState = .idle
     }
 }

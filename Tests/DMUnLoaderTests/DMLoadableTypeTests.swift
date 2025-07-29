@@ -38,7 +38,7 @@ final class DMLoadableTypeTests: XCTestCase {
     }
     
     func testRawValueForNone() {
-        let loadableType = DMLoadableType.none
+        let loadableType = DMLoadableType.idle
         XCTAssertEqual(loadableType.rawValue,
                        "None",
                        "Raw value for .none should be 'None'")
@@ -79,8 +79,8 @@ final class DMLoadableTypeTests: XCTestCase {
         let success2 = DMLoadableType.success(MockDMLoadableTypeSuccess(description: "Mock Success"))
         let success3 = DMLoadableType.success(MockDMLoadableTypeSuccess(description: "Different Success"))
         
-        let none1 = DMLoadableType.none
-        let none2 = DMLoadableType.none
+        let none1 = DMLoadableType.idle
+        let none2 = DMLoadableType.idle
         
         XCTAssertEqual(loading1,
                        loading2,
@@ -112,7 +112,7 @@ final class DMLoadableTypeTests: XCTestCase {
         let failure = DMLoadableType.failure(error: error,
                                              onRetry: DMButtonAction({}))
         let success = DMLoadableType.success(successObject)
-        let none = DMLoadableType.none
+        let none = DMLoadableType.idle
         
         var hasher = Hasher()
         loading.hash(into: &hasher)

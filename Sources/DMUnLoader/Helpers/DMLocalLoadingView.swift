@@ -49,7 +49,7 @@ public struct DMLocalLoadingView<Content: View, Provider: DMLoadingViewProviderP
         self.provider = provider
         
         // Initialize a new `DMLoadingManager` instance.
-        let newLoadingManager = DMLoadingManager(state: .none,
+        let newLoadingManager = DMLoadingManager(state: .idle,
                                                  settings: provider.loadingManagerSettings)
         self.getLoadingManager = {
             newLoadingManager

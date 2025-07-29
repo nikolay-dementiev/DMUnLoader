@@ -10,7 +10,7 @@ import Combine
 
 final class MockGlobalLoadingStateManager: GlobalLoadingStateManagerInternalProtocol {
     let id: UUID
-    @Published public var loadableState: DMLoadableType = .none
+    @Published public var loadableState: DMLoadableType = .idle
     
     var isLoading: Bool {
         return loadableState == .loading

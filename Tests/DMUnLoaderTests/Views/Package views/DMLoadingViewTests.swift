@@ -36,7 +36,7 @@ final class DMLoadingViewTests: XCTestCase {
                                      provider: provider)
         
         XCTAssertEqual(loadingManager.loadableState,
-                       .none,
+                       .idle,
                        "Initial state should be .none")
         
         let testedView = try? testView.inspect()
@@ -178,7 +178,7 @@ final class DMLoadingViewTests: XCTestCase {
                          "The view should be able to call the tap gesture")
         
         XCTAssertEqual(loadingManager.loadableState,
-                       .none,
+                       .idle,
                        """
                        The loadingManager should change the state to .none;
                        Instead set`\(loadingManager.loadableState)`

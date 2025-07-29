@@ -31,7 +31,7 @@ internal struct DMLoadingModifier<Provider: DMLoadingViewProviderProtocol,
     ///   - When the `loadingManager.loadableState` is not `.none`, the content is blurred and disabled.
     ///   - A loading view (`DMLoadingView`) is displayed on top of the content.
     internal func body(content: Content) -> some View {
-        let isLoading = loadingManager.loadableState != .none
+        let isLoading = loadingManager.loadableState != .idle
         
         return ZStack {
             content
