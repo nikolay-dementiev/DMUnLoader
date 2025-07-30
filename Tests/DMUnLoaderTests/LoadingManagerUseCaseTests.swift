@@ -132,6 +132,15 @@ final class LoadingManagerUseCaseTests: XCTestCase {
         }
     }
     
+    func test_currentState_setIdleStateAfterManagerHide() {
+        let sut = makeSUT()
+        
+        sut.show(state: .loading)
+        sut.hide()
+        
+        XCTAssertEqual(sut.currentState, .idle)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(settings: DMLoadingManagerSettings = DMLoadingManagerSettings()) -> LoadingManagerSpy {
