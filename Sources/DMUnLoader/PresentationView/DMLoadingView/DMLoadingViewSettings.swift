@@ -69,7 +69,7 @@ public struct DMLoadingDefaultViewSettings: DMLoadingViewSettings {
 /// A struct defining properties for the loading text displayed in a loading view.
 public struct LoadingTextProperties {
     
-    //TODO: need to use localization
+    // TODO: need to use localization
     public static var defaultText: String { "Loading..." }
     
     /// The text to display in the loading view.

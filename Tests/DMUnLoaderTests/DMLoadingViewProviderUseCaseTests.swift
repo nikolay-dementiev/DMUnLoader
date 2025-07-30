@@ -11,14 +11,14 @@ import SwiftUICore
 final class DMLoadingViewProviderUseCaseTests: XCTestCase {
 
     func test_defaultImplementation_providesLoadingManagerSettings() {
-        let sut = LoadingViewProviderSpy()
+        let sut = makeSUT()
         
         let settingsUT = sut.loadingManagerSettings
         XCTAssertEqual(settingsUT.autoHideDelay, .seconds(2))
     }
     
     func test_defaultImplementation_providesLoadingViewSettings() {
-        let sut = LoadingViewProviderSpy()
+        let sut = makeSUT()
         
         let settingsUT = sut.loadingViewSettings
         XCTAssertEqual(
@@ -55,6 +55,9 @@ final class DMLoadingViewProviderUseCaseTests: XCTestCase {
     }
     
     // MARK: - Helpers
+    private func makeSUT() -> LoadingViewProviderSpy {
+        LoadingViewProviderSpy()
+    }
 }
 
 extension ProgressIndicatorProperties: Equatable {
