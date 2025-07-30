@@ -5,106 +5,6 @@
 //
 
 import XCTest
-import Combine
-
-public enum DMLoadableState: Sendable {
-    case idle
-    case loading
-    case success
-    case error(Error)
-}
-
-public protocol LoadingManager {
-    var settings: DMLoadingManagerSettings { get }
-    var currentState: DMLoadableState { get }
-    func show(state: DMLoadableState)
-    func hide()
-}
-
-public struct DMLoadingManagerSettings {
-    public let autoHideDelay: Duration
-    
-    public init(autoHideDelay: Duration = .seconds(2)) {
-        self.autoHideDelay = autoHideDelay
-    }
-}
-
-public class DMLoadingManagerService: LoadingManager {
-    public let settings: DMLoadingManagerSettings
-    
-    public var currentState: DMLoadableState {
-        _currentState()
-    }
-    
-    private var _currentState: Atomic<DMLoadableState>
-    private var inactivityTimerCancellable: AnyCancellable?
-    
-    public init(withState state: DMLoadableState = .idle,
-                settings: DMLoadingManagerSettings = DMLoadingManagerSettings()) {
-        self._currentState = Atomic(state)
-        self.settings = settings
-    }
-    
-    public func show(state: DMLoadableState) {
-        switch state {
-        case .loading,
-                .idle:
-            stopInactivityTimer()
-        default:
-            startInactivityTimer()
-        }
-        
-        _currentState.mutate { [state] prop in
-            prop = state
-        }
-    }
-    
-    public func hide() {
-        show(state: .idle)
-    }
-    
-    // MARK: Timer Management
-    
-    /// Starts the inactivity timer, which automatically hides the loading state after the specified delay.
-    private func startInactivityTimer() {
-        stopInactivityTimer()
-        inactivityTimerCancellable = Deferred {
-            Future<Void, Never> { promise in
-                promise(.success(()))
-            }
-        }
-        .delay(for: .seconds(settings.autoHideDelay.timeInterval),
-               scheduler: RunLoop.main)
-        .sink(receiveValue: { [weak self] _ in
-            self?.hide()
-        })
-    }
-    
-    /// Stops the inactivity timer, canceling any pending auto-hide operations.
-    private func stopInactivityTimer() {
-        inactivityTimerCancellable?.cancel()
-        inactivityTimerCancellable = nil
-    }
-}
-
-extension Duration {
-    
-    /// Converts the `Duration` value into a `TimeInterval` representation.
-    /// - Returns: The total duration in seconds as a `TimeInterval`, including fractional seconds.
-    /// - Note: This property combines the `seconds` and `attoseconds` components of the `Duration`
-    ///   to calculate the precise time interval.
-    /// - Example:
-    ///   ```swift
-    ///   let duration = Duration.seconds(2) + Duration.attoseconds(500_000_000_000_000_000)
-    ///   let timeInterval = duration.timeInterval
-    ///   print(timeInterval) // Output: 2.5
-    ///   ```
-    var timeInterval: TimeInterval {
-        let seconds = Double(components.seconds)
-        let attoseconds = Double(components.attoseconds) / 1_000_000_000_000_000_000
-        return seconds + attoseconds
-    }
-}
 
 final class LoadingManagerUseCaseTests: XCTestCase {
 
@@ -267,7 +167,6 @@ final class LoadingManagerUseCaseTests: XCTestCase {
 func anyError() -> Error {
     NSError(domain: "TestError", code: 0, userInfo: nil)
 }
-
 
 extension DMLoadableState: Equatable {
     public static func == (lhs: DMLoadableState, rhs: DMLoadableState) -> Bool {
