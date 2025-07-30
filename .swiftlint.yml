@@ -50,7 +50,7 @@ function_parameter_count:
   error: 10
 
 line_length:
-  warning: 130
+  warning: 150
   error: 200
 
 custom_rules:
