@@ -4,7 +4,7 @@
 - **Module**: DMLoadingViewProvider
 - **Description**: Protocol and implementation for providing views and settings related to loading, error, and success states.
 - **Type of Tests**: Functional Tests (BDD)
-- **Status**: In Progress / Completed
+- **Status**: In Progress / ✅Completed
 
 ---
 
@@ -42,15 +42,15 @@
 ### Scenario 3: Verify Success State
 - **Description**: Check if the success state view is generated correctly.
 - **Steps**:
-  - [ ] Create an instance of `DefaultDMLoadingViewProvider`.
-  - [ ] Call the `getSuccessView(object:)` method with a test object.
-  - [ ] Verify that the returned view is of type `DMSuccessView`.
-  - [ ] Verify that the correct success message is displayed.
-  - [ ] Verify that the correct settings (`successViewSettings`) are used.
+  - [✅] Create an instance of `DefaultDMLoadingViewProvider`.
+  - [✅] Call the `getSuccessView(object:)` method with a test object.
+  - [✅] Verify that the returned view is of type `DMSuccessView`.
+  - [✅] Verify that the correct success message is displayed.
+  - [✅] Verify that the correct settings (`successViewSettings`) are used.
 - **Expected Result**:
-  - [ ] A view of type `DMSuccessView` is returned.
-  - [ ] The success message is displayed correctly.
-  - [ ] The view settings match `DMSuccessDefaultViewSettings`.
+  - [✅] A view of type `DMSuccessView` is returned.
+  - [✅] The success message is displayed correctly.
+  - [✅] The view settings match `DMSuccessDefaultViewSettings`.
 - **Status**: ❌ / ✅
 
 ---

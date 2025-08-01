@@ -51,6 +51,27 @@ final class DMLoadingViewProviderUseCaseTests: XCTestCase {
         )
     }
     
+    @MainActor
+    func test_defaultImplementation_providesCorrectSuccessView() {
+        
+        let sut = makeSUT()
+        let successMessage = "Operation Completed!"
+        
+        let successView = sut.getSuccessView(object: successMessage)as? DMSuccessView
+        
+        XCTAssertNotNil(successView, "The returned view should be of type DMSuccessView")
+        XCTAssertEqual(
+            successView?.assosiatedObject as? String,
+            successMessage,
+            "The success message should match the provided message"
+        )
+        XCTAssertEqual(
+            successView?.settingsProvider as? DMSuccessDefaultViewSettings,
+            DMSuccessDefaultViewSettings(),
+            "The view settings should match the default settings"
+        )
+    }
+
     func test_defaultImplementation_providesUniqueID() {
         let sut1 = makeSUT()
         let sut2 = makeSUT()
