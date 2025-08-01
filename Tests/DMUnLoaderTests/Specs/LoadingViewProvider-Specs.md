@@ -4,7 +4,7 @@
 - **Module**: DMLoadingViewProvider
 - **Description**: Protocol and implementation for providing views and settings related to loading, error, and success states.
 - **Type of Tests**: Functional Tests (BDD)
-- **Status**: In Progress / ✅Completed
+- **Status**: In Progress / ✅ Completed
 
 ---
 
