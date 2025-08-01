@@ -88,3 +88,10 @@ extension DMErrorDefaultViewSettings: Equatable {
         lhs.errorImageSettings == rhs.errorImageSettings
     }
 }
+
+extension DMSuccessDefaultViewSettings: Equatable {
+    public static func == (lhs: DMSuccessDefaultViewSettings, rhs: DMSuccessDefaultViewSettings) -> Bool {
+        lhs.successImageProperties == rhs.successImageProperties &&
+        lhs.successTextProperties == rhs.successTextProperties
+    }
+}
