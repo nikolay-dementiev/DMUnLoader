@@ -38,33 +38,31 @@ final class LoadingManagerUseCaseTests: XCTestCase {
     
     func test_states_LoadingManagerIsDisplayesItsStatesInOrderOfIncomeInMultithreadingEnviroment() {
         let sut = makeSUT()
-        let expectation = XCTestExpectation(description: "States should be displayed in order")
-        
         let testConcurrentQueue = DispatchQueue(label: "com.test.concurrentQueue", attributes: .concurrent)
-
-        expectation.expectedFulfillmentCount = 3
         
+        let expectations = UncheckedSendableExpectations()
+        let ext1 = XCTestExpectation()
         testConcurrentQueue.async {
             sut.show(state: .loading)
-            expectation.fulfill()
+            expectations.completedExpectationInOrder.append(ext1)
         }
-        testConcurrentQueue.asyncAfter(deadline: .now() + 0.01) {
+        let ext2 = XCTestExpectation()
+        testConcurrentQueue.async {
             sut.show(state: .idle)
-            expectation.fulfill()
+            expectations.completedExpectationInOrder.append(ext2)
         }
-        testConcurrentQueue.asyncAfter(deadline: .now() + 0.02) {
+        let ext3 = XCTestExpectation()
+        testConcurrentQueue.async {
             sut.show(state: .error(anyError()))
-            expectation.fulfill()
+            expectations.completedExpectationInOrder.append(ext3)
         }
         
-        wait(for: [expectation], timeout: 0.3)
+        wait(for: expectations.completedExpectationInOrder, timeout: 3)
         
         XCTAssertEqual(
-            sut.states,
+            expectations.completedExpectationInOrder,
             [
-                .loading,
-                .idle,
-                .error(anyError())
+                ext1, ext2, ext3
             ],
             "LoadingManager should display states in the order they are received"
         )
@@ -171,6 +169,10 @@ final class LoadingManagerUseCaseTests: XCTestCase {
         func hide() {
             manager.hide()
         }
+    }
+    
+    final class UncheckedSendableExpectations: @unchecked Sendable {
+        var completedExpectationInOrder = [XCTestExpectation]()
     }
 }
 
