@@ -47,12 +47,12 @@ final class LoadingManagerUseCaseTests: XCTestCase {
             expectations.addExpectation(ext1, completion: ext1.fulfill)
         }
         let ext2 = XCTestExpectation(description: "2")
-        testConcurrentQueue.async {
+        testConcurrentQueue.asyncAfter(deadline: .now() + 0.001) {
             sut.show(state: .idle)
             expectations.addExpectation(ext2, completion: ext2.fulfill)
         }
         let ext3 = XCTestExpectation(description: "3")
-        testConcurrentQueue.async {
+        testConcurrentQueue.asyncAfter(deadline: .now() + 0.002) {
             sut.show(state: .error(anyNSError()))
             expectations.addExpectation(ext3, completion: ext3.fulfill)
         }
@@ -80,11 +80,11 @@ final class LoadingManagerUseCaseTests: XCTestCase {
             expectation.fulfill()
         }
         
-        testConcurrentQueue.asyncAfter(deadline: .now() + 0.01) {
+        testConcurrentQueue.asyncAfter(deadline: .now() + 0.001) {
             sut.show(state: .idle)
             expectation.fulfill()
         }
-        testConcurrentQueue.asyncAfter(deadline: .now() + 0.02) {
+        testConcurrentQueue.asyncAfter(deadline: .now() + 0.002) {
             sut.show(state: .error(anyNSError()))
             expectation.fulfill()
         }
