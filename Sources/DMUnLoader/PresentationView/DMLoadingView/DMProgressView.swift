@@ -70,7 +70,7 @@ internal struct DMProgressView: View {
                 
                 ProgressView()
                     .controlSize(progressIndicatorProperties.size)
-                    .progressViewStyle(.circular) // .linear
+                    .progressViewStyle(.circular)
                     .tint(progressIndicatorProperties.tintColor)
                     .layoutPriority(1)
                     .tag(DMProgressViewOwnSettings.progressViewTag)
@@ -112,7 +112,12 @@ struct DMProgressView_Previews: PreviewProvider {
                     ),
             ],
             configure: { state in
-                DMProgressView(settings: state).padding()
+                DMProgressView(settings: state)
+                    .addModificationForAlerView()
+                    .transaction { transaction in // disabling animation
+                        transaction.animation = nil
+                    }
+                    .padding()
             }
         )
     }
