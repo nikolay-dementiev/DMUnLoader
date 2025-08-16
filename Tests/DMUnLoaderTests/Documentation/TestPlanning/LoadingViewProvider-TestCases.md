@@ -1,4 +1,4 @@
-# Checklist for Testing Module: "DMLoadingViewProvider"
+# Test Cases: "DMLoadingViewProvider"
 
 ## 1. General Information
 - **Module**: DMLoadingViewProvider
