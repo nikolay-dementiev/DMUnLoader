@@ -98,7 +98,7 @@ struct DMProgressView_Previews: PreviewProvider {
         PreviewSnapshots(
             configurations: [
                 .init(name: "DefaultSettings", state: DMLoadingDefaultViewSettings()),
-
+                
                     .init(
                         name: "CustomSettings",
                         state: DMLoadingDefaultViewSettings(
@@ -109,14 +109,11 @@ struct DMProgressView_Previews: PreviewProvider {
                                 font: .title3
                             )
                         )
-                    ),
+                    )
             ],
             configure: { state in
                 DMProgressView(settings: state)
                     .addModificationForAlerView()
-                    .transaction { transaction in // disabling animation
-                        transaction.animation = nil
-                    }
                     .padding()
             }
         )
