@@ -24,21 +24,11 @@ final class DmProgressViewSnapshotTests: XCTestCase {
     func test_progressView_initiatedWithLoadingIndicatorAtTheCenterOfTheScreen() {
         let snapshots = DMProgressView_Previews.snapshots
         
-        snapshots.assertSnapshots(as: ["Light": .testStrategyLight,
-                                       "Dark": .testStrategyDark],
-                                  named: "ViewsPreview_ProductionCodebase",
-                                  record: false) {
-            $0
-            .padding(30)
-            .background(Color.gray.opacity(0.8))
-            .cornerRadius(10)
-        }
-        
-//        expect(
-//            snapshots,
-//            named: "ViewsPreview_ProductionCodebase",
-//            record: true
-//        )
+        expect(
+            snapshots,
+            named: "ViewsPreview_ProductionCodebase",
+            record: false
+        )
     }
     
     // MARK: HELPER
@@ -49,27 +39,31 @@ final class DmProgressViewSnapshotTests: XCTestCase {
 //        return sut
 //    }
 
-//    func expect<State>(
-//        _ snapshot: PreviewSnapshots<State>,
-//        named name: String? = nil,
-//        record recording: Bool = false,
-//        file: StaticString = #file,
-//        testName: String = #function,
-//        line: UInt = #line
-//    ) {
-//        snapshot.assertSnapshots(as: ["Light": .testStrategyLight,
-//                                      "Dark": .testStrategyDark],
-//                                 named: name,
-//                                 record: recording,
-//                                 file: file,
-//                                 testName: testName,
-//                                 line: line) {
-//            $0
-//            .padding(30)
-//            .background(Color.gray.opacity(0.8))
-//            .cornerRadius(10)
-//        }
-//    }
+    func expect<State>(
+        _ snapshot: PreviewSnapshots<State>,
+        named name: String? = nil,
+        record recording: Bool = false,
+        file: StaticString = #filePath,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        snapshot.assertSnapshots(as: ["Light": .testStrategyLight,
+                                      "Dark": .testStrategyDark],
+                                 named: name,
+                                 record: recording,
+                                 file: file,
+                                 testName: testName,
+                                 line: line) {
+            addModification($0)
+        }
+    }
+    
+    @inlinable nonisolated func addModification(_ view: some View) -> some View {
+        view
+        .padding(30)
+        .background(Color.gray.opacity(0.8))
+        .cornerRadius(10)
+    }
 }
 
 
@@ -118,10 +112,3 @@ extension Snapshotting where Value: SwiftUI.View, Format == UIImage {
 //    
 //}
 //#endif
-
-/*
- 
- .padding(30)
- .background(Color.gray.opacity(0.8))
- .cornerRadius(10)
- */
