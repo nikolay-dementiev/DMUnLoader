@@ -35,6 +35,19 @@ final class DmProgressViewUseCaseTests: XCTestCase {
                        "The Text view should display the correct text")
     }
     
+    func test_progressView_VerifyDefaultInitialization_defaultTintColorOfTheProgressIndicatorIsCorrect() throws {
+        let sut = makeSUT()
+       
+        let progressView = try sut
+            .inspect()
+            .find(viewWithTag: DMProgressViewOwnSettings.progressViewTag)
+            .progressView()
+        
+        XCTAssertEqual(try progressView.tint(),
+                       .white,
+                       "The ProgressView should have the correct tint color")
+    }
+    
     // MARK: HELPERs
     
     private func makeSUT(
