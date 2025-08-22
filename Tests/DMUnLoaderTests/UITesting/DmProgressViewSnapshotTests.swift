@@ -36,17 +36,7 @@ final class DmProgressViewSnapshotTests: XCTestCase {
         let snapshots = makeSUT(
             withConfiguration: .init(
                 name: "CustomSettings",
-                state: DMLoadingDefaultViewSettings(
-                    loadingTextProperties: LoadingTextProperties(
-                        text: "Processing...",
-                        alignment: .leading,
-                        foregroundColor: .orange,
-                        font: .title3
-                    ),
-                    progressIndicatorProperties: ProgressIndicatorProperties(
-                        tintColor: .green
-                    )
-                )
+                state: ViewSettingsHelper.makeLoadingCustomSettings()
             )
         )
         

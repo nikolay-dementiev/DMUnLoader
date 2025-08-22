@@ -11,6 +11,7 @@ import ViewInspector
 @MainActor
 final class DmProgressViewUseCaseTests: XCTestCase {
 
+    // MARK: Default Settings
     func test_progressView_VerifyDefaultInitialization_viewContainsProgressView() throws {
         
         let sut = makeSUT()
@@ -48,7 +49,10 @@ final class DmProgressViewUseCaseTests: XCTestCase {
                        "The ProgressView should have the correct tint color")
     }
     
-    // MARK: HELPERs
+    // MARK: Custom Settings
+    
+    
+    // MARK: - HELPERs
     
     private func makeSUT(
         withSettings settings: DMLoadingViewSettings = DMLoadingDefaultViewSettings()
