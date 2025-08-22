@@ -18,9 +18,9 @@
 - **Description**: Check if the `DMProgressView` is initialized correctly with default settings.
 - **Steps**:
   - [✅] Use snapshot testing to verify the layout and appearance of `DMProgressView` with default settings.
-  - [🚧] Inspect the view to ensure it contains a `ProgressView` and optional text.
-  - [🚧] Verify that the default text is `"Loading..."`.
-  - [🚧] Verify that the default tint color of the progress indicator is `.white`.
+  - [✅] Inspect the view to ensure it contains a `ProgressView`.
+  - [?] Verify that the ProgressView's default text is `"Loading..."`.
+  - [?] Verify that the default tint color of the progress indicator is `.white`.
 - **Expected Result**:
   - The view is displayed with a circular progress indicator.
   - The default text `"Loading..."` is displayed.
@@ -39,8 +39,8 @@
     - Custom progress indicator tint color: `.green`.
     - Custom frame size: `iPhone 13: portrait: CGSize(width: 390, height: 844)`.
   - [✅] Use snapshot testing to verify the layout and appearance with the custom settings.
-  - [🚧] Inspect the view to validate that the custom text, font, and tint color are applied.
-  - [🚧] Verify that the frame size matches the custom dimensions.
+  - [?] Inspect the view to validate that the custom text, font, and tint color are applied.
+  - [?] Verify that the frame size matches the custom dimensions.
 - **Expected Result**:
   - The custom text `"Processing..."` is displayed.
   - The font is `.title3`.
