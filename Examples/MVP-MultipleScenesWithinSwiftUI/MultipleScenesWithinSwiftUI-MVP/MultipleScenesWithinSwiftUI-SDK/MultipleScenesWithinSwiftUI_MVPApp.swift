@@ -8,9 +8,12 @@ import SwiftUI
 
 @main
 struct MultipleScenesWithinSwiftUI_MVPApp: App {
+    @StateObject var hudState = HudState()
+    @UIApplicationDelegateAdaptor var delegate: MVPAppDelegate
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainSceneView(hudState: hudState)
         }
     }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:MultipleScenesWithinSwiftUI-MVP.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:MultipleScenesWithinSwiftUI-SDK.xcodeproj">
+   </FileRef>
+</Workspace>
