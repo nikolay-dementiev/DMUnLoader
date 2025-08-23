@@ -7,23 +7,38 @@ struct MainSceneView: View {
 
   var body: some View {
     NavigationView {
-      VStack {
-        Button("Show hud") {
-          hudState.show(title: "Five Stars", systemImage: "star.fill")
-        }
-
-        Button("Show sheet") {
-          showingSheet = true
-        }
-      }
+        MainSceneViewContent(
+            hudState: hudState,
+            showingSheet: $showingSheet
+        )
     }
-    .font(.largeTitle)
-    .frame(maxWidth: .infinity)
     .sheet(isPresented: $showingSheet) {
-      Text("Sheet")
+        MainSceneViewContent(
+            hudState: hudState,
+            showingSheet: $showingSheet
+        )
     }
     .onAppear {
       sceneDelegate.hudState = hudState
     }
   }
+}
+
+struct MainSceneViewContent: View {
+    @ObservedObject var hudState: HudState
+    @Binding var showingSheet: Bool
+    
+    var body: some View {
+        VStack {
+            Button("Show hud") {
+                hudState.show()
+            }
+            
+            Button("Show sheet") {
+                showingSheet = true
+            }
+        }
+        .font(.largeTitle)
+        .frame(maxWidth: .infinity)
+    }
 }
