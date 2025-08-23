@@ -28,7 +28,6 @@ final class MVPSceneDelegate: UIResponder, UIWindowSceneDelegate, ObservableObje
       return
     }
 
-    // let toastViewController = UIHostingController(rootView: DMProgressView(settings: DMLoadingDefaultViewSettings()))
     let toastViewController = UIHostingController(rootView: HudSceneView().environmentObject(toastState))
     toastViewController.view.backgroundColor = .clear
 

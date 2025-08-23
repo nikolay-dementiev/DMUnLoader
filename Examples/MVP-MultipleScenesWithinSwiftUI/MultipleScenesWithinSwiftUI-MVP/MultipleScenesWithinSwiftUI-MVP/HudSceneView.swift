@@ -7,7 +7,7 @@ struct HudSceneView: View {
     Color.clear
       .ignoresSafeArea(.all)
       .hudCenter(isPresented: $hudState.isPresented) {
-        Label(hudState.title, systemImage: hudState.systemImage)
+          DMProgressView(settings: DMLoadingDefaultViewSettings())
       }
   }
 }

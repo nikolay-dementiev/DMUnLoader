@@ -48,7 +48,7 @@ extension View {
 
 private struct MDCenterHUD<Content: View>: View {
     @ViewBuilder let content: Content
-    @State var animate = false
+    @State private var animate = false
     
     var body: some View {
         content
@@ -60,7 +60,10 @@ private struct MDCenterHUD<Content: View>: View {
             .onAppear {
                 animate.toggle()
             }
-            .animation(Animation.spring(duration: 0.2, ), value: animate)
+            .animation(
+                Animation.spring(duration: 0.2),
+                value: animate
+            )
     }
 }
 
