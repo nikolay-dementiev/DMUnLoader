@@ -6,7 +6,7 @@ struct HudSceneView: View {
   var body: some View {
     Color.clear
       .ignoresSafeArea(.all)
-      .hud(isPresented: $hudState.isPresented) {
+      .hudCenter(isPresented: $hudState.isPresented) {
         Label(hudState.title, systemImage: hudState.systemImage)
       }
   }
