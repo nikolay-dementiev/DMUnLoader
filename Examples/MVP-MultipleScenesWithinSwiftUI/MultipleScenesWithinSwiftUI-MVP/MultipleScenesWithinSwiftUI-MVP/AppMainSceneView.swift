@@ -2,7 +2,7 @@ import SwiftUI
 import MPSwiftUI_SDK
 
 internal struct AppMainSceneView: View {
-//    @EnvironmentObject var sceneDelegate: MVPSceneDelegate
+    @EnvironmentObject var sceneDelegate: MVPSceneDelegate
     
     @ObservedObject var hudState: HudState
     @State var showingSheet = false
@@ -24,9 +24,9 @@ internal struct AppMainSceneView: View {
                 showingSheet: $showingSheet
             )
         }
-//        .onAppear {
-//            sceneDelegate.hudState = hudState
-//        }
+        .onAppear {
+            sceneDelegate.hudState = hudState
+        }
     }
 }
 

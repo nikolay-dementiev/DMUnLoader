@@ -13,7 +13,7 @@ public protocol MP_Scene {
 public struct MultipleScenesWithinSwiftUI_SDK_Scene<Body: Scene>: Scene, MP_Scene {
     
     @StateObject public var hudState = HudState()
-    @UIApplicationDelegateAdaptor var delegate: MVPAppDelegate
+//    @UIApplicationDelegateAdaptor var delegate: MVPAppDelegate
     
     private let _body: (HudState) -> Body
     

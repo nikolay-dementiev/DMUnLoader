@@ -5,9 +5,10 @@
 //
 
 import SwiftUI
+import Combine
 
-final class MVPSceneDelegate: UIResponder, UIWindowSceneDelegate, ObservableObject {
-    var hudState: HudState? {
+public final class MVPSceneDelegate: UIResponder, UIWindowSceneDelegate, ObservableObject {
+    public var hudState: HudState? {
         didSet {
             setupHudWindow()
         }
@@ -15,7 +16,7 @@ final class MVPSceneDelegate: UIResponder, UIWindowSceneDelegate, ObservableObje
     var toastWindow: UIWindow?
     weak var windowScene: UIWindowScene?
     
-    func scene(
+    public func scene(
         _ scene: UIScene,
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions

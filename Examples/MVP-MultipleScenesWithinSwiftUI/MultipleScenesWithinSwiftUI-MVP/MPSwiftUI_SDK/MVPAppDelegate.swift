@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-internal final class MVPAppDelegate: NSObject, UIApplicationDelegate {
-    internal func application(
+public final class MVPAppDelegate: NSObject, UIApplicationDelegate {
+    public func application(
         _ application: UIApplication,
         configurationForConnecting connectingSceneSession: UISceneSession,
         options: UIScene.ConnectionOptions
