@@ -1,0 +1,23 @@
+PODS:
+  - DMAction (1.0.4)
+  - DMUnLoader (0.1.29):
+    - DMAction
+
+DEPENDENCIES:
+  - DMUnLoader (from `../../`)
+
+SPEC REPOS:
+  trunk:
+    - DMAction
+
+EXTERNAL SOURCES:
+  DMUnLoader:
+    :path: "../../"
+
+SPEC CHECKSUMS:
+  DMAction: d0d482fca64619a0868f2390d832027647fd475d
+  DMUnLoader: d1eef65994855c78f735b3d8d23d1ca200093c3f
+
+PODFILE CHECKSUM: 77b591185ad2aba46b1c6ab6cd51e3b0925b5969
+
+COCOAPODS: 1.16.2

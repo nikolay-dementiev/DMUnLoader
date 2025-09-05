@@ -1,0 +1,39 @@
+{
+  "configurations" : [
+    {
+      "id" : "494DB115-546E-4998-A8B2-241400D3C8F7",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:",
+          "identifier" : "DMUnLoader",
+          "name" : "DMUnLoader"
+        }
+      ]
+    },
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "--enable-inspection"
+      }
+    ],
+    "preferredScreenCaptureFormat" : "screenshot",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "DMUnLoaderTests",
+        "name" : "DMUnLoaderTests"
+      }
+    }
+  ],
+  "version" : 1
+}

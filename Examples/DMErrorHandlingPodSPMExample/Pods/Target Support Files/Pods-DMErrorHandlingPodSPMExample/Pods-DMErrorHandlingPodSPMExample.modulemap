@@ -1,6 +1,0 @@
-framework module Pods_DMErrorHandlingPodSPMExample {
-  umbrella header "Pods-DMErrorHandlingPodSPMExample-umbrella.h"
-
-  export *
-  module * { export * }
-}
