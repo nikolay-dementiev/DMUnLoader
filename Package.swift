@@ -6,7 +6,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "DMErrorHandling",
+    name: "DMUnLoader",
     platforms: [
         .iOS(.v17),
         .watchOS(.v7),
@@ -14,9 +14,9 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "DMErrorHandling",
+            name: "DMUnLoader",
             type: .dynamic,
-            targets: ["DMErrorHandling"]
+            targets: ["DMUnLoader"]
         ),
     ],
     dependencies: [
@@ -28,15 +28,15 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "DMErrorHandling",
+            name: "DMUnLoader",
             dependencies: ["DMAction"],
             path: "Sources",
-            sources: ["DMErrorHandling"],
+            sources: ["DMUnLoader"],
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
         .testTarget(
-            name: "DMErrorHandlingTests",
-            dependencies: ["DMErrorHandling",
+            name: "DMUnLoaderTests",
+            dependencies: ["DMUnLoader",
                            "ViewInspector",
                            "DMAction"],
             path: "Tests",
