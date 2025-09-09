@@ -5,13 +5,18 @@
 //
 
 import SwiftUI
+import DMUnLoader
 
 struct MainTabView: View {
+    
+    var loadingManager: DMLoadingManager
+    
     var body: some View {
         TabView {
             // First Tab - Default Settings
             NavigationStack {
-                ContentViewDefaultSettings()
+//                ContentViewDefaultSettings()
+                ContentViewDefaultSettingsTopView(loadingManager: loadingManager)
                     .navigationTitle("Default Settings")
             }
             .tabItem {
@@ -21,6 +26,7 @@ struct MainTabView: View {
             // Second Tab - Custom Settings
             NavigationStack {
                 ContentViewCustomSettings()
+                    .environmentObject(loadingManager)
                     .navigationTitle("Custom Settings")
             }
             .tabItem {

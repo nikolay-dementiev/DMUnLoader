@@ -67,7 +67,8 @@ public protocol DMLoadingManagerProtocol: Identifiable, ObservableObject {
 ///
 /// This protocol is intended for use within the module and should not be exposed publicly.
 @MainActor
-internal protocol DMLoadingManagerInteralProtocol: DMLoadingManagerProtocol {
+// TODO: need to check acess modifiers (mark it as internal)!!
+public protocol DMLoadingManagerInteralProtocol: DMLoadingManagerProtocol {
     
     /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
     /// - Note: This property is mutable and allows the manager to update its state dynamically.

@@ -15,6 +15,8 @@ import DMUnLoader
  */
 struct ContentViewCustomSettings: View {
     
+    @EnvironmentObject var loadingManager: DMLoadingManager
+    
     /**
      The main body of the `ContentViewCustomSettings` view.
      
@@ -31,7 +33,7 @@ struct ContentViewCustomSettings: View {
      */
     var body: some View {
         DMLocalLoadingView(provider: CustomDMLoadingViewProvider()) {
-            LoadingContentView()
+            LoadingContentView(loadingManager: loadingManager)
         }
     }
 }

@@ -31,11 +31,13 @@ internal enum DMLoadingViewOwnSettings {
 
 /// A custom SwiftUI view that displays a loading state based on the `loadableState` of a `loadingManager`.
 /// This view uses a `provider` to supply views for different states (loading, failure, success).
-internal struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
+// TODO: need to check acess modifiers (mark it as internal)!
+public struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
                               LLM: DMLoadingManagerInteralProtocol>: View {
     
     /// The loading manager responsible for managing the loadable state.
     @ObservedObject private(set) internal var loadingManager: LLM
+    @State private var animateTheAppearance = false
     
     /// The provider that supplies views and settings for loading, error, and success states.
     internal var provider: Provider
@@ -44,7 +46,8 @@ internal struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
     /// - Parameters:
     ///   - loadingManager: The loading manager responsible for managing the loadable state.
     ///   - provider: The provider that supplies views and settings for different states.
-    internal init(loadingManager: LLM,
+    // TODO: need to check acess modifiers (mark it as internal)!!
+    public init(loadingManager: LLM,
                   provider: Provider) {
         self.loadingManager = loadingManager
         self.provider = provider
@@ -56,7 +59,8 @@ internal struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
     ///   - Displays an empty view when the state is `.none`.
     ///   - Displays a semi-transparent overlay with a loading, failure, or success view based on the current state.
     ///   - Includes a tap gesture to dismiss the view when appropriate.
-    internal var body: some View {
+    // TODO: need to check acess modifiers (mark it as internal)!!
+    public var body: some View {
         ZStack {
             let loadableState = loadingManager.loadableState
             switch loadableState {
@@ -65,7 +69,7 @@ internal struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
                     .tag(DMLoadingViewOwnSettings.emptyViewTag)
             case .failure, .loading, .success:
                 ZStack {
-                    Color.black.opacity(0.2)
+                    Color.black.opacity(animateTheAppearance ? 0.2 : 0)
                         .ignoresSafeArea()
                     
                     VStack(spacing: 20) {
@@ -83,14 +87,19 @@ internal struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
                         }
                     }
                     .padding(30)
-                    .background(Color.gray.opacity(0.8))
+                    .background(Color.gray.opacity(animateTheAppearance ? 0.8 : 0.1))
                     .cornerRadius(10)
+                    .scaleEffect(animateTheAppearance ? 1 : 0.9)
                 }
                 .transition(.opacity)
                 .animation(.easeInOut, value: loadingManager.loadableState)
                 .tag(DMLoadingViewOwnSettings.defaultViewTag)
             }
-        }.onTapGesture {
+        }.onAppear {
+            animateTheAppearance.toggle()
+        }.animation(Animation.spring(duration: 0.2),
+                    value: animateTheAppearance)
+        .onTapGesture {
             switch loadingManager.loadableState {
             case .success,
                     .failure,

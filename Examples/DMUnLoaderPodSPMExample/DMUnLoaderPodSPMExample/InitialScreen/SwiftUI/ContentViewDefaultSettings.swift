@@ -14,6 +14,7 @@ import DMUnLoader
  implementation of `DMLoadingViewProviderProtocol` for managing loading states, error views, and success views.
  */
 struct ContentViewDefaultSettings: View {
+    @EnvironmentObject var loadingManager: DMLoadingManager
     
     /**
      The main body of the `ContentViewDefaultSettings` view.
@@ -29,7 +30,17 @@ struct ContentViewDefaultSettings: View {
      */
     var body: some View {
         DMLocalLoadingView(provider: DefaultDMLoadingViewProvider()) {
-            LoadingContentView()
+            LoadingContentView(loadingManager: loadingManager)
         }
+    }
+}
+
+
+struct ContentViewDefaultSettingsTopView: View {
+    
+    var loadingManager: DMLoadingManager
+    
+    var body: some View {
+        LoadingContentView(loadingManager: loadingManager)
     }
 }

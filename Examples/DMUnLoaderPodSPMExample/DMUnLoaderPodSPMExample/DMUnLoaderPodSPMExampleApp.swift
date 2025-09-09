@@ -39,6 +39,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 @main
 struct DMUnLoaderPodSPMExampleApp: App {
+    @UIApplicationDelegateAdaptor var delegate: FSAppDelegate
+    
+    @StateObject private var loadingManager = DMLoadingManager(state: .none,
+                                                               settings: DMLoadingManagerSTSettings())
     
     init () {
         AppDelegateHelper.makeAppDescriprtion()
@@ -46,7 +50,8 @@ struct DMUnLoaderPodSPMExampleApp: App {
     
     var body: some Scene {
         WindowGroup {
-            AppDelegateHelper.RootLoadingView()
+            AppDelegateHelper
+                .RootLoadingView(loadingManager: loadingManager)
         }
     }
 }
@@ -89,9 +94,16 @@ internal struct AppDelegateHelper {
     }
     
     struct RootLoadingView: View {
+        @EnvironmentObject var sceneDelegate: FSSceneDelegate
+        
+        var loadingManager: DMLoadingManager
+        
         var body: some View {
-            DMRootLoadingView { _ in
-                MainTabView()
+//            DMRootLoadingView { loadingManager in
+            MainTabView(loadingManager: loadingManager)
+//            }
+            .onAppear {
+                sceneDelegate.loadingManager = loadingManager
             }
         }
     }

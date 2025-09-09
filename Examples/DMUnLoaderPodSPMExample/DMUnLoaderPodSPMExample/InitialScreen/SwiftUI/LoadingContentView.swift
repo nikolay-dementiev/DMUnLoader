@@ -8,7 +8,7 @@ import SwiftUI
 import DMUnLoader
 
 internal struct LoadingContentView: View {
-    @EnvironmentObject var loadingManager: DMLoadingManager
+    var loadingManager: DMLoadingManager
     @StateObject var viewModel = LoadingContentViewModel()
 
     var body: some View {

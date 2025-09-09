@@ -24,7 +24,8 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     
     /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
     /// - Note: This property is thread-safe and emits changes via `loadableStateSubject`.
-    @Published internal(set) public var loadableState: DMLoadableType = .none {
+    // TODO: need to check acess modifiers (mark it as internal)!!
+    @Published public(set) public var loadableState: DMLoadableType = .none {
         willSet {
             loadableStateSubject.send(newValue)
         }
@@ -39,7 +40,8 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     ///       print("Loadable state changed to: \(state)")
     ///   }
     ///   ```
-    internal var loadableStatePublisher: AnyPublisher<DMLoadableType, Never> {
+    // TODO: need to check acess modifiers (mark it as internal)!!
+    public var loadableStatePublisher: AnyPublisher<DMLoadableType, Never> {
         loadableStateSubject.eraseToAnyPublisher()
     }
     
