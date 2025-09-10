@@ -1,8 +1,8 @@
 import SwiftUI
 import DMUnLoader
 
-final class FSSceneDelegate: UIResponder, UIWindowSceneDelegate, ObservableObject {
-    var loadingManager: DMLoadingManager? {
+final class FSSceneDelegate<LM: DMLoadingManagerInteralProtocol>: UIResponder, UIWindowSceneDelegate, ObservableObject {
+    var loadingManager: LM? {
         didSet {
             setupHudWindow()
         }

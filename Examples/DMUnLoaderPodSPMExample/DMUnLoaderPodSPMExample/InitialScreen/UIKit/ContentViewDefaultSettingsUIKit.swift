@@ -19,7 +19,11 @@ import DMUnLoader
    - CV: A type conforming to `LoadingContentViewUIKit`, representing the inner content view.
    - LVP: A type conforming to `DMLoadingViewProviderProtocol`, responsible for providing loading and error views.
  */
-final class ContentViewDefaultSettingsUIKit<CV: LoadingContentViewUIKit, LVP: DMLoadingViewProviderProtocol>: DMLocalLoadingViewUIKit<CV, LVP> {
+final class ContentViewDefaultSettingsUIKit<
+    LM: DMLoadingManagerInteralProtocol,
+    CV: LoadingContentViewUIKit<LM>,
+    LVP: DMLoadingViewProviderProtocol
+>: DMLocalLoadingViewUIKit<CV, LVP, LM> {
     
     /**
      Initializes the `ContentViewDefaultSettingsUIKit` instance.
@@ -35,10 +39,12 @@ final class ContentViewDefaultSettingsUIKit<CV: LoadingContentViewUIKit, LVP: DM
      */
     override init(provider: LVP,
                   innerView: CV,
-                  manager: GlobalLoadingStateManager) {
+                  manager: GlobalLoadingStateManager,
+                  loadingManager: LM?) {
         super.init(provider: provider,
                    innerView: innerView,
-                   manager: manager)
+                   manager: manager,
+                   loadingManager: loadingManager)
         
         // Configure the inner view with the loading manager
         innerView.configure(loadingManager: loadingManager)

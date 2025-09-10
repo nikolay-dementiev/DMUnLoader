@@ -7,9 +7,9 @@
 import SwiftUI
 import DMUnLoader
 
-struct MainTabView: View {
+struct MainTabView<LM: DMLoadingManagerInteralProtocol>: View {
     
-    var loadingManager: DMLoadingManager
+    var loadingManager: LM
     
     var body: some View {
         TabView {

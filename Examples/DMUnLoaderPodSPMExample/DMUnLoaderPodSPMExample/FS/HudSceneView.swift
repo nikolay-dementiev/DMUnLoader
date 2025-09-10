@@ -1,8 +1,8 @@
 import SwiftUI
 import DMUnLoader
 
-struct HudSceneView: View {
-    @ObservedObject var loadingManager: DMLoadingManager
+struct HudSceneView<LM: DMLoadingManagerInteralProtocol>: View {
+    @ObservedObject var loadingManager: LM
 
   var body: some View {
     Color.clear

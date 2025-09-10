@@ -8,12 +8,16 @@ import UIKit
 import Combine
 import DMUnLoader
 
-final class MainTabViewControllerUIKit: UITabBarController {
+final class MainTabViewControllerUIKit<LM: DMLoadingManagerInteralProtocol>: UITabBarController {
     
     private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
+    private(set) weak var loadingManager: LM?
     
-    internal init(manager: GlobalLoadingStateManager) {
+    internal init(manager: GlobalLoadingStateManager,
+                  loadingManager: LM?) {
         self.globalLoadingManager = manager
+        self.loadingManager = loadingManager
+        
         super.init(nibName: nil, bundle: nil)
     }
    
@@ -31,7 +35,10 @@ final class MainTabViewControllerUIKit: UITabBarController {
     private func setupTabs() {
         // First tab - Default
         let defaultVC = createNavController(
-            viewController: DefaultSettingsViewController(manager: globalLoadingManager),
+            viewController: DefaultSettingsViewController(
+                manager: globalLoadingManager,
+                loadingManager: loadingManager
+            ),
             buttonTitle: "Default",
             imageName: "gearshape",
             navigatioTitle: "Default settings"
@@ -39,7 +46,10 @@ final class MainTabViewControllerUIKit: UITabBarController {
         
         // Second tab - Custom
         let customVC = createNavController(
-            viewController: CustomSettingsViewController(manager: globalLoadingManager),
+            viewController: CustomSettingsViewController(
+                manager: globalLoadingManager,
+                loadingManager: loadingManager
+            ),
             buttonTitle: "Custom",
             imageName: "pencil",
             navigatioTitle: "Custom settings"
@@ -71,11 +81,14 @@ extension MainTabViewControllerUIKit: DMViewControllerTopLevel {
 
 // MARK: - View Controllers for tabs
 
-final class DefaultSettingsViewController: UIViewController {
+final class DefaultSettingsViewController<LM: DMLoadingManagerInteralProtocol>: UIViewController {
     private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
+    private(set) weak var loadingManager: LM?
     
-    internal init(manager: GlobalLoadingStateManager) {
+    internal init(manager: GlobalLoadingStateManager,
+                  loadingManager: LM?) {
         self.globalLoadingManager = manager
+        self.loadingManager = loadingManager
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -87,18 +100,22 @@ final class DefaultSettingsViewController: UIViewController {
         super.loadView()
         
         let newCustedView = ContentViewDefaultSettingsUIKit(provider: DefaultDMLoadingViewProvider(),
-                                                            innerView: LoadingContentViewUIKit(),
-                                                            manager: globalLoadingManager)
+                                                            innerView: LoadingContentViewUIKit<LM>(),
+                                                            manager: globalLoadingManager,
+                                                            loadingManager: loadingManager)
         view = newCustedView
         view.setNeedsUpdateConstraints()
     }
 }
 
-final class CustomSettingsViewController: UIViewController {
+final class CustomSettingsViewController<LM: DMLoadingManagerInteralProtocol>: UIViewController {
     private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
+    private(set) weak var loadingManager: LM?
     
-    internal init(manager: GlobalLoadingStateManager) {
+    internal init(manager: GlobalLoadingStateManager,
+                  loadingManager: LM?) {
         self.globalLoadingManager = manager
+        self.loadingManager = loadingManager
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -111,7 +128,8 @@ final class CustomSettingsViewController: UIViewController {
         
         let newCustedView = ContentViewCustomSettingsUIKit(provider: CustomDMLoadingViewProvider(),
                                                            innerView: LoadingContentViewUIKit(),
-                                                           manager: globalLoadingManager)
+                                                           manager: globalLoadingManager,
+                                                           loadingManager: loadingManager)
         view = newCustedView
         view.setNeedsUpdateConstraints()
     }

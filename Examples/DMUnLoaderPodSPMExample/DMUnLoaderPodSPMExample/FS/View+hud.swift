@@ -2,8 +2,8 @@ import SwiftUI
 import DMUnLoader
 
 extension View {
-    func hudCenter<Content: View>(
-        loadingManager: DMLoadingManager,
+    func hudCenter<Content: View, LM: DMLoadingManagerInteralProtocol>(
+        loadingManager: LM,
         @ViewBuilder content: () -> Content
     ) -> some View {
         overlay(alignment: .center) {

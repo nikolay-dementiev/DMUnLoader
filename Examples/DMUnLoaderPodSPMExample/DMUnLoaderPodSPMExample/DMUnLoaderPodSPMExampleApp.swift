@@ -15,6 +15,12 @@ import DMUnLoader
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
+    private typealias DMLoadingManagerType = DMLoadingManager
+    @UIApplicationDelegateAdaptor private var delegate: FSAppDelegate<DMLoadingManagerType>
+    
+    private var loadingManager = DMLoadingManagerType(state: .none,
+                                                      settings: DMLoadingManagerSTSettings())
+    
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
         AppDelegateHelper.makeAppDescriprtion()
@@ -27,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let appDelegateHelper = AppDelegateHelper()
         
-        let rootVC = appDelegateHelper.makeUIKitRootViewHierarhy()
+        let rootVC = appDelegateHelper.makeUIKitRootViewHierarhy(loadingManager: loadingManager)
         
         window?.rootViewController = rootVC
         window?.makeKeyAndVisible()
@@ -39,10 +45,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 @main
 struct DMUnLoaderPodSPMExampleApp: App {
-    @UIApplicationDelegateAdaptor var delegate: FSAppDelegate
+    private typealias DMLoadingManagerType = DMLoadingManager
+    @UIApplicationDelegateAdaptor private var delegate: FSAppDelegate<DMLoadingManagerType>
     
-    @StateObject private var loadingManager = DMLoadingManager(state: .none,
-                                                               settings: DMLoadingManagerSTSettings())
+    @StateObject private var loadingManager = DMLoadingManagerType(state: .none,
+                                                                   settings: DMLoadingManagerSTSettings())
     
     init () {
         AppDelegateHelper.makeAppDescriprtion()
@@ -77,10 +84,13 @@ internal struct AppDelegateHelper {
         appDescriprtion += newString
     }
     
-    func makeUIKitRootViewHierarhy() -> DMRootViewControllerUIKit<UIView> {
+    func makeUIKitRootViewHierarhy<LM: DMLoadingManagerInteralProtocol>(loadingManager: LM) -> DMRootViewControllerUIKit<UIView> {
         let rootVC = DMRootViewControllerUIKit()
         
-        let tabViewController = MainTabViewControllerUIKit(manager: rootVC.getLoadingManager())
+        let tabViewController = MainTabViewControllerUIKit(
+            manager: rootVC.getLoadingManager(),
+            loadingManager: loadingManager
+        )
         
         // Add MainTabViewControllerUIKit as a child controller
         tabViewController.willMove(toParent: rootVC)
@@ -93,10 +103,10 @@ internal struct AppDelegateHelper {
         return rootVC
     }
     
-    struct RootLoadingView: View {
-        @EnvironmentObject var sceneDelegate: FSSceneDelegate
+    struct RootLoadingView<LM: DMLoadingManagerInteralProtocol>: View {
+        @EnvironmentObject var sceneDelegate: FSSceneDelegate<LM>
         
-        var loadingManager: DMLoadingManager
+        var loadingManager: LM
         
         var body: some View {
 //            DMRootLoadingView { loadingManager in

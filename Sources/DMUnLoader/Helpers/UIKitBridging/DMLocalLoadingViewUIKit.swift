@@ -10,7 +10,8 @@ import UIKit
 /// A `UIView` subclass that integrates a local loading state management system with a UIKit view.
 /// This class bridges SwiftUI's `DMLocalLoadingView` with UIKit views using `DMWrappedViewUIKit`.
 open class DMLocalLoadingViewUIKit<UIKitView: UIView,
-                                   Provider: DMLoadingViewProviderProtocol>: UIView {
+                                   Provider: DMLoadingViewProviderProtocol,
+                                   LM: DMLoadingManagerInteralProtocol>: UIView {
     
     /// A type alias for the SwiftUI-hosted content (`DMLocalLoadingView`) that wraps a UIKit view.
     private typealias HostingContent = DMLocalLoadingView<DMWrappedViewUIKit<UIKitView>, Provider>
@@ -19,7 +20,7 @@ open class DMLocalLoadingViewUIKit<UIKitView: UIView,
     private let hostingController: UIHostingController<AnyView>
     
     /// A weak reference to the local loading manager used for managing the loading state.
-    public weak private(set) var loadingManager: DMLoadingManager?
+    public weak private(set) var loadingManager: LM?
     
     /// Initializes a new instance of `DMLocalLoadingViewUIKit`.
     /// - Parameters:
@@ -40,10 +41,12 @@ open class DMLocalLoadingViewUIKit<UIKitView: UIView,
     ///   ```
     public init(provider: Provider,
                 innerView: UIKitView,
-                manager: GlobalLoadingStateManager) {
+                manager: GlobalLoadingStateManager,
+                loadingManager: LM?) {
         // Create the SwiftUI view and wrap it in an `AnyView`
         let swiftUIView = Self.makeSwiftUIView(provider: provider, view: innerView)
-        self.loadingManager = swiftUIView.getLoadingManager()
+//        self.loadingManager = swiftUIView.getLoadingManager()
+        self.loadingManager = loadingManager
         
         // Initialize the hosting controller with the SwiftUI view
         hostingController = UIHostingController(rootView:
@@ -54,7 +57,7 @@ open class DMLocalLoadingViewUIKit<UIKitView: UIView,
         super.init(frame: .zero)
         
         // Update the loading manager reference
-        self.loadingManager = swiftUIView.getLoadingManager()
+//        self.loadingManager = swiftUIView.getLoadingManager()
         
         // Set up the UI
         setupUI()

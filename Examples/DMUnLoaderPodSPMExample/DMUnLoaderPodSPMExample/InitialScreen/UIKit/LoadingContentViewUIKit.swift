@@ -8,8 +8,8 @@ import UIKit
 import Combine
 import DMUnLoader
 
-final class LoadingContentViewUIKit: UIView {
-    private let viewModel = LoadingContentViewModel()
+final class LoadingContentViewUIKit<LM: DMLoadingManagerInteralProtocol>: UIView {
+    private let viewModel = LoadingContentViewModel<LM>()
     private var cancellables = Set<AnyCancellable>()
     
     private let stackView = UIStackView()
@@ -25,7 +25,7 @@ final class LoadingContentViewUIKit: UIView {
         fatalError("Not implemented")
     }
     
-    func configure(loadingManager: DMLoadingManager?) {
+    func configure(loadingManager: LM?) {
         viewModel.configure(loadingManager: loadingManager)
     }
     

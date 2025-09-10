@@ -12,11 +12,11 @@ import DMUnLoader
 /// and provides methods for simulating tasks, handling errors, and interacting with the
 /// `DMLoadingManager`.
 @MainActor
-final class LoadingContentViewModel: ObservableObject {
+final class LoadingContentViewModel<LM: DMLoadingManagerInteralProtocol>: ObservableObject {
     
     /// The `DMLoadingManager` instance used to manage loading states, show success messages,
     /// or display error dialogs. This property is optional and must be configured before use.
-    private var loadingManager: DMLoadingManager?
+    private var loadingManager: LM?
     
     /// A published property indicating whether the `ViewModel` is ready to handle actions.
     /// This property is `true` when the `loadingManager` is properly configured, and `false` otherwise.
@@ -28,7 +28,7 @@ final class LoadingContentViewModel: ObservableObject {
      - Parameter loadingManager: An optional `DMLoadingManager` instance. If `nil`, the `ViewModel`
        will remain in an uninitialized state (`isReady = false`).
      */
-    func configure(loadingManager: DMLoadingManager?) {
+    func configure(loadingManager: LM?) {
         self.loadingManager = loadingManager
         self.isReady = self.loadingManager != nil
     }

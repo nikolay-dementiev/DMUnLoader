@@ -36,9 +36,9 @@ struct ContentViewDefaultSettings: View {
 }
 
 
-struct ContentViewDefaultSettingsTopView: View {
+struct ContentViewDefaultSettingsTopView<LM: DMLoadingManagerInteralProtocol>: View {
     
-    var loadingManager: DMLoadingManager
+    var loadingManager: LM
     
     var body: some View {
         LoadingContentView(loadingManager: loadingManager)
