@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUICore
+import SwiftUI
 
 /// A custom `EnvironmentKey` used to store and retrieve a `GlobalLoadingStateManager` instance in the SwiftUI environment.
 internal struct GlobalLoadingManagerKey: EnvironmentKey {

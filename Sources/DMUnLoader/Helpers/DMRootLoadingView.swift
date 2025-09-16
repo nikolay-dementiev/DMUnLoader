@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUICore
+import SwiftUI
 
 /// A custom SwiftUI view that provides a root-level loading state management system.
 /// This view integrates with a `GlobalLoadingStateManager` to manage and display loading states globally.

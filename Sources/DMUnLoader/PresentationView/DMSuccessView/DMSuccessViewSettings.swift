@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUICore
+import SwiftUI
 
 /// A protocol defining settings for a success view (`DMSuccessView`).
 /// Conforming types must provide properties for the success image and text.

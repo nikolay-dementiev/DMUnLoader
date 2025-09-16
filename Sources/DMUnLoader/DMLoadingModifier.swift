@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUICore
+import SwiftUI
 import Combine
 
 /// A `ViewModifier` that adds a loading view to any SwiftUI `View`.

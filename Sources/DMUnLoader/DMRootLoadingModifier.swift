@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUICore
+import SwiftUI
 
 /// A namespace for constants used in the `DMRootLoadingModifier`.
 /// These constants define unique tags for views within the root loading modifier.

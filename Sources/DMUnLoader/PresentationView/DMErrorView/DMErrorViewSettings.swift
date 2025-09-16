@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUICore
+import SwiftUI
 
 /// A protocol defining settings for an error view (`DMErrorView`).
 /// Conforming types must provide properties for error text, action buttons, text styling, and image settings.
