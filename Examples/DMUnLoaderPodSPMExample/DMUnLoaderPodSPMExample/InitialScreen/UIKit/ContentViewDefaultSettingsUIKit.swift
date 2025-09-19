@@ -39,11 +39,9 @@ final class ContentViewDefaultSettingsUIKit<
      */
     override init(provider: LVP,
                   innerView: CV,
-                  manager: GlobalLoadingStateManager,
                   loadingManager: LM?) {
         super.init(provider: provider,
                    innerView: innerView,
-                   manager: manager,
                    loadingManager: loadingManager)
         
         // Configure the inner view with the loading manager

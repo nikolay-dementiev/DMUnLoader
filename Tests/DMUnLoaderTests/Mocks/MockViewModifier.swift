@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUICore
+import SwiftUI
 
 struct MockViewModifier: ViewModifier {
     func body(content: Content) -> some View {

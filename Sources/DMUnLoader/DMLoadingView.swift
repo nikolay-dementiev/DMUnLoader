@@ -29,9 +29,9 @@ internal enum DMLoadingViewOwnSettings {
     static let tapGestureViewTag: Int = 0515
 }
 
+// TODO: need to check acess modifiers (mark it as internal)!
 /// A custom SwiftUI view that displays a loading state based on the `loadableState` of a `loadingManager`.
 /// This view uses a `provider` to supply views for different states (loading, failure, success).
-// TODO: need to check acess modifiers (mark it as internal)!
 public struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
                               LLM: DMLoadingManagerInteralProtocol>: View {
     
@@ -42,24 +42,24 @@ public struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
     /// The provider that supplies views and settings for loading, error, and success states.
     internal var provider: Provider
     
+    // TODO: need to check acess modifiers (mark it as internal)!!
     /// Initializes a new instance of `DMLoadingView`.
     /// - Parameters:
     ///   - loadingManager: The loading manager responsible for managing the loadable state.
     ///   - provider: The provider that supplies views and settings for different states.
-    // TODO: need to check acess modifiers (mark it as internal)!!
     public init(loadingManager: LLM,
-                  provider: Provider) {
+                provider: Provider) {
         self.loadingManager = loadingManager
         self.provider = provider
     }
     
+    // TODO: need to check acess modifiers (mark it as internal)!!
     /// The body of the `DMLoadingView`.
     /// - Returns: A view that dynamically updates based on the `loadableState` of the `loadingManager`.
     /// - Behavior:
     ///   - Displays an empty view when the state is `.none`.
     ///   - Displays a semi-transparent overlay with a loading, failure, or success view based on the current state.
     ///   - Includes a tap gesture to dismiss the view when appropriate.
-    // TODO: need to check acess modifiers (mark it as internal)!!
     public var body: some View {
         ZStack {
             let loadableState = loadingManager.loadableState

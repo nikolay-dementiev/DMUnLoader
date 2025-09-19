@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUICore
+import SwiftUI
 @testable import DMUnLoader
 
 struct MockErrorViewSettingsProvider: DMErrorViewSettings {

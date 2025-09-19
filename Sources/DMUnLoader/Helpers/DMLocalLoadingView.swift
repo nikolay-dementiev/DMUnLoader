@@ -25,9 +25,6 @@ public struct DMLocalLoadingView<Content: View, Provider: DMLoadingViewProviderP
     /// The local loading manager responsible for managing the loading state.
     @StateObject internal var loadingManager: DMLoadingManager
     
-    /// The global loading manager retrieved from the environment.
-    @Environment(\.globalLoadingManager) internal var globalLoadingManager
-    
     /// A computed property used to obtain the `DMLoadingManager` instance.
     /// - Note: This is primarily used for UIKit-based approaches to access the loading manager.
     private(set) internal var getLoadingManager: () -> DMLoadingManager
@@ -68,14 +65,6 @@ public struct DMLocalLoadingView<Content: View, Provider: DMLoadingViewProviderP
         content()
             .autoLoading(loadingManager,
                          provider: provider)
-            .onAppear {
-                subscribeToGloabalLoadingManagers(localManager: loadingManager,
-                                                  globalManager: globalLoadingManager)
-            }
-            .onDisappear {
-                unsubscribeFromLoadingManager(localManager: loadingManager,
-                                              globalManager: globalLoadingManager)
-            }
 #if DEBUG
             .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in
                 inspection?.visit(self, $0)

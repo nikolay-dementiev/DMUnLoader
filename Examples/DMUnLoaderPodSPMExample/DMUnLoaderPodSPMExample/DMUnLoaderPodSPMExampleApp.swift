@@ -83,23 +83,13 @@ internal struct AppDelegateHelper {
         appDescriprtion += newString
     }
     
-    func makeUIKitRootViewHierarhy<LM: DMLoadingManagerInteralProtocol>(loadingManager: LM) -> DMRootViewControllerUIKit<UIView> {
-        let rootVC = DMRootViewControllerUIKit()
+    func makeUIKitRootViewHierarhy<LM: DMLoadingManagerInteralProtocol>(loadingManager: LM) -> UIViewController {
         
         let tabViewController = MainTabViewControllerUIKit(
-            manager: rootVC.getLoadingManager(),
             loadingManager: loadingManager
         )
         
-        // Add MainTabViewControllerUIKit as a child controller
-        tabViewController.willMove(toParent: rootVC)
-        rootVC.addChild(tabViewController)
-        tabViewController.view.frame = rootVC.view.bounds
-        tabViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        rootVC.view.addSubview(tabViewController.view)
-        tabViewController.didMove(toParent: rootVC)
-        
-        return rootVC
+        return tabViewController
     }
     
     struct RootLoadingView<LM: DMLoadingManagerInteralProtocol>: View {
@@ -108,9 +98,7 @@ internal struct AppDelegateHelper {
         var loadingManager: LM
         
         var body: some View {
-//            DMRootLoadingView { loadingManager in
             MainTabView(loadingManager: loadingManager)
-//            }
             .onAppear {
                 sceneDelegate.loadingManager = loadingManager
             }

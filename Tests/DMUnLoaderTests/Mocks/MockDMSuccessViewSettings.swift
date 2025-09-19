@@ -5,7 +5,7 @@
 //
 
 @testable import DMUnLoader
-import SwiftUICore
+import SwiftUI
 
 struct MockDMSuccessViewSettings: DMSuccessViewSettings {
     var successImageProperties: SuccessImageProperties = SuccessImageProperties(

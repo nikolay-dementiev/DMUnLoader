@@ -10,12 +10,9 @@ import DMUnLoader
 
 final class MainTabViewControllerUIKit<LM: DMLoadingManagerInteralProtocol>: UITabBarController {
     
-    private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
     private(set) weak var loadingManager: LM?
     
-    internal init(manager: GlobalLoadingStateManager,
-                  loadingManager: LM?) {
-        self.globalLoadingManager = manager
+    internal init(loadingManager: LM?) {
         self.loadingManager = loadingManager
         
         super.init(nibName: nil, bundle: nil)
@@ -28,15 +25,12 @@ final class MainTabViewControllerUIKit<LM: DMLoadingManagerInteralProtocol>: UIT
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTabs()
-        
-        subscribeToLoadingStateChange(from: globalLoadingManager)
     }
     
     private func setupTabs() {
         // First tab - Default
         let defaultVC = createNavController(
             viewController: DefaultSettingsViewController(
-                manager: globalLoadingManager,
                 loadingManager: loadingManager
             ),
             buttonTitle: "Default",
@@ -47,7 +41,6 @@ final class MainTabViewControllerUIKit<LM: DMLoadingManagerInteralProtocol>: UIT
         // Second tab - Custom
         let customVC = createNavController(
             viewController: CustomSettingsViewController(
-                manager: globalLoadingManager,
                 loadingManager: loadingManager
             ),
             buttonTitle: "Custom",
@@ -82,12 +75,9 @@ extension MainTabViewControllerUIKit: DMViewControllerTopLevel {
 // MARK: - View Controllers for tabs
 
 final class DefaultSettingsViewController<LM: DMLoadingManagerInteralProtocol>: UIViewController {
-    private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
     private(set) weak var loadingManager: LM?
     
-    internal init(manager: GlobalLoadingStateManager,
-                  loadingManager: LM?) {
-        self.globalLoadingManager = manager
+    internal init(loadingManager: LM?) {
         self.loadingManager = loadingManager
         super.init(nibName: nil, bundle: nil)
     }
@@ -101,7 +91,6 @@ final class DefaultSettingsViewController<LM: DMLoadingManagerInteralProtocol>: 
         
         let newCustedView = ContentViewDefaultSettingsUIKit(provider: DefaultDMLoadingViewProvider(),
                                                             innerView: LoadingContentViewUIKit<LM>(),
-                                                            manager: globalLoadingManager,
                                                             loadingManager: loadingManager)
         view = newCustedView
         view.setNeedsUpdateConstraints()
@@ -109,12 +98,9 @@ final class DefaultSettingsViewController<LM: DMLoadingManagerInteralProtocol>: 
 }
 
 final class CustomSettingsViewController<LM: DMLoadingManagerInteralProtocol>: UIViewController {
-    private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
     private(set) weak var loadingManager: LM?
     
-    internal init(manager: GlobalLoadingStateManager,
-                  loadingManager: LM?) {
-        self.globalLoadingManager = manager
+    internal init(loadingManager: LM?) {
         self.loadingManager = loadingManager
         super.init(nibName: nil, bundle: nil)
     }
@@ -128,7 +114,6 @@ final class CustomSettingsViewController<LM: DMLoadingManagerInteralProtocol>: U
         
         let newCustedView = ContentViewCustomSettingsUIKit(provider: CustomDMLoadingViewProvider(),
                                                            innerView: LoadingContentViewUIKit(),
-                                                           manager: globalLoadingManager,
                                                            loadingManager: loadingManager)
         view = newCustedView
         view.setNeedsUpdateConstraints()

@@ -41,7 +41,6 @@ open class DMLocalLoadingViewUIKit<UIKitView: UIView,
     ///   ```
     public init(provider: Provider,
                 innerView: UIKitView,
-                manager: GlobalLoadingStateManager,
                 loadingManager: LM?) {
         // Create the SwiftUI view and wrap it in an `AnyView`
         let swiftUIView = Self.makeSwiftUIView(provider: provider, view: innerView)
@@ -49,9 +48,7 @@ open class DMLocalLoadingViewUIKit<UIKitView: UIView,
         
         // Initialize the hosting controller with the SwiftUI view
         hostingController = UIHostingController(rootView:
-            AnyView(swiftUIView
-                .environment(\.globalLoadingManager, manager)
-            ))
+            AnyView(swiftUIView))
         
         super.init(frame: .zero)
         

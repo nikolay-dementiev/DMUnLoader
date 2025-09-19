@@ -54,28 +54,6 @@ public extension DMViewControllerTopLevel {
                 .cancellableTopLevelView = newValue
         }
     }
-    
-    /// Subscribes to loading state changes from a `GlobalLoadingStateManager`.
-    /// - Parameter manager: The global loading state manager to subscribe to.
-    /// - Behavior:
-    ///   - Ensures that the object is not already subscribed before adding a new subscription.
-    ///   - Uses Combine to observe changes in the `loadableState` property of the manager.
-    ///   - Calls `handleLoadingStateChange` whenever the state changes.
-    func subscribeToLoadingStateChange(from manager: GlobalLoadingStateManager) {
-        guard !subscribedObjects.contains(self) else {
-            return
-        }
-        
-        manager.$loadableState
-            .receive(on: DispatchQueue.main)
-            .removeDuplicates()
-            .sink { [weak self] state in
-                self?.handleLoadingStateChange(state)
-            }
-            .store(in: &cancellableTopLevelView)
-        
-        subscribedObjects.add(self)
-    }
 }
 
 /// A private struct used to hold shared subscription-related data for `DMViewControllerTopLevel` conforming objects.

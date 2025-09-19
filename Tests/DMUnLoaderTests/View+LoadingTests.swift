@@ -65,129 +65,7 @@ final class ExtensionViewTests: XCTestCase {
 //            XCTFail("The view should be inspected")
 //        }
 //    }
-    
-    func testSubscribeToGlobalLoadingManagers() {
-        
-        let provider = MockDMLoadingViewProvider()
-        let localManager = DMLoadingManager(state: .none, settings: provider.loadingManagerSettings)
-        let globalManager = GlobalLoadingStateManager()
-        
-        // Create mocks
-        /*
-         let localManager = MockDMLoadingManager()
-         let globalManager = MockGlobalLoadingStateManager(loadableState: .none,
-         subscribeToLoadingManagers: { managers in
-         },
-         unsubscribeFromLoadingManager: { manager in
-         
-         })
-         */
-        
-        // Call the function
-        Text("Test View").subscribeToGloabalLoadingManagers(localManager: localManager, globalManager: globalManager)
-        
-        // Verify subscription
-        XCTAssertFalse(globalManager.isLoading, "Global manager should reflect the initial state of the local manager")
-        
-        // Trigger a state change in the local manager
-        localManager.showLoading()
-        
-        XCTAssertTrue(globalManager.isLoading, "Global manager should reflect the loading state of the local manager")
-    }
-    
-    func testUnsubscribeFromLoadingManager() {
-        // Create mocks
-        /*
-         let localManager = MockDMLoadingManager()
-         let globalManager = MockGlobalLoadingStateManager()
-         */
-        
-        let provider = MockDMLoadingViewProvider()
-        let localManager = DMLoadingManager(state: .none, settings: provider.loadingManagerSettings)
-        let globalManager = GlobalLoadingStateManager()
-        
-        // Subscribe first
-        globalManager.subscribeToLoadingManagers(localManager)
-        XCTAssertTrue(globalManager.isLoading == false, "Global manager should reflect the initial state of the local manager")
-        
-        // Trigger a state change in the local manager
-        localManager.showLoading()
-        XCTAssertTrue(globalManager.isLoading, "Global manager should reflect the loading state of the local manager")
-        
-        // Unsubscribe
-        let lastGlobalManagerStatusBeforeUnscribe = globalManager.isLoading
-        Text("Test View").unsubscribeFromLoadingManager(localManager: localManager, globalManager: globalManager)
-        
-        // Trigger another state change in the local manager
-        localManager.hide()
-        XCTAssertEqual(lastGlobalManagerStatusBeforeUnscribe,
-                       globalManager.isLoading,
-                       "Global manager should no longer reflect changes after unsubscribing")
-        
-        XCTAssertNotEqual(localManager.loadableState,
-                          globalManager.loadableState,
-                          "Global manager and Local manager statuses can't be the same after unsubscribing")
-    }
-    
-    func testUnsubscribeFromLoadingManagerWithoutGlobalManager() {
-        // Create mocks
-        let localManager = MockDMLoadingManager()
-        let globalManager: MockGlobalLoadingStateManager? = nil
-        
-        // Call the function without a global manager
-        Text("Test View").unsubscribeFromLoadingManager(localManager: localManager,
-                                                        globalManager: globalManager)
-        
-    }
-    
-    func testSubscribeToGlobalLoadingManagersWithoutGlobalManager() {
-        // Create mocks
-        let localManager = MockDMLoadingManager()
-        let globalManager: MockGlobalLoadingStateManager? = nil
-        // Call the function without a global manager
-        Text("Test View").subscribeToGloabalLoadingManagers(localManager: localManager,
-                                                            globalManager: globalManager)
-    }
-    
-    func testRootLoading() throws {
-        defer {
-            ViewHosting.expel()
-        }
-        
-        // Create a mock global manager
-        /*
-         let globalManager = MockGlobalLoadingStateManager(loadableState: .none,
-         subscribeToLoadingManagers: { managers in
-         },
-         unsubscribeFromLoadingManager: { manager in
-         
-         })
-         */
-        
-        let globalManager = GlobalLoadingStateManager()
-        
-        // Create a test view
-        let testView = EnvironmentRootLoadingTestView()
-        
-        let expEnvironment = testView.inspection.inspect { view in
             
-            let globalLoadingManagerFromView = try view.actualView().globalLoadingManager
-            XCTAssertNotNil(globalLoadingManagerFromView,
-                            "GlobalLoadingStateManager should be available in the environment")
-            
-            XCTAssertEqual(globalLoadingManagerFromView?.id,
-                           globalManager.id,
-                           "DMLoadingManager ids' is not the same in the environment!")
-        }
-        
-        ViewHosting.host(view: testView
-            .rootLoading(globalManager: globalManager))
-        
-        wait(for: [expEnvironment], timeout: 0.1)
-        
-        // TODO: Need to check existence of BlockingView in ViewStack (content)
-    }
-    
     private func checkAutoLoading(loadableState: DMLoadableType) throws {
         defer {
             ViewHosting.expel()
@@ -297,18 +175,6 @@ private struct EnvironmentAutoLoadingTestView: View {
     
     var body: some View {
         Text("Test EnvironmentAutoLoadingTestView")
-            .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
-    }
-}
-
-private struct EnvironmentRootLoadingTestView: View {
-    
-    @Environment(\.globalLoadingManager) internal var globalLoadingManager
-    
-    internal let inspection = Inspection<Self>()
-    
-    var body: some View {
-        Text("Test EnvironmentRootLoadingTestView")
             .onReceive(inspection.notice) { self.inspection.visit(self, $0) }
     }
 }
