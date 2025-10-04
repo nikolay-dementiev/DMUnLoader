@@ -87,7 +87,7 @@ public struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
                                 .tag(DMLoadingViewOwnSettings.successViewTag)
                         }
                     }
-                    .padding(30)
+                    .padding(15)
                     .background(Color.gray.opacity(animateTheAppearance ? 0.8 : 0.1))
                     .cornerRadius(10)
                     .scaleEffect(animateTheAppearance ? 1 : 0.9)

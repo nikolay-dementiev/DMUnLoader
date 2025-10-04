@@ -114,8 +114,10 @@ internal struct DMErrorView: View {
                     .tag(DMErrorViewOwnSettings.actionButtonRetryViewTag)
                 }
             }
+            .padding(.top, 5)
             .tag(DMErrorViewOwnSettings.buttonContainersHStackViewTag)
         }
+        .fixedSize(horizontal: true, vertical: false)
         .tag(DMErrorViewOwnSettings.containerVStackViewTag)
     }
 }
@@ -146,9 +148,7 @@ internal extension DMErrorView {
         var body: some View {
             Button(settings.text,
                    action: action.simpleAction)
-            .padding()
-            .background(settings.backgroundColor)
-            .cornerRadius(settings.cornerRadius)
+            .buttonStyle(settings.style)
             .tag(DMErrorViewOwnSettings.actionButtonButtoViewTag)
         }
     }
@@ -212,7 +212,7 @@ private struct PreviewRenderOwner<Content: View>: View {
         Group {
             content
         }
-        .padding(30)
+        .padding(15)
         .background(Color.gray.opacity(0.8))
         .cornerRadius(10)
     }

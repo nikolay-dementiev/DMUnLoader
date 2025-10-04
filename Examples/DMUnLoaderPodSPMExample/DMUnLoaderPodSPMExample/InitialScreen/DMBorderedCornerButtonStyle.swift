@@ -1,7 +1,7 @@
 //
-// DMUnLoader
+// DMUnLoaderPodSPMExample
 //
-// Created by Mykola Dementiev
+//  Created by Mykola Dementiev
 //
 
 import SwiftUI
