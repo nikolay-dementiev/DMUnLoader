@@ -18,11 +18,11 @@ internal struct LoadingContentViewSwiftUI<LM: DMLoadingManagerInteralProtocol>: 
             
             Group {
                 Button("Simulate Loading", action: viewModel.showDownloads)
-                    .buttonStyle(.borderedCorner)
+                    .buttonStyle(.dmBorderedCorner)
                 Button("Simulate Error", action: viewModel.simulateAnError)
-                    .buttonStyle(.borderedCorner)
+                    .buttonStyle(.dmBorderedCorner)
                 Button("Simulate Success", action: viewModel.simulateSuccess)
-                    .buttonStyle(.borderedCorner)
+                    .buttonStyle(.dmBorderedCorner)
             }
             .padding(.vertical, 3)
         }

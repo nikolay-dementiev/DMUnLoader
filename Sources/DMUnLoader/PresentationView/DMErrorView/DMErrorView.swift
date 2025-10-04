@@ -184,14 +184,36 @@ internal extension DMErrorView {
     }
 }
 
-#Preview("Basic") {
-    Group {
+#Preview("Basic: 2 buttons") {
+    PreviewRenderOwner {
         DMErrorView(settings: DMErrorDefaultViewSettings(),
                     error: DMAppError.custom("Something went wrong"),
                     onRetry: DMButtonAction({ _ in }),
                     onClose: DMButtonAction({ _ in }))
     }
-    .padding(30)
-    .background(Color.gray.opacity(0.8))
-    .cornerRadius(10)
+}
+
+#Preview("Basic: 1 button") {
+    PreviewRenderOwner {
+        DMErrorView(settings: DMErrorDefaultViewSettings(),
+                    error: DMAppError.custom("Something went wrong"),
+                    onClose: DMButtonAction({ _ in }))
+    }
+}
+
+private struct PreviewRenderOwner<Content: View>: View {
+    @ViewBuilder let content: Content
+    
+    internal init(_ content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        Group {
+            content
+        }
+        .padding(30)
+        .background(Color.gray.opacity(0.8))
+        .cornerRadius(10)
+    }
 }

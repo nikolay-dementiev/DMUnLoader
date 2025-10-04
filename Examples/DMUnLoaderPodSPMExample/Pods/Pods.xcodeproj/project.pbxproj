@@ -19,6 +19,7 @@
 		2F0CFBEB2E9160B300054EC0 /* View+HUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0CFBE82E9160B300054EC0 /* View+HUD.swift */; };
 		2F0CFBEC2E9160B300054EC0 /* HudSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0CFBE62E9160B300054EC0 /* HudSceneView.swift */; };
 		2F0CFBEE2E9160B800054EC0 /* PassThroughWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0CFBED2E9160B800054EC0 /* PassThroughWindow.swift */; };
+		2F0CFBF12E9165F300054EC0 /* BorderedCornerButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0CFBF02E9165F300054EC0 /* BorderedCornerButtonStyle.swift */; };
 		30AC849D6AB05DEF25E9EB1888728319 /* DMLocalLoadingViewUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1DBC8E72846DA249FEF27AE714588 /* DMLocalLoadingViewUIKit.swift */; };
 		37F6C07C955FFC733BB0046B57E000E8 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2094B4ADB60CC2FF63D261FCF257DFE1 /* SwiftUI.framework */; };
 		3CD159460610A92E9B05B658052A3DA6 /* DMNativeDeviceParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 426F9C0DDEEF01FC8FFD86783D576F95 /* DMNativeDeviceParameters.swift */; };
@@ -102,6 +103,7 @@
 		2F0CFBE72E9160B300054EC0 /* VariableBlurView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VariableBlurView.swift; sourceTree = "<group>"; };
 		2F0CFBE82E9160B300054EC0 /* View+HUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+HUD.swift"; sourceTree = "<group>"; };
 		2F0CFBED2E9160B800054EC0 /* PassThroughWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassThroughWindow.swift; sourceTree = "<group>"; };
+		2F0CFBF02E9165F300054EC0 /* BorderedCornerButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderedCornerButtonStyle.swift; sourceTree = "<group>"; };
 		334ED6F94921BDE936D076756E7137D8 /* Atomic.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		3951EA6C6E6514633B5C44BB4B0ACF9B /* DMAction+AttempCount.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "DMAction+AttempCount.swift"; path = "Sources/DMAction/DMAction+AttempCount.swift"; sourceTree = "<group>"; };
 		426F9C0DDEEF01FC8FFD86783D576F95 /* DMNativeDeviceParameters.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMNativeDeviceParameters.swift; sourceTree = "<group>"; };
@@ -248,6 +250,14 @@
 			path = HUD;
 			sourceTree = "<group>";
 		};
+		2F0CFBEF2E9165ED00054EC0 /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				2F0CFBF02E9165F300054EC0 /* BorderedCornerButtonStyle.swift */,
+			);
+			path = Buttons;
+			sourceTree = "<group>";
+		};
 		39F40FB586A0C148B6D04602ABC64A03 /* Debug */ = {
 			isa = PBXGroup;
 			children = (
@@ -345,6 +355,7 @@
 		8BECF85CC762D4161903FDB6C907CD27 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				2F0CFBEF2E9165ED00054EC0 /* Buttons */,
 				2F0CFBE92E9160B300054EC0 /* HUD */,
 				AA654CF820074B951717E3B006D31339 /* DMLocalLoadingView.swift */,
 				426F9C0DDEEF01FC8FFD86783D576F95 /* DMNativeDeviceParameters.swift */,
@@ -631,6 +642,7 @@
 				D412280F6CC1A81E79B77C91992B7758 /* Atomic.swift in Sources */,
 				1A2726776FC4CE644C03A2166E8DD647 /* CustomSizeView.swift in Sources */,
 				9CB58CA919A977B2FBD237015B6909E6 /* DispatchQueue+Unique.swift in Sources */,
+				2F0CFBF12E9165F300054EC0 /* BorderedCornerButtonStyle.swift in Sources */,
 				D7331E53D2697A57F2D51A5A3DA2F27A /* DMAppError.swift in Sources */,
 				6AE9715E909CD97F250ED9C1759B0407 /* DMErrorView.swift in Sources */,
 				1FB4FA6A642A801A45A998C4C322EC8B /* DMErrorViewSettings.swift in Sources */,

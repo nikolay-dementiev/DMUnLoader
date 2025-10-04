@@ -1,13 +1,13 @@
 //
-//  DMUnLoaderPodSPMExample
+// DMUnLoader
 //
-//  Created by Mykola Dementiev
+// Created by Mykola Dementiev
 //
 
 import SwiftUI
 
-struct BorderedCornerButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
+public struct DMBorderedCornerButtonStyle: ButtonStyle {
+    public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .frame(maxWidth: .infinity, minHeight: 44)
             .padding([.vertical], 1)
@@ -20,8 +20,8 @@ struct BorderedCornerButtonStyle: ButtonStyle {
     }
 }
 
-extension ButtonStyle where Self == BorderedCornerButtonStyle {
-    static var borderedCorner: Self {
+public extension ButtonStyle where Self == DMBorderedCornerButtonStyle {
+    static var dmBorderedCorner: Self {
         return .init()
     }
 }
