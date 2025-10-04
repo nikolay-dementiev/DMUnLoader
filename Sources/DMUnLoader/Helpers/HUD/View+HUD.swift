@@ -17,7 +17,7 @@ extension View {
                 case .success,
                         .failure,
                         .loading:
-                    VariableBlurView(maxBlurRadius: 3)
+                    VariableBlurView(maxBlurRadius: 8)
                                         
                     content()
                 case .none:
