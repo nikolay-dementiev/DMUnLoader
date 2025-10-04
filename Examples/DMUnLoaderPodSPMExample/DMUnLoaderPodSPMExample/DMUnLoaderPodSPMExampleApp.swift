@@ -98,7 +98,7 @@ internal struct AppDelegateHelper {
         var loadingManager: LM
         
         var body: some View {
-            MainTabView(loadingManager: loadingManager)
+            MainTabViewSwiftUI(loadingManager: loadingManager)
             .onAppear {
                 sceneDelegate.loadingManager = loadingManager
             }

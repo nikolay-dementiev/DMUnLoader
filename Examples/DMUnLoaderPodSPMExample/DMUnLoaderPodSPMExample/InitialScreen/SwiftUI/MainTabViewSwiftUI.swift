@@ -7,7 +7,7 @@
 import SwiftUI
 import DMUnLoader
 
-struct MainTabView<LM: DMLoadingManagerInteralProtocol>: View {
+struct MainTabViewSwiftUI<LM: DMLoadingManagerInteralProtocol>: View {
     
     var loadingManager: LM
     
@@ -15,7 +15,7 @@ struct MainTabView<LM: DMLoadingManagerInteralProtocol>: View {
         TabView {
             // First Tab - Default Settings
             NavigationStack {
-                ContentViewDefaultSettingsTopView(loadingManager: loadingManager)
+                ContentViewDefaultSettingsTopViewSwiftUI(loadingManager: loadingManager)
                     .navigationTitle("Default Settings")
             }
             .tabItem {
@@ -24,7 +24,7 @@ struct MainTabView<LM: DMLoadingManagerInteralProtocol>: View {
             
             // Second Tab - Custom Settings
             NavigationStack {
-                ContentViewCustomSettingsTopView(loadingManager: loadingManager)
+                ContentViewCustomSettingsTopViewSwiftUI(loadingManager: loadingManager)
                     .navigationTitle("Custom Settings")
             }
             .tabItem {
