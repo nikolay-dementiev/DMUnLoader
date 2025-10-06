@@ -12,7 +12,7 @@ import DMUnLoader
 /// and provides methods for simulating tasks, handling errors, and interacting with the
 /// `DMLoadingManager`.
 @MainActor
-final class LoadingContentViewModel<LM: DMLoadingManagerInteralProtocol>: ObservableObject {
+final class LoadingContentViewModel<LM: DMLoadingManagerProtocol>: ObservableObject {
     
     /// The `DMLoadingManager` instance used to manage loading states, show success messages,
     /// or display error dialogs. This property is optional and must be configured before use.

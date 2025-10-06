@@ -7,7 +7,7 @@
 import SwiftUI
 
 extension View {
-    func hudCenter<Content: View, LM: DMLoadingManagerInteralProtocol>(
+    func hudCenter<Content: View, LM: DMLoadingManagerProtocol>(
         loadingManager: LM,
         @ViewBuilder content: () -> Content
     ) -> some View {

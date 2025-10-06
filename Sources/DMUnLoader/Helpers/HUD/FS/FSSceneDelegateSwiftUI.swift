@@ -1,7 +1,7 @@
 import SwiftUI
 
 public final class FSSceneDelegateUIKit<
-    LM: DMLoadingManagerInteralProtocol,
+    LM: DMLoadingManagerProtocol,
     Helper: FSSceneDelegateHelper
 >: UIResponder, UIWindowSceneDelegate, ObservableObject {
     
@@ -59,7 +59,7 @@ public final class FSSceneDelegateUIKit<
 }
 
 public final class FSSceneDelegateSwiftUI<
-    LM: DMLoadingManagerInteralProtocol
+    LM: DMLoadingManagerProtocol
 >: UIResponder, UIWindowSceneDelegate, ObservableObject {
     public var loadingManager: LM? {
         didSet {

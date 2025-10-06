@@ -104,7 +104,7 @@ class VariableBlurUIView: UIVisualEffectView {
         direction: VariableBlurDirection
     ) throws -> CGImage { // much lower resolution might be acceptable
         let ciGradientFilter = CIFilter.linearGradient()
-        //let ciGradientFilter =  CIFilter.smoothLinearGradient()
+        // let ciGradientFilter =  CIFilter.smoothLinearGradient()
         ciGradientFilter.color0 = CIColor.black
         ciGradientFilter.color1 = CIColor.clear
         ciGradientFilter.point0 = CGPoint(x: 0, y: height)

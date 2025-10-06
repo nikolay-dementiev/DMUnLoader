@@ -8,7 +8,7 @@ import UIKit
 import Combine
 import DMUnLoader
 
-final class LoadingContentViewUIKit<LM: DMLoadingManagerInteralProtocol>: UIView {
+final class LoadingContentViewUIKit<LM: DMLoadingManagerProtocol>: UIView {
     private let viewModel = LoadingContentViewModel<LM>()
     private var cancellables = Set<AnyCancellable>()
     

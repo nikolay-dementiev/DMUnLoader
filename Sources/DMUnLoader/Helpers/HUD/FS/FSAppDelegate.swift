@@ -1,6 +1,6 @@
 import SwiftUI
 
-public final class FSAppDelegate<LM: DMLoadingManagerInteralProtocol>: NSObject, UIApplicationDelegate {
+public final class FSAppDelegate<LM: DMLoadingManagerProtocol>: NSObject, UIApplicationDelegate {
     public func application(
         _ application: UIApplication,
         configurationForConnecting connectingSceneSession: UISceneSession,

@@ -22,16 +22,14 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     /// A `PassthroughSubject` used to emit changes to the `loadableState`.
     private let loadableStateSubject = PassthroughSubject<DMLoadableType, Never>()
     
-    // TODO: need to check acess modifiers (mark it as internal)!!
     /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
     /// - Note: This property is thread-safe and emits changes via `loadableStateSubject`.
-    @Published public(set) public var loadableState: DMLoadableType = .none {
+    @Published internal(set) public var loadableState: DMLoadableType = .none {
         willSet {
             loadableStateSubject.send(newValue)
         }
     }
     
-    // TODO: need to check acess modifiers (mark it as internal)!!
     /// A publisher that emits changes to the `loadableState`.
     /// - Note: This property enables reactive programming using Combine, allowing observers
     ///   to react to state changes in real-time.
@@ -41,7 +39,7 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     ///       print("Loadable state changed to: \(state)")
     ///   }
     ///   ```
-    public var loadableStatePublisher: AnyPublisher<DMLoadableType, Never> {
+    var loadableStatePublisher: AnyPublisher<DMLoadableType, Never> {
         loadableStateSubject.eraseToAnyPublisher()
     }
     

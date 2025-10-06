@@ -6,20 +6,14 @@
 
 import SwiftUI
 
-// TODO: need to check acess modifiers (mark it as internal)!
-
-public struct HudSceneView<LM: DMLoadingManagerInteralProtocol>: View {
+struct HudSceneView<LM: DMLoadingManagerProtocol>: View {
     @ObservedObject var loadingManager: LM
 
-    // TODO: need to check acess modifiers (mark it as internal)!
-    
-    public init(loadingManager: LM) {
+    init(loadingManager: LM) {
         self.loadingManager = loadingManager
     }
     
-    // TODO: need to check acess modifiers (mark it as internal)!
-    
-    public var body: some View {
+    var body: some View {
         Color.clear
             .ignoresSafeArea(.all)
             .hudCenter(loadingManager: loadingManager) {

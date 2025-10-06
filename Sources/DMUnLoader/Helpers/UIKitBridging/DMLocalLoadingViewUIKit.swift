@@ -11,7 +11,7 @@ import UIKit
 /// This class bridges SwiftUI's `DMLocalLoadingView` with UIKit views using `DMWrappedViewUIKit`.
 open class DMLocalLoadingViewUIKit<UIKitView: UIView,
                                    Provider: DMLoadingViewProviderProtocol,
-                                   LM: DMLoadingManagerInteralProtocol>: UIView {
+                                   LM: DMLoadingManagerProtocol>: UIView {
     
     /// A type alias for the SwiftUI-hosted content (`DMLocalLoadingView`) that wraps a UIKit view.
     private typealias HostingContent = DMLocalLoadingView<DMWrappedViewUIKit<UIKitView>, Provider>

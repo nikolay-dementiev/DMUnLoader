@@ -20,7 +20,7 @@ import DMUnLoader
    - LVP: A type conforming to `DMLoadingViewProviderProtocol`, responsible for providing loading and error views.
  */
 final class ContentViewDefaultSettingsUIKit<
-    LM: DMLoadingManagerInteralProtocol,
+    LM: DMLoadingManagerProtocol,
     CV: LoadingContentViewUIKit<LM>,
     LVP: DMLoadingViewProviderProtocol
 >: DMLocalLoadingViewUIKit<CV, LVP, LM> {

@@ -13,7 +13,7 @@ import DMUnLoader
  This view uses `DMLocalLoadingView` to wrap a `LoadingContentView` and provides a custom
  implementation of `DMLoadingViewProviderProtocol` for managing loading states, error views, and success views.
  */
-struct ContentViewCustomSettingsTopViewSwiftUI<LM: DMLoadingManagerInteralProtocol>: View {
+struct ContentViewCustomSettingsTopViewSwiftUI<LM: DMLoadingManagerProtocol>: View {
     
     var loadingManager: LM
     

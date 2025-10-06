@@ -7,7 +7,7 @@
 import SwiftUI
 import DMUnLoader
 
-internal struct LoadingContentViewSwiftUI<LM: DMLoadingManagerInteralProtocol>: View {
+internal struct LoadingContentViewSwiftUI<LM: DMLoadingManagerProtocol>: View {
     var loadingManager: LM
     @StateObject var viewModel = LoadingContentViewModel<LM>()
     

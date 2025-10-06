@@ -74,7 +74,7 @@ internal struct AppDelegateHelper {
         appDescriprtion += newString
     }
     
-    struct RootLoadingView<LM: DMLoadingManagerInteralProtocol>: View {
+    struct RootLoadingView<LM: DMLoadingManagerProtocol>: View {
         @EnvironmentObject var sceneDelegate: FSSceneDelegateSwiftUI<LM>
         
         var loadingManager: LM
@@ -118,7 +118,7 @@ internal struct AppDelegateHelper {
 }
 
 extension AppDelegateHelper: FSSceneDelegateHelper {
-    static func makeUIKitRootViewHierarhy<LM: DMLoadingManagerInteralProtocol>(loadingManager: LM) -> UIViewController {
+    static func makeUIKitRootViewHierarhy<LM: DMLoadingManagerProtocol>(loadingManager: LM) -> UIViewController {
         
         let tabViewController = MainTabViewControllerUIKit(
             loadingManager: loadingManager

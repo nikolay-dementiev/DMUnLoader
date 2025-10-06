@@ -29,11 +29,10 @@ internal enum DMLoadingViewOwnSettings {
     static let tapGestureViewTag: Int = 0515
 }
 
-// TODO: need to check acess modifiers (mark it as internal)!
 /// A custom SwiftUI view that displays a loading state based on the `loadableState` of a `loadingManager`.
 /// This view uses a `provider` to supply views for different states (loading, failure, success).
-public struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
-                              LLM: DMLoadingManagerInteralProtocol>: View {
+struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
+                     LLM: DMLoadingManagerProtocol>: View {
     
     /// The loading manager responsible for managing the loadable state.
     @ObservedObject private(set) internal var loadingManager: LLM
@@ -42,25 +41,23 @@ public struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
     /// The provider that supplies views and settings for loading, error, and success states.
     internal var provider: Provider
     
-    // TODO: need to check acess modifiers (mark it as internal)!!
     /// Initializes a new instance of `DMLoadingView`.
     /// - Parameters:
     ///   - loadingManager: The loading manager responsible for managing the loadable state.
     ///   - provider: The provider that supplies views and settings for different states.
-    public init(loadingManager: LLM,
-                provider: Provider) {
+    init(loadingManager: LLM,
+         provider: Provider) {
         self.loadingManager = loadingManager
         self.provider = provider
     }
     
-    // TODO: need to check acess modifiers (mark it as internal)!!
     /// The body of the `DMLoadingView`.
     /// - Returns: A view that dynamically updates based on the `loadableState` of the `loadingManager`.
     /// - Behavior:
     ///   - Displays an empty view when the state is `.none`.
     ///   - Displays a semi-transparent overlay with a loading, failure, or success view based on the current state.
     ///   - Includes a tap gesture to dismiss the view when appropriate.
-    public var body: some View {
+    var body: some View {
         ZStack {
             let loadableState = loadingManager.loadableState
             switch loadableState {
@@ -72,7 +69,7 @@ public struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
                     Color.black.opacity(animateTheAppearance ? 0.2 : 0)
                         .ignoresSafeArea()
                     
-//                    VStack(spacing: 20) {
+                    //                    VStack(spacing: 20) {
                     Group {
                         if case .loading = loadableState {
                             provider.getLoadingView()

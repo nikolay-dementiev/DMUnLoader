@@ -8,7 +8,7 @@ import UIKit
 import Combine
 import DMUnLoader
 
-final class MainTabViewControllerUIKit<LM: DMLoadingManagerInteralProtocol>: UITabBarController {
+final class MainTabViewControllerUIKit<LM: DMLoadingManagerProtocol>: UITabBarController {
     
     private(set) weak var loadingManager: LM?
     
@@ -74,7 +74,7 @@ extension MainTabViewControllerUIKit: DMViewControllerTopLevel {
 
 // MARK: - View Controllers for tabs
 
-final class DefaultSettingsViewController<LM: DMLoadingManagerInteralProtocol>: UIViewController {
+final class DefaultSettingsViewController<LM: DMLoadingManagerProtocol>: UIViewController {
     private(set) weak var loadingManager: LM?
     
     internal init(loadingManager: LM?) {
@@ -97,7 +97,7 @@ final class DefaultSettingsViewController<LM: DMLoadingManagerInteralProtocol>: 
     }
 }
 
-final class CustomSettingsViewController<LM: DMLoadingManagerInteralProtocol>: UIViewController {
+final class CustomSettingsViewController<LM: DMLoadingManagerProtocol>: UIViewController {
     private(set) weak var loadingManager: LM?
     
     internal init(loadingManager: LM?) {

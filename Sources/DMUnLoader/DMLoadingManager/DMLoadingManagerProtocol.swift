@@ -15,6 +15,10 @@ import Combine
 @MainActor
 public protocol DMLoadingManagerProtocol: Identifiable, ObservableObject {
     
+    /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
+    /// - Note: This property is mutable and allows the manager to update its state dynamically.
+    var loadableState: DMLoadableType { get }
+    
     /// A unique identifier for the loading manager.
     /// - Note: This property is required by the `Identifiable` protocol.
     var id: UUID { get }
@@ -60,6 +64,8 @@ public protocol DMLoadingManagerProtocol: Identifiable, ObservableObject {
     ///   loadingManager.hide()
     ///   ```
     func hide()
+    
+    init()
 }
 
 /// An internal protocol extending `DMLoadingManagerProtocol` to include additional properties
@@ -67,11 +73,8 @@ public protocol DMLoadingManagerProtocol: Identifiable, ObservableObject {
 ///
 /// This protocol is intended for use within the module and should not be exposed publicly.
 @MainActor
-// TODO: need to check acess modifiers (mark it as internal)!!
-public protocol DMLoadingManagerInteralProtocol: DMLoadingManagerProtocol {
+protocol DMLoadingManagerInteralProtocol: DMLoadingManagerProtocol {
     
-    /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
-    /// - Note: This property is mutable and allows the manager to update its state dynamically.
     var loadableState: DMLoadableType { get set }
     
     /// A publisher that emits changes to the `loadableState`.
