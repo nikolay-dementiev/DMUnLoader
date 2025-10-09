@@ -7,9 +7,11 @@
 import SwiftUI
 import DMUnLoader
 
-internal struct LoadingContentViewSwiftUI<LM: DMLoadingManagerProtocol>: View {
+internal struct LoadingContentViewSwiftUI<Provider: DMLoadingViewProviderProtocol,
+                                          LM: DMLoadingManagerProtocol>: View {
     var loadingManager: LM
-    @StateObject var viewModel = LoadingContentViewModel<LM>()
+    var provider: Provider
+    @StateObject var viewModel = LoadingContentViewModel<Provider,LM>()
     
     var body: some View {
         VStack {
@@ -28,11 +30,15 @@ internal struct LoadingContentViewSwiftUI<LM: DMLoadingManagerProtocol>: View {
         }
         .fixedSize(horizontal: true, vertical: false)
         .onAppear {
-            viewModel.configure(loadingManager: loadingManager)
+            viewModel.configure(
+                loadingManager: loadingManager,
+                provider: provider
+            )
         }.disabled(!viewModel.isReady)
     }
 }
 
 #Preview("LoadingContent") {
-    LoadingContentViewSwiftUI(loadingManager: DMLoadingManager())
+    LoadingContentViewSwiftUI(loadingManager: DMLoadingManager(),
+                              provider: DefaultDMLoadingViewProvider())
 }

@@ -18,6 +18,9 @@ struct ContentViewCustomSettingsTopViewSwiftUI<LM: DMLoadingManagerProtocol>: Vi
     var loadingManager: LM
     
     var body: some View {
-        LoadingContentViewSwiftUI(loadingManager: loadingManager)
+        LoadingContentViewSwiftUI(
+            loadingManager: loadingManager,
+            provider: CustomDMLoadingViewProvider()
+        )
     }
 }

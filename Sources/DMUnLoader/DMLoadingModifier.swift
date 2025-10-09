@@ -38,8 +38,7 @@ internal struct DMLoadingModifier<Provider: DMLoadingViewProviderProtocol,
                 .blur(radius: isLoading ? 2 : 0)
                 .disabled(isLoading)
             
-            DMLoadingView(loadingManager: loadingManager,
-                          provider: provider)
+            DMLoadingView(loadingManager: loadingManager)
         }
         #if DEBUG
         .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in

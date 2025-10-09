@@ -21,7 +21,7 @@ import DMUnLoader
  */
 final class ContentViewCustomSettingsUIKit<
     LM: DMLoadingManagerProtocol,
-    CV: LoadingContentViewUIKit<LM>,
+    CV: LoadingContentViewUIKit<LVP,LM>,
     LVP: DMLoadingViewProviderProtocol
 >: DMLocalLoadingViewUIKit<CV, LVP, LM> {
     
@@ -45,7 +45,7 @@ final class ContentViewCustomSettingsUIKit<
                    loadingManager: loadingManager)
         
         // Configure the inner view with the loading manager
-        innerView.configure(loadingManager: loadingManager)
+        innerView.configure(loadingManager: loadingManager, provider: provider)
     }
     
     /**

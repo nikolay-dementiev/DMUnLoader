@@ -66,18 +66,21 @@ final class MainTabViewControllerUIKit<LM: DMLoadingManagerProtocol>: UITabBarCo
     }
 }
 
-extension MainTabViewControllerUIKit: DMViewControllerTopLevel {
-    func handleLoadingStateChange(_ state: DMUnLoader.DMLoadableType) {
-        view.isUserInteractionEnabled = state != .loading
-    }
-}
+// TODO: got rid this - but check is it needed?
+//extension MainTabViewControllerUIKit: DMViewControllerTopLevel {
+//    func handleLoadingStateChange(_ state: DMUnLoader.DMLoadableType) {
+//        view.isUserInteractionEnabled = state != .loading
+//    }
+//}
 
 // MARK: - View Controllers for tabs
 
 final class DefaultSettingsViewController<LM: DMLoadingManagerProtocol>: UIViewController {
     private(set) weak var loadingManager: LM?
     
-    internal init(loadingManager: LM?) {
+    internal init(
+        loadingManager: LM?
+    ) {
         self.loadingManager = loadingManager
         super.init(nibName: nil, bundle: nil)
     }
@@ -89,8 +92,10 @@ final class DefaultSettingsViewController<LM: DMLoadingManagerProtocol>: UIViewC
     override func loadView() {
         super.loadView()
         
+        // TODO: ugly code: deal with this: ```provider: DefaultDMLoadingViewProvider(), ... LoadingContentViewUIKit<DefaultDMLoadingViewProvider,LM>(),```
+        
         let newCustedView = ContentViewDefaultSettingsUIKit(provider: DefaultDMLoadingViewProvider(),
-                                                            innerView: LoadingContentViewUIKit<LM>(),
+                                                            innerView: LoadingContentViewUIKit<DefaultDMLoadingViewProvider,LM>(),
                                                             loadingManager: loadingManager)
         view = newCustedView
         view.setNeedsUpdateConstraints()

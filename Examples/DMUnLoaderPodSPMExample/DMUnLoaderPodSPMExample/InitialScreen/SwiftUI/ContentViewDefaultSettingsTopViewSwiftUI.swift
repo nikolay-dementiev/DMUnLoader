@@ -18,6 +18,9 @@ struct ContentViewDefaultSettingsTopViewSwiftUI<LM: DMLoadingManagerProtocol>: V
     var loadingManager: LM
     
     var body: some View {
-        LoadingContentViewSwiftUI(loadingManager: loadingManager)
+        LoadingContentViewSwiftUI(
+            loadingManager: loadingManager,
+            provider: DefaultDMLoadingViewProvider()
+        )
     }
 }

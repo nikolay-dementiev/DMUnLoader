@@ -17,8 +17,7 @@ struct DMHudSceneView<LM: DMLoadingManagerProtocol>: View {
         Color.clear
             .ignoresSafeArea(.all)
             .hudCenter(loadingManager: loadingManager) {
-                DMLoadingView(loadingManager: loadingManager,
-                              provider: DefaultDMLoadingViewProvider())
+                DMLoadingView(loadingManager: loadingManager)
             }
     }
 }
@@ -27,6 +26,8 @@ struct DMHudSceneView<LM: DMLoadingManagerProtocol>: View {
     let loadingManager = DMLoadingManager(
         state: .failure(
             error: DMAppError.custom("Something went wrong"),
+            provider: DefaultDMLoadingViewProvider()
+                .eraseToAnyViewProvider(),
             onRetry: DMButtonAction({ _ in })
         ),
         settings: DMLoadingManagerDefaultSettings()
@@ -37,7 +38,10 @@ struct DMHudSceneView<LM: DMLoadingManagerProtocol>: View {
 
 #Preview("Loading") {
     let loadingManager = DMLoadingManager(
-        state: .loading,
+        state: .loading(
+            provider: DefaultDMLoadingViewProvider()
+                .eraseToAnyViewProvider(),
+        ),
         settings: DMLoadingManagerDefaultSettings()
     )
     
@@ -46,7 +50,11 @@ struct DMHudSceneView<LM: DMLoadingManagerProtocol>: View {
 
 #Preview("Success") {
     let loadingManager = DMLoadingManager(
-        state: .success("Wow! All were done!"),
+        state: .success(
+            "Wow! All were done!",
+            provider: DefaultDMLoadingViewProvider()
+                .eraseToAnyViewProvider(),
+        ),
         settings: DMLoadingManagerDefaultSettings()
     )
     
