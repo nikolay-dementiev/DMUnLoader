@@ -11,12 +11,21 @@
       }
     },
     {
+      "identity" : "dmvariableblurview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nikolay-dementiev/DMVariableBlurView.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "43e0685193620370f9abd35c644af6b896b9f3c3"
+      }
+    },
+    {
       "identity" : "swiftlintplugin",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/GayleDunham/SwiftLintPlugin.git",
       "state" : {
         "branch" : "main",
-        "revision" : "0bb7767a7c64701b62cb6fcb4d846bd01869662b"
+        "revision" : "5c864493d1231a79f48cd4212f4410acad959306"
       }
     }
   ],

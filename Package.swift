@@ -9,7 +9,7 @@ let package = Package(
     name: "DMUnLoader",
     platforms: [
         .iOS(.v17),
-        .watchOS(.v7),
+//        .watchOS(.v7),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -22,23 +22,30 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/GayleDunham/SwiftLintPlugin.git", branch: "main"),
         .package(url: "https://github.com/nalexn/ViewInspector", from: "0.10.1"),
-        .package(url: "https://github.com/nikolay-dementiev/DMAction.git", branch: "main")
+        .package(url: "https://github.com/nikolay-dementiev/DMAction.git", branch: "main"),
+        .package(url: "https://github.com/nikolay-dementiev/DMVariableBlurView.git", branch: "main")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "DMUnLoader",
-            dependencies: ["DMAction"],
+            dependencies: [
+                "DMAction",
+                "DMVariableBlurView"
+            ],
             path: "Sources",
             sources: ["DMUnLoader"],
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
         .testTarget(
             name: "DMUnLoaderTests",
-            dependencies: ["DMUnLoader",
-                           "ViewInspector",
-                           "DMAction"],
+            dependencies: [
+                "DMUnLoader",
+                "ViewInspector",
+                "DMAction",
+                "DMVariableBlurView"
+            ],
             path: "Tests",
             plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
         ),
