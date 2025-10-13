@@ -15,8 +15,9 @@ struct MainTabViewSwiftUI<LM: DMLoadingManagerProtocol>: View {
         TabView {
             // First Tab - Default Settings
             NavigationStack {
-                ContentViewDefaultSettingsTopViewSwiftUI(loadingManager: loadingManager)
-                    .navigationTitle("Default Settings")
+                makeLoadingContentViewSwiftUI(loadingManager: loadingManager,
+                                              provider: DefaultDMLoadingViewProvider())
+                .navigationTitle("Default Settings")
             }
             .tabItem {
                 Label("Default", systemImage: "gearshape")
@@ -24,12 +25,23 @@ struct MainTabViewSwiftUI<LM: DMLoadingManagerProtocol>: View {
             
             // Second Tab - Custom Settings
             NavigationStack {
-                ContentViewCustomSettingsTopViewSwiftUI(loadingManager: loadingManager)
+                makeLoadingContentViewSwiftUI(loadingManager: loadingManager,
+                                              provider: CustomDMLoadingViewProvider())
                     .navigationTitle("Custom Settings")
             }
             .tabItem {
                 Label("Custom", systemImage: "pencil")
             }
         }
+    }
+    
+    private func makeLoadingContentViewSwiftUI<LVP: DMLoadingViewProviderProtocol>(
+        loadingManager: LM,
+        provider: LVP
+    ) -> some View {
+        LoadingContentViewSwiftUI(
+            loadingManager: loadingManager,
+            provider: provider
+        )
     }
 }

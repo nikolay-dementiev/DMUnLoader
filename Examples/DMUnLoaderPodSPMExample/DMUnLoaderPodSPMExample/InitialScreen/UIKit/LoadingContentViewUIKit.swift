@@ -138,12 +138,13 @@ final class LoadingContentViewUIKit<
         
         button.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
     }
-}
-
-
-final class CapsuleButton: UIButton {
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        layer.cornerRadius = bounds.height / 2
+    
+    //MARK: HELPERs
+    
+    final class CapsuleButton: UIButton {
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            layer.cornerRadius = bounds.height / 2
+        }
     }
 }
