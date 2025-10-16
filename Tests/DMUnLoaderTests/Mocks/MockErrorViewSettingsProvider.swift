@@ -25,17 +25,9 @@ struct MockErrorViewSettingsProvider: DMErrorViewSettings {
                             trailing: 10)
     )
     
-    var actionButtonCloseSettings: ActionButtonSettings = .init(
-        text: "Close",
-        backgroundColor: .blue,
-        cornerRadius: 8
-    )
+    var actionButtonCloseSettings = ActionButtonSettings(text: "Close")
     
-    var actionButtonRetrySettings: ActionButtonSettings = .init(
-        text: "Retry",
-        backgroundColor: .green,
-        cornerRadius: 8
-    )
+    var actionButtonRetrySettings = ActionButtonSettings(text: "Retry")
     
     var errorText: String? = "An error occurred"
 }

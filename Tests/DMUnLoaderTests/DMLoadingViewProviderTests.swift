@@ -165,7 +165,6 @@ extension DMLoadingViewProviderTests {
         guard let viewToCast = viewToCast as? T else {
             let requestedView = try viewToCast
                 .inspect()
-                //.implicitAnyView()
                 .view(T.self)
                 .actualView()
             

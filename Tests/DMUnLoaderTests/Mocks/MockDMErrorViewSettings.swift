@@ -10,17 +10,9 @@ import SwiftUI
 struct MockDMErrorViewSettings: DMErrorViewSettings {
     var errorText: String? = "Mock Error Occurred"
     
-    var actionButtonCloseSettings: ActionButtonSettings = ActionButtonSettings(
-        text: "Close",
-        backgroundColor: .red,
-        cornerRadius: 8
-    )
+    var actionButtonCloseSettings = ActionButtonSettings(text: "Close")
     
-    var actionButtonRetrySettings: ActionButtonSettings = ActionButtonSettings(
-        text: "Retry",
-        backgroundColor: .green,
-        cornerRadius: 8
-    )
+    var actionButtonRetrySettings = ActionButtonSettings(text: "Retry")
     
     var errorTextSettings: ErrorTextSettings = ErrorTextSettings(
         foregroundColor: .white,

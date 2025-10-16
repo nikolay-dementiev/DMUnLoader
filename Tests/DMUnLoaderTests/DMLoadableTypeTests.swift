@@ -11,27 +11,37 @@ final class DMLoadableTypeTests: XCTestCase {
     
     // MARK: Raw Representable Tests
     
+    @MainActor
     func testRawValueForLoading() {
-        let loadableType = DMLoadableType.loading
+        let loadableType = DMLoadableType.loading(
+            provider: MockDMLoadingViewProvider().eraseToAnyViewProvider()
+        )
         XCTAssertEqual(loadableType.rawValue,
                        "Loading",
                        "Raw value for .loading should be 'Loading'")
     }
     
+    @MainActor
     func testRawValueForFailure() {
         let error = NSError(domain: "TestError",
                             code: 1,
                             userInfo: nil)
-        let loadableType = DMLoadableType.failure(error: error,
-                                                  onRetry: DMButtonAction({}))
+        let loadableType = DMLoadableType.failure(
+            error: error,
+            provider: MockDMLoadingViewProvider().eraseToAnyViewProvider(),
+            onRetry: DMButtonAction({})
+        )
         XCTAssertEqual(loadableType.rawValue,
                        "Error: `\(error)`",
                        "Raw value for .failure should include the error description")
     }
     
-    func testRawValueForSuccess() {
+    @MainActor func testRawValueForSuccess() {
         let successObject = MockDMLoadableTypeSuccess(description: "Mock Success")
-        let loadableType = DMLoadableType.success(successObject)
+        let loadableType = DMLoadableType.success(
+            successObject,
+            provider: MockDMLoadingViewProvider().eraseToAnyViewProvider()
+        )
         XCTAssertEqual(loadableType.rawValue,
                        "Success: `Mock Success`",
                        "Raw value for .success should include the success object's description")
@@ -57,6 +67,8 @@ final class DMLoadableTypeTests: XCTestCase {
     
     // MARK: Hashable and Equatable Tests
     
+    @MainActor
+    // swiftlint:disable:next function_body_length
     func testEquatableConformance() {
         let error1 = NSError(domain: "TestError",
                              code: 1,
@@ -65,19 +77,39 @@ final class DMLoadableTypeTests: XCTestCase {
                              code: 2,
                              userInfo: nil)
         
-        let loading1 = DMLoadableType.loading
-        let loading2 = DMLoadableType.loading
+        let provider = MockDMLoadingViewProvider().eraseToAnyViewProvider()
         
-        let failure1 = DMLoadableType.failure(error: error1,
-                                              onRetry: DMButtonAction({}))
-        let failure2 = DMLoadableType.failure(error: error1,
-                                              onRetry: DMButtonAction({}))
-        let failure3 = DMLoadableType.failure(error: error2,
-                                              onRetry: DMButtonAction({}))
+        let loading1 = DMLoadableType.loading(provider: provider)
+        let loading2 = DMLoadableType.loading(provider: provider)
         
-        let success1 = DMLoadableType.success(MockDMLoadableTypeSuccess(description: "Mock Success"))
-        let success2 = DMLoadableType.success(MockDMLoadableTypeSuccess(description: "Mock Success"))
-        let success3 = DMLoadableType.success(MockDMLoadableTypeSuccess(description: "Different Success"))
+        let failure1 = DMLoadableType.failure(
+            error: error1,
+            provider: provider,
+            onRetry: DMButtonAction({})
+        )
+        let failure2 = DMLoadableType.failure(
+            error: error1,
+            provider: provider,
+            onRetry: DMButtonAction({})
+        )
+        let failure3 = DMLoadableType.failure(
+            error: error2,
+            provider: provider,
+            onRetry: DMButtonAction({})
+        )
+        
+        let success1 = DMLoadableType.success(
+            MockDMLoadableTypeSuccess(description: "Mock Success"),
+            provider: provider
+        )
+        let success2 = DMLoadableType.success(
+            MockDMLoadableTypeSuccess(description: "Mock Success"),
+            provider: provider
+        )
+        let success3 = DMLoadableType.success(
+            MockDMLoadableTypeSuccess(description: "Different Success"),
+            provider: provider
+        )
         
         let none1 = DMLoadableType.none
         let none2 = DMLoadableType.none
@@ -102,16 +134,23 @@ final class DMLoadableTypeTests: XCTestCase {
                        "Two .none instances should be equal")
     }
     
+    @MainActor
     func testHashableConformance() {
         let error = NSError(domain: "TestError",
                             code: 1,
                             userInfo: nil)
         let successObject = MockDMLoadableTypeSuccess(description: "Mock Success")
         
-        let loading = DMLoadableType.loading
+        let provider = MockDMLoadingViewProvider().eraseToAnyViewProvider()
+        
+        let loading = DMLoadableType.loading(provider: provider)
         let failure = DMLoadableType.failure(error: error,
+                                             provider: provider,
                                              onRetry: DMButtonAction({}))
-        let success = DMLoadableType.success(successObject)
+        let success = DMLoadableType.success(
+            successObject,
+            provider: provider
+        )
         let none = DMLoadableType.none
         
         var hasher = Hasher()

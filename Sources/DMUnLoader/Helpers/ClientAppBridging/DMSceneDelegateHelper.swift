@@ -8,6 +8,7 @@ public protocol DMSceneDelegateHelper {
 }
 
 extension DMSceneDelegateHelper {
+    @MainActor
     static func makeUIKitRootViewHierarhy<LM: DMLoadingManagerProtocol>(loadingManager: LM) -> UIViewController {
         
         UIViewController(nibName: nil, bundle: nil)

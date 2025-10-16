@@ -95,7 +95,11 @@ public extension DMLoadingViewProviderProtocol {
     
     @MainActor
     func eraseToAnyViewProvider() -> AnyDMLoadingAnyViewProvider {
-        AnyDMLoadingAnyViewProvider(
+        if let castedSelf = self as? AnyDMLoadingAnyViewProvider {
+            return castedSelf
+        }
+        
+        return AnyDMLoadingAnyViewProvider(
             getLoadingView: {
                 AnyView(
                     self.getLoadingView()

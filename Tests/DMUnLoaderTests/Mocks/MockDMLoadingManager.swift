@@ -32,16 +32,32 @@ final class MockDMLoadingManager: DMLoadingManagerInteralProtocol {
         self.loadableState = loadableState
     }
     
-    public func showLoading() {
-        loadableState = .loading
+    func showLoading<PR: DMLoadingViewProviderProtocol>(provider: PR) {
+        loadableState = .loading(
+            provider: provider.eraseToAnyViewProvider()
+        )
+    }
+
+    func showSuccess<PR: DMLoadingViewProviderProtocol>(
+        _ message: DMLoadableTypeSuccess,
+        provider: PR
+    ) {
+        loadableState = .success(
+            message,
+            provider: provider.eraseToAnyViewProvider()
+        )
     }
     
-    public func showSuccess(_ message: DMLoadableTypeSuccess) {
-        loadableState = .success(message)
-    }
-    
-    public func showFailure(_ error: Error, onRetry: DMAction? = nil) {
-        loadableState = .failure(error: error, onRetry: onRetry)
+    func showFailure<PR: DMLoadingViewProviderProtocol>(
+        _ error: Error,
+        provider: PR,
+        onRetry: DMAction?
+    ) {
+        loadableState = .failure(
+            error: error,
+            provider: provider.eraseToAnyViewProvider(),
+            onRetry: onRetry
+        )
     }
     
     public func hide() {

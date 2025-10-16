@@ -83,16 +83,25 @@ public struct ActionButtonSettings {
     /// The text displayed on the button.
     public let text: String
     
-    public let style: AnyButtonStyle
-    
-    public init(text: String,
-                style: (any ButtonStyle)? = nil) {
+    public let styleFactory: @MainActor () -> AnyButtonStyle
+
+    public init(
+        text: String,
+        styleFactory: @escaping @MainActor () -> AnyButtonStyle
+    ) {
         self.text = text
-        if let style = style {
-            self.style = AnyButtonStyle(style)
-        } else {
-            self.style = AnyButtonStyle(.hudButtonStyle)
-        }
+        self.styleFactory = styleFactory
+    }
+    
+    public init(
+        text: String
+    ) {
+        self.init(
+            text: text,
+            styleFactory: {
+                @MainActor in AnyButtonStyle(.hudButtonStyle)
+            }
+        )
     }
 }
 
