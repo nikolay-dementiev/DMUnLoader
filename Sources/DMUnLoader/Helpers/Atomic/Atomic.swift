@@ -11,7 +11,7 @@ import Foundation
 ///
 /// - Note: The `ValueType` must conform to `Sendable` to ensure thread safety.
 @propertyWrapper
-internal final class Atomic<ValueType: Sendable>: @unchecked Sendable {
+final class Atomic<ValueType: Sendable>: @unchecked Sendable {
     
     /// The underlying value wrapped by this property wrapper.
     private var _property: ValueType
@@ -31,7 +31,7 @@ internal final class Atomic<ValueType: Sendable>: @unchecked Sendable {
     ///   @Atomic var atomicValue: Int = 42
     ///   $atomicValue.mutate { $0 += 1 }
     ///   ```
-    internal var projectedValue: Atomic<ValueType> {
+    var projectedValue: Atomic<ValueType> {
         // swiftlint:disable:next implicit_getter
         get { self }
     }
@@ -46,7 +46,7 @@ internal final class Atomic<ValueType: Sendable>: @unchecked Sendable {
     ///   atomicValue.wrappedValue = 20
     ///   print(atomicValue.wrappedValue) // Output: 20
     ///   ```
-    internal var wrappedValue: ValueType {
+    var wrappedValue: ValueType {
         get {
             wQueue.sync {
                 return _property
@@ -66,7 +66,7 @@ internal final class Atomic<ValueType: Sendable>: @unchecked Sendable {
     ///   let atomicValue = Atomic(0)
     ///   print(atomicValue.wrappedValue) // Output: 0
     ///   ```
-    internal init(_ wrappedValue: ValueType) {
+    init(_ wrappedValue: ValueType) {
         self._property = wrappedValue
     }
     
@@ -77,7 +77,7 @@ internal final class Atomic<ValueType: Sendable>: @unchecked Sendable {
     ///   let atomicValue = Atomic("Hello")
     ///   print(atomicValue()) // Output: "Hello"
     ///   ```
-    internal func callAsFunction() -> ValueType {
+    func callAsFunction() -> ValueType {
         wrappedValue
     }
     

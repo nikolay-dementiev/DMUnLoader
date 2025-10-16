@@ -8,7 +8,7 @@ import SwiftUI
 
 /// A namespace for constants used in the `DMLoadingView`.
 /// These constants define unique tags for views within the loading view.
-internal enum DMLoadingViewOwnSettings {
+enum DMLoadingViewOwnSettings {
     
     /// The tag assigned to an empty view when no loading state is active.
     static let emptyViewTag: Int = 0001
@@ -31,23 +31,41 @@ internal enum DMLoadingViewOwnSettings {
 
 /// A custom SwiftUI view that displays a loading state based on the `loadableState` of a `loadingManager`.
 /// This view uses a `provider` to supply views for different states (loading, failure, success).
-internal struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
-                              LLM: DMLoadingManagerInteralProtocol>: View {
+struct DMLoadingView<LLM: DMLoadingManagerProtocol>: View {
     
     /// The loading manager responsible for managing the loadable state.
-    @ObservedObject private(set) internal var loadingManager: LLM
-    
-    /// The provider that supplies views and settings for loading, error, and success states.
-    internal var provider: Provider
+    @ObservedObject private(set) var loadingManager: LLM
+    @State private var animateTheAppearance = false
     
     /// Initializes a new instance of `DMLoadingView`.
     /// - Parameters:
     ///   - loadingManager: The loading manager responsible for managing the loadable state.
-    ///   - provider: The provider that supplies views and settings for different states.
-    internal init(loadingManager: LLM,
-                  provider: Provider) {
+    init(loadingManager: LLM) {
         self.loadingManager = loadingManager
-        self.provider = provider
+    }
+    
+    /// Returns a type-erased view for the current state.
+    @ViewBuilder
+    private var overlayView: some View {
+        let loadableState = loadingManager.loadableState
+        switch loadableState {
+        case .none:
+            EmptyView()
+                .tag(DMLoadingViewOwnSettings.emptyViewTag)
+        case let .failure(error, provider, onRetry):
+            provider.getErrorView(
+                error: error,
+                onRetry: onRetry,
+                onClose: DMButtonAction(loadingManager.hide)
+            )
+            .tag(DMLoadingViewOwnSettings.failureViewTag)
+        case let .loading(provider):
+            provider.getLoadingView()
+                .tag(DMLoadingViewOwnSettings.loadingViewTag)
+        case let .success(object, provider):
+            provider.getSuccessView(object: object)
+                .tag(DMLoadingViewOwnSettings.successViewTag)
+        }
     }
     
     /// The body of the `DMLoadingView`.
@@ -56,41 +74,34 @@ internal struct DMLoadingView<Provider: DMLoadingViewProviderProtocol,
     ///   - Displays an empty view when the state is `.none`.
     ///   - Displays a semi-transparent overlay with a loading, failure, or success view based on the current state.
     ///   - Includes a tap gesture to dismiss the view when appropriate.
-    internal var body: some View {
+    var body: some View {
         ZStack {
             let loadableState = loadingManager.loadableState
             switch loadableState {
             case .none:
-                EmptyView()
-                    .tag(DMLoadingViewOwnSettings.emptyViewTag)
+                overlayView
             case .failure, .loading, .success:
                 ZStack {
-                    Color.black.opacity(0.2)
+                    Color.black.opacity(animateTheAppearance ? 0.2 : 0)
                         .ignoresSafeArea()
                     
-                    VStack(spacing: 20) {
-                        if case .loading = loadableState {
-                            provider.getLoadingView()
-                                .tag(DMLoadingViewOwnSettings.loadingViewTag)
-                        } else if case .failure(let error, let onRetry) = loadableState {
-                            provider.getErrorView(error: error,
-                                                  onRetry: onRetry,
-                                                  onClose: DMButtonAction(loadingManager.hide))
-                            .tag(DMLoadingViewOwnSettings.failureViewTag)
-                        } else if case .success(let object) = loadableState {
-                            provider.getSuccessView(object: object)
-                                .tag(DMLoadingViewOwnSettings.successViewTag)
-                        }
-                    }
-                    .padding(30)
-                    .background(Color.gray.opacity(0.8))
-                    .cornerRadius(10)
+                    overlayView
+                        .padding(15)
+                        .background(Color.gray.opacity(animateTheAppearance ? 0.8 : 0.1))
+                        .cornerRadius(10)
+                        .scaleEffect(animateTheAppearance ? 1 : 0.9)
                 }
                 .transition(.opacity)
                 .animation(.easeInOut, value: loadingManager.loadableState)
                 .tag(DMLoadingViewOwnSettings.defaultViewTag)
             }
-        }.onTapGesture {
+        }
+        .onAppear {
+            animateTheAppearance.toggle()
+        }
+        .animation(Animation.spring(duration: 0.2),
+                   value: animateTheAppearance)
+        .onTapGesture {
             switch loadingManager.loadableState {
             case .success,
                     .failure,

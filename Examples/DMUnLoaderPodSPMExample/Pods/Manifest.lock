@@ -1,7 +1,9 @@
 PODS:
-  - DMAction (1.0.4)
-  - DMUnLoader (0.1.29):
-    - DMAction
+  - DMAction (1.0.5)
+  - DMUnLoader (0.1.30):
+    - DMAction (~> 1.0.5)
+    - DMVariableBlurView (~> 1.0.0)
+  - DMVariableBlurView (1.0.0)
 
 DEPENDENCIES:
   - DMUnLoader (from `../../`)
@@ -9,14 +11,16 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - DMAction
+    - DMVariableBlurView
 
 EXTERNAL SOURCES:
   DMUnLoader:
     :path: "../../"
 
 SPEC CHECKSUMS:
-  DMAction: d0d482fca64619a0868f2390d832027647fd475d
-  DMUnLoader: d1eef65994855c78f735b3d8d23d1ca200093c3f
+  DMAction: faa1f40595bca309ab0f7cc6e4f9124c6d117d3e
+  DMUnLoader: 5920bba83876ae7b87753f6a48110021f121aa3e
+  DMVariableBlurView: c9b37b495051bd97dbee0f81ab49b7ab163d58d1
 
 PODFILE CHECKSUM: 77b591185ad2aba46b1c6ab6cd51e3b0925b5969
 

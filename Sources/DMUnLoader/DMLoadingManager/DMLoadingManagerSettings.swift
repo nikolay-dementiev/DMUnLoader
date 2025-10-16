@@ -24,7 +24,7 @@ public protocol DMLoadingManagerSettings {
 /// A concrete implementation of the `DMLoadingManagerSettings` protocol.
 /// This struct provides default settings for a loading manager, including
 /// an optional `autoHideDelay` parameter during initialization.
-internal struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings {
+struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings {
     
     /// The duration after which the loading state should automatically hide.
     /// Defaults to 2 seconds if no value is provided during initialization.
@@ -41,7 +41,7 @@ internal struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings {
     ///   let customSettings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(5))
     ///   print("Custom auto-hide delay: \(customSettings.autoHideDelay)") // Output: "Custom auto-hide delay: 5 seconds"
     ///   ```
-    internal init(autoHideDelay: Duration = .seconds(2)) {
+    init(autoHideDelay: Duration = .seconds(2)) {
         self.autoHideDelay = autoHideDelay
     }
 }

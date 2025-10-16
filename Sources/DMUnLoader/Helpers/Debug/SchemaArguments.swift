@@ -11,7 +11,7 @@ import Foundation
 ///
 /// This protocol is designed to abstract the retrieval of process arguments, allowing for
 /// dependency injection or mocking in tests.
-internal protocol ProcessInfoProvider: Sendable {
+protocol ProcessInfoProvider: Sendable {
     
     /// The command-line arguments passed to the current process.
     /// - Example:
@@ -25,7 +25,7 @@ internal protocol ProcessInfoProvider: Sendable {
 /// A concrete implementation of the `ProcessInfoProvider` protocol.
 /// This struct uses `ProcessInfo.processInfo.arguments` to retrieve the command-line arguments
 /// of the current process.
-internal struct DefaultProcessInfoProvider: ProcessInfoProvider {
+struct DefaultProcessInfoProvider: ProcessInfoProvider {
     
     /// The command-line arguments passed to the current process.
     /// - Note: This implementation directly accesses `ProcessInfo.processInfo.arguments`.
@@ -39,7 +39,7 @@ internal struct DefaultProcessInfoProvider: ProcessInfoProvider {
 ///
 /// This struct uses a thread-safe `Atomic` wrapper to manage the `ProcessInfoProvider` instance,
 /// allowing for dynamic replacement of the provider (e.g., for testing purposes).
-internal struct SchemaArguments {
+struct SchemaArguments {
     
     /// A private nested type containing static settings for the `SchemaArguments` struct.
     private enum Settings {

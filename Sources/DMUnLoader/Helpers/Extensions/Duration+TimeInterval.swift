@@ -7,7 +7,7 @@
 import Foundation
 
 /// An extension on `Duration` to provide additional functionality.
-internal extension Duration {
+extension Duration {
     
     /// Converts the `Duration` value into a `TimeInterval` representation.
     /// - Returns: The total duration in seconds as a `TimeInterval`, including fractional seconds.

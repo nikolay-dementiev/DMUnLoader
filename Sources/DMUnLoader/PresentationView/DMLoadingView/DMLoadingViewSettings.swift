@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUICore
+import SwiftUI
 
 /// A protocol defining settings for a loading view (`DMProgressView`).
 /// Conforming types must provide properties for text, progress indicator, container appearance, and geometry.

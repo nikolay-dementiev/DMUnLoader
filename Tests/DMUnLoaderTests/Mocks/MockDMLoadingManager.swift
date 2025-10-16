@@ -18,6 +18,12 @@ final class MockDMLoadingManager: DMLoadingManagerInteralProtocol {
         $loadableState.eraseToAnyPublisher()
     }
     
+    convenience init() {
+        self.init(id: UUID(),
+                  loadableState: .none,
+                  settings: MockDMLoadingManagerSettings(autoHideDelay: .seconds(0.2)))
+    }
+    
     internal init(id: UUID = UUID(),
                   loadableState: DMLoadableType = .none,
                   settings: DMLoadingManagerSettings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(0.2))) {

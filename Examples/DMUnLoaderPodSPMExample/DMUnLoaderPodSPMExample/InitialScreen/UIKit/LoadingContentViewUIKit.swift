@@ -8,8 +8,11 @@ import UIKit
 import Combine
 import DMUnLoader
 
-final class LoadingContentViewUIKit: UIView {
-    private let viewModel = LoadingContentViewModel()
+final class LoadingContentViewUIKit<
+    Provider: DMLoadingViewProviderProtocol,
+    LM: DMLoadingManagerProtocol
+>: UIView {
+    private let viewModel = LoadingContentViewModel<Provider,LM>()
     private var cancellables = Set<AnyCancellable>()
     
     private let stackView = UIStackView()
@@ -18,15 +21,17 @@ final class LoadingContentViewUIKit: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        bindViewModel()
     }
     
     required init?(coder: NSCoder) {
         fatalError("Not implemented")
     }
     
-    func configure(loadingManager: DMLoadingManager?) {
-        viewModel.configure(loadingManager: loadingManager)
+    func configure(loadingManager: LM?, provider: Provider?) {
+        viewModel.configure(
+            loadingManager: loadingManager,
+            provider: provider
+        )
     }
     
     private func setupUI() {
@@ -64,11 +69,30 @@ final class LoadingContentViewUIKit: UIView {
         ])
         stackView.addArrangedSubview(titleContainer)
         
+        let buttonsContainer = UIStackView()
+        buttonsContainer.axis = .vertical
+        buttonsContainer.spacing = 10
+        buttonsContainer.alignment = .fill
+        buttonsContainer.translatesAutoresizingMaskIntoConstraints = false
+        
+        stackView.addArrangedSubview(buttonsContainer)
+        
         // Buttons
-        addButton(title: "Show downloads", action: #selector(viewModel.showDownloads))
-        addButton(title: "Simulate an error", action: #selector(viewModel.simulateAnError))
-        addButton(title: "Simulate success", action: #selector(viewModel.simulateSuccess))
-        addButton(title: "Hide downloads", action: #selector(viewModel.hideLoading))
+        addButton(
+            title: "Simulate Loading",
+            action: #selector(viewModel.showDownloads),
+            into: buttonsContainer
+        )
+        addButton(
+            title: "Simulate Error",
+            action: #selector(viewModel.simulateAnError),
+            into: buttonsContainer
+        )
+        addButton(
+            title: "Simulate Success",
+            action: #selector(viewModel.simulateSuccess),
+            into: buttonsContainer
+        )
         
         // Constraints
         NSLayoutConstraint.activate([
@@ -79,25 +103,48 @@ final class LoadingContentViewUIKit: UIView {
         ])
     }
     
-    private func addButton(title: String, action: Selector) {
-        let button = UIButton(type: .system)
+    private func addButton(title: String, action: Selector, into stackView: UIStackView) {
+        let button = CapsuleButton(type: .system)
+        
+        button.addTarget(viewModel, action: action, for: .touchUpInside)
         
         var configuration = UIButton.Configuration.plain()
         configuration.title = title
-        configuration.baseForegroundColor = .systemBlue
-        configuration.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+        configuration.baseForegroundColor = .tintColor
+        configuration.contentInsets = NSDirectionalEdgeInsets(
+            top: 8,
+            leading: 40,
+            bottom: 8,
+            trailing: 40
+        )
         button.configuration = configuration
         
-        button.addTarget(viewModel, action: action, for: .touchUpInside)
+        // Tint color
+        button.tintColor = .systemBlue
+        
+        // Border styling via layer
+        button.layer.borderWidth = 2
+        button.layer.borderColor = button.tintColor.cgColor
+        button.layer.masksToBounds = true
+        
+        // Make the button expand horizontally in a stack view, if desired
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.addConstraint(
+            button.heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
+        )
+        
         stackView.addArrangedSubview(button)
+        
+        button.widthAnchor.constraint(equalTo: stackView.widthAnchor).isActive = true
     }
     
-    private func bindViewModel() {
-        viewModel.$isReady
-            .receive(on: RunLoop.main)
-            .sink { [weak self] isReady in
-                self?.isUserInteractionEnabled = isReady
-            }
-            .store(in: &cancellables)
+    //MARK: HELPERs
+    
+    final class CapsuleButton: UIButton {
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            layer.cornerRadius = bounds.height / 2
+        }
     }
 }

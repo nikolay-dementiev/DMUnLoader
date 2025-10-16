@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUICore
+import SwiftUI
 
 /// A protocol defining settings for an error view (`DMErrorView`).
 /// Conforming types must provide properties for error text, action buttons, text styling, and image settings.
@@ -83,31 +83,30 @@ public struct ActionButtonSettings {
     /// The text displayed on the button.
     public let text: String
     
-    /// The background color of the button.
-    public let backgroundColor: Color
+    public let style: AnyButtonStyle
     
-    /// The corner radius of the button.
-    public let cornerRadius: CGFloat
-    
-    /// Initializes a new instance of `ActionButtonSettings` with optional customizations.
-    /// - Parameters:
-    ///   - text: The text displayed on the button. Defaults to an empty string.
-    ///   - backgroundColor: The background color of the button. Defaults to `.white`.
-    ///   - cornerRadius: The corner radius of the button. Defaults to `8`.
-    /// - Example:
-    ///   ```swift
-    ///   let closeButtonSettings = ActionButtonSettings(
-    ///       text: "Close",
-    ///       backgroundColor: .gray,
-    ///       cornerRadius: 10
-    ///   )
-    ///   ```
     public init(text: String,
-                backgroundColor: Color = .white,
-                cornerRadius: CGFloat = 8) {
+                style: (any ButtonStyle)? = nil) {
         self.text = text
-        self.backgroundColor = backgroundColor
-        self.cornerRadius = cornerRadius
+        if let style = style {
+            self.style = AnyButtonStyle(style)
+        } else {
+            self.style = AnyButtonStyle(.hudButtonStyle)
+        }
+    }
+}
+
+public struct AnyButtonStyle: ButtonStyle {
+    private let _makeBody: (Configuration) -> AnyView
+
+    public init<S: ButtonStyle>(_ style: S) {
+        self._makeBody = { configuration in
+            AnyView(style.makeBody(configuration: configuration))
+        }
+    }
+
+    public func makeBody(configuration: Configuration) -> some View {
+        _makeBody(configuration)
     }
 }
 

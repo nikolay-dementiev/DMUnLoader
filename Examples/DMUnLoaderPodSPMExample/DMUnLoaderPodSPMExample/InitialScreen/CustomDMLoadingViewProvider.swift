@@ -9,7 +9,7 @@ import DMUnLoader
 
 /// A custom implementation of `DMLoadingViewProvider` that provides custom loading and error views.
 /// This class also defines settings for the `DMLoadingManager`, including success view configurations.
-internal final class CustomDMLoadingViewProvider: DMLoadingViewProviderProtocol {
+final class CustomDMLoadingViewProvider: DMLoadingViewProviderProtocol {
     
     public var id: UUID = UUID()
     

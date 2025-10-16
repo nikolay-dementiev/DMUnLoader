@@ -8,7 +8,7 @@ import SwiftUI
 
 /// A namespace for constants used in the `DMSuccessView`.
 /// These constants define unique tags for views within the success view.
-internal enum DMSuccessViewOwnSettings {
+enum DMSuccessViewOwnSettings {
     
     /// The tag assigned to the container view that holds all content in the success view.
     static let containerViewTag: Int = 3100
@@ -22,13 +22,13 @@ internal enum DMSuccessViewOwnSettings {
 
 /// A custom SwiftUI view that displays a success state with an image and optional text.
 /// This view uses a settings provider to configure the appearance of the success view.
-internal struct DMSuccessView: View {
+struct DMSuccessView: View {
     
     /// The settings provider responsible for configuring the success view's appearance.
-    internal let settingsProvider: DMSuccessViewSettings
+    let settingsProvider: DMSuccessViewSettings
     
     /// An optional object associated with the success state, providing additional context or a custom message.
-    internal let assosiatedObject: DMLoadableTypeSuccess?
+    let assosiatedObject: DMLoadableTypeSuccess?
     
     /// Initializes a new instance of `DMSuccessView`.
     /// - Parameters:
@@ -39,8 +39,8 @@ internal struct DMSuccessView: View {
     ///   let settings = DMSuccessDefaultViewSettings()
     ///   let successView = DMSuccessView(settings: settings, assosiatedObject: "Operation Completed!")
     ///   ```
-    internal init(settings settingsProvider: DMSuccessViewSettings,
-                  assosiatedObject: DMLoadableTypeSuccess? = nil) {
+    init(settings settingsProvider: DMSuccessViewSettings,
+         assosiatedObject: DMLoadableTypeSuccess? = nil) {
         self.settingsProvider = settingsProvider
         self.assosiatedObject = assosiatedObject
     }
@@ -50,7 +50,7 @@ internal struct DMSuccessView: View {
     /// - Behavior:
     ///   - Displays a resizable image with properties defined in `successImageProperties`.
     ///   - Displays optional text derived from the `assosiatedObject` or `successTextProperties`.
-    internal var body: some View {
+    var body: some View {
         let successImageProperties = settingsProvider.successImageProperties
         VStack {
             successImageProperties.image

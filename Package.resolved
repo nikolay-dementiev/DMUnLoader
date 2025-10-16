@@ -1,5 +1,5 @@
 {
-  "originHash" : "dd42dc391eef5d087a2f767d0a6950e678908bf18a8cec0906c67037f99afd7a",
+  "originHash" : "ba45bcdbae14203d43390f1a3fe038e71a6cf4f6760665ad23ade29aa80420a0",
   "pins" : [
     {
       "identity" : "dmaction",
@@ -11,12 +11,21 @@
       }
     },
     {
+      "identity" : "dmvariableblurview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nikolay-dementiev/DMVariableBlurView.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "274a7072257a9f4eb626bfe57016b9ae4b4cc9c8"
+      }
+    },
+    {
       "identity" : "swiftlintplugin",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/GayleDunham/SwiftLintPlugin.git",
       "state" : {
         "branch" : "main",
-        "revision" : "0bb7767a7c64701b62cb6fcb4d846bd01869662b"
+        "revision" : "5c864493d1231a79f48cd4212f4410acad959306"
       }
     },
     {
@@ -24,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nalexn/ViewInspector",
       "state" : {
-        "revision" : "a6fcac8485bc8f57b2d2b55bb6d97138e8659e4b",
-        "version" : "0.10.2"
+        "revision" : "e9a06346499a3a889165647e3f23f8a7b2609a1c",
+        "version" : "0.10.3"
       }
     }
   ],

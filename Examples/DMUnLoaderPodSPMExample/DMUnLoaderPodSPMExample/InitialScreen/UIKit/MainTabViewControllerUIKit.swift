@@ -8,15 +8,17 @@ import UIKit
 import Combine
 import DMUnLoader
 
-final class MainTabViewControllerUIKit: UITabBarController {
+final class MainTabViewControllerUIKit<LM: DMLoadingManagerProtocol>: UITabBarController {
     
-    private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
+    private(set) weak var loadingManager: LM?
     
-    internal init(manager: GlobalLoadingStateManager) {
-        self.globalLoadingManager = manager
+    init(loadingManager: LM?) {
+        self.loadingManager = loadingManager
+        
         super.init(nibName: nil, bundle: nil)
     }
    
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -24,14 +26,14 @@ final class MainTabViewControllerUIKit: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTabs()
-        
-        subscribeToLoadingStateChange(from: globalLoadingManager)
     }
     
     private func setupTabs() {
         // First tab - Default
         let defaultVC = createNavController(
-            viewController: DefaultSettingsViewController(manager: globalLoadingManager),
+            viewController: DefaultSettingsViewController(
+                loadingManager: loadingManager
+            ),
             buttonTitle: "Default",
             imageName: "gearshape",
             navigatioTitle: "Default settings"
@@ -39,7 +41,9 @@ final class MainTabViewControllerUIKit: UITabBarController {
         
         // Second tab - Custom
         let customVC = createNavController(
-            viewController: CustomSettingsViewController(manager: globalLoadingManager),
+            viewController: CustomSettingsViewController(
+                loadingManager: loadingManager
+            ),
             buttonTitle: "Custom",
             imageName: "pencil",
             navigatioTitle: "Custom settings"
@@ -63,22 +67,17 @@ final class MainTabViewControllerUIKit: UITabBarController {
     }
 }
 
-extension MainTabViewControllerUIKit: DMViewControllerTopLevel {
-    func handleLoadingStateChange(_ state: DMUnLoader.DMLoadableType) {
-        view.isUserInteractionEnabled = state != .loading
-    }
-}
-
 // MARK: - View Controllers for tabs
 
-final class DefaultSettingsViewController: UIViewController {
-    private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
+final class DefaultSettingsViewController<LM: DMLoadingManagerProtocol>: UIViewController {
+    private(set) weak var loadingManager: LM?
     
-    internal init(manager: GlobalLoadingStateManager) {
-        self.globalLoadingManager = manager
+    init(loadingManager: LM?) {
+        self.loadingManager = loadingManager
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -86,22 +85,26 @@ final class DefaultSettingsViewController: UIViewController {
     override func loadView() {
         super.loadView()
         
-        let newCustedView = ContentViewDefaultSettingsUIKit(provider: DefaultDMLoadingViewProvider(),
-                                                            innerView: LoadingContentViewUIKit(),
-                                                            manager: globalLoadingManager)
+        let newCustedView = configureContentViewSettingsView(
+            provider: DefaultDMLoadingViewProvider(),
+            innerView: LoadingContentViewUIKit(),
+            loadingManager: loadingManager
+        )
+        
         view = newCustedView
         view.setNeedsUpdateConstraints()
     }
 }
 
-final class CustomSettingsViewController: UIViewController {
-    private(set) weak var globalLoadingManager: GlobalLoadingStateManager!
+final class CustomSettingsViewController<LM: DMLoadingManagerProtocol>: UIViewController {
+    private(set) weak var loadingManager: LM?
     
-    internal init(manager: GlobalLoadingStateManager) {
-        self.globalLoadingManager = manager
+    init(loadingManager: LM?) {
+        self.loadingManager = loadingManager
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -109,10 +112,32 @@ final class CustomSettingsViewController: UIViewController {
     override func loadView() {
         super.loadView()
         
-        let newCustedView = ContentViewCustomSettingsUIKit(provider: CustomDMLoadingViewProvider(),
-                                                           innerView: LoadingContentViewUIKit(),
-                                                           manager: globalLoadingManager)
+        let newCustedView = configureContentViewSettingsView(
+            provider: CustomDMLoadingViewProvider(),
+            innerView: LoadingContentViewUIKit(),
+            loadingManager: loadingManager
+        )
+        
         view = newCustedView
         view.setNeedsUpdateConstraints()
+    }
+}
+
+private extension UIViewController {
+    func configureContentViewSettingsView<
+        LM: DMLoadingManagerProtocol,
+        LVP: DMLoadingViewProviderProtocol
+    >(
+        provider: LVP,
+        innerView: LoadingContentViewUIKit<LVP, LM>,
+        loadingManager: LM?
+    ) -> UIView {
+        
+        innerView.configure(
+            loadingManager: loadingManager,
+            provider: provider
+        )
+        
+        return innerView
     }
 }

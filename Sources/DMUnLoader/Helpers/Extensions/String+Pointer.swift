@@ -7,7 +7,7 @@
 import Foundation
 
 /// An extension on `String` to provide utility methods for working with object pointers.
-internal extension String {
+extension String {
     
     /// Generates a string representation of the memory address of a given object.
     /// - Parameter object: The object whose memory address is to be represented as a string.

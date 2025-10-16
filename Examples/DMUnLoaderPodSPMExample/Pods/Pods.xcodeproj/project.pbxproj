@@ -3,179 +3,205 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 71;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		06F734FA2941C6E5C761A2AA37DC6B8D /* DMAppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4DC7BB0423C625AD4CBEE17513BCB00 /* DMAppError.swift */; };
+		00C69699CF456F2F33474021E62C070A /* DMSceneDelegateBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B80CD958984EECD53271C292E5BA1F1 /* DMSceneDelegateBase.swift */; };
 		0768414D1BA10D886BB2EFAF9671879B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AE2110C75913799B1814837D0E021AE /* Foundation.framework */; };
-		0A7629624FB5C38C703F3001E391730A /* DMLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2AEE91C49871899F0F1E2BB1EF8C85 /* DMLoadingView.swift */; };
-		0F3249FE96ED123CAA17E5E015EDA0A2 /* DMGlobalLoadingStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98EA7A64538524D388DB58C37435FB27 /* DMGlobalLoadingStateManager.swift */; };
-		145BCA5B359684A40BCD5D17F9880C8E /* View+Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022559ED8CC09BE48BE31EE306FA8D94 /* View+Loading.swift */; };
-		15EFB11D05E0A0DDF0230DF22FB2AFA0 /* DMSuccessViewSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5DAA435719C9E3223F41577018AD5C6 /* DMSuccessViewSettings.swift */; };
-		1CC5717740A6B07FB2363FF8404EDC4D /* EnvironmentKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD9DF13599CFD5195856D015FC7EDE9 /* EnvironmentKeys.swift */; };
-		225327609151F392BD914D3573BA2EC0 /* DMErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DF2A0715DAC36941DABF9ACB2274FA /* DMErrorView.swift */; };
-		2C8EA61DCC96259ADCC211740910B5CF /* DMViewControllerTopLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084B1321AB1C79ADBAE2FB3DAF24BAC2 /* DMViewControllerTopLevel.swift */; };
-		2E82907FEDC98F71B08C5F30BE4C0982 /* DMActionWithFallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29DA8C38932F7EE20328625EC185AC02 /* DMActionWithFallback.swift */; };
-		2EFF6FD90B88A1E386DAACC89174AB81 /* DMAction-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 2752DF09B06D157CA049E4AD3AB7F5EA /* DMAction-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		48DD00B37421BE54337CAAB43DA67939 /* DMUnLoader-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B3911BD32ACF67F464E6401DF38DA91 /* DMUnLoader-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		51E77F4B67E623EF19D0A88EEBD2154F /* GlobalLoadingStateManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B846235113FFF4852B4376F75060F7DE /* GlobalLoadingStateManagerProtocol.swift */; };
-		57B1E7A8AD02B96E55E4CEF861E29E7F /* DMSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123C83D448113CCF93738C25F06B35DF /* DMSuccessView.swift */; };
-		5866C447CCB35121B28270C367ADD289 /* CustomSizeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94841AB2C45EC458052F297D1C64FEE /* CustomSizeView.swift */; };
-		5A14E768FDC749F4FD41BD12903D7E3F /* DMRootViewControllerUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A1B11E3E0C261B2C16D0D8AE45EFCE /* DMRootViewControllerUIKit.swift */; };
-		633660551F573BC1E9549604383AD57A /* DMRootLoadingModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D04B7C1AB553094DDA9BAA6A80119A1 /* DMRootLoadingModifier.swift */; };
-		641374230387BE84977945D1C060CB46 /* DMUnLoader-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 75547614A50F40140AE48A15A0807229 /* DMUnLoader-dummy.m */; };
-		6C4948BAEED4DD4915DFEEA65011F84E /* DMProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A797DCCA416238B88108FDEE824BAD3 /* DMProgressView.swift */; };
-		7BC8EAE65CF4DAAFF1EEFAB28CEF7CDC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D66573C3081AC887F08053E18DB16501 /* UIKit.framework */; };
-		8044A65EFAF28D1A968A889EFC28800A /* DMLocalLoadingViewUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3CF335C6DB3FAEB20462337CB82F294 /* DMLocalLoadingViewUIKit.swift */; };
-		82EB2D278130CFC9223251021FA3713D /* DMLoadingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E9ED2BA1CC76B3B356B62550ED6E52 /* DMLoadingManager.swift */; };
-		86B4BA6C5D43CAB8AF2E6034994FDCD1 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF58A8E68465366A22051E16F4D7F6D7 /* Atomic.swift */; };
-		8854E196902A1CD01F1D1DA02913FD27 /* DMButtonAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E1E16D1CC83BAEDF84E4C335EFF1A1 /* DMButtonAction.swift */; };
-		890508C8DC231FEB871766938A30E9EE /* DMNativeDeviceParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2DA786CC82111313AAE760BBB31B4D /* DMNativeDeviceParameters.swift */; };
-		89172D5A9812BC9FFF76CD8B7282AD72 /* DMLoadableTypeSuccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB84C6675C1773E930AFA4C780AF188 /* DMLoadableTypeSuccess.swift */; };
-		892780B3B2299330F5BE1E9CC82CB905 /* DispatchQueue+Unique.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C6F32B9E0A41C7120E9F0635D11B480 /* DispatchQueue+Unique.swift */; };
-		8AD92A1363F91D6A95379D32B2B1AE0D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AE2110C75913799B1814837D0E021AE /* Foundation.framework */; };
-		91571C22EE6C9A196B5AA8AAB37ABDB2 /* DMLoadingModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC51E72644294AFB82B8B46F823C7F6 /* DMLoadingModifier.swift */; };
-		923C850F3A4C78B03B682C8C3D48C084 /* DMRootLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7075EE0133F5B2DDA6E9335874D4E5C /* DMRootLoadingView.swift */; };
-		931F5642725BEF1D3AD54AE83A824DD8 /* DMAction+AttempCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3951EA6C6E6514633B5C44BB4B0ACF9B /* DMAction+AttempCount.swift */; };
-		9D0EA622CB323BAFBD4456A88EA5D50A /* DMErrorViewSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055FEF742FFC1B3A6E90628A671E48FB /* DMErrorViewSettings.swift */; };
-		A2924D859989D5E60768BF3919718D5C /* DMLocalLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C913B03ABB99832D5686996DDCA7F5 /* DMLocalLoadingView.swift */; };
-		A6D099E608B93E50FC6785814AC63029 /* DMAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F26C7F8F0B3F0880530E45D40A55EC0 /* DMAction.swift */; };
-		A70980D8FDD855750C5E1132B6D58632 /* Pods-DMUnLoaderPodSPMExample-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EA4BF7510E6FD6DC4D06BF91080BE80 /* Pods-DMUnLoaderPodSPMExample-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		ADDDE0EE6541C99C047ED03FADDE854B /* Duration+TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = F052B96FF2FE47273D282D6860A16C61 /* Duration+TimeInterval.swift */; };
-		B44B6F085A0B3811A5C0687DCD9FFC5D /* Inspection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73090EE831215FBF7CBE1EBE3ACAF0FB /* Inspection.swift */; };
-		BBBB776E1F13A5BC2B1FF6581EED5773 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2094B4ADB60CC2FF63D261FCF257DFE1 /* SwiftUI.framework */; };
-		BD6280FEBFA0629C6A4C56616E498E64 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AE2110C75913799B1814837D0E021AE /* Foundation.framework */; };
-		BDCBCB08D6D68323C48E27AB72112953 /* Pods-DMUnLoaderPodSPMExample-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B6A7D3B8065056B5C03952CB585F72 /* Pods-DMUnLoaderPodSPMExample-dummy.m */; };
-		CE2623BB16535BBFDF653F510B41A5B9 /* Optional+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5702E9C3DF66E97D46F29FF41430DD8D /* Optional+Protocol.swift */; };
-		DBFDBAEF881BA94D17447F0B9E63B4D5 /* DMLoadingViewProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE93B9D32469D6AC29B0BCEC86887422 /* DMLoadingViewProviderProtocol.swift */; };
-		DF7C9A110D67960DB452D3550A61D97D /* SchemaArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629EA2116B149297945EE671304D9975 /* SchemaArguments.swift */; };
-		E4713636D06C3FBB652C883A12033580 /* String+Pointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F65B9601325EC266181493453F7ED79 /* String+Pointer.swift */; };
-		E71DE20AC5C43932FD24D0DEA92CC9A4 /* FrameworkExports.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A1EA5F070BF3FABF0777DEC0D24576 /* FrameworkExports.swift */; };
-		E8E1946280B92EF08383A9D299FBC57B /* DMWrappedViewUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A9C5EB2D84E4350C9190C869C8A268 /* DMWrappedViewUIKit.swift */; };
-		ED8A4E7790783ED440EA8F38652EC3D0 /* DMLoadableType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0767EA404ACFB67FD543F33474659E5F /* DMLoadableType.swift */; };
-		EF4322805194867122EAD6B9DE6D9285 /* DMActionResultValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D2402EB98551312886B082C0787CC1 /* DMActionResultValue.swift */; };
-		EFF4BC6D713D001A379349DDE825B48A /* DMLoadingManagerSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89CCA4EEC2A33E08A3715608C5543C97 /* DMLoadingManagerSettings.swift */; };
-		F9379E8C8654778B7A6F24B5C9986580 /* DMAction-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F5D4BB0E75E436614EB8D9EA8E25934 /* DMAction-dummy.m */; };
-		FEBD0501377FFF8EA72EDBCFA80B65B8 /* DMLoadingManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28F31777D6CD991D6CCB393EF576DE2F /* DMLoadingManagerProtocol.swift */; };
-		FF73EDD90DE29B86AD00F3CDC53376A7 /* DMLoadingViewSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B50368EE4C3003ADA989E526BF6595 /* DMLoadingViewSettings.swift */; };
+		0E7B901861A933957B7EAB0323D59B0A /* AnyDMLoadingViewProviderTypeErasurer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91EF0F2BB1EE1D4A670337D0453BE61E /* AnyDMLoadingViewProviderTypeErasurer.swift */; };
+		1FDD8210BF4DBB30FFC4F094D45D41DC /* DMErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8FE375BAF816D2FD0BC7D99E367A1DF /* DMErrorView.swift */; };
+		21B9D4A6560C6C7E9F46B55BF4D7A9E1 /* DMVariableBlurView-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C4AAFCD790FF831FE1361076B132EF93 /* DMVariableBlurView-dummy.m */; };
+		25F5E16BF475F7C2E3BEFF3C0416AF42 /* DMAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3912006A924AC8D3E8660739ABD6FC15 /* DMAppDelegate.swift */; };
+		2D9764F9409EF3125F60721E6DCFD14C /* DMPassThroughWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DC87EE27B189409FEBEDBE461DD77D /* DMPassThroughWindow.swift */; };
+		2E82907FEDC98F71B08C5F30BE4C0982 /* DMActionWithFallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB32B5580472038CB577C2CBDBF1EBA0 /* DMActionWithFallback.swift */; };
+		2EFF6FD90B88A1E386DAACC89174AB81 /* DMAction-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D37DF4A1B029F5DDA3B442075D76DD9 /* DMAction-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		31E105BB1D7410213721E1257629A4D1 /* DMSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD97E3B5009F051EAD38A12B203AA15 /* DMSuccessView.swift */; };
+		3B0FD3B02912D26D90386ECC91CC05E2 /* DMLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665C880E99CBDA67BED719D2310B20FA /* DMLoadingView.swift */; };
+		47EEF57CB7C915ED26A2A66F7615D3C0 /* DMLoadableTypeSuccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93AAAA449F6FA2A0BF046EF5A5C723C /* DMLoadableTypeSuccess.swift */; };
+		4B3BC0DD066D1E9F9336E9492F3034F7 /* String+Pointer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B8B823A47C72716509C506D16D94459 /* String+Pointer.swift */; };
+		4E04B2040E76F875F99425EAF1AF7270 /* DMLoadingManagerSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6037D884CCB08621C6F408BF96D21E4 /* DMLoadingManagerSettings.swift */; };
+		4E0F37E994C6076B2BEA8DCE76E5FBF8 /* Pods-DMUnLoaderPodSPMExample-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B6A7D3B8065056B5C03952CB585F72 /* Pods-DMUnLoaderPodSPMExample-dummy.m */; };
+		5135D2A70530E3F74C41B8B9CFDFC524 /* DMErrorViewSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B792F6E068F089F06193EEDAB5810FFC /* DMErrorViewSettings.swift */; };
+		5A8DE3D02B4A551ADC58DA6842FE5B8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AE2110C75913799B1814837D0E021AE /* Foundation.framework */; };
+		5DC97E58DEF5EDBA3BCC43A6D5205C2D /* SchemaArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 059F9123A6147A3BE689AE965CD7EFCA /* SchemaArguments.swift */; };
+		62A8CC8F303BE2A99BFD8017BF42224D /* Pods-DMUnLoaderPodSPMExample-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EA4BF7510E6FD6DC4D06BF91080BE80 /* Pods-DMUnLoaderPodSPMExample-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		72E274ED724DB7C47C2CDCBCBBBB57DC /* View+HUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52432B93E1B16257FC9A23D752567203 /* View+HUD.swift */; };
+		743C10CB58395C5C337A7043884797A3 /* DMAppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EE598BCE7C9A5EF235D837695D6C0C /* DMAppError.swift */; };
+		77CBC480E039CC799D77E00973CC7526 /* DMLoadingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A8EDE525D86297C0934E411B96D995 /* DMLoadingManager.swift */; };
+		806B632C79A74055EDEB8A9F85D83501 /* Inspection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F756F03A4ED252D9B62A4D4FBC9ED4 /* Inspection.swift */; };
+		8854E196902A1CD01F1D1DA02913FD27 /* DMButtonAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BA407AC05DC05AB24238918FDFDBEF /* DMButtonAction.swift */; };
+		8FD9BE2D095F6188B7EDA69EA183A374 /* DMSuccessViewSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B035313259BAE1E8181BBBEE319CD06 /* DMSuccessViewSettings.swift */; };
+		931F5642725BEF1D3AD54AE83A824DD8 /* DMAction+AttempCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDA4DBC26C96500A18FC826AF0E16EC /* DMAction+AttempCount.swift */; };
+		9AB38DD2550850D39EBDD20B57793A7D /* DMHudButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F7AD6411EB46E50E605BB2E15D130D6 /* DMHudButtonStyle.swift */; };
+		9EE9A7F8D1ED752F61F5E3CDC2F1B68E /* DMUnLoader-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = AA661327E3FBFFCF930B06E9F15AA96B /* DMUnLoader-dummy.m */; };
+		A3BD1A9C559B6DF81A514A01F6F86C44 /* DMVariableBlurView-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 1337B896C6B22DDCE7A358CB454FD1B8 /* DMVariableBlurView-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A6D099E608B93E50FC6785814AC63029 /* DMAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BD442E1F16DB65AC98C23D4682F7F14 /* DMAction.swift */; };
+		BCDA96A0E93FEA518E0E92367424E986 /* Duration+TimeInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159FF205532E06F83BA1C8518B21C41A /* Duration+TimeInterval.swift */; };
+		BE96EEF8182FFFA9B335058E0803627E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AE2110C75913799B1814837D0E021AE /* Foundation.framework */; };
+		C1B5ADB9D81BD563FBFE9781E09095EC /* DMRootLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D356C60B1A477A8F7D47D90E846A37 /* DMRootLoadingView.swift */; };
+		C42E2B68D5B72982B0A762F4DCA0EC27 /* CustomSizeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFDA63162F8D3BD069D6DA7FA767918 /* CustomSizeView.swift */; };
+		CE36613DDE34A9B251FC0C12BFD55ED2 /* FrameworkExports.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298F194F098211301A692AE646C0CC7F /* FrameworkExports.swift */; };
+		D137C99286B36855D72D09B023C10FF2 /* DMLoadingViewSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E93E4750BCBBDAAE27EC6DBD182637F /* DMLoadingViewSettings.swift */; };
+		D26A414558BE9B065505097049F48600 /* DMHudSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65B1FDE5B0B39C6573A8AC3F757FC8F /* DMHudSceneView.swift */; };
+		DA32548D387F7D426F61D59B72BE66B0 /* DMLoadingViewProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F56F4D2781C61E1812399B5AEF26B8 /* DMLoadingViewProviderProtocol.swift */; };
+		DB16BFFF90CFE028621EE52BF23C64B0 /* DMLoadingManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ECAB2392BAA8B0379C0C43EDAE71D41 /* DMLoadingManagerProtocol.swift */; };
+		DC629A2D3264FEFCA34E5AD3ED236FD9 /* DMSceneDelegateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFAD6A9C8D7538D1339ADFE54283C0E /* DMSceneDelegateHelper.swift */; };
+		DC6499C2DC17E2041D9B3AAAD6963DF3 /* DMUnLoader-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 61D3F1DA7D7D40759450465554E10B70 /* DMUnLoader-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DD146A95B2F809BE7961A1AE33F7B740 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2AE2110C75913799B1814837D0E021AE /* Foundation.framework */; };
+		E22693E6F88CB11464DC3C0A3870E361 /* DMProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B88AF715AB207569124D1C97B7ACA0 /* DMProgressView.swift */; };
+		E294CCE2F4F33022801751BC6863F1A7 /* DMVariableBlurView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8D3D3FD4C96733E4A44F83DAA2FC10F /* DMVariableBlurView.swift */; };
+		E55632CD00045FE85E287040F9E922FA /* DMLoadableType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BBEB874BB675DE652EEE3C9B5BCABF5 /* DMLoadableType.swift */; };
+		EE088721E744B83D51D1F1F146F0F3AB /* DispatchQueue+Unique.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49DA643A0B1B8A45DF02A95379AFE9B0 /* DispatchQueue+Unique.swift */; };
+		EF4322805194867122EAD6B9DE6D9285 /* DMActionResultValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DF3D9954F6342D75D51C51848076C4 /* DMActionResultValue.swift */; };
+		F343C202C1007DC210C851DF516355F4 /* Optional+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01021847A9813CD4CF7D6739F0F8793 /* Optional+Protocol.swift */; };
+		F363ADF8D8295E1D8E5B29C2E6680BF0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D66573C3081AC887F08053E18DB16501 /* UIKit.framework */; };
+		F44237D04FCA21CD84812E5238720FAD /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57B9A4AC1294EE740563D0E6BC642A86 /* Atomic.swift */; };
+		F7D790FAA1616962E0B14348668B6DC9 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2094B4ADB60CC2FF63D261FCF257DFE1 /* SwiftUI.framework */; };
+		F9379E8C8654778B7A6F24B5C9986580 /* DMAction-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 356E83C6D18FAC77A67FA1EE76B16AAC /* DMAction-dummy.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		029F4BCE861663B4D1CED97FB2B4D423 /* PBXContainerItemProxy */ = {
+		1A1CEC54B223719C4A2CF6C1AB4A74D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F7564024008D614A34B976CD905BD90D;
+			remoteInfo = DMAction;
+		};
+		1B234E19F071F5690829A1E8DEF6178A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F7C86ADD3C7A3D169B4E71C6602432A2;
+			remoteInfo = DMVariableBlurView;
+		};
+		8627E1F37E381E09D95F5EC31A3804E7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 859EFC1FBBC1FAC3D13AA276B34DC624;
 			remoteInfo = DMUnLoader;
 		};
-		A241F129882B40D2A9574D493E847699 /* PBXContainerItemProxy */ = {
+		AB0647E6B971A27C537513F004E707D3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = F7564024008D614A34B976CD905BD90D;
 			remoteInfo = DMAction;
 		};
-		C17D377C18C5B08539A558E03818BE27 /* PBXContainerItemProxy */ = {
+		E4238FB6640BC7253D102214F5DD703B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F7564024008D614A34B976CD905BD90D;
-			remoteInfo = DMAction;
+			remoteGlobalIDString = F7C86ADD3C7A3D169B4E71C6602432A2;
+			remoteInfo = DMVariableBlurView;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		022559ED8CC09BE48BE31EE306FA8D94 /* View+Loading.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "View+Loading.swift"; sourceTree = "<group>"; };
-		055FEF742FFC1B3A6E90628A671E48FB /* DMErrorViewSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMErrorViewSettings.swift; sourceTree = "<group>"; };
-		0767EA404ACFB67FD543F33474659E5F /* DMLoadableType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMLoadableType.swift; path = Sources/DMUnLoader/DMLoadableType.swift; sourceTree = "<group>"; };
-		084B1321AB1C79ADBAE2FB3DAF24BAC2 /* DMViewControllerTopLevel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMViewControllerTopLevel.swift; sourceTree = "<group>"; };
-		0A797DCCA416238B88108FDEE824BAD3 /* DMProgressView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMProgressView.swift; sourceTree = "<group>"; };
-		0B3911BD32ACF67F464E6401DF38DA91 /* DMUnLoader-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMUnLoader-umbrella.h"; sourceTree = "<group>"; };
+		059F9123A6147A3BE689AE965CD7EFCA /* SchemaArguments.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SchemaArguments.swift; sourceTree = "<group>"; };
+		0AD97E3B5009F051EAD38A12B203AA15 /* DMSuccessView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMSuccessView.swift; sourceTree = "<group>"; };
+		0E93E4750BCBBDAAE27EC6DBD182637F /* DMLoadingViewSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLoadingViewSettings.swift; sourceTree = "<group>"; };
 		0EA4BF7510E6FD6DC4D06BF91080BE80 /* Pods-DMUnLoaderPodSPMExample-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-DMUnLoaderPodSPMExample-umbrella.h"; sourceTree = "<group>"; };
-		0F6D38507B7E824186EE94A369A778E5 /* DMUnLoader-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "DMUnLoader-Info.plist"; sourceTree = "<group>"; };
-		123C83D448113CCF93738C25F06B35DF /* DMSuccessView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMSuccessView.swift; sourceTree = "<group>"; };
-		17E1E16D1CC83BAEDF84E4C335EFF1A1 /* DMButtonAction.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMButtonAction.swift; path = Sources/DMAction/DMButtonAction.swift; sourceTree = "<group>"; };
-		1F65B9601325EC266181493453F7ED79 /* String+Pointer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "String+Pointer.swift"; sourceTree = "<group>"; };
+		1337B896C6B22DDCE7A358CB454FD1B8 /* DMVariableBlurView-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMVariableBlurView-umbrella.h"; sourceTree = "<group>"; };
+		14A5222E145A6CC72BAF6D3EB4C831A8 /* DMVariableBlurView-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMVariableBlurView-prefix.pch"; sourceTree = "<group>"; };
+		159FF205532E06F83BA1C8518B21C41A /* Duration+TimeInterval.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Duration+TimeInterval.swift"; sourceTree = "<group>"; };
+		18DF3D9954F6342D75D51C51848076C4 /* DMActionResultValue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMActionResultValue.swift; path = Sources/DMAction/DMActionResultValue.swift; sourceTree = "<group>"; };
+		1F7AD6411EB46E50E605BB2E15D130D6 /* DMHudButtonStyle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMHudButtonStyle.swift; sourceTree = "<group>"; };
 		2094B4ADB60CC2FF63D261FCF257DFE1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
-		21C893BA163A1D0623D041E6E38B9F90 /* DMAction.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DMAction.release.xcconfig; sourceTree = "<group>"; };
-		2752DF09B06D157CA049E4AD3AB7F5EA /* DMAction-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMAction-umbrella.h"; sourceTree = "<group>"; };
-		28F31777D6CD991D6CCB393EF576DE2F /* DMLoadingManagerProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLoadingManagerProtocol.swift; sourceTree = "<group>"; };
+		298F194F098211301A692AE646C0CC7F /* FrameworkExports.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FrameworkExports.swift; sourceTree = "<group>"; };
 		29B6A7D3B8065056B5C03952CB585F72 /* Pods-DMUnLoaderPodSPMExample-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-DMUnLoaderPodSPMExample-dummy.m"; sourceTree = "<group>"; };
-		29DA8C38932F7EE20328625EC185AC02 /* DMActionWithFallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMActionWithFallback.swift; path = Sources/DMAction/DMActionWithFallback.swift; sourceTree = "<group>"; };
 		2AE2110C75913799B1814837D0E021AE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		2C6F32B9E0A41C7120E9F0635D11B480 /* DispatchQueue+Unique.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Unique.swift"; sourceTree = "<group>"; };
-		2CC51E72644294AFB82B8B46F823C7F6 /* DMLoadingModifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMLoadingModifier.swift; path = Sources/DMUnLoader/DMLoadingModifier.swift; sourceTree = "<group>"; };
-		3951EA6C6E6514633B5C44BB4B0ACF9B /* DMAction+AttempCount.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "DMAction+AttempCount.swift"; path = "Sources/DMAction/DMAction+AttempCount.swift"; sourceTree = "<group>"; };
-		4F5D4BB0E75E436614EB8D9EA8E25934 /* DMAction-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DMAction-dummy.m"; sourceTree = "<group>"; };
-		51D2402EB98551312886B082C0787CC1 /* DMActionResultValue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMActionResultValue.swift; path = Sources/DMAction/DMActionResultValue.swift; sourceTree = "<group>"; };
+		2B035313259BAE1E8181BBBEE319CD06 /* DMSuccessViewSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMSuccessViewSettings.swift; sourceTree = "<group>"; };
+		2BD442E1F16DB65AC98C23D4682F7F14 /* DMAction.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMAction.swift; path = Sources/DMAction/DMAction.swift; sourceTree = "<group>"; };
+		2C3414127DB262B3506DD85BC50BAF3F /* DMAction.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DMAction.release.xcconfig; sourceTree = "<group>"; };
+		31BA407AC05DC05AB24238918FDFDBEF /* DMButtonAction.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMButtonAction.swift; path = Sources/DMAction/DMButtonAction.swift; sourceTree = "<group>"; };
+		356E83C6D18FAC77A67FA1EE76B16AAC /* DMAction-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DMAction-dummy.m"; sourceTree = "<group>"; };
+		3912006A924AC8D3E8660739ABD6FC15 /* DMAppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMAppDelegate.swift; sourceTree = "<group>"; };
+		3D37DF4A1B029F5DDA3B442075D76DD9 /* DMAction-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMAction-umbrella.h"; sourceTree = "<group>"; };
+		428A3EF7DB0CD6505F2BCECF991AD1DF /* DMUnLoader-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "DMUnLoader-Info.plist"; sourceTree = "<group>"; };
+		49DA643A0B1B8A45DF02A95379AFE9B0 /* DispatchQueue+Unique.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Unique.swift"; sourceTree = "<group>"; };
+		4FDA4DBC26C96500A18FC826AF0E16EC /* DMAction+AttempCount.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "DMAction+AttempCount.swift"; path = "Sources/DMAction/DMAction+AttempCount.swift"; sourceTree = "<group>"; };
+		52432B93E1B16257FC9A23D752567203 /* View+HUD.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "View+HUD.swift"; sourceTree = "<group>"; };
 		543082D3420B9E75275B6151AAC41559 /* Pods-DMUnLoaderPodSPMExample-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-DMUnLoaderPodSPMExample-acknowledgements.plist"; sourceTree = "<group>"; };
-		5702E9C3DF66E97D46F29FF41430DD8D /* Optional+Protocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Optional+Protocol.swift"; sourceTree = "<group>"; };
-		59B2B331A5036826412E601AB23DE841 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
-		5BB84C6675C1773E930AFA4C780AF188 /* DMLoadableTypeSuccess.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLoadableTypeSuccess.swift; sourceTree = "<group>"; };
-		5D29D9BDE50567206554D3060F7BB3F4 /* DMUnLoader-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMUnLoader-prefix.pch"; sourceTree = "<group>"; };
+		5703CBFA82D77C574B1D5B3C550E0A25 /* DMVariableBlurView */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = DMVariableBlurView; path = DMVariableBlurView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		57B9A4AC1294EE740563D0E6BC642A86 /* Atomic.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
+		58B88AF715AB207569124D1C97B7ACA0 /* DMProgressView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMProgressView.swift; sourceTree = "<group>"; };
 		5DD43ADB4188C1D523AF025DF6500661 /* Pods-DMUnLoaderPodSPMExample-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-DMUnLoaderPodSPMExample-Info.plist"; sourceTree = "<group>"; };
-		5E2DA786CC82111313AAE760BBB31B4D /* DMNativeDeviceParameters.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMNativeDeviceParameters.swift; sourceTree = "<group>"; };
-		6255CD63A11882BB3A93566D74D002F2 /* DMAction.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = DMAction.modulemap; sourceTree = "<group>"; };
-		629EA2116B149297945EE671304D9975 /* SchemaArguments.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SchemaArguments.swift; sourceTree = "<group>"; };
+		61D3F1DA7D7D40759450465554E10B70 /* DMUnLoader-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMUnLoader-umbrella.h"; sourceTree = "<group>"; };
+		665C880E99CBDA67BED719D2310B20FA /* DMLoadingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMLoadingView.swift; path = Sources/DMUnLoader/DMLoadingView.swift; sourceTree = "<group>"; };
 		66C21FE188D6724ACE1A82DE3CEE268F /* Pods-DMUnLoaderPodSPMExample.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-DMUnLoaderPodSPMExample.modulemap"; sourceTree = "<group>"; };
-		6DD9DF13599CFD5195856D015FC7EDE9 /* EnvironmentKeys.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EnvironmentKeys.swift; sourceTree = "<group>"; };
-		72A1B11E3E0C261B2C16D0D8AE45EFCE /* DMRootViewControllerUIKit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMRootViewControllerUIKit.swift; sourceTree = "<group>"; };
-		73090EE831215FBF7CBE1EBE3ACAF0FB /* Inspection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Inspection.swift; sourceTree = "<group>"; };
-		75547614A50F40140AE48A15A0807229 /* DMUnLoader-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DMUnLoader-dummy.m"; sourceTree = "<group>"; };
-		7D04B7C1AB553094DDA9BAA6A80119A1 /* DMRootLoadingModifier.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMRootLoadingModifier.swift; path = Sources/DMUnLoader/DMRootLoadingModifier.swift; sourceTree = "<group>"; };
-		7F26C7F8F0B3F0880530E45D40A55EC0 /* DMAction.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMAction.swift; path = Sources/DMAction/DMAction.swift; sourceTree = "<group>"; };
-		84A1EA5F070BF3FABF0777DEC0D24576 /* FrameworkExports.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FrameworkExports.swift; sourceTree = "<group>"; };
-		86BE6BD6410987CDA05DF7A9F15333E8 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
-		88E9ED2BA1CC76B3B356B62550ED6E52 /* DMLoadingManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLoadingManager.swift; sourceTree = "<group>"; };
-		89CCA4EEC2A33E08A3715608C5543C97 /* DMLoadingManagerSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLoadingManagerSettings.swift; sourceTree = "<group>"; };
-		8A2AEE91C49871899F0F1E2BB1EF8C85 /* DMLoadingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMLoadingView.swift; path = Sources/DMUnLoader/DMLoadingView.swift; sourceTree = "<group>"; };
-		8CD4A0AB5E054FEA1EFA2510FC31D67A /* DMUnLoader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DMUnLoader.release.xcconfig; sourceTree = "<group>"; };
-		98EA7A64538524D388DB58C37435FB27 /* DMGlobalLoadingStateManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMGlobalLoadingStateManager.swift; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		A847FB93153C4C1C69E33677C52BBD6A /* DMUnLoader.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = DMUnLoader.modulemap; sourceTree = "<group>"; };
-		A9B50368EE4C3003ADA989E526BF6595 /* DMLoadingViewSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLoadingViewSettings.swift; sourceTree = "<group>"; };
+		67DC87EE27B189409FEBEDBE461DD77D /* DMPassThroughWindow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMPassThroughWindow.swift; sourceTree = "<group>"; };
+		7C13842F07B2C5E0E0D477C7FDD16458 /* DMAction-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "DMAction-Info.plist"; sourceTree = "<group>"; };
+		82B4EAB4EAF51923093FCC0E53A16DC5 /* DMAction-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMAction-prefix.pch"; sourceTree = "<group>"; };
+		845FCC101B82FF63638F87D8DC9AA673 /* DMAction.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = DMAction.modulemap; sourceTree = "<group>"; };
+		86D356C60B1A477A8F7D47D90E846A37 /* DMRootLoadingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMRootLoadingView.swift; path = Sources/DMUnLoader/DMRootLoadingView.swift; sourceTree = "<group>"; };
+		8B80CD958984EECD53271C292E5BA1F1 /* DMSceneDelegateBase.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMSceneDelegateBase.swift; sourceTree = "<group>"; };
+		8BBEB874BB675DE652EEE3C9B5BCABF5 /* DMLoadableType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMLoadableType.swift; path = Sources/DMUnLoader/DMLoadableType.swift; sourceTree = "<group>"; };
+		8ECAB2392BAA8B0379C0C43EDAE71D41 /* DMLoadingManagerProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLoadingManagerProtocol.swift; sourceTree = "<group>"; };
+		914F3FDA8763C15A262471626FDFD049 /* DMUnLoader.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = DMUnLoader.modulemap; sourceTree = "<group>"; };
+		91EF0F2BB1EE1D4A670337D0453BE61E /* AnyDMLoadingViewProviderTypeErasurer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AnyDMLoadingViewProviderTypeErasurer.swift; sourceTree = "<group>"; };
+		92EE598BCE7C9A5EF235D837695D6C0C /* DMAppError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMAppError.swift; path = Sources/DMUnLoader/DMAppError.swift; sourceTree = "<group>"; };
+		9AE4A93E1C8737A7B5308B5A7569DC3C /* DMUnLoader.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = DMUnLoader.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9B8B823A47C72716509C506D16D94459 /* String+Pointer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "String+Pointer.swift"; sourceTree = "<group>"; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		A01021847A9813CD4CF7D6739F0F8793 /* Optional+Protocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Optional+Protocol.swift"; sourceTree = "<group>"; };
+		A2C8AB517A6BD662FFB441F3BAFD592C /* DMVariableBlurView.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = DMVariableBlurView.modulemap; sourceTree = "<group>"; };
+		A46962910D6E2ECF232C8C2D2AFD61F7 /* DMVariableBlurView-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "DMVariableBlurView-Info.plist"; sourceTree = "<group>"; };
+		A6037D884CCB08621C6F408BF96D21E4 /* DMLoadingManagerSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLoadingManagerSettings.swift; sourceTree = "<group>"; };
+		A65B1FDE5B0B39C6573A8AC3F757FC8F /* DMHudSceneView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMHudSceneView.swift; sourceTree = "<group>"; };
+		AA661327E3FBFFCF930B06E9F15AA96B /* DMUnLoader-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DMUnLoader-dummy.m"; sourceTree = "<group>"; };
 		AC445AA7475527C70B5C9B8BC7563459 /* Pods-DMUnLoaderPodSPMExample-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DMUnLoaderPodSPMExample-frameworks.sh"; sourceTree = "<group>"; };
-		AF58A8E68465366A22051E16F4D7F6D7 /* Atomic.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		AFA26E3A804F87994F8361DF6C042A41 /* DMAction */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = DMAction; path = DMAction.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B00B12566C242B879C1A4A39A836DFCF /* Pods-DMUnLoaderPodSPMExample-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-DMUnLoaderPodSPMExample-acknowledgements.markdown"; sourceTree = "<group>"; };
-		B6726F79696C893183064F858832A5A1 /* DMUnLoader.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = DMUnLoader.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		B846235113FFF4852B4376F75060F7DE /* GlobalLoadingStateManagerProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GlobalLoadingStateManagerProtocol.swift; sourceTree = "<group>"; };
-		C94841AB2C45EC458052F297D1C64FEE /* CustomSizeView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CustomSizeView.swift; sourceTree = "<group>"; };
+		B2F756F03A4ED252D9B62A4D4FBC9ED4 /* Inspection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Inspection.swift; sourceTree = "<group>"; };
+		B792F6E068F089F06193EEDAB5810FFC /* DMErrorViewSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMErrorViewSettings.swift; sourceTree = "<group>"; };
+		B93AAAA449F6FA2A0BF046EF5A5C723C /* DMLoadableTypeSuccess.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLoadableTypeSuccess.swift; sourceTree = "<group>"; };
+		BB32B5580472038CB577C2CBDBF1EBA0 /* DMActionWithFallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMActionWithFallback.swift; path = Sources/DMAction/DMActionWithFallback.swift; sourceTree = "<group>"; };
+		BEFDA63162F8D3BD069D6DA7FA767918 /* CustomSizeView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CustomSizeView.swift; sourceTree = "<group>"; };
+		BF7BA50D189851B908AB5479525E9928 /* DMUnLoader-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMUnLoader-prefix.pch"; sourceTree = "<group>"; };
+		C4AAFCD790FF831FE1361076B132EF93 /* DMVariableBlurView-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DMVariableBlurView-dummy.m"; sourceTree = "<group>"; };
+		C7F24BFAB88DCB59D1FB4FF0982E5415 /* DMUnLoader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DMUnLoader.release.xcconfig; sourceTree = "<group>"; };
 		D31765F3658DCE69E36758DDCABB8532 /* DMUnLoader */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = DMUnLoader; path = DMUnLoader.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D3CF335C6DB3FAEB20462337CB82F294 /* DMLocalLoadingViewUIKit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLocalLoadingViewUIKit.swift; sourceTree = "<group>"; };
-		D4DC7BB0423C625AD4CBEE17513BCB00 /* DMAppError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMAppError.swift; path = Sources/DMUnLoader/DMAppError.swift; sourceTree = "<group>"; };
-		D5A9C5EB2D84E4350C9190C869C8A268 /* DMWrappedViewUIKit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMWrappedViewUIKit.swift; sourceTree = "<group>"; };
 		D66573C3081AC887F08053E18DB16501 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		D7075EE0133F5B2DDA6E9335874D4E5C /* DMRootLoadingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMRootLoadingView.swift; sourceTree = "<group>"; };
-		DE93B9D32469D6AC29B0BCEC86887422 /* DMLoadingViewProviderProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMLoadingViewProviderProtocol.swift; path = Sources/DMUnLoader/DMLoadingViewProviderProtocol.swift; sourceTree = "<group>"; };
-		E1DF2A0715DAC36941DABF9ACB2274FA /* DMErrorView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMErrorView.swift; sourceTree = "<group>"; };
-		E26D2ECC717C002E2BCDBD3C8115B7DE /* DMAction-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "DMAction-Info.plist"; sourceTree = "<group>"; };
-		E5DAA435719C9E3223F41577018AD5C6 /* DMSuccessViewSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMSuccessViewSettings.swift; sourceTree = "<group>"; };
-		E85B0E5D13FE53A42B374F1E7EA54734 /* DMAction-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMAction-prefix.pch"; sourceTree = "<group>"; };
-		F052B96FF2FE47273D282D6860A16C61 /* Duration+TimeInterval.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Duration+TimeInterval.swift"; sourceTree = "<group>"; };
-		F6C913B03ABB99832D5686996DDCA7F5 /* DMLocalLoadingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLocalLoadingView.swift; sourceTree = "<group>"; };
+		DBFAD6A9C8D7538D1339ADFE54283C0E /* DMSceneDelegateHelper.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMSceneDelegateHelper.swift; sourceTree = "<group>"; };
+		E6F56F4D2781C61E1812399B5AEF26B8 /* DMLoadingViewProviderProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMLoadingViewProviderProtocol.swift; path = Sources/DMUnLoader/DMLoadingViewProviderProtocol.swift; sourceTree = "<group>"; };
+		E8C7086C4C1AB22755D596FD81F5403A /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		E8D3D3FD4C96733E4A44F83DAA2FC10F /* DMVariableBlurView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMVariableBlurView.swift; path = Sources/DMVariableBlurView/DMVariableBlurView.swift; sourceTree = "<group>"; };
+		E8FE375BAF816D2FD0BC7D99E367A1DF /* DMErrorView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMErrorView.swift; sourceTree = "<group>"; };
+		F6A8EDE525D86297C0934E411B96D995 /* DMLoadingManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLoadingManager.swift; sourceTree = "<group>"; };
 		F85053AB273151D80C9DF0A38FF7C431 /* Pods-DMUnLoaderPodSPMExample */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-DMUnLoaderPodSPMExample"; path = Pods_DMUnLoaderPodSPMExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F91BBAA63C0DF2C87D8DB6B196C13FBA /* Pods-DMUnLoaderPodSPMExample.debug-swiftui.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DMUnLoaderPodSPMExample.debug-swiftui.xcconfig"; sourceTree = "<group>"; };
+		FA38BC17E4022378540FE99EAC659BE4 /* DMVariableBlurView.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DMVariableBlurView.release.xcconfig; sourceTree = "<group>"; };
+		FC76B12B3E95EE17BA4FDA0A672DA779 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		FEA5872D41D4C57A1962B3C9FA38A847 /* Pods-DMUnLoaderPodSPMExample.debug-uikit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DMUnLoaderPodSPMExample.debug-uikit.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		4621E0B788E955F7C1A8663CDFE43F8A /* Frameworks */ = {
+		04791A26FF303F9C7155897D78FE9A09 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BD6280FEBFA0629C6A4C56616E498E64 /* Foundation.framework in Frameworks */,
+				5A8DE3D02B4A551ADC58DA6842FE5B8B /* Foundation.framework in Frameworks */,
+				F7D790FAA1616962E0B14348668B6DC9 /* SwiftUI.framework in Frameworks */,
+				F363ADF8D8295E1D8E5B29C2E6680BF0 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C25FD8B7D4B54A3C0427B76078BED4B7 /* Frameworks */ = {
+		4BFC065FA370018C03563890D96FB52C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8AD92A1363F91D6A95379D32B2B1AE0D /* Foundation.framework in Frameworks */,
-				BBBB776E1F13A5BC2B1FF6581EED5773 /* SwiftUI.framework in Frameworks */,
-				7BC8EAE65CF4DAAFF1EEFAB28CEF7CDC /* UIKit.framework in Frameworks */,
+				DD146A95B2F809BE7961A1AE33F7B740 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8EE64A0EE2FF17AFFB38A981B993EEAC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE96EEF8182FFFA9B335058E0803627E /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,14 +224,33 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		08BCA1CF5E49D4787B76D755173B7BDE /* DMSuccessView */ = {
+		0786EE82072B10E5EF55847AA4675178 /* Pod */ = {
 			isa = PBXGroup;
 			children = (
-				123C83D448113CCF93738C25F06B35DF /* DMSuccessView.swift */,
-				E5DAA435719C9E3223F41577018AD5C6 /* DMSuccessViewSettings.swift */,
+				9AE4A93E1C8737A7B5308B5A7569DC3C /* DMUnLoader.podspec */,
+				FC76B12B3E95EE17BA4FDA0A672DA779 /* LICENSE */,
+				E8C7086C4C1AB22755D596FD81F5403A /* README.md */,
 			);
-			name = DMSuccessView;
-			path = DMSuccessView;
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		0A3C4389218B7EF7B26F1BB098A07AC9 /* DMUnLoader */ = {
+			isa = PBXGroup;
+			children = (
+				92EE598BCE7C9A5EF235D837695D6C0C /* DMAppError.swift */,
+				8BBEB874BB675DE652EEE3C9B5BCABF5 /* DMLoadableType.swift */,
+				665C880E99CBDA67BED719D2310B20FA /* DMLoadingView.swift */,
+				E6F56F4D2781C61E1812399B5AEF26B8 /* DMLoadingViewProviderProtocol.swift */,
+				86D356C60B1A477A8F7D47D90E846A37 /* DMRootLoadingView.swift */,
+				AC43C76DF8109CF9AB3DDEC7C2ADEF9D /* DMLoadableType */,
+				BFC0E23EB0B2AC0CA944FD3830B5E039 /* DMLoadingManager */,
+				C2F0B931C385C94C0EF9C9956B81365E /* Helpers */,
+				0786EE82072B10E5EF55847AA4675178 /* Pod */,
+				79F03B50201C596233D11A80F9ACDA7C /* PresentationView */,
+				8F44F7042FD83449AAB138824CD5F052 /* Support Files */,
+			);
+			name = DMUnLoader;
+			path = ../../..;
 			sourceTree = "<group>";
 		};
 		0FE462C15E2BA768CBA06F6C84AF40EC /* Pods-DMUnLoaderPodSPMExample */ = {
@@ -225,43 +270,25 @@
 			path = "Target Support Files/Pods-DMUnLoaderPodSPMExample";
 			sourceTree = "<group>";
 		};
-		262ADF3AA4ED8D1F27003AC63F693F90 /* Pods */ = {
+		1FF503E13C4130498F0C51352E8B850B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				6B13D64C9261D404F0BD9513ECB06AB6 /* DMAction */,
+				49DA643A0B1B8A45DF02A95379AFE9B0 /* DispatchQueue+Unique.swift */,
+				159FF205532E06F83BA1C8518B21C41A /* Duration+TimeInterval.swift */,
+				A01021847A9813CD4CF7D6739F0F8793 /* Optional+Protocol.swift */,
+				9B8B823A47C72716509C506D16D94459 /* String+Pointer.swift */,
+				52432B93E1B16257FC9A23D752567203 /* View+HUD.swift */,
 			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
-		339203B1B078C3D5D6B5CA81CEE6C4A4 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				2C6F32B9E0A41C7120E9F0635D11B480 /* DispatchQueue+Unique.swift */,
-				F052B96FF2FE47273D282D6860A16C61 /* Duration+TimeInterval.swift */,
-				5702E9C3DF66E97D46F29FF41430DD8D /* Optional+Protocol.swift */,
-				1F65B9601325EC266181493453F7ED79 /* String+Pointer.swift */,
-				022559ED8CC09BE48BE31EE306FA8D94 /* View+Loading.swift */,
-			);
-			name = Extensions;
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		39C59367988F86C02AA085C7A0FF7A9D /* Helpers */ = {
+		29EAECA9252C941EE9496565926DDA2A /* DMSuccessView */ = {
 			isa = PBXGroup;
 			children = (
-				F6C913B03ABB99832D5686996DDCA7F5 /* DMLocalLoadingView.swift */,
-				5E2DA786CC82111313AAE760BBB31B4D /* DMNativeDeviceParameters.swift */,
-				D7075EE0133F5B2DDA6E9335874D4E5C /* DMRootLoadingView.swift */,
-				6DD9DF13599CFD5195856D015FC7EDE9 /* EnvironmentKeys.swift */,
-				84A1EA5F070BF3FABF0777DEC0D24576 /* FrameworkExports.swift */,
-				D03C301A5B34F19559B3E5230C7E3D77 /* Atomic */,
-				70AE142ECC8F8F6D0950A741F23453B3 /* Debug */,
-				6336F093D6B5828FBA70C9612B1CF65E /* DMGlobalLoadingStateManager */,
-				339203B1B078C3D5D6B5CA81CEE6C4A4 /* Extensions */,
-				EAAE267A71D624B597CC46C5E98B285C /* UIKitBridging */,
+				0AD97E3B5009F051EAD38A12B203AA15 /* DMSuccessView.swift */,
+				2B035313259BAE1E8181BBBEE319CD06 /* DMSuccessViewSettings.swift */,
 			);
-			name = Helpers;
-			path = Sources/DMUnLoader/Helpers;
+			path = DMSuccessView;
 			sourceTree = "<group>";
 		};
 		3CFDA1CF727D7CF4C111FA3731550912 /* iOS */ = {
@@ -274,89 +301,89 @@
 			name = iOS;
 			sourceTree = "<group>";
 		};
-		3EFC189DC71C73779BB67C5B96EED9E6 /* Pod */ = {
+		51FCD9A55FF877D3F2AD08719BC8C946 /* DMVariableBlurView */ = {
 			isa = PBXGroup;
 			children = (
-				B6726F79696C893183064F858832A5A1 /* DMUnLoader.podspec */,
-				59B2B331A5036826412E601AB23DE841 /* LICENSE */,
-				86BE6BD6410987CDA05DF7A9F15333E8 /* README.md */,
+				E8D3D3FD4C96733E4A44F83DAA2FC10F /* DMVariableBlurView.swift */,
+				87952ECA90264CF43B81640051E23324 /* Support Files */,
 			);
-			name = Pod;
+			path = DMVariableBlurView;
 			sourceTree = "<group>";
 		};
-		4D4C49E1AE654923A0F41AC6B93BE987 /* DMLoadingView */ = {
+		6922188062603895C83DEFFB6A6509DE /* Debug */ = {
 			isa = PBXGroup;
 			children = (
-				A9B50368EE4C3003ADA989E526BF6595 /* DMLoadingViewSettings.swift */,
-				0A797DCCA416238B88108FDEE824BAD3 /* DMProgressView.swift */,
+				B2F756F03A4ED252D9B62A4D4FBC9ED4 /* Inspection.swift */,
+				059F9123A6147A3BE689AE965CD7EFCA /* SchemaArguments.swift */,
 			);
-			name = DMLoadingView;
-			path = DMLoadingView;
-			sourceTree = "<group>";
-		};
-		4F70DDDBD54AC410ACF0C1C9ACC23076 /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				6255CD63A11882BB3A93566D74D002F2 /* DMAction.modulemap */,
-				4F5D4BB0E75E436614EB8D9EA8E25934 /* DMAction-dummy.m */,
-				E26D2ECC717C002E2BCDBD3C8115B7DE /* DMAction-Info.plist */,
-				E85B0E5D13FE53A42B374F1E7EA54734 /* DMAction-prefix.pch */,
-				2752DF09B06D157CA049E4AD3AB7F5EA /* DMAction-umbrella.h */,
-				21C893BA163A1D0623D041E6E38B9F90 /* DMAction.release.xcconfig */,
-			);
-			name = "Support Files";
-			path = "../Target Support Files/DMAction";
-			sourceTree = "<group>";
-		};
-		6336F093D6B5828FBA70C9612B1CF65E /* DMGlobalLoadingStateManager */ = {
-			isa = PBXGroup;
-			children = (
-				98EA7A64538524D388DB58C37435FB27 /* DMGlobalLoadingStateManager.swift */,
-				B846235113FFF4852B4376F75060F7DE /* GlobalLoadingStateManagerProtocol.swift */,
-			);
-			name = DMGlobalLoadingStateManager;
-			path = DMGlobalLoadingStateManager;
-			sourceTree = "<group>";
-		};
-		6B13D64C9261D404F0BD9513ECB06AB6 /* DMAction */ = {
-			isa = PBXGroup;
-			children = (
-				7F26C7F8F0B3F0880530E45D40A55EC0 /* DMAction.swift */,
-				3951EA6C6E6514633B5C44BB4B0ACF9B /* DMAction+AttempCount.swift */,
-				51D2402EB98551312886B082C0787CC1 /* DMActionResultValue.swift */,
-				29DA8C38932F7EE20328625EC185AC02 /* DMActionWithFallback.swift */,
-				17E1E16D1CC83BAEDF84E4C335EFF1A1 /* DMButtonAction.swift */,
-				4F70DDDBD54AC410ACF0C1C9ACC23076 /* Support Files */,
-			);
-			name = DMAction;
-			path = DMAction;
-			sourceTree = "<group>";
-		};
-		70AE142ECC8F8F6D0950A741F23453B3 /* Debug */ = {
-			isa = PBXGroup;
-			children = (
-				73090EE831215FBF7CBE1EBE3ACAF0FB /* Inspection.swift */,
-				629EA2116B149297945EE671304D9975 /* SchemaArguments.swift */,
-			);
-			name = Debug;
 			path = Debug;
 			sourceTree = "<group>";
 		};
-		76A27D310B0F8B14558532A78ED1FEF2 /* DMLoadableType */ = {
+		6AF046B2827F1E45FB1D2B4DC40BE6A8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5BB84C6675C1773E930AFA4C780AF188 /* DMLoadableTypeSuccess.swift */,
+				AFA26E3A804F87994F8361DF6C042A41 /* DMAction */,
+				D31765F3658DCE69E36758DDCABB8532 /* DMUnLoader */,
+				5703CBFA82D77C574B1D5B3C550E0A25 /* DMVariableBlurView */,
+				F85053AB273151D80C9DF0A38FF7C431 /* Pods-DMUnLoaderPodSPMExample */,
 			);
-			name = DMLoadableType;
-			path = Sources/DMUnLoader/DMLoadableType;
+			name = Products;
+			sourceTree = "<group>";
+		};
+		723FCFD78D92DB31E9461A2DF4D03CDC /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				1F7AD6411EB46E50E605BB2E15D130D6 /* DMHudButtonStyle.swift */,
+			);
+			path = Buttons;
+			sourceTree = "<group>";
+		};
+		79F03B50201C596233D11A80F9ACDA7C /* PresentationView */ = {
+			isa = PBXGroup;
+			children = (
+				BEFDA63162F8D3BD069D6DA7FA767918 /* CustomSizeView.swift */,
+				E596D6A8A7EB7F116E79EFDEA5E1BC76 /* DMErrorView */,
+				CA69A3AC4223EFD3B46203498F9A6A4C /* DMLoadingView */,
+				29EAECA9252C941EE9496565926DDA2A /* DMSuccessView */,
+			);
+			name = PresentationView;
+			path = Sources/DMUnLoader/PresentationView;
 			sourceTree = "<group>";
 		};
 		7E46A3511F32E607ED2E7B066F35799A /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
-				E4516407C2F9451DF1E72BE4FBAE93E3 /* DMUnLoader */,
+				0A3C4389218B7EF7B26F1BB098A07AC9 /* DMUnLoader */,
 			);
 			name = "Development Pods";
+			sourceTree = "<group>";
+		};
+		87952ECA90264CF43B81640051E23324 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				A2C8AB517A6BD662FFB441F3BAFD592C /* DMVariableBlurView.modulemap */,
+				C4AAFCD790FF831FE1361076B132EF93 /* DMVariableBlurView-dummy.m */,
+				A46962910D6E2ECF232C8C2D2AFD61F7 /* DMVariableBlurView-Info.plist */,
+				14A5222E145A6CC72BAF6D3EB4C831A8 /* DMVariableBlurView-prefix.pch */,
+				1337B896C6B22DDCE7A358CB454FD1B8 /* DMVariableBlurView-umbrella.h */,
+				FA38BC17E4022378540FE99EAC659BE4 /* DMVariableBlurView.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/DMVariableBlurView";
+			sourceTree = "<group>";
+		};
+		8F44F7042FD83449AAB138824CD5F052 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				914F3FDA8763C15A262471626FDFD049 /* DMUnLoader.modulemap */,
+				AA661327E3FBFFCF930B06E9F15AA96B /* DMUnLoader-dummy.m */,
+				428A3EF7DB0CD6505F2BCECF991AD1DF /* DMUnLoader-Info.plist */,
+				BF7BA50D189851B908AB5479525E9928 /* DMUnLoader-prefix.pch */,
+				61D3F1DA7D7D40759450465554E10B70 /* DMUnLoader-umbrella.h */,
+				C7F24BFAB88DCB59D1FB4FF0982E5415 /* DMUnLoader.release.xcconfig */,
+			);
+			name = "Support Files";
+			path = "Examples/DMUnLoaderPodSPMExample/Pods/Target Support Files/DMUnLoader";
 			sourceTree = "<group>";
 		};
 		92B209EE6DBB588D6232CE15ECF65ADE /* Targets Support Files */ = {
@@ -367,30 +394,81 @@
 			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
-		991FA28553DBC2A2EC1B73057DA9B291 /* Support Files */ = {
+		94134502BFEFFD5DCEF94C4C61D3527E /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				A847FB93153C4C1C69E33677C52BBD6A /* DMUnLoader.modulemap */,
-				75547614A50F40140AE48A15A0807229 /* DMUnLoader-dummy.m */,
-				0F6D38507B7E824186EE94A369A778E5 /* DMUnLoader-Info.plist */,
-				5D29D9BDE50567206554D3060F7BB3F4 /* DMUnLoader-prefix.pch */,
-				0B3911BD32ACF67F464E6401DF38DA91 /* DMUnLoader-umbrella.h */,
-				8CD4A0AB5E054FEA1EFA2510FC31D67A /* DMUnLoader.release.xcconfig */,
+				F2B423B941A25F3FCA1E961974F67AAF /* DMAction */,
+				51FCD9A55FF877D3F2AD08719BC8C946 /* DMVariableBlurView */,
 			);
-			name = "Support Files";
-			path = "Examples/DMUnLoaderPodSPMExample/Pods/Target Support Files/DMUnLoader";
+			name = Pods;
 			sourceTree = "<group>";
 		};
-		BBDCD6DB702110FA17733EC8B7D58638 /* PresentationView */ = {
+		A55C69BE76CE794207437A865CB6737D /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				C94841AB2C45EC458052F297D1C64FEE /* CustomSizeView.swift */,
-				F66135AD37750828E0AD5E4224AFB3D2 /* DMErrorView */,
-				4D4C49E1AE654923A0F41AC6B93BE987 /* DMLoadingView */,
-				08BCA1CF5E49D4787B76D755173B7BDE /* DMSuccessView */,
+				845FCC101B82FF63638F87D8DC9AA673 /* DMAction.modulemap */,
+				356E83C6D18FAC77A67FA1EE76B16AAC /* DMAction-dummy.m */,
+				7C13842F07B2C5E0E0D477C7FDD16458 /* DMAction-Info.plist */,
+				82B4EAB4EAF51923093FCC0E53A16DC5 /* DMAction-prefix.pch */,
+				3D37DF4A1B029F5DDA3B442075D76DD9 /* DMAction-umbrella.h */,
+				2C3414127DB262B3506DD85BC50BAF3F /* DMAction.release.xcconfig */,
 			);
-			name = PresentationView;
-			path = Sources/DMUnLoader/PresentationView;
+			name = "Support Files";
+			path = "../Target Support Files/DMAction";
+			sourceTree = "<group>";
+		};
+		A6EABE64C08D58BC7C8A4D4BD2E85CF9 /* Atomic */ = {
+			isa = PBXGroup;
+			children = (
+				57B9A4AC1294EE740563D0E6BC642A86 /* Atomic.swift */,
+			);
+			path = Atomic;
+			sourceTree = "<group>";
+		};
+		AC43C76DF8109CF9AB3DDEC7C2ADEF9D /* DMLoadableType */ = {
+			isa = PBXGroup;
+			children = (
+				B93AAAA449F6FA2A0BF046EF5A5C723C /* DMLoadableTypeSuccess.swift */,
+			);
+			name = DMLoadableType;
+			path = Sources/DMUnLoader/DMLoadableType;
+			sourceTree = "<group>";
+		};
+		BFC0E23EB0B2AC0CA944FD3830B5E039 /* DMLoadingManager */ = {
+			isa = PBXGroup;
+			children = (
+				F6A8EDE525D86297C0934E411B96D995 /* DMLoadingManager.swift */,
+				8ECAB2392BAA8B0379C0C43EDAE71D41 /* DMLoadingManagerProtocol.swift */,
+				A6037D884CCB08621C6F408BF96D21E4 /* DMLoadingManagerSettings.swift */,
+			);
+			name = DMLoadingManager;
+			path = Sources/DMUnLoader/DMLoadingManager;
+			sourceTree = "<group>";
+		};
+		C2F0B931C385C94C0EF9C9956B81365E /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				91EF0F2BB1EE1D4A670337D0453BE61E /* AnyDMLoadingViewProviderTypeErasurer.swift */,
+				A65B1FDE5B0B39C6573A8AC3F757FC8F /* DMHudSceneView.swift */,
+				67DC87EE27B189409FEBEDBE461DD77D /* DMPassThroughWindow.swift */,
+				298F194F098211301A692AE646C0CC7F /* FrameworkExports.swift */,
+				A6EABE64C08D58BC7C8A4D4BD2E85CF9 /* Atomic */,
+				723FCFD78D92DB31E9461A2DF4D03CDC /* Buttons */,
+				EE7606D359F1CA11C3A02242A1019B1C /* ClientAppBridging */,
+				6922188062603895C83DEFFB6A6509DE /* Debug */,
+				1FF503E13C4130498F0C51352E8B850B /* Extensions */,
+			);
+			name = Helpers;
+			path = Sources/DMUnLoader/Helpers;
+			sourceTree = "<group>";
+		};
+		CA69A3AC4223EFD3B46203498F9A6A4C /* DMLoadingView */ = {
+			isa = PBXGroup;
+			children = (
+				0E93E4750BCBBDAAE27EC6DBD182637F /* DMLoadingViewSettings.swift */,
+				58B88AF715AB207569124D1C97B7ACA0 /* DMProgressView.swift */,
+			);
+			path = DMLoadingView;
 			sourceTree = "<group>";
 		};
 		CF1408CF629C7361332E53B88F7BD30C = {
@@ -399,87 +477,71 @@
 				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
 				7E46A3511F32E607ED2E7B066F35799A /* Development Pods */,
 				03C5C200A0787E300053CFA8F53CA094 /* Frameworks */,
-				262ADF3AA4ED8D1F27003AC63F693F90 /* Pods */,
-				EC69359E5398ECD0C43DDB2356ADB669 /* Products */,
+				94134502BFEFFD5DCEF94C4C61D3527E /* Pods */,
+				6AF046B2827F1E45FB1D2B4DC40BE6A8 /* Products */,
 				92B209EE6DBB588D6232CE15ECF65ADE /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
 		};
-		D03C301A5B34F19559B3E5230C7E3D77 /* Atomic */ = {
+		E596D6A8A7EB7F116E79EFDEA5E1BC76 /* DMErrorView */ = {
 			isa = PBXGroup;
 			children = (
-				AF58A8E68465366A22051E16F4D7F6D7 /* Atomic.swift */,
+				E8FE375BAF816D2FD0BC7D99E367A1DF /* DMErrorView.swift */,
+				B792F6E068F089F06193EEDAB5810FFC /* DMErrorViewSettings.swift */,
 			);
-			name = Atomic;
-			path = Atomic;
-			sourceTree = "<group>";
-		};
-		E4516407C2F9451DF1E72BE4FBAE93E3 /* DMUnLoader */ = {
-			isa = PBXGroup;
-			children = (
-				D4DC7BB0423C625AD4CBEE17513BCB00 /* DMAppError.swift */,
-				0767EA404ACFB67FD543F33474659E5F /* DMLoadableType.swift */,
-				2CC51E72644294AFB82B8B46F823C7F6 /* DMLoadingModifier.swift */,
-				8A2AEE91C49871899F0F1E2BB1EF8C85 /* DMLoadingView.swift */,
-				DE93B9D32469D6AC29B0BCEC86887422 /* DMLoadingViewProviderProtocol.swift */,
-				7D04B7C1AB553094DDA9BAA6A80119A1 /* DMRootLoadingModifier.swift */,
-				76A27D310B0F8B14558532A78ED1FEF2 /* DMLoadableType */,
-				E5CF65848F2670A4487CC5A1CF6B6A0A /* DMLoadingManager */,
-				39C59367988F86C02AA085C7A0FF7A9D /* Helpers */,
-				3EFC189DC71C73779BB67C5B96EED9E6 /* Pod */,
-				BBDCD6DB702110FA17733EC8B7D58638 /* PresentationView */,
-				991FA28553DBC2A2EC1B73057DA9B291 /* Support Files */,
-			);
-			name = DMUnLoader;
-			path = ../../..;
-			sourceTree = "<group>";
-		};
-		E5CF65848F2670A4487CC5A1CF6B6A0A /* DMLoadingManager */ = {
-			isa = PBXGroup;
-			children = (
-				88E9ED2BA1CC76B3B356B62550ED6E52 /* DMLoadingManager.swift */,
-				28F31777D6CD991D6CCB393EF576DE2F /* DMLoadingManagerProtocol.swift */,
-				89CCA4EEC2A33E08A3715608C5543C97 /* DMLoadingManagerSettings.swift */,
-			);
-			name = DMLoadingManager;
-			path = Sources/DMUnLoader/DMLoadingManager;
-			sourceTree = "<group>";
-		};
-		EAAE267A71D624B597CC46C5E98B285C /* UIKitBridging */ = {
-			isa = PBXGroup;
-			children = (
-				D3CF335C6DB3FAEB20462337CB82F294 /* DMLocalLoadingViewUIKit.swift */,
-				72A1B11E3E0C261B2C16D0D8AE45EFCE /* DMRootViewControllerUIKit.swift */,
-				084B1321AB1C79ADBAE2FB3DAF24BAC2 /* DMViewControllerTopLevel.swift */,
-				D5A9C5EB2D84E4350C9190C869C8A268 /* DMWrappedViewUIKit.swift */,
-			);
-			name = UIKitBridging;
-			path = UIKitBridging;
-			sourceTree = "<group>";
-		};
-		EC69359E5398ECD0C43DDB2356ADB669 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				AFA26E3A804F87994F8361DF6C042A41 /* DMAction */,
-				D31765F3658DCE69E36758DDCABB8532 /* DMUnLoader */,
-				F85053AB273151D80C9DF0A38FF7C431 /* Pods-DMUnLoaderPodSPMExample */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		F66135AD37750828E0AD5E4224AFB3D2 /* DMErrorView */ = {
-			isa = PBXGroup;
-			children = (
-				E1DF2A0715DAC36941DABF9ACB2274FA /* DMErrorView.swift */,
-				055FEF742FFC1B3A6E90628A671E48FB /* DMErrorViewSettings.swift */,
-			);
-			name = DMErrorView;
 			path = DMErrorView;
+			sourceTree = "<group>";
+		};
+		EE7606D359F1CA11C3A02242A1019B1C /* ClientAppBridging */ = {
+			isa = PBXGroup;
+			children = (
+				3912006A924AC8D3E8660739ABD6FC15 /* DMAppDelegate.swift */,
+				8B80CD958984EECD53271C292E5BA1F1 /* DMSceneDelegateBase.swift */,
+				DBFAD6A9C8D7538D1339ADFE54283C0E /* DMSceneDelegateHelper.swift */,
+			);
+			path = ClientAppBridging;
+			sourceTree = "<group>";
+		};
+		F2B423B941A25F3FCA1E961974F67AAF /* DMAction */ = {
+			isa = PBXGroup;
+			children = (
+				2BD442E1F16DB65AC98C23D4682F7F14 /* DMAction.swift */,
+				4FDA4DBC26C96500A18FC826AF0E16EC /* DMAction+AttempCount.swift */,
+				18DF3D9954F6342D75D51C51848076C4 /* DMActionResultValue.swift */,
+				BB32B5580472038CB577C2CBDBF1EBA0 /* DMActionWithFallback.swift */,
+				31BA407AC05DC05AB24238918FDFDBEF /* DMButtonAction.swift */,
+				A55C69BE76CE794207437A865CB6737D /* Support Files */,
+			);
+			path = DMAction;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		04862863D21A566CEDBAB35A649E8AF4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3BD1A9C559B6DF81A514A01F6F86C44 /* DMVariableBlurView-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1428F8B756DF8F5FE219BB5C9BE1599E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				62A8CC8F303BE2A99BFD8017BF42224D /* Pods-DMUnLoaderPodSPMExample-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA7B4C834826D712C02384FBD1127C43 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC6499C2DC17E2041D9B3AAAD6963DF3 /* DMUnLoader-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B38CDC49AFDAE7D14EADEC53178EF30D /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -488,39 +550,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3CF7068989F8E4DA1B3A5E5491CBAAF /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A70980D8FDD855750C5E1132B6D58632 /* Pods-DMUnLoaderPodSPMExample-umbrella.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D1DC89FB6845A8A0BC1A234C67068D15 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				48DD00B37421BE54337CAAB43DA67939 /* DMUnLoader-umbrella.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		3B00BB696102466C9880443909B073B9 /* Pods-DMUnLoaderPodSPMExample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 64215570713A723F84A71251D03BBCA4 /* Build configuration list for PBXNativeTarget "Pods-DMUnLoaderPodSPMExample" */;
+			buildConfigurationList = 6423612D35CBAC77BA9EB37FD80E33E0 /* Build configuration list for PBXNativeTarget "Pods-DMUnLoaderPodSPMExample" */;
 			buildPhases = (
-				B3CF7068989F8E4DA1B3A5E5491CBAAF /* Headers */,
-				C2C555E4F1650CD3E87101B986FF34D5 /* Sources */,
-				4621E0B788E955F7C1A8663CDFE43F8A /* Frameworks */,
-				E2FD173FDB1A3C565956E2A6E9FA11A6 /* Resources */,
+				1428F8B756DF8F5FE219BB5C9BE1599E /* Headers */,
+				1075E2A23178AE3B2370AFE8DC5DE197 /* Sources */,
+				4BFC065FA370018C03563890D96FB52C /* Frameworks */,
+				A06356EE7AF46D2E247456DF6816FF1D /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				3B66D30EE586C807A80C000D2AF6E8D9 /* PBXTargetDependency */,
-				8AD1479CB6AC7E34CDC762C9DCB201B8 /* PBXTargetDependency */,
+				3925C9DBBB3D13141A8AD43C1EBBBC19 /* PBXTargetDependency */,
+				5676A01A10B116CB02AFA6826598428C /* PBXTargetDependency */,
+				AB662893280E0CAD86E9AE96E95F6E35 /* PBXTargetDependency */,
 			);
 			name = "Pods-DMUnLoaderPodSPMExample";
 			productName = Pods_DMUnLoaderPodSPMExample;
@@ -529,17 +576,18 @@
 		};
 		859EFC1FBBC1FAC3D13AA276B34DC624 /* DMUnLoader */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5B19ECA582F0F27CF6DE6532B5A4C0EC /* Build configuration list for PBXNativeTarget "DMUnLoader" */;
+			buildConfigurationList = 2D6AA14F3CC6B39AED62AB10D306BAD2 /* Build configuration list for PBXNativeTarget "DMUnLoader" */;
 			buildPhases = (
-				D1DC89FB6845A8A0BC1A234C67068D15 /* Headers */,
-				2C95738742C16D8CEBD86E9A6F28F810 /* Sources */,
-				C25FD8B7D4B54A3C0427B76078BED4B7 /* Frameworks */,
-				E2BBE6C485D170956AD3A54A286C2537 /* Resources */,
+				AA7B4C834826D712C02384FBD1127C43 /* Headers */,
+				554A2DD7E259207E276B13882D090510 /* Sources */,
+				04791A26FF303F9C7155897D78FE9A09 /* Frameworks */,
+				3064DA6BD956E6EEB43D493FA743C6AC /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				F3C2DC0D96C68B867D11B8F5E4741CAB /* PBXTargetDependency */,
+				43E8C7B4B007CAA5E5AF74EF0482ABFD /* PBXTargetDependency */,
+				6BFA8B6FE5AC9D4DFEFE39F582687705 /* PBXTargetDependency */,
 			);
 			name = DMUnLoader;
 			productName = DMUnLoader;
@@ -564,6 +612,24 @@
 			productReference = AFA26E3A804F87994F8361DF6C042A41 /* DMAction */;
 			productType = "com.apple.product-type.framework";
 		};
+		F7C86ADD3C7A3D169B4E71C6602432A2 /* DMVariableBlurView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 77575727D711C39D19FD2B8A92631FED /* Build configuration list for PBXNativeTarget "DMVariableBlurView" */;
+			buildPhases = (
+				04862863D21A566CEDBAB35A649E8AF4 /* Headers */,
+				009A9FACCF81CE4B4BA95F14EB7879EF /* Sources */,
+				8EE64A0EE2FF17AFFB38A981B993EEAC /* Frameworks */,
+				379C0776A5AEBD8FDD0769D715D14FF4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DMVariableBlurView;
+			productName = DMVariableBlurView;
+			productReference = 5703CBFA82D77C574B1D5B3C550E0A25 /* DMVariableBlurView */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -582,14 +648,13 @@
 				en,
 			);
 			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
-			minimizedProjectReferenceProxies = 0;
-			preferredProjectObjectVersion = 77;
-			productRefGroup = EC69359E5398ECD0C43DDB2356ADB669 /* Products */;
+			productRefGroup = 6AF046B2827F1E45FB1D2B4DC40BE6A8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				F7564024008D614A34B976CD905BD90D /* DMAction */,
 				859EFC1FBBC1FAC3D13AA276B34DC624 /* DMUnLoader */,
+				F7C86ADD3C7A3D169B4E71C6602432A2 /* DMVariableBlurView */,
 				3B00BB696102466C9880443909B073B9 /* Pods-DMUnLoaderPodSPMExample */,
 			);
 		};
@@ -603,14 +668,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E2BBE6C485D170956AD3A54A286C2537 /* Resources */ = {
+		3064DA6BD956E6EEB43D493FA743C6AC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E2FD173FDB1A3C565956E2A6E9FA11A6 /* Resources */ = {
+		379C0776A5AEBD8FDD0769D715D14FF4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A06356EE7AF46D2E247456DF6816FF1D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -620,6 +692,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		009A9FACCF81CE4B4BA95F14EB7879EF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E294CCE2F4F33022801751BC6863F1A7 /* DMVariableBlurView.swift in Sources */,
+				21B9D4A6560C6C7E9F46B55BF4D7A9E1 /* DMVariableBlurView-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1075E2A23178AE3B2370AFE8DC5DE197 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4E0F37E994C6076B2BEA8DCE76E5FBF8 /* Pods-DMUnLoaderPodSPMExample-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1BEDD31B296D2D18B6A4A0A494B4B818 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -633,87 +722,86 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2C95738742C16D8CEBD86E9A6F28F810 /* Sources */ = {
+		554A2DD7E259207E276B13882D090510 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				86B4BA6C5D43CAB8AF2E6034994FDCD1 /* Atomic.swift in Sources */,
-				5866C447CCB35121B28270C367ADD289 /* CustomSizeView.swift in Sources */,
-				892780B3B2299330F5BE1E9CC82CB905 /* DispatchQueue+Unique.swift in Sources */,
-				06F734FA2941C6E5C761A2AA37DC6B8D /* DMAppError.swift in Sources */,
-				225327609151F392BD914D3573BA2EC0 /* DMErrorView.swift in Sources */,
-				9D0EA622CB323BAFBD4456A88EA5D50A /* DMErrorViewSettings.swift in Sources */,
-				0F3249FE96ED123CAA17E5E015EDA0A2 /* DMGlobalLoadingStateManager.swift in Sources */,
-				ED8A4E7790783ED440EA8F38652EC3D0 /* DMLoadableType.swift in Sources */,
-				89172D5A9812BC9FFF76CD8B7282AD72 /* DMLoadableTypeSuccess.swift in Sources */,
-				82EB2D278130CFC9223251021FA3713D /* DMLoadingManager.swift in Sources */,
-				FEBD0501377FFF8EA72EDBCFA80B65B8 /* DMLoadingManagerProtocol.swift in Sources */,
-				EFF4BC6D713D001A379349DDE825B48A /* DMLoadingManagerSettings.swift in Sources */,
-				91571C22EE6C9A196B5AA8AAB37ABDB2 /* DMLoadingModifier.swift in Sources */,
-				0A7629624FB5C38C703F3001E391730A /* DMLoadingView.swift in Sources */,
-				DBFDBAEF881BA94D17447F0B9E63B4D5 /* DMLoadingViewProviderProtocol.swift in Sources */,
-				FF73EDD90DE29B86AD00F3CDC53376A7 /* DMLoadingViewSettings.swift in Sources */,
-				A2924D859989D5E60768BF3919718D5C /* DMLocalLoadingView.swift in Sources */,
-				8044A65EFAF28D1A968A889EFC28800A /* DMLocalLoadingViewUIKit.swift in Sources */,
-				890508C8DC231FEB871766938A30E9EE /* DMNativeDeviceParameters.swift in Sources */,
-				6C4948BAEED4DD4915DFEEA65011F84E /* DMProgressView.swift in Sources */,
-				633660551F573BC1E9549604383AD57A /* DMRootLoadingModifier.swift in Sources */,
-				923C850F3A4C78B03B682C8C3D48C084 /* DMRootLoadingView.swift in Sources */,
-				5A14E768FDC749F4FD41BD12903D7E3F /* DMRootViewControllerUIKit.swift in Sources */,
-				57B1E7A8AD02B96E55E4CEF861E29E7F /* DMSuccessView.swift in Sources */,
-				15EFB11D05E0A0DDF0230DF22FB2AFA0 /* DMSuccessViewSettings.swift in Sources */,
-				641374230387BE84977945D1C060CB46 /* DMUnLoader-dummy.m in Sources */,
-				2C8EA61DCC96259ADCC211740910B5CF /* DMViewControllerTopLevel.swift in Sources */,
-				E8E1946280B92EF08383A9D299FBC57B /* DMWrappedViewUIKit.swift in Sources */,
-				ADDDE0EE6541C99C047ED03FADDE854B /* Duration+TimeInterval.swift in Sources */,
-				1CC5717740A6B07FB2363FF8404EDC4D /* EnvironmentKeys.swift in Sources */,
-				E71DE20AC5C43932FD24D0DEA92CC9A4 /* FrameworkExports.swift in Sources */,
-				51E77F4B67E623EF19D0A88EEBD2154F /* GlobalLoadingStateManagerProtocol.swift in Sources */,
-				B44B6F085A0B3811A5C0687DCD9FFC5D /* Inspection.swift in Sources */,
-				CE2623BB16535BBFDF653F510B41A5B9 /* Optional+Protocol.swift in Sources */,
-				DF7C9A110D67960DB452D3550A61D97D /* SchemaArguments.swift in Sources */,
-				E4713636D06C3FBB652C883A12033580 /* String+Pointer.swift in Sources */,
-				145BCA5B359684A40BCD5D17F9880C8E /* View+Loading.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C2C555E4F1650CD3E87101B986FF34D5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				BDCBCB08D6D68323C48E27AB72112953 /* Pods-DMUnLoaderPodSPMExample-dummy.m in Sources */,
+				0E7B901861A933957B7EAB0323D59B0A /* AnyDMLoadingViewProviderTypeErasurer.swift in Sources */,
+				F44237D04FCA21CD84812E5238720FAD /* Atomic.swift in Sources */,
+				C42E2B68D5B72982B0A762F4DCA0EC27 /* CustomSizeView.swift in Sources */,
+				EE088721E744B83D51D1F1F146F0F3AB /* DispatchQueue+Unique.swift in Sources */,
+				25F5E16BF475F7C2E3BEFF3C0416AF42 /* DMAppDelegate.swift in Sources */,
+				743C10CB58395C5C337A7043884797A3 /* DMAppError.swift in Sources */,
+				1FDD8210BF4DBB30FFC4F094D45D41DC /* DMErrorView.swift in Sources */,
+				5135D2A70530E3F74C41B8B9CFDFC524 /* DMErrorViewSettings.swift in Sources */,
+				9AB38DD2550850D39EBDD20B57793A7D /* DMHudButtonStyle.swift in Sources */,
+				D26A414558BE9B065505097049F48600 /* DMHudSceneView.swift in Sources */,
+				E55632CD00045FE85E287040F9E922FA /* DMLoadableType.swift in Sources */,
+				47EEF57CB7C915ED26A2A66F7615D3C0 /* DMLoadableTypeSuccess.swift in Sources */,
+				77CBC480E039CC799D77E00973CC7526 /* DMLoadingManager.swift in Sources */,
+				DB16BFFF90CFE028621EE52BF23C64B0 /* DMLoadingManagerProtocol.swift in Sources */,
+				4E04B2040E76F875F99425EAF1AF7270 /* DMLoadingManagerSettings.swift in Sources */,
+				3B0FD3B02912D26D90386ECC91CC05E2 /* DMLoadingView.swift in Sources */,
+				DA32548D387F7D426F61D59B72BE66B0 /* DMLoadingViewProviderProtocol.swift in Sources */,
+				D137C99286B36855D72D09B023C10FF2 /* DMLoadingViewSettings.swift in Sources */,
+				2D9764F9409EF3125F60721E6DCFD14C /* DMPassThroughWindow.swift in Sources */,
+				E22693E6F88CB11464DC3C0A3870E361 /* DMProgressView.swift in Sources */,
+				C1B5ADB9D81BD563FBFE9781E09095EC /* DMRootLoadingView.swift in Sources */,
+				00C69699CF456F2F33474021E62C070A /* DMSceneDelegateBase.swift in Sources */,
+				DC629A2D3264FEFCA34E5AD3ED236FD9 /* DMSceneDelegateHelper.swift in Sources */,
+				31E105BB1D7410213721E1257629A4D1 /* DMSuccessView.swift in Sources */,
+				8FD9BE2D095F6188B7EDA69EA183A374 /* DMSuccessViewSettings.swift in Sources */,
+				9EE9A7F8D1ED752F61F5E3CDC2F1B68E /* DMUnLoader-dummy.m in Sources */,
+				BCDA96A0E93FEA518E0E92367424E986 /* Duration+TimeInterval.swift in Sources */,
+				CE36613DDE34A9B251FC0C12BFD55ED2 /* FrameworkExports.swift in Sources */,
+				806B632C79A74055EDEB8A9F85D83501 /* Inspection.swift in Sources */,
+				F343C202C1007DC210C851DF516355F4 /* Optional+Protocol.swift in Sources */,
+				5DC97E58DEF5EDBA3BCC43A6D5205C2D /* SchemaArguments.swift in Sources */,
+				4B3BC0DD066D1E9F9336E9492F3034F7 /* String+Pointer.swift in Sources */,
+				72E274ED724DB7C47C2CDCBCBBBB57DC /* View+HUD.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3B66D30EE586C807A80C000D2AF6E8D9 /* PBXTargetDependency */ = {
+		3925C9DBBB3D13141A8AD43C1EBBBC19 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = DMAction;
 			target = F7564024008D614A34B976CD905BD90D /* DMAction */;
-			targetProxy = C17D377C18C5B08539A558E03818BE27 /* PBXContainerItemProxy */;
+			targetProxy = 1A1CEC54B223719C4A2CF6C1AB4A74D3 /* PBXContainerItemProxy */;
 		};
-		8AD1479CB6AC7E34CDC762C9DCB201B8 /* PBXTargetDependency */ = {
+		43E8C7B4B007CAA5E5AF74EF0482ABFD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DMAction;
+			target = F7564024008D614A34B976CD905BD90D /* DMAction */;
+			targetProxy = AB0647E6B971A27C537513F004E707D3 /* PBXContainerItemProxy */;
+		};
+		5676A01A10B116CB02AFA6826598428C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = DMUnLoader;
 			target = 859EFC1FBBC1FAC3D13AA276B34DC624 /* DMUnLoader */;
-			targetProxy = 029F4BCE861663B4D1CED97FB2B4D423 /* PBXContainerItemProxy */;
+			targetProxy = 8627E1F37E381E09D95F5EC31A3804E7 /* PBXContainerItemProxy */;
 		};
-		F3C2DC0D96C68B867D11B8F5E4741CAB /* PBXTargetDependency */ = {
+		6BFA8B6FE5AC9D4DFEFE39F582687705 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = DMAction;
-			target = F7564024008D614A34B976CD905BD90D /* DMAction */;
-			targetProxy = A241F129882B40D2A9574D493E847699 /* PBXContainerItemProxy */;
+			name = DMVariableBlurView;
+			target = F7C86ADD3C7A3D169B4E71C6602432A2 /* DMVariableBlurView */;
+			targetProxy = E4238FB6640BC7253D102214F5DD703B /* PBXContainerItemProxy */;
+		};
+		AB662893280E0CAD86E9AE96E95F6E35 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DMVariableBlurView;
+			target = F7C86ADD3C7A3D169B4E71C6602432A2 /* DMVariableBlurView */;
+			targetProxy = 1B234E19F071F5690829A1E8DEF6178A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		2A66B03B2023DFC113802B729CBAA36C /* Debug-UIKit */ = {
+		0C904940984B4A39C880D8704FEBAFF8 /* Debug-UIKit */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FEA5872D41D4C57A1962B3C9FA38A847 /* Pods-DMUnLoaderPodSPMExample.debug-uikit.xcconfig */;
+			baseConfigurationReference = FA38BC17E4022378540FE99EAC659BE4 /* DMVariableBlurView.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -725,7 +813,9 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				INFOPLIST_FILE = "Target Support Files/Pods-DMUnLoaderPodSPMExample/Pods-DMUnLoaderPodSPMExample-Info.plist";
+				GCC_PREFIX_HEADER = "Target Support Files/DMVariableBlurView/DMVariableBlurView-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/DMVariableBlurView/DMVariableBlurView-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -733,21 +823,58 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-DMUnLoaderPodSPMExample/Pods-DMUnLoaderPodSPMExample.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				MODULEMAP_FILE = "Target Support Files/DMVariableBlurView/DMVariableBlurView.modulemap";
+				PRODUCT_MODULE_NAME = DMVariableBlurView;
+				PRODUCT_NAME = DMVariableBlurView;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = "Debug-UIKit";
+		};
+		257292C15BDF60F9E8EC971F4ED35C2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/DMUnLoader/DMUnLoader-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/DMUnLoader/DMUnLoader-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/DMUnLoader/DMUnLoader.modulemap";
+				PRODUCT_MODULE_NAME = DMUnLoader;
+				PRODUCT_NAME = DMUnLoader;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
 		};
 		2E12983070D14BC2A605C3287C25F28D /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -787,9 +914,9 @@
 			};
 			name = Debug;
 		};
-		2F0B4AE15E99CA09291927D2653F3267 /* Debug-SwiftUI */ = {
+		49350FE263491D516E8034BAEF3843DA /* Debug-SwiftUI */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8CD4A0AB5E054FEA1EFA2510FC31D67A /* DMUnLoader.release.xcconfig */;
+			baseConfigurationReference = FA38BC17E4022378540FE99EAC659BE4 /* DMVariableBlurView.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -802,9 +929,9 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/DMUnLoader/DMUnLoader-prefix.pch";
+				GCC_PREFIX_HEADER = "Target Support Files/DMVariableBlurView/DMVariableBlurView-prefix.pch";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/DMUnLoader/DMUnLoader-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/DMVariableBlurView/DMVariableBlurView-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -812,9 +939,9 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MODULEMAP_FILE = "Target Support Files/DMUnLoader/DMUnLoader.modulemap";
-				PRODUCT_MODULE_NAME = DMUnLoader;
-				PRODUCT_NAME = DMUnLoader;
+				MODULEMAP_FILE = "Target Support Files/DMVariableBlurView/DMVariableBlurView.modulemap";
+				PRODUCT_MODULE_NAME = DMVariableBlurView;
+				PRODUCT_NAME = DMVariableBlurView;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
@@ -826,44 +953,6 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = "Debug-SwiftUI";
-		};
-		3694EB07207897C70F4696BB475D46C8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/DMUnLoader/DMUnLoader-prefix.pch";
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/DMUnLoader/DMUnLoader-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/DMUnLoader/DMUnLoader.modulemap";
-				PRODUCT_MODULE_NAME = DMUnLoader;
-				PRODUCT_NAME = DMUnLoader;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
 		};
 		4A108AA885F9A69939A3EF146C6C66B8 /* Debug-SwiftUI */ = {
 			isa = XCBuildConfiguration;
@@ -927,8 +1016,9 @@
 			};
 			name = "Debug-SwiftUI";
 		};
-		61DE7060FF8AC3312E965213BCA8F021 /* Release */ = {
+		5964B7037ABFB5782F0BAF8035FFF424 /* Debug-UIKit */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = FEA5872D41D4C57A1962B3C9FA38A847 /* Pods-DMUnLoaderPodSPMExample.debug-uikit.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -964,11 +1054,51 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = "Debug-UIKit";
+		};
+		5C7D2EBF0DFD61ACFF03C5DA1B1DF1E6 /* Debug-UIKit */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C7F24BFAB88DCB59D1FB4FF0982E5415 /* DMUnLoader.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/DMUnLoader/DMUnLoader-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/DMUnLoader/DMUnLoader-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/DMUnLoader/DMUnLoader.modulemap";
+				PRODUCT_MODULE_NAME = DMUnLoader;
+				PRODUCT_NAME = DMUnLoader;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = "Debug-UIKit";
 		};
 		65A5BA9F2001F374564E3E2164046FB7 /* Debug-UIKit */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 21C893BA163A1D0623D041E6E38B9F90 /* DMAction.release.xcconfig */;
+			baseConfigurationReference = 2C3414127DB262B3506DD85BC50BAF3F /* DMAction.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -1072,9 +1202,48 @@
 			};
 			name = Debug;
 		};
+		746A5238F819C301AC47A4CFBED1B4F9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/DMVariableBlurView/DMVariableBlurView-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/DMVariableBlurView/DMVariableBlurView-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/DMVariableBlurView/DMVariableBlurView.modulemap";
+				PRODUCT_MODULE_NAME = DMVariableBlurView;
+				PRODUCT_NAME = DMVariableBlurView;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 		7765D6668DE56A3D65802E86F05272BA /* Debug-SwiftUI */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 21C893BA163A1D0623D041E6E38B9F90 /* DMAction.release.xcconfig */;
+			baseConfigurationReference = 2C3414127DB262B3506DD85BC50BAF3F /* DMAction.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -1112,8 +1281,9 @@
 			};
 			name = "Debug-SwiftUI";
 		};
-		803D0919068E1F85F44EFF6ED454EE8E /* Debug */ = {
+		9034EF8CA0CB421D52064F690B042CE8 /* Debug-SwiftUI */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F91BBAA63C0DF2C87D8DB6B196C13FBA /* Pods-DMUnLoaderPodSPMExample.debug-swiftui.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1145,14 +1315,15 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Debug;
+			name = "Debug-SwiftUI";
 		};
-		BAAC66C0AAC1A3E857949083FB690FC7 /* Debug-UIKit */ = {
+		954747CE2F545F184B1CA3A4781F14EA /* Debug-SwiftUI */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8CD4A0AB5E054FEA1EFA2510FC31D67A /* DMUnLoader.release.xcconfig */;
+			baseConfigurationReference = C7F24BFAB88DCB59D1FB4FF0982E5415 /* DMUnLoader.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -1188,7 +1359,84 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = "Debug-UIKit";
+			name = "Debug-SwiftUI";
+		};
+		9FEC254FBCB807EC16CD1EC7810BF4C1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				INFOPLIST_FILE = "Target Support Files/Pods-DMUnLoaderPodSPMExample/Pods-DMUnLoaderPodSPMExample-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-DMUnLoaderPodSPMExample/Pods-DMUnLoaderPodSPMExample.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		A0E01F9C5F6059DF9E9F93CAFDAB023C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREFIX_HEADER = "Target Support Files/DMVariableBlurView/DMVariableBlurView-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/DMVariableBlurView/DMVariableBlurView-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/DMVariableBlurView/DMVariableBlurView.modulemap";
+				PRODUCT_MODULE_NAME = DMVariableBlurView;
+				PRODUCT_NAME = DMVariableBlurView;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
 		};
 		C45D24E8DA93588B2E41DE033FA9200D /* Debug-UIKit */ = {
 			isa = XCBuildConfiguration;
@@ -1252,9 +1500,10 @@
 			};
 			name = "Debug-UIKit";
 		};
-		DA8630C2230F2C04A9ACC50692746216 /* Release */ = {
+		C9A577F083101CD3C3AA852433127DA9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1266,9 +1515,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				GCC_PREFIX_HEADER = "Target Support Files/DMAction/DMAction-prefix.pch";
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "Target Support Files/DMAction/DMAction-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Pods-DMUnLoaderPodSPMExample/Pods-DMUnLoaderPodSPMExample-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1276,22 +1523,22 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MODULEMAP_FILE = "Target Support Files/DMAction/DMAction.modulemap";
-				PRODUCT_MODULE_NAME = DMAction;
-				PRODUCT_NAME = DMAction;
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-DMUnLoaderPodSPMExample/Pods-DMUnLoaderPodSPMExample.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = Debug;
 		};
-		DF5C193A377ADA193A7C3AD29A11889F /* Release */ = {
+		CE8F9D6BB237F32923B8EDCB93E6F983 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1330,11 +1577,9 @@
 			};
 			name = Release;
 		};
-		E6D28A2D94B6E505E2BBAF763677DC73 /* Debug-SwiftUI */ = {
+		DA8630C2230F2C04A9ACC50692746216 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F91BBAA63C0DF2C87D8DB6B196C13FBA /* Pods-DMUnLoaderPodSPMExample.debug-swiftui.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1346,7 +1591,9 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
-				INFOPLIST_FILE = "Target Support Files/Pods-DMUnLoaderPodSPMExample/Pods-DMUnLoaderPodSPMExample-Info.plist";
+				GCC_PREFIX_HEADER = "Target Support Files/DMAction/DMAction-prefix.pch";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Target Support Files/DMAction/DMAction-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1354,21 +1601,20 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-DMUnLoaderPodSPMExample/Pods-DMUnLoaderPodSPMExample.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				MODULEMAP_FILE = "Target Support Files/DMAction/DMAction.modulemap";
+				PRODUCT_MODULE_NAME = DMAction;
+				PRODUCT_NAME = DMAction;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = "Debug-SwiftUI";
+			name = Release;
 		};
 		E873CA97BD124B21839AF13C9BE1CD18 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1435,6 +1681,17 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2D6AA14F3CC6B39AED62AB10D306BAD2 /* Build configuration list for PBXNativeTarget "DMUnLoader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				257292C15BDF60F9E8EC971F4ED35C2C /* Debug */,
+				954747CE2F545F184B1CA3A4781F14EA /* Debug-SwiftUI */,
+				5C7D2EBF0DFD61ACFF03C5DA1B1DF1E6 /* Debug-UIKit */,
+				CE8F9D6BB237F32923B8EDCB93E6F983 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1446,24 +1703,13 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5B19ECA582F0F27CF6DE6532B5A4C0EC /* Build configuration list for PBXNativeTarget "DMUnLoader" */ = {
+		6423612D35CBAC77BA9EB37FD80E33E0 /* Build configuration list for PBXNativeTarget "Pods-DMUnLoaderPodSPMExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3694EB07207897C70F4696BB475D46C8 /* Debug */,
-				2F0B4AE15E99CA09291927D2653F3267 /* Debug-SwiftUI */,
-				BAAC66C0AAC1A3E857949083FB690FC7 /* Debug-UIKit */,
-				DF5C193A377ADA193A7C3AD29A11889F /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		64215570713A723F84A71251D03BBCA4 /* Build configuration list for PBXNativeTarget "Pods-DMUnLoaderPodSPMExample" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				803D0919068E1F85F44EFF6ED454EE8E /* Debug */,
-				E6D28A2D94B6E505E2BBAF763677DC73 /* Debug-SwiftUI */,
-				2A66B03B2023DFC113802B729CBAA36C /* Debug-UIKit */,
-				61DE7060FF8AC3312E965213BCA8F021 /* Release */,
+				C9A577F083101CD3C3AA852433127DA9 /* Debug */,
+				9034EF8CA0CB421D52064F690B042CE8 /* Debug-SwiftUI */,
+				5964B7037ABFB5782F0BAF8035FFF424 /* Debug-UIKit */,
+				9FEC254FBCB807EC16CD1EC7810BF4C1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1475,6 +1721,17 @@
 				7765D6668DE56A3D65802E86F05272BA /* Debug-SwiftUI */,
 				65A5BA9F2001F374564E3E2164046FB7 /* Debug-UIKit */,
 				DA8630C2230F2C04A9ACC50692746216 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		77575727D711C39D19FD2B8A92631FED /* Build configuration list for PBXNativeTarget "DMVariableBlurView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0E01F9C5F6059DF9E9F93CAFDAB023C /* Debug */,
+				49350FE263491D516E8034BAEF3843DA /* Debug-SwiftUI */,
+				0C904940984B4A39C880D8704FEBAFF8 /* Debug-UIKit */,
+				746A5238F819C301AC47A4CFBED1B4F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

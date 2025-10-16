@@ -36,6 +36,7 @@ excluded: # paths to ignore during linting. overridden by `included`.
 
 identifier_name:
   min_length: 2
+  allowed_symbols: [_]
 
 file_length:
   warning: 600
@@ -60,3 +61,8 @@ custom_rules:
     match_kinds:
       - identifier
     message: 'Please use XCTAssertThrows instead of XCTAssertThrowsError'
+  # underscore_only_at_beginning:
+  #   name: "Underscore allowed only at position 0 (start)"
+  #   regex: "(?<!^)_"
+  #   message: "Underscore allowed only at position 0 (start)"
+  #   severity: warning

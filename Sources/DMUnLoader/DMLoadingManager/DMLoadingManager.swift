@@ -24,7 +24,7 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     
     /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
     /// - Note: This property is thread-safe and emits changes via `loadableStateSubject`.
-    @Published internal(set) public var loadableState: DMLoadableType = .none {
+    @Published public internal(set) var loadableState: DMLoadableType = .none {
         willSet {
             loadableStateSubject.send(newValue)
         }
@@ -39,7 +39,7 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     ///       print("Loadable state changed to: \(state)")
     ///   }
     ///   ```
-    internal var loadableStatePublisher: AnyPublisher<DMLoadableType, Never> {
+    var loadableStatePublisher: AnyPublisher<DMLoadableType, Never> {
         loadableStateSubject.eraseToAnyPublisher()
     }
     
@@ -69,10 +69,14 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     ///   ```swift
     ///   loadingManager.showLoading()
     ///   ```
-    public func showLoading() {
+    public func showLoading<PR: DMLoadingViewProviderProtocol>(
+        provider: PR
+    ) {
         stopInactivityTimer()
         
-        loadableState = .loading
+        loadableState = .loading(
+            provider: provider.eraseToAnyViewProvider()
+        )
     }
     
     /// Shows the success state with a success message.
@@ -81,10 +85,16 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     ///   ```swift
     ///   loadingManager.showSuccess("Data loaded successfully")
     ///   ```
-    public func showSuccess(_ message: DMLoadableTypeSuccess) {
+    public func showSuccess<PR: DMLoadingViewProviderProtocol>(
+        _ message: DMLoadableTypeSuccess,
+        provider: PR
+    ) {
         startInactivityTimer()
         
-        loadableState = .success(message)
+        loadableState = .success(
+            message,
+            provider: provider.eraseToAnyViewProvider()
+        )
     }
     
     /// Shows the failure state with an error and an optional retry action.
@@ -98,10 +108,18 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     ///   }
     ///   loadingManager.showFailure(NSError(domain: "Example", code: 404), onRetry: retryAction)
     ///   ```
-    public func showFailure(_ error: Error, onRetry: DMAction? = nil) {
+    public func showFailure<PR: DMLoadingViewProviderProtocol>(
+        _ error: Error,
+        provider: PR,
+        onRetry: DMAction? = nil
+    ) {
         startInactivityTimer()
         
-        loadableState = .failure(error: error, onRetry: onRetry)
+        loadableState = .failure(
+            error: error,
+            provider: provider.eraseToAnyViewProvider(),
+            onRetry: onRetry
+        )
     }
     
     /// Hides the loading state, resetting it to `.none`.
@@ -134,6 +152,11 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     private func stopInactivityTimer() {
         inactivityTimerCancellable?.cancel()
         inactivityTimerCancellable = nil
+    }
+    
+    public convenience init() {
+        self.init(state: .none,
+                  settings: DMLoadingManagerDefaultSettings())
     }
 }
 

@@ -17,11 +17,11 @@ final class DMLocalLoadingViewUIKitTests: XCTestCase {
     func testInitialization() {
         let mockUIKitView = MockUIKitView()
         let mockProvider = MockDMLoadingViewProvider()
-        let globalLoadingManager = GlobalLoadingStateManager()
+        let loadingManager = MockDMLoadingManager()
         
         let view = DMLocalLoadingViewUIKit(provider: mockProvider,
                                            innerView: mockUIKitView,
-                                           manager: globalLoadingManager)
+                                           loadingManager: loadingManager)
         
         XCTAssertNotNil(view.loadingManager,
                         "The loadingManager should be initialized")
@@ -31,7 +31,11 @@ final class DMLocalLoadingViewUIKitTests: XCTestCase {
     
     @MainActor
     func testInitializationFromCoder() {
-        let view = DMLocalLoadingViewUIKit<UIView, MockDMLoadingViewProvider>(coder: NSCoder())
+        let view = DMLocalLoadingViewUIKit<
+            UIView,
+            MockDMLoadingViewProvider,
+            MockDMLoadingManager
+        >(coder: NSCoder())
         
         XCTAssertNil(view,
                     "Failed to initialize view from coder")
@@ -43,11 +47,11 @@ final class DMLocalLoadingViewUIKitTests: XCTestCase {
     func testHostingControllerViewIsAddedAsSubview() {
         let mockUIKitView = MockUIKitView()
         let mockProvider = MockDMLoadingViewProvider()
-        let globalLoadingManager = GlobalLoadingStateManager()
+        let loadingManager = MockDMLoadingManager()
         
         let view = DMLocalLoadingViewUIKit(provider: mockProvider,
                                            innerView: mockUIKitView,
-                                           manager: globalLoadingManager)
+                                           loadingManager: loadingManager)
         
         let hostingView = view
             .subviews
@@ -60,11 +64,11 @@ final class DMLocalLoadingViewUIKitTests: XCTestCase {
     func testControllerViewHasCorrectConstraints() {
         let mockUIKitView = MockUIKitView()
         let mockProvider = MockDMLoadingViewProvider()
-        let globalLoadingManager = GlobalLoadingStateManager()
+        let loadingManager = MockDMLoadingManager()
         
         let view = DMLocalLoadingViewUIKit(provider: mockProvider,
                                            innerView: mockUIKitView,
-                                           manager: globalLoadingManager)
+                                           loadingManager: loadingManager)
         view.layoutIfNeeded()
         
         XCTAssertEqual(view.constraints.count,

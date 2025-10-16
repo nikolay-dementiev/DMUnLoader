@@ -7,7 +7,7 @@
 import Foundation
 
 /// A protocol defining methods to check and unwrap optional values in a type-safe manner.
-internal protocol OptionalProtocol {
+protocol OptionalProtocol {
     
     /// Checks whether the optional contains a value (`.some`) or is `nil` (`.none`).
     /// - Returns: `true` if the optional contains a value; otherwise, `false`.
@@ -79,7 +79,7 @@ extension Optional: OptionalProtocol {
 }
 
 /// An extension on `Optional` where the wrapped type conforms to `Collection`.
-internal extension Optional where Wrapped: Collection {
+extension Optional where Wrapped: Collection {
     
     /// Checks whether the optional is `nil` or contains an empty collection.
     /// - Returns: `true` if the optional is `nil` or the collection is empty; otherwise, `false`.
@@ -97,7 +97,7 @@ internal extension Optional where Wrapped: Collection {
 }
 
 /// An extension on `Optional` where the wrapped type is `String`.
-internal extension Optional where Wrapped == String {
+extension Optional where Wrapped == String {
     
     /// A static constant representing a null event string (`"<null>"`).
     static let nullEvent: String = NSString.nullEvent
@@ -141,7 +141,7 @@ internal extension Optional where Wrapped == String {
 }
 
 /// An error type representing issues related to unwrapping optional values.
-internal enum OptionalError: Error {
+enum OptionalError: Error {
     
     /// Indicates that an attempt was made to unwrap a `nil` optional value.
     case unwrappingNil

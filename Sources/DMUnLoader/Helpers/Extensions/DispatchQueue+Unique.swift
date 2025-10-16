@@ -11,13 +11,13 @@ import Foundation
 
 /// An extension on `DispatchQueue` to provide thread-safe, one-time execution of code blocks.
 /// This extension ensures that a block of code is executed only once, even in multithreaded environments.
-internal extension DispatchQueue {
+extension DispatchQueue {
     
     /// A private static array used to track tokens for one-time execution.
     /// - Note: This property is marked as `nonisolated(unsafe)` to allow access across threads.
     nonisolated(unsafe) private static var _onceTracker = [String]()
     
-    /// Resets the internal tracker array, clearing all previously tracked tokens.
+    /// Resets the tracker array, clearing all previously tracked tokens.
     /// - Warning: Use this method with caution, as it will allow previously executed blocks to run again.
     /// - Example:
     ///   ```swift

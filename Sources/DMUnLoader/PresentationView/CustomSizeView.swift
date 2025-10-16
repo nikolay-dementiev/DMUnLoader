@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUICore
+import SwiftUI
 
 /// A struct representing a custom size view with optional width, height, and alignment properties.
 /// This struct is typically used to define the dimensions and alignment of a view or component.
