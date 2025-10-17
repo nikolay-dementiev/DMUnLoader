@@ -10,12 +10,13 @@
 
 ## 2. Test Scenarios
 
-### Scenario 1: 🚧 Verify Default Initialization
+### Scenario 1: ✅ Verify Default Initialization
 - **Description**: Check if the `DMLoadingManager` is initialized correctly with default settings.
 - **Steps**:
-  - [ ] Create a new instance of `DMLoadingManager`.
-  - [ ] Verify that the initial `loadableState` is `.none`.
-  - [ ] Verify that the `settings` are set to `DMLoadingManagerDefaultSettings`.
+  - [✅] Create a new instance of `DMLoadingManager`.
+  - [✅] Verify that new instance conforms to `DMLoadingManagerProtocol`
+  - [✅] Verify that the initial `loadableState` is `.none`.
+  - [✅] Verify that the `settings` are set to `DMLoadingManagerDefaultSettings`.
 - **Expected Result**:
   - The `loadableState` is `.none`.
   - The `settings` match `DMLoadingManagerDefaultSettings`.
