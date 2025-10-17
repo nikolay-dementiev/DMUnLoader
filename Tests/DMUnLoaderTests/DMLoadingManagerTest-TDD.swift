@@ -143,10 +143,10 @@ final class DMLoadingManagerTestTDD: XCTestCase {
         
         sut.showSuccess(successsMessage, provider: provider)
         
-        let expectationSuccess = CountedFulfillmentTestExpectation(
+        let expectationSuccess = FulfillmentTestExpectationSpy(
             description: "Loadable state updated to .success"
         )
-        let expectationIdle = CountedFulfillmentTestExpectation(
+        let expectationIdle = FulfillmentTestExpectationSpy(
             description: "Loadable state updated to .none after auto-hide delay"
         )
         
@@ -208,8 +208,7 @@ final class TestDMLoadingViewProvider: DMLoadingViewProviderProtocol {
     public var id: UUID = UUID()
 }
 
-
-final class CountedFulfillmentTestExpectation: XCTestExpectation {
+final class FulfillmentTestExpectationSpy: XCTestExpectation {
     private(set) var currentFulfillmentCount: Int = 0
     
     var isFulfilled: Bool {
@@ -221,4 +220,3 @@ final class CountedFulfillmentTestExpectation: XCTestExpectation {
         super.fulfill()
     }
 }
-

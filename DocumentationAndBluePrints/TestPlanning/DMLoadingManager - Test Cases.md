@@ -24,12 +24,12 @@
 
 ---
 
-### Scenario 2: 🚧 Verify Loading State
+### Scenario 2: ✅ Verify Loading State
 - **Description**: Check if the `DMLoadingManager` correctly transitions to the `.loading` state.
 - **Steps**:
-  - [ ] Call the `showLoading(provider:)` method with a mock `DMLoadingViewProvider`.
-  - [ ] Verify that the `loadableState` is `.loading`.
-  - [ ] Verify that the inactivity timer is stopped.
+  - [✅] Call the `showLoading(provider:)` method with a `DMLoadingViewProvider` object.
+  - [✅] Verify that the `loadableState` is `.loading`.
+  - [✅] Verify that the inactivity timer is stopped.
 - **Expected Result**:
   - The `loadableState` is `.loading`.
   - The inactivity timer is stopped.
@@ -37,13 +37,13 @@
 
 ---
 
-### Scenario 3: 🚧 Verify Success State
+### Scenario 3: ✅ Verify Success State
 - **Description**: Check if the `DMLoadingManager` correctly transitions to the `.success` state.
 - **Steps**:
-  - [ ] Call the `showSuccess(_:provider:)` method with a success message and a mock `DMLoadingViewProvider`.
-  - [ ] Verify that the `loadableState` is `.success`.
-  - [ ] Verify that the inactivity timer is started with the delay specified in `settings.autoHideDelay`.
-  - [ ] Wait for the auto-hide delay and verify that the `loadableState` transitions back to `.none`.
+  - [✅] Call the `showSuccess(_:provider:)` method with a success message and a `DMLoadingViewProvider` object.
+  - [✅] Verify that the `loadableState` is `.success`.
+  - [✅] Verify that the inactivity timer is started with the delay specified in `settings.autoHideDelay`.
+  - [✅] Wait for the auto-hide delay and verify that the `loadableState` transitions back to `.none`.
 - **Expected Result**:
   - The `loadableState` is `.success` immediately after the call.
   - The inactivity timer is started.

@@ -18,7 +18,7 @@ public final class DMLoadingManager: DMLoadingManagerProtocol {
     
     /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
     /// - Note: This property is thread-safe and emits changes via `loadableStateSubject`.
-    @Published public internal(set) var loadableState: DMLoadableType = .none
+    @Published public internal(set) var loadableState: DMLoadableType
     
     /// A cancellable subscription used to manage the inactivity timer.
     private var inactivityTimerCancellable: AnyCancellable?
