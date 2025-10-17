@@ -35,10 +35,14 @@ final class LoadingManagerTDD: DMLoadingManagerProtocol {
         )
     }
     
+    @MainActor
     func showLoading<PR>(provider: PR) where PR: DMLoadingViewProviderProtocol {
-        
+        loadableState = .loading(
+            provider: provider.eraseToAnyViewProvider()
+        )
     }
     
+    @MainActor
     func showSuccess<PR>(
         _ message: DMLoadableTypeSuccess,
         provider: PR
@@ -46,6 +50,7 @@ final class LoadingManagerTDD: DMLoadingManagerProtocol {
         
     }
     
+    @MainActor
     func showFailure<PR>(
         _ error: any Error,
         provider: PR,
@@ -59,11 +64,11 @@ final class LoadingManagerTDD: DMLoadingManagerProtocol {
     }
 }
 
+@MainActor
 final class DMLoadingManagerTestTDD: XCTestCase {
-
-    @MainActor
-    func testDefaultInitialization() throws {
-        let sut = LoadingManagerTDD()
+    
+    func testDefaultInitialization() {
+        let sut = makeSUT()
         XCTAssertTrue(
             (sut as AnyObject) is (any DMLoadingManagerProtocol),
             "LoadingManager should conform to DMLoadingManagerProtocol"
@@ -80,4 +85,30 @@ final class DMLoadingManagerTestTDD: XCTestCase {
             "Default settings should be an instance of LoadingManagerDefaultSettingsTDD"
         )
     }
+    
+    func testVerifyLoadingState() {
+        let sut = makeSUT()
+        let provider = TestDMLoadingViewProvider()
+        
+        sut.showLoading(provider: provider)
+        
+        XCTAssertEqual(
+            sut.loadableState,
+            .loading(
+                provider: provider.eraseToAnyViewProvider()
+            ),
+            "After calling `showLoading(provider:)`, `loadableState` should be `.loading` with the correct provider"
+        )
+        
+        
+    }
+    
+    // MARK: - Helpers
+    private func makeSUT() -> LoadingManagerTDD {
+        LoadingManagerTDD()
+    }
+}
+
+final class TestDMLoadingViewProvider: DMLoadingViewProviderProtocol {
+    public var id: UUID = UUID()
 }
