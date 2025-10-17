@@ -8,15 +8,12 @@ import Combine
 @testable import DMUnLoader
 
 @MainActor
-final class MockDMLoadingManager: DMLoadingManagerInteralProtocol {
+final class MockDMLoadingManager: DMLoadingManagerProtocol {
     
     public let id: UUID
     public let settings: DMLoadingManagerSettings
     
     @Published public var loadableState: DMLoadableType = .none
-    public var loadableStatePublisher: AnyPublisher<DMLoadableType, Never> {
-        $loadableState.eraseToAnyPublisher()
-    }
     
     convenience init() {
         self.init(id: UUID(),

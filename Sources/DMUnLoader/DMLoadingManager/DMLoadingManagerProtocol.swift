@@ -63,26 +63,3 @@ public protocol DMLoadingManagerProtocol: ObservableObject {
     
     init()
 }
-
-/// An protocol extending `DMLoadingManagerProtocol` to include additional properties
-/// and functionality required for implementation.
-///
-/// This protocol is intended for use within the module and should not be exposed publicly.
-@MainActor
-protocol DMLoadingManagerInteralProtocol: DMLoadingManagerProtocol {
-    
-    var loadableState: DMLoadableType { get set }
-    
-    /// A publisher that emits changes to the `loadableState`.
-    /// - Note: This property enables reactive programming using Combine, allowing observers
-    ///   to react to state changes in real-time.
-    /// - Example:
-    ///   ```swift
-    ///   cancellable = loadingManager.loadableStatePublisher.sink { state in
-    ///       print("Loadable state changed to: \(state)")
-    ///   }
-    ///   ```
-    var loadableStatePublisher: AnyPublisher<DMLoadableType, Never> { get }
-    
-    init()
-}

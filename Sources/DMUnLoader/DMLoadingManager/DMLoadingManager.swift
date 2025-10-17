@@ -8,37 +8,17 @@ import Foundation
 import Combine
 
 /// A `ViewModel` responsible for managing and handling loading states in a user interface.
-/// This class conforms to `DMLoadingManagerInteralProtocol` and provides functionality to
+/// This class conforms to `DMLoadingManagerProtocol` and provides functionality to
 /// show loading, success, failure, and hidden states, as well as manage an inactivity timer.
 @MainActor
-public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
+public final class DMLoadingManager: DMLoadingManagerProtocol {
     
     /// The settings used by the loading manager to configure its behavior, such as auto-hide delay.
     public let settings: DMLoadingManagerSettings
     
-    /// A `PassthroughSubject` used to emit changes to the `loadableState`.
-    private let loadableStateSubject = PassthroughSubject<DMLoadableType, Never>()
-    
     /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
     /// - Note: This property is thread-safe and emits changes via `loadableStateSubject`.
-    @Published public internal(set) var loadableState: DMLoadableType = .none {
-        willSet {
-            loadableStateSubject.send(newValue)
-        }
-    }
-    
-    /// A publisher that emits changes to the `loadableState`.
-    /// - Note: This property enables reactive programming using Combine, allowing observers
-    ///   to react to state changes in real-time.
-    /// - Example:
-    ///   ```swift
-    ///   cancellable = loadingManager.loadableStatePublisher.sink { state in
-    ///       print("Loadable state changed to: \(state)")
-    ///   }
-    ///   ```
-    var loadableStatePublisher: AnyPublisher<DMLoadableType, Never> {
-        loadableStateSubject.eraseToAnyPublisher()
-    }
+    @Published public internal(set) var loadableState: DMLoadableType = .none
     
     /// A cancellable subscription used to manage the inactivity timer.
     private var inactivityTimerCancellable: AnyCancellable?
@@ -57,6 +37,11 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
                 settings: DMLoadingManagerSettings) {
         self.loadableState = loadableState
         self.settings = settings
+    }
+    
+    public convenience init() {
+        self.init(state: .none,
+                  settings: DMLoadingManagerDefaultSettings())
     }
     
     /// Shows the loading state, typically indicating that an operation is in progress.
@@ -147,11 +132,6 @@ public final class DMLoadingManager: DMLoadingManagerInteralProtocol {
     private func stopInactivityTimer() {
         inactivityTimerCancellable?.cancel()
         inactivityTimerCancellable = nil
-    }
-    
-    public convenience init() {
-        self.init(state: .none,
-                  settings: DMLoadingManagerDefaultSettings())
     }
 }
 
