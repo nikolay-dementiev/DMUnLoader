@@ -199,6 +199,32 @@ final class DMLoadingManagerTestTDD: XCTestCase {
         )
     }
     
+    // Test loading manager conforms to ObservableObject
+    @MainActor
+    func testLoadingManagerConformsToObservableObject() {
+        let secondsAutoHideDelay: Double = 0.03
+        let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
+        let sut = makeSUT(settings: settings)
+        
+        // Check if LoadingManager conforms to ObservableObject
+        XCTAssertTrue((sut as Any) is (any ObservableObject), "LoadingManager should conform to ObservableObject")
+        
+        let expectationIdle = FulfillmentTestExpectationSpy(
+            description: "Loadable state updated to .none after hide() call"
+        )
+        
+        observeLoadableState(of: sut) { state in
+            expectationIdle.fulfill()
+        }
+        
+        sut.hide()
+        
+        wait(
+            for: [expectationIdle],
+            timeout: secondsAutoHideDelay
+        )
+    }
+    
     // MARK: Helpers
 
     @MainActor
@@ -233,8 +259,13 @@ final class DMLoadingManagerTestTDD: XCTestCase {
     }
     
     @MainActor
-    private func makeSUT() -> DMLoadingManager {
-        makeSUT(settings: LoadingManagerDefaultSettingsTDD())
+    private func makeSUT(file: StaticString = #filePath,
+                         line: UInt = #line) -> DMLoadingManager {
+        makeSUT(
+            settings: LoadingManagerDefaultSettingsTDD(),
+            file: file,
+            line: line
+        )
     }
 }
 
