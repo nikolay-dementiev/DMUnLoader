@@ -225,6 +225,46 @@ final class DMLoadingManagerTestTDD: XCTestCase {
         )
     }
     
+    @MainActor
+    func testVerifyAutoHideDelayBehavior() {
+        let secondsAutoHideDelay: Double = 0.2
+        let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
+        let sut = makeSUT(settings: settings)
+        let provider = TestDMLoadingViewProvider()
+        
+        let expectationStateSuccessChange = FulfillmentTestExpectationSpy(
+            description: "Loadable state did NOT auto-hide before the specified delay"
+        )
+        expectationStateSuccessChange.isInverted = true
+        let expectationIdle = XCTestExpectation(
+            description: "Loadable state updated to .none after hide() call"
+        )
+        
+        sut.showSuccess(
+            "Some success message",
+            provider: provider
+        )
+        observeLoadableState(of: sut) { state in
+            if case .success = state {
+                return
+            } else if case .none = state,
+                        !expectationStateSuccessChange.isFulfilled {
+                expectationIdle.fulfill()
+            }
+            
+            expectationStateSuccessChange.fulfill()
+        }
+        
+        wait(
+            for: [expectationStateSuccessChange],
+            timeout: secondsAutoHideDelay-0.01
+        )
+        wait(
+            for: [expectationIdle],
+            timeout: secondsAutoHideDelay+0.01
+        )
+    }
+    
     // MARK: Helpers
 
     @MainActor

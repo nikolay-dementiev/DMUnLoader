@@ -1,6 +1,6 @@
 # Test Cases: "DMLoadingManager"
 
-## 1. General Information
+## 1. ✅ General Information
 - **Module**: DMLoadingManager
 - **Description**: A `ViewModel` responsible for managing and handling loading states in a user interface. It supports states such as `.none`, `.loading`, `.success`, and `.failure`, and includes an inactivity timer for auto-hiding.
 - **Type of Tests**: Functional Tests (BDD), Unit Testing, Snapshot Testing (optional).
@@ -82,6 +82,32 @@
 - **Status**: ? / 🚧 / ❌ / ✅
 
 ---
+
+### Scenario 6: ✅ Verify Conformance to ObservableObject
+- **Description**: Ensure that `DMLoadingManager` conforms to `ObservableObject` and reacts to state changes correctly.
+- **Steps**:
+  - [✅] Create an instance of `DMLoadingManager`.
+  - [✅] Observe changes to the `loadableState` using Combine's `@Published` property wrapper.
+  - [✅] Trigger state changes (e.g., `.loading`, `.success`, `.failure`) and verify that the view updates accordingly.
+- **Expected Result**:
+  - The `loadableState` updates correctly and triggers view updates.
+- **Status**: ? / 🚧 / ❌ / ✅
+
+---
+
+### Scenario 7: ✅ Verify Auto-Hide Delay Behavior
+- **Description**: Ensure that the `loadableState` does not transition to `.none` before the expected delay of `\(secondsAutoHideDelay)` seconds.
+- **Steps**:
+  - [✅] Call the `showSuccess(_:provider:)` or `showFailure(_:provider:onRetry:)` method.
+  - [✅] Wait for less than `settings.autoHideDelay` seconds and verify that the `loadableState` remains `.success` or `.failure`.
+  - [✅] Wait for the full `settings.autoHideDelay` duration and verify that the `loadableState` transitions to `.none`.
+- **Expected Result**:
+  - The `loadableState` remains `.success` or `.failure` until the full `settings.autoHideDelay` duration has elapsed.
+  - After the delay, the `loadableState` transitions to `.none`.
+- **Status**: ? / 🚧 / ❌ / ✅
+
+---
+
 
 ## 3. Test Data
 | Method               | Input Data                          | Expected Output                     |
