@@ -13,15 +13,11 @@ import Combine
 /// in a user interface. It provides methods to show or hide these states and supports
 /// optional retry actions for failure states.
 @MainActor
-public protocol DMLoadingManagerProtocol: Identifiable, ObservableObject {
+public protocol DMLoadingManagerProtocol: ObservableObject {
     
     /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
     /// - Note: This property is mutable and allows the manager to update its state dynamically.
     var loadableState: DMLoadableType { get }
-    
-    /// A unique identifier for the loading manager.
-    /// - Note: This property is required by the `Identifiable` protocol.
-    var id: UUID { get }
     
     /// The settings used by the loading manager to configure its behavior.
     /// - Example:
@@ -64,29 +60,6 @@ public protocol DMLoadingManagerProtocol: Identifiable, ObservableObject {
     ///   loadingManager.hide()
     ///   ```
     func hide()
-    
-    init()
-}
-
-/// An protocol extending `DMLoadingManagerProtocol` to include additional properties
-/// and functionality required for implementation.
-///
-/// This protocol is intended for use within the module and should not be exposed publicly.
-@MainActor
-protocol DMLoadingManagerInteralProtocol: DMLoadingManagerProtocol {
-    
-    var loadableState: DMLoadableType { get set }
-    
-    /// A publisher that emits changes to the `loadableState`.
-    /// - Note: This property enables reactive programming using Combine, allowing observers
-    ///   to react to state changes in real-time.
-    /// - Example:
-    ///   ```swift
-    ///   cancellable = loadingManager.loadableStatePublisher.sink { state in
-    ///       print("Loadable state changed to: \(state)")
-    ///   }
-    ///   ```
-    var loadableStatePublisher: AnyPublisher<DMLoadableType, Never> { get }
     
     init()
 }

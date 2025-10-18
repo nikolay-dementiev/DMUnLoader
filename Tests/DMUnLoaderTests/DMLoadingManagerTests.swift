@@ -5,256 +5,319 @@
 //
 
 import XCTest
+import DMUnLoader
 import Combine
-@testable import DMUnLoader
 
 final class DMLoadingManagerTests: XCTestCase {
-        
+    
     private var cancellables: Set<AnyCancellable> = []
-    @WeakElements private var weakLoadingManager = [DMLoadingManager]()
     
     override func tearDown() {
-        cancellables.removeAll()
+       cancellables.removeAll()
         super.tearDown()
-        
-        XCTAssertEqual(weakLoadingManager.count,
-                       0,
-                       "Loading manager should not be deallocated")
     }
     
-    // Initialization
     @MainActor
-    func testInitialization() {
-        let settings = MockDMLoadingManagerSettings()
-        let manager = DMLoadingManager(state: .none, settings: settings)
-        weakLoadingManager.append(manager)
-        
-        // Ensure that the initial state is `.none`
-        XCTAssertEqual(manager.loadableState,
-                       .none,
-                       "Initial loadableState should be .none")
-    }
-    
-    // Test loading manager conforms to Hashable
-    @MainActor
-    func testDMLoadingManagerConformsToHashable() {
-        let settings = MockDMLoadingManagerSettings()
-        let manager = DMLoadingManager(state: .none, settings: settings)
-        weakLoadingManager.append(manager)
-        
-        // Check if DMLoadingManager conforms to Hashable
-        XCTAssertTrue((manager as Any) is (any Hashable), "DMLoadingManager should conform to Hashable")
-    }
-    
-    // Test loading manager conforms to Identifiable
-    @MainActor
-    func testDMLoadingManagerConformsToIdentifiable() {
-        let settings = MockDMLoadingManagerSettings()
-        let manager = DMLoadingManager(state: .none, settings: settings)
-        weakLoadingManager.append(manager)
-        
-        // Check if DMLoadingManager conforms to Identifiable
-        XCTAssertTrue((manager as Any) is (any Identifiable), "DMLoadingManager should conform to Identifiable")
-    }
-    
-    // Test loading manager conforms to ObservableObject
-    @MainActor
-    func testDMLoadingManagerConformsToObservableObject() {
-        let settings = MockDMLoadingManagerSettings()
-        let manager = DMLoadingManager(state: .none, settings: settings)
-        weakLoadingManager.append(manager)
-        
-        // Check if DMLoadingManager conforms to ObservableObject
-        XCTAssertTrue((manager as Any) is (any ObservableObject), "DMLoadingManager should conform to ObservableObject")
-    }
-    
-    // Test loading manager instances conforms to Identifiable
-    @MainActor
-    func testDMLoadingManagerInstancesConformsToIdentifiable() {
-        let settings = MockDMLoadingManagerSettings()
-        
-        // Create two DMLoadingManager instances
-        let manager1 = DMLoadingManager(state: .none, settings: settings)
-        let manager2 = DMLoadingManager(state: .none, settings: settings)
-        
-        weakLoadingManager.append(manager1)
-        weakLoadingManager.append(manager2)
-        
-        // Verify that the IDs are unique
-        XCTAssertNotEqual(manager1.id, manager2.id, "DMLoadingManager instances should have unique IDs")
-    }
-    
-    // Test loading manager instances conforms to Hashable
-    @MainActor
-    func testDMLoadingManagerInstancesConformsToHashable() {
-        let settings = MockDMLoadingManagerSettings()
-        
-        let newTheSameID = UUID()
-        // Create two DMLoadingManager instances with the same ID
-        let manager1 = DMLoadingManager(id: newTheSameID, state: .none, settings: settings)
-        let manager2 = DMLoadingManager(id: newTheSameID, state: .none, settings: settings)
-        
-        weakLoadingManager.append(manager1)
-        weakLoadingManager.append(manager2)
-        
-        // Verify equality
-        XCTAssertEqual(manager1, manager2, "DMLoadingManager instances with the same ID should be equal")
-        
-        // Verify hashValue consistency
-        var set = Set<DMLoadingManager>()
-        set.insert(manager1)
-        XCTAssertTrue(set.contains(manager2), "DMLoadingManager instances with the same ID should have the same hashValue")
-    }
-    
-    // Show Loading State
-    @MainActor
-    func testShowLoading() throws {
-        let expectation = XCTestExpectation(description: "Loadable state updated to .loading")
-        
-        let provider = MockDMLoadingViewProvider().eraseToAnyViewProvider()
-        let secondsAutoHideDelay: Double = 0.2
-        let settings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
-        let manager = DMLoadingManager(state: .none, settings: settings)
-        weakLoadingManager.append(manager)
-        
-        // Observe changes to loadableState
-        manager.$loadableState
-            .dropFirst() // Skip the initial value
-            .sink { state in
-                XCTAssertEqual(state, .loading(provider: provider),
-                               "loadableState should be updated to .loading")
-                expectation.fulfill()
-            }
-            .store(in: &cancellables)
-        
-        // Trigger the showLoading method
-        manager.showLoading(provider: provider)
-        
-        // Wait for the expectation to be fulfilled
-        wait(for: [expectation], timeout: secondsAutoHideDelay)
-    }
-    
-    // Show Success State
-    @MainActor
-    func testShowSuccess() throws {
-        let expectation = XCTestExpectation(description: "Loadable state updated to .success")
-        
-        let provider = MockDMLoadingViewProvider()
-        let secondsAutoHideDelay: Double = 0.2
-        let settings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
-        let manager = DMLoadingManager(state: .none, settings: settings)
-        weakLoadingManager.append(manager)
-        
-        // Observe changes to loadableState
-        manager.$loadableState
-            .dropFirst() // Skip the initial value
-            .sink { state in
-                if case .success(let message, _) = state {
-                    XCTAssertEqual(message.description,
-                                   "Test Message",
-                                   "loadableState should be updated to .success with the correct message")
-                    expectation.fulfill()
-                }
-            }
-            .store(in: &cancellables)
-        
-        // Trigger the showSuccess method
-        manager.showSuccess("Test Message", provider: provider)
-        
-        // Wait for the expectation to be fulfilled
-        wait(for: [expectation], timeout: secondsAutoHideDelay)
-    }
-    
-    // Show Failure State
-    @MainActor
-    func testShowFailure() throws {
-        let expectation = XCTestExpectation(description: "Loadable state updated to .failure")
-        
-        let provider = MockDMLoadingViewProvider()
-        let secondsAutoHideDelay: Double = 0.2
-        let settings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
-        let manager = DMLoadingManager(state: .none, settings: settings)
-        weakLoadingManager.append(manager)
-        
-        // Observe changes to loadableState
-        manager.$loadableState
-            .dropFirst() // Skip the initial value
-            .sink { state in
-                if case .failure(let error, _, _) = state {
-                    XCTAssertEqual(error.localizedDescription,
-                                   "Test Error",
-                                   "loadableState should be updated to .failure with the correct error")
-                    expectation.fulfill()
-                }
-            }
-            .store(in: &cancellables)
-        
-        // Trigger the showFailure method
-        manager.showFailure(
-            NSError(
-                domain: "TestDomain",
-                code: 1,
-                userInfo: [NSLocalizedDescriptionKey: "Test Error"]
-            ),
-            provider: provider
+    func testDefaultInitialization() {
+        let sut = makeSUT()
+        XCTAssertTrue(
+            (sut as AnyObject) is (any DMLoadingManagerProtocol),
+            "LoadingManager should conform to DMLoadingManagerProtocol"
         )
         
-        // Wait for the expectation to be fulfilled
-        wait(for: [expectation], timeout: secondsAutoHideDelay)
+        XCTAssertEqual(
+            sut.loadableState,
+            .none,
+            "Default loadableState should be `.none`"
+        )
+        
+        XCTAssertTrue(
+            sut.settings is LoadingManagerDefaultSettingsTDD,
+            "Default settings should be an instance of LoadingManagerDefaultSettingsTDD"
+        )
     }
     
-    // Test inactivity timer hides state early with hide expectation
     @MainActor
-    func testInactivityTimerHidesStateEarlyHideExpectation() throws {
-        let earlyHideExpectation = XCTestExpectation(description: "Loadable state should not hide earlier than 1.5 seconds")
-        earlyHideExpectation.isInverted = true // This ensures the test fails if the expectation is fulfilled too early
+    func testVerifyLoadingState() {
+        let sut = makeSUT()
+        let provider = TestDMLoadingViewProvider()
         
-        let provider = MockDMLoadingViewProvider()
-        let secondsAutoHideDelay: Double = 0.05
-        let settings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
-        let manager = DMLoadingManager(state: .none, settings: settings)
-        weakLoadingManager.append(manager)
+        sut.showLoading(provider: provider)
         
-        // Trigger the showSuccess method to start the inactivity timer
-        manager.showSuccess("Test Message", provider: provider)
+        XCTAssertEqual(
+            sut.loadableState,
+            .loading(
+                provider: provider.eraseToAnyViewProvider()
+            ),
+            "After calling `showLoading(provider:)`, `loadableState` should be `.loading` with the correct provider"
+        )
+    }
+    
+    @MainActor
+    func testVerifySuccessState() {
+        let secondsAutoHideDelay: Double = 0.2
+        let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
+        let sut = makeSUT(settings: settings)
+        let provider = TestDMLoadingViewProvider()
+        let successsMessage = "Any message"
         
-        // Check that the state does not transition to `.none` before `\(secondsAutoHideDelay)` seconds
-        DispatchQueue.main.asyncAfter(deadline: .now() + secondsAutoHideDelay - 0.01) {
-            // If the state has already transitioned to `.none`, log a failure (optional)
-            XCTAssertFalse(manager.loadableState == .none,
-                           "Loadable state transitioned to .none before the expected delay of `\(secondsAutoHideDelay)` seconds")
+        sut.showSuccess(successsMessage, provider: provider)
+        
+        let expectationSuccess = FulfillmentTestExpectationSpy(
+            description: "Loadable state updated to .success"
+        )
+        let expectationIdle = XCTestExpectation(
+            description: "Loadable state updated to .none after auto-hide delay"
+        )
+        
+        observeLoadableState(of: sut) { state in
+            if case .success(let message, _) = state {
+                XCTAssertEqual(message.description,
+                               successsMessage,
+                               "loadableState should be updated to .success with the correct message")
+                expectationSuccess.fulfill()
+            } else if case .none = state, expectationSuccess.isFulfilled {
+                expectationIdle.fulfill()
+            }
         }
         
-        wait(for: [earlyHideExpectation], timeout: secondsAutoHideDelay + 0.01) // Ensure no early fulfillment
-        XCTAssertTrue(manager.loadableState == .none,
-                       "Loadable state didn't transitioned to .none the expected delay of `\(secondsAutoHideDelay)` seconds")
+        XCTAssertEqual(
+            sut.loadableState,
+            .success(
+                successsMessage,
+                provider: provider.eraseToAnyViewProvider()
+            ),
+            "After calling `showSuccess(_:provider:)`, `loadableState` should be `.success` with the correct message and provider"
+        )
+        
+        wait(
+            for: [expectationSuccess],
+            timeout: secondsAutoHideDelay
+        )
+        wait(
+            for: [expectationIdle],
+            timeout: secondsAutoHideDelay + 0.05
+        )
     }
     
-    // Test inactivity timer hides state with hide expectation
     @MainActor
-    func testInactivityTimerHidesStateHideExpectation() throws {
-        let hideExpectation = XCTestExpectation(description: "Loadable state hidden after inactivity timer")
+    func testVerifyFailureState() {
+        let secondsAutoHideDelay: Double = 0.2
+        let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
+        let sut = makeSUT(settings: settings)
+        let provider = TestDMLoadingViewProvider()
         
-        let provider = MockDMLoadingViewProvider()
-        let secondsAutoHideDelay: Double = 0.03
-        let settings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
-        let manager = DMLoadingManager(state: .none, settings: settings)
-        weakLoadingManager.append(manager)
+        let errorDescription = "Test Error"
+        let error = NSError(
+            domain: "TestDomain",
+            code: 100500,
+            userInfo: [NSLocalizedDescriptionKey: errorDescription]
+        )
         
-        // Observe changes to loadableState
-        manager.$loadableState
-            .dropFirst() // Skip the initial value
-            .sink { state in
-                if state == .none {
-                    hideExpectation.fulfill()
+        sut.showFailure(error, provider: provider, onRetry: nil)
+        
+        let expectationFailure = FulfillmentTestExpectationSpy(
+            description: "Loadable state updated to .failure"
+        )
+        let expectationIdle = XCTestExpectation(
+            description: "Loadable state updated to .none after auto-hide delay"
+        )
+        
+        observeLoadableState(of: sut) { state in
+            if case .failure(let error, _, _) = state {
+                XCTAssertEqual(error.localizedDescription,
+                               errorDescription,
+                               "loadableState should be updated to .failure with the correct error")
+                expectationFailure.fulfill()
+            } else if case .none = state,
+                        expectationFailure.isFulfilled {
+                expectationIdle.fulfill()
+            }
+        }
+        
+        XCTAssertEqual(
+            sut.loadableState,
+            .failure(
+                error: error,
+                provider: provider.eraseToAnyViewProvider()
+            ),
+            "After calling `showFailure(_:provider:)`, `loadableState` should be `.failure` with the correct error and provider"
+        )
+        
+        wait(
+            for: [expectationFailure],
+            timeout: secondsAutoHideDelay
+        )
+        wait(
+            for: [expectationIdle],
+            timeout: secondsAutoHideDelay + 0.05
+        )
+    }
+    
+    @MainActor
+    func testVerifyHideState() {
+        let secondsAutoHideDelay: Double = 0.2
+        let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
+        let sut = makeSUT(settings: settings)
+        
+        let provider = TestDMLoadingViewProvider()
+        
+        sut.showLoading(provider: provider)
+        
+        let expectationIdle = FulfillmentTestExpectationSpy(
+            description: "Loadable state updated to .none after hide() call"
+        )
+        let expectationAfterwordsIdle = XCTestExpectation(
+            description: "Loadable state remains .none (and doesn't chnaged) after hide() call"
+        )
+        expectationAfterwordsIdle.isInverted = true
+        
+        observeLoadableState(of: sut) { state in
+            if case .none = state {
+                expectationIdle.fulfill()
+            } else {
+                if expectationIdle.isFulfilled {
+                    expectationAfterwordsIdle.fulfill()
                 }
             }
-            .store(in: &cancellables)
+        }
         
-        // Trigger the showSuccess method to start the inactivity timer
-        manager.showSuccess("Test Message", provider: provider)
+        sut.hide()
         
-        // Wait for the expectations to be fulfilled
-        wait(for: [hideExpectation], timeout: secondsAutoHideDelay+0.1) // Ensure the state hides after the timer
+        XCTAssertEqual(
+            sut.loadableState,
+            .none,
+            "After calling `hide()`, `loadableState` should be `.none`"
+        )
+        wait(
+            for: [expectationIdle],
+            timeout: secondsAutoHideDelay
+        )
+        wait(
+            for: [expectationAfterwordsIdle],
+            timeout: secondsAutoHideDelay + 0.2
+        )
     }
+    
+    @MainActor
+    func testLoadingManagerConformsToObservableObject() {
+        let secondsAutoHideDelay: Double = 0.03
+        let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
+        let sut = makeSUT(settings: settings)
+        
+        // Check if LoadingManager conforms to ObservableObject
+        XCTAssertTrue((sut as Any) is (any ObservableObject), "LoadingManager should conform to ObservableObject")
+        
+        let expectationIdle = FulfillmentTestExpectationSpy(
+            description: "Loadable state updated to .none after hide() call"
+        )
+        
+        observeLoadableState(of: sut) { state in
+            expectationIdle.fulfill()
+        }
+        
+        sut.hide()
+        
+        wait(
+            for: [expectationIdle],
+            timeout: secondsAutoHideDelay
+        )
+    }
+    
+    @MainActor
+    func testVerifyAutoHideDelayBehavior() {
+        let secondsAutoHideDelay: Double = 0.2
+        let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
+        let sut = makeSUT(settings: settings)
+        let provider = TestDMLoadingViewProvider()
+        
+        let expectationStateSuccessChange = FulfillmentTestExpectationSpy(
+            description: "Loadable state did NOT auto-hide before the specified delay"
+        )
+        expectationStateSuccessChange.isInverted = true
+        let expectationIdle = XCTestExpectation(
+            description: "Loadable state updated to .none after hide() call"
+        )
+        
+        sut.showSuccess(
+            "Some success message",
+            provider: provider
+        )
+        observeLoadableState(of: sut) { state in
+            if case .success = state {
+                return
+            } else if case .none = state,
+                        !expectationStateSuccessChange.isFulfilled {
+                expectationIdle.fulfill()
+            }
+            
+            expectationStateSuccessChange.fulfill()
+        }
+        
+        wait(
+            for: [expectationStateSuccessChange],
+            timeout: secondsAutoHideDelay-0.01
+        )
+        wait(
+            for: [expectationIdle],
+            timeout: secondsAutoHideDelay+0.01
+        )
+    }
+    
+    // MARK: Helpers
+
+    @MainActor
+    private func observeLoadableState(
+        of sut: DMLoadingManager,
+        handler: @escaping (DMLoadableType) -> Void
+    ) {
+        sut
+            .$loadableState
+            .sink(receiveValue: handler)
+            .store(in: &cancellables)
+    }
+    
+    @MainActor
+    private func makeSUT<S>(
+        settings: S,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> DMLoadingManager where S: DMLoadingManagerSettings {
+        let loadingManager = DMLoadingManager(
+            state: .none,
+            settings: settings
+        )
+        
+        trackForMemoryLeaks(
+            loadingManager,
+            file: file,
+            line: line
+        )
+        
+        return loadingManager
+    }
+    
+    @MainActor
+    private func makeSUT(file: StaticString = #filePath,
+                         line: UInt = #line) -> DMLoadingManager {
+        makeSUT(
+            settings: LoadingManagerDefaultSettingsTDD(),
+            file: file,
+            line: line
+        )
+    }
+}
+
+// MARK: - Helpers; Supports
+
+private struct LoadingManagerDefaultSettingsTDD: DMLoadingManagerSettings {
+    let autoHideDelay: Duration
+    
+    init(autoHideDelay: Duration = .seconds(2)) {
+        self.autoHideDelay = autoHideDelay
+    }
+}
+
+private final class TestDMLoadingViewProvider: DMLoadingViewProviderProtocol {
+    public var id: UUID = UUID()
 }
