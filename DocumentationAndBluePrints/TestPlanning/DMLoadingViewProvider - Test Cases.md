@@ -1,39 +1,49 @@
 # Test Cases: "DMLoadingViewProvider"
 
-## 1. General Information
-- **Module**: DMLoadingViewProviderProtocol
-- **Description**: A protocol defining the interface for providing views and settings related to loading, error, and success states. Conforming types must also conform to `ObservableObject`, `Identifiable`, and `Hashable`.
+## 1. ✅ General Information
+- **Module**: DMLoadingViewProvider
+- **Description**: A protocol defining the interface for providing views and settings related to loading, error, and success states. Conforming types must also conform to `ObservableObject` and `Hashable`.
 - **Type of Tests**: Functional Tests (BDD), Unit Testing, Integration Testing.
 - **Status**: ? / 🚧 / ❌ / ✅
 
+Example: 
+```Swift
+protocol DMLoadingViewProvider: ObservableObject, Hashable {
+    associatedtype LoadingViewType: View
+    associatedtype ErrorViewType: View
+    associatedtype SuccessViewType: View
+    
+    func getLoadingView() -> LoadingViewType
+    func getErrorView(error: Error, onRetry: DMAction?, onClose: DMAction) -> ErrorViewType
+    func getSuccessView(object: DMLoadableTypeSuccess) -> SuccessViewType
+
+    var loadingManagerSettings: DMLoadingManagerSettings { get }
+    var loadingViewSettings: DMLoadingViewSettings { get }
+    var errorViewSettings: DMErrorViewSettings { get }
+    var successViewSettings: DMSuccessViewSettings { get }
+}
+```
 ---
 
 ## 2. Test Scenarios
 
-### Scenario 1: ? Verify Default Initialization
+### Scenario 1: ✅ Verify Default Initialization
 - **Description**: Check if the `DefaultDMLoadingViewProvider` is initialized correctly with default settings.
 - **Steps**:
-  - [?] Create a new instance of `DefaultDMLoadingViewProvider`.
-  - [?] Verify that the `id` is unique.
-  - [?] Verify that the default settings (`loadingManagerSettings`, `loadingViewSettings`, `errorViewSettings`, `successViewSettings`) match their respective default implementations.
+  - [✅] Create few new instances of `DefaultDMLoadingViewProvider`.
+  - [✅] Verify that the `hash` is unique.
+  - [✅] Verify that the default settings (`loadingManagerSettings`, `loadingViewSettings`, `errorViewSettings`, `successViewSettings`) match their respective default implementations.
 - **Expected Result**:
-  - The `id` is unique.
+  - The `hash` is unique.
   - Default settings are applied correctly.
 - **Status**: ? / 🚧 / ❌ / ✅
 
 ---
 
-### Scenario 2: ? Verify Loading View
+### Scenario 2: 🚧 Verify Loading View
 - **Description**: Check if the `getLoadingView` method returns a `DMProgressView` configured with the provided `loadingViewSettings`.
-- **Steps**:
-  - [?] Call the `getLoadingView` method.
-  - [?] Verify that the returned view is a `DMProgressView`.
-  - [?] Verify that the text is `"Loading..."`.
-  - [?] Verify that the progress indicator has a large size and white tint color.
-  - [?] Verify that the container foreground color matches the default settings.
-- **Expected Result**:
-  - The returned view is a `DMProgressView`.
-  - The text, progress indicator, and container appearance match the default settings.
+
+**[> test plan available here <](../TestPlanning/LoadingView-TestCases.md)**
 - **Status**: ? / 🚧 / ❌ / ✅
 
 ---
@@ -103,7 +113,7 @@
 ---
 
 ## 4. Notes
-- Use snapshot testing (if applicable) to verify the visual appearance of views managed by `DMLoadingViewProviderProtocol`.
+- Use snapshot testing (if applicable) to verify the visual appearance of views managed by `DMLoadingViewProvider`.
 - Use unit inspection to programmatically validate view configurations and settings.
 - Ensure that all tests are performed on multiple devices and screen sizes to verify responsiveness.
 - Localization testing should cover at least two languages (e.g., English and Ukrainian) if your app supports localization.
@@ -113,7 +123,7 @@
 
 ```Swift
 // Custom Loading View Provider
-final class CustomDMLoadingViewProvider: DMLoadingViewProviderProtocol {
+final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
     public var id: UUID = UUID()
     
     // Custom Loading View Settings

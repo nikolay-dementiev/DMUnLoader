@@ -2,7 +2,7 @@
 
 ## 1. General Information
 - **Module**: DMLoadingViewProvider
-- **Description**: A protocol defining the interface for providing views and settings related to loading, error, and success states. Conforming types must also conform to `ObservableObject`, `Identifiable`, and `Hashable`.
+- **Description**: A protocol defining the interface for providing views and settings related to loading, error, and success states. Conforming types must also conform to `ObservableObject` and `Hashable`.
 - **Purpose**: Define the expected behavior of `DMLoadingViewProvider` to ensure it meets functional requirements.
 
 ---
@@ -12,7 +12,7 @@
 ### Criterion 1: Default Initialization
 - **Description**: The `DefaultDMLoadingViewProvider` should initialize correctly with default settings.
 - **Requirements**:
-  - The `id` must be unique for each instance.
+  - The `hash` must be unique for each instance.
   - Default settings (`loadingManagerSettings`, `loadingViewSettings`, `errorViewSettings`, `successViewSettings`) must match their respective default implementations.
 - **Expected Behavior**:
   - When a new instance is created, the `id` is unique.
@@ -22,13 +22,8 @@
 
 ### Criterion 2: Loading View Behavior
 - **Description**: The `getLoadingView` method should return a `DMProgressView` configured with the provided `loadingViewSettings`.
-- **Requirements**:
-  - The progress view must display the text `"Loading..."` by default.
-  - The progress indicator must have a large size and white tint color.
-  - The container foreground color must match the default settings.
-- **Expected Behavior**:
-  - The returned view is a `DMProgressView`.
-  - The text, progress indicator, and container appearance match the default settings.
+
+**[> Acceptance Criteria available here <](../Acceptance%20Criteria/Loading%20View%20-%20Acceptance%20Criteria.md)**
 
 ---
 
