@@ -29,13 +29,7 @@
 
 ### Criterion 3: Error View Behavior
 - **Description**: The `getErrorView` method should return a `DMErrorView` configured with the provided `errorViewSettings`, `error`, `onRetry`, and `onClose`.
-- **Requirements**:
-  - The error view must display the error message and an exclamation mark triangle icon.
-  - The "Close" button must always be present and functional.
-  - The "Retry" button must be present and functional if `onRetry` is provided.
-- **Expected Behavior**:
-  - The returned view is a `DMErrorView`.
-  - The error message, icon, and buttons match the provided settings and actions.
+**[> Acceptance Criteria available here <](../Acceptance%20Criteria/Error%20View%20-%20Acceptance%20Criteria.md)**
 
 ---
 

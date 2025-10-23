@@ -50,15 +50,7 @@ protocol DMLoadingViewProvider: ObservableObject, Hashable {
 
 ### Scenario 3: ? Verify Error View
 - **Description**: Check if the `getErrorView` method returns a `DMErrorView` configured with the provided `errorViewSettings`, `error`, `onRetry`, and `onClose`.
-- **Steps**:
-  - [?] Call the `getErrorView` method with a sample error (`NSError(domain: "Test", code: 404)`), `onRetry`, and `onClose`.
-  - [?] Verify that the returned view is a `DMErrorView`.
-  - [?] Verify that the error message and exclamation mark triangle icon are displayed.
-  - [?] Verify that the "Close" button is present and functional.
-  - [?] Verify that the "Retry" button is present and functional if `onRetry` is provided.
-- **Expected Result**:
-  - The returned view is a `DMErrorView`.
-  - The error message, icon, and buttons match the provided settings and actions.
+**[> test plan available here <](../TestPlanning/Error%20View%20-%20TestCases.md)**
 - **Status**: ? / 🚧 / ❌ / ✅
 
 ---
