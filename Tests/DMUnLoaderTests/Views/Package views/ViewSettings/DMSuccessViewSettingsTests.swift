@@ -39,7 +39,7 @@ final class DMSuccessViewSettingsTests: XCTestCase {
     
     func testSuccessImagePropertiesCustomInitialization() {
         let customImage = Image(systemName: "star.fill")
-        let customFrame = CustomSizeView(
+        let customFrame = CustomViewSize(
             width: 100,
             height: 100
         )
@@ -179,7 +179,7 @@ final class DMSuccessViewSettingsTests: XCTestCase {
     func testDMSuccessDefaultViewSettingsCustomInitialization() {
         let customImageProperties = SuccessImageProperties(
             image: Image(systemName: "star.fill"),
-            frame: CustomSizeView(
+            frame: CustomViewSize(
                 width: 100,
                 height: 100
             ),

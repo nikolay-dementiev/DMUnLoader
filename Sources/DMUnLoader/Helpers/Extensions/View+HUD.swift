@@ -8,7 +8,7 @@ import SwiftUI
 import DMVariableBlurView
 
 extension View {
-    func hudCenter<Content: View, LM: DMLoadingManagerProtocol>(
+    func hudCenter<Content: View, LM: DMLoadingManager>(
         loadingManager: LM,
         @ViewBuilder content: () -> Content
     ) -> some View {

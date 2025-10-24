@@ -23,6 +23,20 @@ struct MockDMErrorViewSettings: DMErrorViewSettings {
     var errorImageSettings: ErrorImageSettings = ErrorImageSettings(
         image: Image(systemName: "exclamationmark.circle.fill"),
         foregroundColor: .red,
-        frameSize: CustomSizeView(width: 50, height: 50)
+        frameSize: CustomViewSize(width: 50, height: 50)
     )
+}
+
+extension MockDMErrorViewSettings: Hashable {
+    static public func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(errorText)
+        hasher.combine(actionButtonCloseSettings)
+        hasher.combine(actionButtonRetrySettings)
+        hasher.combine(errorTextSettings)
+        hasher.combine(errorImageSettings)
+    }
 }

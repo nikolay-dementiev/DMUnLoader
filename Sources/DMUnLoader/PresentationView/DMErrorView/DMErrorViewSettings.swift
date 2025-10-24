@@ -77,8 +77,24 @@ public struct DMErrorDefaultViewSettings: DMErrorViewSettings {
     }
 }
 
+extension DMErrorDefaultViewSettings: Hashable {
+    static public func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(errorText)
+        hasher.combine(actionButtonCloseSettings)
+        hasher.combine(actionButtonRetrySettings)
+        hasher.combine(errorTextSettings)
+        hasher.combine(errorImageSettings)
+    }
+}
+
 /// A struct defining settings for an action button in an error view.
-public struct ActionButtonSettings {
+public struct ActionButtonSettings: Identifiable {
+    
+    public let id: UUID
     
     /// The text displayed on the button.
     public let text: String
@@ -86,22 +102,36 @@ public struct ActionButtonSettings {
     public let styleFactory: @MainActor () -> AnyButtonStyle
 
     public init(
+        id: UUID = UUID(),
         text: String,
         styleFactory: @escaping @MainActor () -> AnyButtonStyle
     ) {
+        self.id = id
         self.text = text
         self.styleFactory = styleFactory
     }
     
     public init(
+        id: UUID = UUID(),
         text: String
     ) {
         self.init(
+            id: id,
             text: text,
-            styleFactory: {
-                @MainActor in AnyButtonStyle(.hudButtonStyle)
+            styleFactory: { @MainActor in
+                AnyButtonStyle(.hudButtonStyle)
             }
         )
+    }
+}
+
+extension ActionButtonSettings: Hashable {
+    static public func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
 
@@ -154,6 +184,14 @@ public struct ErrorTextSettings {
     }
 }
 
+extension ErrorTextSettings: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(foregroundColor)
+        hasher.combine(multilineTextAlignment)
+        hasher.combine(padding)
+    }
+}
+
 /// A struct defining settings for the error image displayed in an error view.
 public struct ErrorImageSettings {
     
@@ -164,7 +202,7 @@ public struct ErrorImageSettings {
     let foregroundColor: Color?
     
     /// The size of the image frame.
-    let frameSize: CustomSizeView
+    let frameSize: CustomViewSize
     
     /// Initializes a new instance of `ErrorImageSettings` with optional customizations.
     /// - Parameters:
@@ -181,9 +219,21 @@ public struct ErrorImageSettings {
     ///   ```
     public init(image: Image,
                 foregroundColor: Color? = .red,
-                frameSize: CustomSizeView = CustomSizeView(width: 50, height: 50)) {
+                frameSize: CustomViewSize = CustomViewSize(width: 50, height: 50)) {
         self.image = image
         self.foregroundColor = foregroundColor
         self.frameSize = frameSize
+    }
+}
+
+extension ErrorImageSettings: Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(foregroundColor)
+        hasher.combine(foregroundColor)
+        hasher.combine(frameSize)
     }
 }

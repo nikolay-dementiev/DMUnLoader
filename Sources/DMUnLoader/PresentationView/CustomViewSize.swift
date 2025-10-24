@@ -8,7 +8,7 @@ import SwiftUI
 
 /// A struct representing a custom size view with optional width, height, and alignment properties.
 /// This struct is typically used to define the dimensions and alignment of a view or component.
-public struct CustomSizeView {
+public struct CustomViewSize {
     
     /// The width of the custom size view.
     /// - Note: If `nil`, the width is not explicitly defined.
@@ -22,7 +22,7 @@ public struct CustomSizeView {
     /// - Default: `.center`
     public var alignment: Alignment = .center
     
-    /// Initializes a new instance of `CustomSizeView`.
+    /// Initializes a new instance of `CustomViewSize`.
     /// - Parameters:
     ///   - width: The width of the view. Defaults to `nil`.
     ///   - height: The height of the view. Defaults to `nil`.
@@ -39,5 +39,18 @@ public struct CustomSizeView {
         self.width = width
         self.height = height
         self.alignment = alignment
+    }
+}
+
+extension CustomViewSize: Hashable {
+    
+    public static func == (lhs: CustomViewSize, rhs: CustomViewSize) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(width)
+        hasher.combine(height)
+        hasher.combine(String(describing: alignment))
     }
 }

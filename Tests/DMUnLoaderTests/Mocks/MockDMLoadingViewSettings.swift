@@ -26,3 +26,12 @@ struct MockDMLoadingViewSettings: DMLoadingViewSettings {
     
     var frameGeometrySize: CGSize = CGSize(width: 200, height: 200)
 }
+
+extension MockDMLoadingViewSettings: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(loadingTextProperties)
+        hasher.combine(progressIndicatorProperties)
+        hasher.combine(loadingContainerForegroundColor)
+        hasher.combine(frameGeometrySize)
+    }
+}

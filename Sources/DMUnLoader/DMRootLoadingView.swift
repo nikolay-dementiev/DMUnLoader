@@ -4,7 +4,7 @@
 import SwiftUI
 
 public struct DMRootLoadingView<
-    LM: DMLoadingManagerProtocol,
+    LM: DMLoadingManager,
     Content: View
 >: View {
     @EnvironmentObject private var sceneDelegate: DMSceneDelegateBase<LM>
@@ -16,8 +16,8 @@ public struct DMRootLoadingView<
         self.content = content
     }
 
-    public init(@ViewBuilder content: @escaping (DMLoadingManager) -> Content)
-        where LM == DMLoadingManager {
+    public init(@ViewBuilder content: @escaping (DMLoadingManagerMain) -> Content)
+        where LM == DMLoadingManagerMain {
         self.content = content
     }
     

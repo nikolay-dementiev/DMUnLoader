@@ -7,7 +7,7 @@
 import SwiftUI
 import DMUnLoader
 
-struct MainTabViewSwiftUI<LM: DMLoadingManagerProtocol>: View {
+struct MainTabViewSwiftUI<LM: DMLoadingManager>: View {
     
     var loadingManager: LM
     
@@ -35,7 +35,7 @@ struct MainTabViewSwiftUI<LM: DMLoadingManagerProtocol>: View {
         }
     }
     
-    private func makeLoadingContentViewSwiftUI<LVP: DMLoadingViewProviderProtocol>(
+    private func makeLoadingContentViewSwiftUI<LVP: DMLoadingViewProvider>(
         loadingManager: LM,
         provider: LVP
     ) -> some View {

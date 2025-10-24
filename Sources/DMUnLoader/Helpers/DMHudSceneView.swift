@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-struct DMHudSceneView<LM: DMLoadingManagerProtocol>: View {
+struct DMHudSceneView<LM: DMLoadingManager>: View {
     @ObservedObject var loadingManager: LM
 
     init(loadingManager: LM) {
@@ -23,7 +23,7 @@ struct DMHudSceneView<LM: DMLoadingManagerProtocol>: View {
 }
 
 #Preview("Error") {
-    let loadingManager = DMLoadingManager(
+    let loadingManager = DMLoadingManagerMain(
         state: .failure(
             error: DMAppError.custom("Something went wrong"),
             provider: DefaultDMLoadingViewProvider()
@@ -42,7 +42,7 @@ struct DMHudSceneView<LM: DMLoadingManagerProtocol>: View {
 }
 
 #Preview("Loading") {
-    let loadingManager = DMLoadingManager(
+    let loadingManager = DMLoadingManagerMain(
         state: .loading(
             provider: DefaultDMLoadingViewProvider()
                 .eraseToAnyViewProvider(),
@@ -54,7 +54,7 @@ struct DMHudSceneView<LM: DMLoadingManagerProtocol>: View {
 }
 
 #Preview("Success") {
-    let loadingManager = DMLoadingManager(
+    let loadingManager = DMLoadingManagerMain(
         state: .success(
             "Wow! All were done!",
             provider: DefaultDMLoadingViewProvider()
@@ -67,7 +67,7 @@ struct DMHudSceneView<LM: DMLoadingManagerProtocol>: View {
 }
 
 #Preview("None") {
-    let loadingManager = DMLoadingManager(
+    let loadingManager = DMLoadingManagerMain(
         state: .none,
         settings: DMLoadingManagerDefaultSettings()
     )

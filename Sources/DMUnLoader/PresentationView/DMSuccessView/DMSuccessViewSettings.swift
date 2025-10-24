@@ -46,17 +46,29 @@ public struct DMSuccessDefaultViewSettings: DMSuccessViewSettings {
     }
 }
 
+extension DMSuccessDefaultViewSettings: Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(successImageProperties)
+        hasher.combine(successTextProperties)
+    }
+}
+
 /// A struct defining properties for the success image displayed in a success view.
-public struct SuccessImageProperties {
+public struct SuccessImageProperties: Identifiable {
+    public var id: UUID
     
     /// The image to display as the success icon.
-    public var image: Image
+    public let image: Image
     
     /// The size of the image frame.
-    public var frame: CustomSizeView
+    public let frame: CustomViewSize
     
     /// The foreground color of the image.
-    public var foregroundColor: Color?
+    public let foregroundColor: Color?
     
     /// Initializes a new instance of `SuccessImageProperties` with optional customizations.
     /// - Parameters:
@@ -72,13 +84,27 @@ public struct SuccessImageProperties {
     ///   )
     ///   ```
     public init(
+        id: UUID = UUID(),
         image: Image = Image(systemName: "checkmark.circle.fill"),
-        frame: CustomSizeView = .init(width: 50, height: 50),
+        frame: CustomViewSize = .init(width: 50, height: 50),
         foregroundColor: Color? = .green
     ) {
+        self.id = id
         self.image = image
         self.frame = frame
         self.foregroundColor = foregroundColor
+    }
+}
+
+extension SuccessImageProperties: Hashable {
+    public static func == (lhs: SuccessImageProperties, rhs: SuccessImageProperties) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(frame)
+        hasher.combine(foregroundColor)
     }
 }
 
@@ -108,5 +134,16 @@ public struct SuccessTextProperties {
     ) {
         self.text = text
         self.foregroundColor = foregroundColor
+    }
+}
+
+extension SuccessTextProperties: Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(text)
+        hasher.combine(foregroundColor)
     }
 }

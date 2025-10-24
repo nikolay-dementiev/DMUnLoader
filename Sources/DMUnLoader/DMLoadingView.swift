@@ -31,7 +31,7 @@ enum DMLoadingViewOwnSettings {
 
 /// A custom SwiftUI view that displays a loading state based on the `loadableState` of a `loadingManager`.
 /// This view uses a `provider` to supply views for different states (loading, failure, success).
-struct DMLoadingView<LLM: DMLoadingManagerProtocol>: View {
+struct DMLoadingView<LLM: DMLoadingManager>: View {
     
     /// The loading manager responsible for managing the loadable state.
     @ObservedObject private(set) var loadingManager: LLM

@@ -55,7 +55,7 @@ struct AppDelegateHelper {
 }
 
 extension AppDelegateHelper: DMSceneDelegateHelper {
-    static func makeUIKitRootViewHierarhy<LM: DMLoadingManagerProtocol>(loadingManager: LM) -> UIViewController {
+    static func makeUIKitRootViewHierarhy<LM: DMLoadingManager>(loadingManager: LM) -> UIViewController {
         
         let tabViewController = MainTabViewControllerUIKit(
             loadingManager: loadingManager

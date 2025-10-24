@@ -9,8 +9,8 @@ import Combine
 import DMUnLoader
 
 final class LoadingContentViewUIKit<
-    Provider: DMLoadingViewProviderProtocol,
-    LM: DMLoadingManagerProtocol
+    Provider: DMLoadingViewProvider,
+    LM: DMLoadingManager
 >: UIView {
     private let viewModel = LoadingContentViewModel<Provider,LM>()
     private var cancellables = Set<AnyCancellable>()

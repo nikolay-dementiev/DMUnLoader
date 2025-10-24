@@ -1,9 +1,9 @@
 import SwiftUI
 
-public typealias DMSceneDelegateTypeUIKit<Helper: DMSceneDelegateHelper> = DMSceneDelegateUIKit<DMLoadingManager, Helper>
+public typealias DMSceneDelegateTypeUIKit<Helper: DMSceneDelegateHelper> = DMSceneDelegateUIKit<DMLoadingManagerMain, Helper>
 
 public final class DMSceneDelegateUIKit<
-    LM: DMLoadingManagerProtocol,
+    LM: DMLoadingManager,
     Helper: DMSceneDelegateHelper
 >: UIResponder, UIWindowSceneDelegate, ObservableObject {
     
@@ -60,7 +60,7 @@ public final class DMSceneDelegateUIKit<
 }
 
 public final class DMSceneDelegateBase<
-    LM: DMLoadingManagerProtocol
+    LM: DMLoadingManager
 >: UIResponder, UIWindowSceneDelegate, ObservableObject {
     public var loadingManager: LM? {
         didSet {

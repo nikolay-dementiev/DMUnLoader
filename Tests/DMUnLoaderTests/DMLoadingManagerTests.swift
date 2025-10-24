@@ -21,7 +21,7 @@ final class DMLoadingManagerTests: XCTestCase {
     func testDefaultInitialization() {
         let sut = makeSUT()
         XCTAssertTrue(
-            (sut as AnyObject) is (any DMLoadingManagerProtocol),
+            (sut as AnyObject) is (any DMLoadingManager),
             "LoadingManager should conform to DMLoadingManagerProtocol"
         )
         
@@ -55,7 +55,7 @@ final class DMLoadingManagerTests: XCTestCase {
     
     @MainActor
     func testVerifySuccessState() {
-        let secondsAutoHideDelay: Double = 0.2
+        let secondsAutoHideDelay: Double = 0.01
         let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
         let sut = makeSUT(settings: settings)
         let provider = TestDMLoadingViewProvider()
@@ -102,7 +102,7 @@ final class DMLoadingManagerTests: XCTestCase {
     
     @MainActor
     func testVerifyFailureState() {
-        let secondsAutoHideDelay: Double = 0.2
+        let secondsAutoHideDelay: Double = 0.01
         let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
         let sut = makeSUT(settings: settings)
         let provider = TestDMLoadingViewProvider()
@@ -156,7 +156,7 @@ final class DMLoadingManagerTests: XCTestCase {
     
     @MainActor
     func testVerifyHideState() {
-        let secondsAutoHideDelay: Double = 0.2
+        let secondsAutoHideDelay: Double = 0.01
         let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
         let sut = makeSUT(settings: settings)
         
@@ -195,13 +195,13 @@ final class DMLoadingManagerTests: XCTestCase {
         )
         wait(
             for: [expectationAfterwordsIdle],
-            timeout: secondsAutoHideDelay + 0.2
+            timeout: secondsAutoHideDelay + 0.05
         )
     }
     
     @MainActor
     func testLoadingManagerConformsToObservableObject() {
-        let secondsAutoHideDelay: Double = 0.03
+        let secondsAutoHideDelay: Double = 0.01
         let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
         let sut = makeSUT(settings: settings)
         
@@ -226,7 +226,7 @@ final class DMLoadingManagerTests: XCTestCase {
     
     @MainActor
     func testVerifyAutoHideDelayBehavior() {
-        let secondsAutoHideDelay: Double = 0.2
+        let secondsAutoHideDelay: Double = 0.01
         let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
         let sut = makeSUT(settings: settings)
         let provider = TestDMLoadingViewProvider()
@@ -268,7 +268,7 @@ final class DMLoadingManagerTests: XCTestCase {
 
     @MainActor
     private func observeLoadableState(
-        of sut: DMLoadingManager,
+        of sut: DMLoadingManagerMain,
         handler: @escaping (DMLoadableType) -> Void
     ) {
         sut
@@ -282,8 +282,8 @@ final class DMLoadingManagerTests: XCTestCase {
         settings: S,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> DMLoadingManager where S: DMLoadingManagerSettings {
-        let loadingManager = DMLoadingManager(
+    ) -> DMLoadingManagerMain where S: DMLoadingManagerSettings {
+        let loadingManager = DMLoadingManagerMain(
             state: .none,
             settings: settings
         )
@@ -299,7 +299,7 @@ final class DMLoadingManagerTests: XCTestCase {
     
     @MainActor
     private func makeSUT(file: StaticString = #filePath,
-                         line: UInt = #line) -> DMLoadingManager {
+                         line: UInt = #line) -> DMLoadingManagerMain {
         makeSUT(
             settings: LoadingManagerDefaultSettingsTDD(),
             file: file,
@@ -318,6 +318,6 @@ private struct LoadingManagerDefaultSettingsTDD: DMLoadingManagerSettings {
     }
 }
 
-private final class TestDMLoadingViewProvider: DMLoadingViewProviderProtocol {
+private final class TestDMLoadingViewProvider: DMLoadingViewProvider {
     public var id: UUID = UUID()
 }

@@ -133,7 +133,7 @@ final class DMErrorViewSettingsTests: XCTestCase {
     func testErrorImageSettingsCustomInitialization() {
         let customImage = Image(systemName: "xmark.circle")
         let customForegroundColor = Color.green
-        let customFrameSize = CustomSizeView(width: 100,
+        let customFrameSize = CustomViewSize(width: 100,
                                              height: 100)
         
         let imageSettings = ErrorImageSettings(
@@ -204,7 +204,7 @@ final class DMErrorViewSettingsTests: XCTestCase {
         let customErrorImageSettings = ErrorImageSettings(
             image: Image(systemName: "xmark.circle"),
             foregroundColor: Color.yellow,
-            frameSize: CustomSizeView(width: 80,
+            frameSize: CustomViewSize(width: 80,
                                       height: 80)
         )
         

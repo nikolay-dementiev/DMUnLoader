@@ -11,7 +11,7 @@ struct MockErrorViewSettingsProvider: DMErrorViewSettings {
     var errorImageSettings: ErrorImageSettings = .init(
         image: Image(systemName: "xmark.circle"),
         foregroundColor: .red,
-        frameSize: CustomSizeView(width: 50,
+        frameSize: CustomViewSize(width: 50,
                                   height: 50,
                                   alignment: .top)
     )

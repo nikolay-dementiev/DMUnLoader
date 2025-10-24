@@ -10,9 +10,7 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
     LoadingViewType: View,
     ErrorViewType: View,
     SuccessViewType: View
->: DMLoadingViewProviderProtocol {
-    public var id: UUID
-    
+>: DMLoadingViewProvider {
     private let _getLoadingView: () -> LoadingViewType
     private let _getErrorView: (Error, DMAction?, DMAction) -> ErrorViewType
     private let _getSuccessView: (DMLoadableTypeSuccess) -> SuccessViewType
@@ -28,11 +26,10 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
     
     @MainActor
     init<P>(provider: P)
-    where P: DMLoadingViewProviderProtocol,
+    where P: DMLoadingViewProvider,
     P.LoadingViewType == LoadingViewType,
     P.ErrorViewType == ErrorViewType,
     P.SuccessViewType == SuccessViewType {
-        self.id = provider.id
         self._getLoadingView = provider.getLoadingView
         self._getErrorView = provider.getErrorView(error:onRetry:onClose:)
         self._getSuccessView = provider.getSuccessView(object:)
@@ -50,10 +47,8 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
         loadingManagerSettings: DMLoadingManagerSettings,
         loadingViewSettings: DMLoadingViewSettings,
         errorViewSettings: DMErrorViewSettings,
-        successViewSettings: DMSuccessViewSettings,
-        id: UUID
+        successViewSettings: DMSuccessViewSettings
     ) {
-        self.id = id
         self._getLoadingView = getLoadingView
         self._getErrorView = getErrorView
         self._getSuccessView = getSuccessView
@@ -87,7 +82,7 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
 
 // MARK: - Universal type erasures
 
-public extension DMLoadingViewProviderProtocol {
+public extension DMLoadingViewProvider {
     @MainActor
     func eraseToAnyProvider() -> AnyDMLoadingViewProviderTypeErasurer<LoadingViewType, ErrorViewType, SuccessViewType> {
         AnyDMLoadingViewProviderTypeErasurer(provider: self)
@@ -120,8 +115,7 @@ public extension DMLoadingViewProviderProtocol {
             loadingManagerSettings: self.loadingManagerSettings,
             loadingViewSettings: self.loadingViewSettings,
             errorViewSettings: self.errorViewSettings,
-            successViewSettings: self.successViewSettings,
-            id: self.id
+            successViewSettings: self.successViewSettings
         )
     }
 }

@@ -160,7 +160,7 @@
 			mainGroup = 2FA647572D40F00000BB3D6F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				2F7CAB9E2E6AFBF100F5AAC9 /* XCLocalSwiftPackageReference "../../../DMUnLoader" */,
+				2F7CAB9E2E6AFBF100F5AAC9 /* XCLocalSwiftPackageReference "DMUnLoader" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2FA647612D40F00000BB3D6F /* Products */;
@@ -192,13 +192,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-DMUnLoaderPodSPMExample/Pods-DMUnLoaderPodSPMExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-DMUnLoaderPodSPMExample/Pods-DMUnLoaderPodSPMExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -465,7 +461,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		2F7CAB9E2E6AFBF100F5AAC9 /* XCLocalSwiftPackageReference "../../../DMUnLoader" */ = {
+		2F7CAB9E2E6AFBF100F5AAC9 /* XCLocalSwiftPackageReference "DMUnLoader" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../../DMUnLoader;
 		};

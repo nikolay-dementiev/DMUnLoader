@@ -8,34 +8,29 @@ import Combine
 @testable import DMUnLoader
 
 @MainActor
-final class MockDMLoadingManager: DMLoadingManagerProtocol {
-    
-    public let id: UUID
+final class MockDMLoadingManager: DMLoadingManager {
     public let settings: DMLoadingManagerSettings
     
     @Published public var loadableState: DMLoadableType = .none
     
     convenience init() {
-        self.init(id: UUID(),
-                  loadableState: .none,
+        self.init(loadableState: .none,
                   settings: MockDMLoadingManagerSettings(autoHideDelay: .seconds(0.2)))
     }
     
-    internal init(id: UUID = UUID(),
-                  loadableState: DMLoadableType = .none,
+    internal init(loadableState: DMLoadableType = .none,
                   settings: DMLoadingManagerSettings = MockDMLoadingManagerSettings(autoHideDelay: .seconds(0.2))) {
-        self.id = id
         self.settings = settings
         self.loadableState = loadableState
     }
     
-    func showLoading<PR: DMLoadingViewProviderProtocol>(provider: PR) {
+    func showLoading<PR: DMLoadingViewProvider>(provider: PR) {
         loadableState = .loading(
             provider: provider.eraseToAnyViewProvider()
         )
     }
-
-    func showSuccess<PR: DMLoadingViewProviderProtocol>(
+    
+    func showSuccess<PR: DMLoadingViewProvider>(
         _ message: DMLoadableTypeSuccess,
         provider: PR
     ) {
@@ -45,7 +40,7 @@ final class MockDMLoadingManager: DMLoadingManagerProtocol {
         )
     }
     
-    func showFailure<PR: DMLoadingViewProviderProtocol>(
+    func showFailure<PR: DMLoadingViewProvider>(
         _ error: Error,
         provider: PR,
         onRetry: DMAction?

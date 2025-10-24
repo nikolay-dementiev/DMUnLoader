@@ -9,12 +9,10 @@ import XCTest
 import Combine
 @testable import DMUnLoader
 
-final class MockDMLoadingViewProvider: DMLoadingViewProviderProtocol {
+final class MockDMLoadingViewProvider: @MainActor DMLoadingViewProvider {
     typealias LoadingViewType = Text
     typealias ErrorViewType = Text
     typealias SuccessViewType = Text
-    
-    public var id: UUID = UUID()
     
     @MainActor
     func getLoadingView() -> LoadingViewType {

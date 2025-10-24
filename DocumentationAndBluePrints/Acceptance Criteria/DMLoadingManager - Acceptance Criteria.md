@@ -70,16 +70,7 @@
 
 ---
 
-### Criterion 6: Reactive Programming
-- **Description**: The `loadableStatePublisher` must emit changes in real-time.
-- **Requirements**:
-  - The `loadableStatePublisher` must emit the correct state when `loadableState` changes.
-- **Expected Behavior**:
-  - When the `loadableState` changes (e.g., `.loading`, `.success`, `.failure`, `.none`), the `loadableStatePublisher` emits the updated state.
-
----
-
-### Criterion 7: Timer Management
+### Criterion 6: Timer Management
 - **Description**: The inactivity timer must behave correctly based on the current state.
 - **Requirements**:
   - The timer must stop when transitioning to `.loading`.
@@ -90,7 +81,7 @@
 
 ---
 
-### Criterion 8: Localization Support (Optional)
+### Criterion 7: Localization Support (Optional)
 - **Description**: The `DMLoadingManager` should support localized text for success and failure messages.
 - **Requirements**:
   - The success and failure messages must adapt to the system's locale.

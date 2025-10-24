@@ -7,8 +7,8 @@
 import SwiftUI
 import DMUnLoader
 
-struct LoadingContentViewSwiftUI<Provider: DMLoadingViewProviderProtocol,
-                                 LM: DMLoadingManagerProtocol>: View {
+struct LoadingContentViewSwiftUI<Provider: DMLoadingViewProvider,
+                                 LM: DMLoadingManager>: View {
     var loadingManager: LM
     var provider: Provider
     @StateObject var viewModel = LoadingContentViewModel<Provider,LM>()
@@ -39,6 +39,6 @@ struct LoadingContentViewSwiftUI<Provider: DMLoadingViewProviderProtocol,
 }
 
 #Preview("LoadingContent") {
-    LoadingContentViewSwiftUI(loadingManager: DMLoadingManager(),
+    LoadingContentViewSwiftUI(loadingManager: DMLoadingManagerMain(),
                               provider: DefaultDMLoadingViewProvider())
 }

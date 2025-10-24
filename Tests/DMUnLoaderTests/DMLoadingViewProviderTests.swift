@@ -10,107 +10,162 @@ import SwiftUI
 
 final class DMLoadingViewProviderTests: XCTestCase {
     
-    // MARK: DefaultDMLoadingViewProvider Tests
-    
-    func testDefaultDMLoadingViewProviderInitialization() {
-        let provider = DefaultDMLoadingViewProvider()
+    @MainActor
+    func testVerifyDefaultInitialization() {
+        let sut = DefaultDMLoadingViewProvider()
         
-        XCTAssertNotNil(provider.id,
-                        "ID should not be nil")
-        XCTAssertEqual(provider.id.uuidString.count,
-                       36,
-                       "ID should be a valid UUID")
+        XCTAssertTrue(
+            sut.loadingManagerSettings is DMLoadingManagerDefaultSettings,
+            "Default loadingManagerSettings should be of type DMLoadingManagerDefaultSettings."
+        )
+        XCTAssertTrue(
+            sut.loadingViewSettings is DMLoadingDefaultViewSettings,
+            "Default loadingViewSettings should be of type DMLoadingDefaultViewSettings."
+        )
+        XCTAssertTrue(
+            sut.errorViewSettings is DMErrorDefaultViewSettings,
+            "Default errorViewSettings should be of type DMErrorDefaultViewSettings."
+        )
+        XCTAssertTrue(
+            sut.successViewSettings is DMSuccessDefaultViewSettings,
+            "Default successViewSettings should be of type DMSuccessDefaultViewSettings."
+        )
     }
     
     @MainActor
-    func testDefaultLoadingView() {
-        let provider = DefaultDMLoadingViewProvider()
-        let loadingViewWrappedInAnyView = provider.getLoadingView()
+    func testVerifyHashableConformance() {
+        let sut1 = DefaultDMLoadingViewProvider()
+        let sut2 = DefaultDMLoadingViewProvider()
         
-        do {
-            let loadingView: DMProgressView = try castView(loadingViewWrappedInAnyView)
-            
-            XCTAssertTrue((loadingView as Any) is DMProgressView,
-                          """
-                          Default loading view should be an instance of type: `MProgressView`
-                          but it is `\(type(of: loadingView))` instead!
-                          """)
-        } catch {
-            XCTFail("""
-            Failed to cast the default loading view to `DMProgressView`.
-            Error: \(error.localizedDescription)
-            """)
-        }
+        XCTAssertNotEqual(sut1, sut2, "Two different instances should have different hash.")
+        XCTAssertEqual(sut1, sut1, "Same instance should have different hash.")
     }
     
     @MainActor
-    func testDefaultErrorView() throws {
-        let provider = DefaultDMLoadingViewProvider()
-        let error = NSError(domain: "TestError",
-                            code: 1,
-                            userInfo: nil)
-        let onCloseAction: DMAction = DMButtonAction {}
-        let errorViewWrappedInAnyView = provider.getErrorView(error: error,
-                                                              onRetry: nil,
-                                                              onClose: onCloseAction)
-        let errorView: DMErrorView = try castView(errorViewWrappedInAnyView)
+    func testVerifyCustomizationViaSettings() {
+        let sut = DefaultDMLoadingViewProvider()
         
-        XCTAssertTrue((errorView as Any) is DMErrorView,
-                      "Default error view should be an instance of DMErrorView")
+        checkVerifyCustomizationViaSettingsForProgressView(sut: sut)
+        checkVerifyCustomizationViaSettingsForErrorView(sut: sut)
+        checkVerifyCustomizationViaSettingsForSuccessView(sut: sut)
     }
     
     @MainActor
-    func testDefaultSuccessView() throws {
-        let provider = DefaultDMLoadingViewProvider()
-        let successObject = MockDMLoadableTypeSuccess()
-        let successViewWrappedInAnyView = provider.getSuccessView(object: successObject)
-        let successView: DMSuccessView = try castView(successViewWrappedInAnyView)
+    private func checkVerifyCustomizationViaSettingsForProgressView<SUT: DMLoadingViewProvider>(
+        sut: SUT,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let loadingView = sut.getLoadingView() as? DMProgressView
+        XCTAssertNotNil(
+            loadingView,
+            "Loading view should be of type DMProgressView.",
+            file: file,
+            line: line
+        )
         
-        XCTAssertTrue((successView as Any) is DMSuccessView,
-                      "Default success view should be an instance of DMSuccessView")
+        let settings = loadingView?.settingsProvider as? DMLoadingDefaultViewSettings
+        XCTAssertNotNil(
+            settings,
+            "Loading view settings should be of type DMLoadingDefaultViewSettings.",
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            settings,
+            sut.loadingViewSettings as? DMLoadingDefaultViewSettings,
+            "Loading view settings should match the provider's loadingViewSettings.",
+            file: file,
+            line: line
+        )
     }
     
     @MainActor
-    func testDefaultSettings() {
-        let provider = DefaultDMLoadingViewProvider()
+    private func checkVerifyCustomizationViaSettingsForErrorView<SUT: DMLoadingViewProvider>(
+        sut: SUT,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let errorView = sut.getErrorView(
+            error: NSError(domain: "Test", code: 404),
+            onRetry: nil,
+            onClose: DMButtonAction {}
+        ) as? DMErrorView
         
-        XCTAssertTrue(provider.loadingManagerSettings is DMLoadingManagerDefaultSettings,
-                      "Default loading manager settings should be an instance of DMLoadingManagerDefaultSettings")
-        XCTAssertTrue(provider.loadingViewSettings is DMLoadingDefaultViewSettings,
-                      "Default loading view settings should be an instance of DMLoadingDefaultViewSettings")
-        XCTAssertTrue(provider.errorViewSettings is DMErrorDefaultViewSettings,
-                      "Default error view settings should be an instance of DMErrorDefaultViewSettings")
-        XCTAssertTrue(provider.successViewSettings is DMSuccessDefaultViewSettings,
-                      "Default success view settings should be an instance of DMSuccessDefaultViewSettings")
+        XCTAssertNotNil(
+            errorView,
+            "Error view should be of type DMErrorView.",
+            file: file,
+            line: line
+        )
+        
+        let settingsFromView = errorView?.settingsProvider as? DMErrorDefaultViewSettings
+        XCTAssertNotNil(
+            settingsFromView,
+            "Error view settings should be of type DMErrorDefaultViewSettings.",
+            file: file,
+            line: line
+        )
+        let settingsFromProvider = sut.errorViewSettings as? DMErrorDefaultViewSettings
+        XCTAssertNotNil(
+            settingsFromProvider,
+            "Error view settings from provider should be of type DMErrorDefaultViewSettings.",
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            settingsFromView,
+            settingsFromProvider,
+            "Error view settings should match the provider's errorViewSettings.",
+            file: file,
+            line: line
+        )
     }
     
-    // MARK: Hashable and Equatable Tests
-    
-    func testEquatableConformance() {
-        let provider1 = DefaultDMLoadingViewProvider()
-        let provider2 = DefaultDMLoadingViewProvider()
+    @MainActor
+    private func checkVerifyCustomizationViaSettingsForSuccessView<SUT: DMLoadingViewProvider>(
+        sut: SUT,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let successView = sut.getSuccessView(object: "Some object") as? DMSuccessView
         
-        XCTAssertNotEqual(provider1,
-                          provider2,
-                          "Two providers with different IDs should not be equal")
-    }
-    
-    func testHashableConformance() {
-        let provider = DefaultDMLoadingViewProvider()
-        var hasher = Hasher()
-        provider.hash(into: &hasher)
-        let hashValue = hasher.finalize()
+        XCTAssertNotNil(
+            successView,
+            "Success view should be of type DMSuccessView.",
+            file: file,
+            line: line
+        )
         
-        XCTAssertEqual(hashValue,
-                       provider.id.hashValue,
-                       "Hash value should match the ID's hash value")
+        let settingsFromView = successView?.settingsProvider as? DMSuccessDefaultViewSettings
+        XCTAssertNotNil(
+            settingsFromView,
+            "Success view settings should be of type DMSuccessDefaultViewSettings.",
+            file: file,
+            line: line
+        )
+        let settingsFromProvider = sut.successViewSettings as? DMSuccessDefaultViewSettings
+        XCTAssertNotNil(
+            settingsFromProvider,
+            "Success view settings from provider should be of type DMSuccessDefaultViewSettings.",
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            settingsFromView,
+            settingsFromProvider,
+            "Success view settings should match the provider's successViewSettings.",
+            file: file,
+            line: line
+        )
     }
-    
-    // MARK: - Custom Implementation Tests
     
     @MainActor
     func testCustomImplementation() throws {
-        final class CustomProvider: DMLoadingViewProviderProtocol {
+        final class CustomProvider: DMLoadingViewProvider {
             let id = UUID()
             
             @MainActor
@@ -155,11 +210,9 @@ final class DMLoadingViewProviderTests: XCTestCase {
         XCTAssertTrue((successView as Any) is MockDMSuccessViewTest,
                       "Custom success view should be an instance of Text")
     }
-}
-
-// MARK: - Helpers
-
-extension DMLoadingViewProviderTests {
+    
+    // MARK: - Helpers
+    
     func castView<T: View>(_ viewToCast: some View) throws -> T {
         
         guard let viewToCast = viewToCast as? T else {

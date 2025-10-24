@@ -66,6 +66,23 @@ public struct DMLoadingDefaultViewSettings: DMLoadingViewSettings {
     }
 }
 
+extension DMLoadingDefaultViewSettings: Hashable {
+    
+    public static func == (
+        lhs: DMLoadingDefaultViewSettings,
+        rhs: DMLoadingDefaultViewSettings
+    ) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(loadingTextProperties)
+        hasher.combine(progressIndicatorProperties)
+        hasher.combine(loadingContainerForegroundColor)
+        hasher.combine(frameGeometrySize)
+    }
+}
+
 /// A struct defining properties for the loading text displayed in a loading view.
 public struct LoadingTextProperties {
     
@@ -124,6 +141,17 @@ public struct LoadingTextProperties {
     }
 }
 
+extension LoadingTextProperties: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(text)
+        hasher.combine(alignment)
+        hasher.combine(foregroundColor)
+        hasher.combine(font)
+        hasher.combine(lineLimit)
+        hasher.combine(linePadding)
+    }
+}
+
 /// A struct defining properties for the progress indicator displayed in a loading view.
 public struct ProgressIndicatorProperties {
     
@@ -150,5 +178,12 @@ public struct ProgressIndicatorProperties {
     ) {
         self.size = size
         self.tintColor = tintColor
+    }
+}
+
+extension ProgressIndicatorProperties: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(size)
+        hasher.combine(tintColor)
     }
 }
