@@ -29,12 +29,14 @@
 
 ### Criterion 3: Error View Behavior
 - **Description**: The `getErrorView` method should return a `DMErrorView` configured with the provided `errorViewSettings`, `error`, `onRetry`, and `onClose`.
+
 **[> Acceptance Criteria available here <](../Acceptance%20Criteria/Error%20View%20-%20Acceptance%20Criteria.md)**
 
 ---
 
 ### Criterion 4: Success View Behavior
 - **Description**: The `getSuccessView` method should return a `DMSuccessView` configured with the provided `successViewSettings` and `object`.
+
 **[> Acceptance Criteria available here <](../Acceptance%20Criteria/Success%20View%20-%20Acceptance%20Criteria.md)**
 
 ---

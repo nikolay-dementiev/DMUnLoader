@@ -30,11 +30,9 @@ protocol DMLoadingViewProvider: ObservableObject, Hashable {
 ### Scenario 1: ✅ Verify Default Initialization
 - **Description**: Check if the `DefaultDMLoadingViewProvider` is initialized correctly with default settings.
 - **Steps**:
-  - [✅] Create few new instances of `DefaultDMLoadingViewProvider`.
-  - [✅] Verify that the `hash` is unique.
+  - [✅] Create few new instance of `DefaultDMLoadingViewProvider`.
   - [✅] Verify that the default settings (`loadingManagerSettings`, `loadingViewSettings`, `errorViewSettings`, `successViewSettings`) match their respective default implementations.
 - **Expected Result**:
-  - The `hash` is unique.
   - Default settings are applied correctly.
 - **Status**: ? / 🚧 / ❌ / ✅
 
@@ -50,6 +48,7 @@ protocol DMLoadingViewProvider: ObservableObject, Hashable {
 
 ### Scenario 3: ? Verify Error View
 - **Description**: Check if the `getErrorView` method returns a `DMErrorView` configured with the provided `errorViewSettings`, `error`, `onRetry`, and `onClose`.
+
 **[> test plan available here <](../TestPlanning/Error%20View%20-%20TestCases.md)**
 - **Status**: ? / 🚧 / ❌ / ✅
 
@@ -57,20 +56,20 @@ protocol DMLoadingViewProvider: ObservableObject, Hashable {
 
 ### Scenario 4: ? Verify Success View
 - **Description**: Check if the `getSuccessView` method returns a `DMSuccessView` configured with the provided `successViewSettings` and `object`.
+
 **[> test plan available here <](../TestPlanning/Success%20View%20-%20TestCases.md)**
 - **Status**: ? / 🚧 / ❌ / ✅
 
 ---
 
-### Scenario 5: ? Verify Hashable Conformance
-- **Description**: Ensure that two instances of `DefaultDMLoadingViewProvider` are distinguishable by their `id`.
+### Scenario 5: ✅ Verify Hashable Conformance
+- **Description**: Ensure that two instances of `DefaultDMLoadingViewProvider` are distinguishable by their hash.
 - **Steps**:
-  - [?] Create two instances of `DefaultDMLoadingViewProvider`.
-  - [?] Compare their `id` values using the `==` operator.
-  - [?] Verify that the `hash(into:)` method combines the `id` into the hasher.
+  - [✅] Create two instances of `DefaultDMLoadingViewProvider`.
+  - [✅] Compare them using the `==` operator.
 - **Expected Result**:
-  - Two instances with different `id` values are not equal.
-  - Two instances with the same `id` values are equal.
+  - Two instances are not equal.
+  - The same instances are equal (hash is not random).
 - **Status**: ? / 🚧 / ❌ / ✅
 
 ---

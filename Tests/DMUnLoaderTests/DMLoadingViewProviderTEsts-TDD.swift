@@ -128,14 +128,11 @@ struct MockSuccessView: View {
     }
 }
 
-final class DMLoadingViewProviderTEsts_TDD: XCTestCase {
+final class DMLoadingViewProviderTests_TDD: XCTestCase {
 
     @MainActor
     func testVerifyDefaultInitialization() {
         let sut1 = DefaultDMLoadingViewProviderTDD()
-        let sut2 = DefaultDMLoadingViewProviderTDD()
-        
-        XCTAssertNotEqual(sut1, sut2, "Two different instances should have different hash.")
         
         XCTAssertTrue(
             sut1.loadingManagerSettings is MockDMLoadingManagerSettings,
@@ -153,5 +150,14 @@ final class DMLoadingViewProviderTEsts_TDD: XCTestCase {
             sut1.successViewSettings is MockDMSuccessViewSettings,
             "Default successViewSettings should be of type MockDMSuccessViewSettings."
         )
+    }
+    
+    @MainActor
+    func testVerifyHashableConformance() {
+        let sut1 = DefaultDMLoadingViewProviderTDD()
+        let sut2 = DefaultDMLoadingViewProviderTDD()
+        
+        XCTAssertNotEqual(sut1, sut2, "Two different instances should have different hash.")
+        XCTAssertEqual(sut1, sut1, "Same instance should have different hash.")
     }
 }
