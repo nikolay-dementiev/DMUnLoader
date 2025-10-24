@@ -55,7 +55,7 @@ final class DMLoadingManagerTests: XCTestCase {
     
     @MainActor
     func testVerifySuccessState() {
-        let secondsAutoHideDelay: Double = 0.2
+        let secondsAutoHideDelay: Double = 0.01
         let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
         let sut = makeSUT(settings: settings)
         let provider = TestDMLoadingViewProvider()
@@ -102,7 +102,7 @@ final class DMLoadingManagerTests: XCTestCase {
     
     @MainActor
     func testVerifyFailureState() {
-        let secondsAutoHideDelay: Double = 0.2
+        let secondsAutoHideDelay: Double = 0.01
         let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
         let sut = makeSUT(settings: settings)
         let provider = TestDMLoadingViewProvider()
@@ -156,7 +156,7 @@ final class DMLoadingManagerTests: XCTestCase {
     
     @MainActor
     func testVerifyHideState() {
-        let secondsAutoHideDelay: Double = 0.2
+        let secondsAutoHideDelay: Double = 0.01
         let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
         let sut = makeSUT(settings: settings)
         
@@ -195,13 +195,13 @@ final class DMLoadingManagerTests: XCTestCase {
         )
         wait(
             for: [expectationAfterwordsIdle],
-            timeout: secondsAutoHideDelay + 0.2
+            timeout: secondsAutoHideDelay + 0.05
         )
     }
     
     @MainActor
     func testLoadingManagerConformsToObservableObject() {
-        let secondsAutoHideDelay: Double = 0.03
+        let secondsAutoHideDelay: Double = 0.01
         let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
         let sut = makeSUT(settings: settings)
         
@@ -226,7 +226,7 @@ final class DMLoadingManagerTests: XCTestCase {
     
     @MainActor
     func testVerifyAutoHideDelayBehavior() {
-        let secondsAutoHideDelay: Double = 0.2
+        let secondsAutoHideDelay: Double = 0.01
         let settings = LoadingManagerDefaultSettingsTDD(autoHideDelay: .seconds(secondsAutoHideDelay))
         let sut = makeSUT(settings: settings)
         let provider = TestDMLoadingViewProvider()
