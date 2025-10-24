@@ -14,11 +14,12 @@
 
 ## 2. Test Scenarios
 
-### Scenario 1: ? Verify Default Initialization
+### Scenario 1: 🚧 Verify Default Initialization
 - **Description**: Check if the `DMProgressView` is initialized correctly with default settings.
 - **Steps**:
-  - [?] Create a new instance of `DMProgressView` with default settings (`DMLoadingDefaultViewSettings`).
-  - [?] Verify that the progress indicator and text are displayed.
+  - [✅] Create a new instance of `DMProgressView` with default settings (`DMLoadingDefaultViewSettings`).
+  - [✅] Verify that the DMProgressView is confirm to `View`.
+  - [✅] Verify that the progress indicator and text are displayed.
   - [?] Verify that the text is `"Loading..."`.
 - **Expected Result**:
   - The view is initialized correctly with default settings.

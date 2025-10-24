@@ -25,10 +25,12 @@ struct DMProgressViewTDD: View {
             let minSize: CGFloat = 30
             VStack {
                 Text(loadingTextProperties.text)
+                    .tag(DMProgressViewOwnSettings.textTag)
                 
                 ProgressView()
                     .controlSize(progressIndicatorProperties.size)
                     .progressViewStyle(.circular)
+                    .tag(DMProgressViewOwnSettings.progressViewTag)
             }
             .frame(minWidth: minSize,
                    maxWidth: 150,
@@ -49,10 +51,45 @@ final class DMProgressViewTests_TDD: XCTestCase {
         XCTAssertTrue((sut as Any) is (any View), "DMProgressView should conform to View protocol")
     }
     
+    @MainActor
+    func testThatTextIsDisplayed() throws {
+        let settings = DMProgressViewDefaultSettings()
+        let sut = makeSUT(settings: settings)
+        
+        let text = try sut
+            .inspect()
+            .find(viewWithTag: DMProgressViewOwnSettings.textTag)
+            .text()
+            .string()
+        
+        XCTAssertEqual(text,
+                       settings.loadingTextProperties.text,
+                       "The Text view should display the correct text")
+        
+        XCTAssertEqual(text,
+                       "Loading...",
+                       "The Text view should display the correct text")
+    }
+    
+    @MainActor
+    func testThatProgressIndicatorIsDisplayed() throws {
+        let settings = DMProgressViewDefaultSettings()
+        let sut = makeSUT(settings: settings)
+        
+        let progressView = try sut
+            .inspect()
+            .find(viewWithTag: DMProgressViewOwnSettings.progressViewTag)
+            .progressView()
+        XCTAssertNotNil(progressView,
+                        "The ProgressView should be rendered")
+    }
+    
     // MARK: - Helpers
     
     @MainActor
-    private func makeSUT() -> DMProgressViewTDD {
-        DMProgressViewTDD(settings: MockDMProgressViewSettings())
+    private func makeSUT(
+        settings: DMProgressViewSettings = MockDMProgressViewSettings()
+    ) -> DMProgressViewTDD {
+        DMProgressViewTDD(settings: settings)
     }
 }
