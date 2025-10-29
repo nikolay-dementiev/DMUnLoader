@@ -42,13 +42,13 @@
 
 ---
 
-### Scenario 3: ? Verify Loading Text Behavior
+### Scenario 3: ✅ Verify Loading Text Behavior
 - **Description**: Check if the loading text is styled correctly based on the `loadingTextProperties`.
 - **Steps**:
-  - [?] Create a new instance of `DMProgressView` with custom `loadingTextProperties`.
-  - [?] Set the `text` to `"Please Wait..."`, `foregroundColor` to `.black`, and `font` to `.headline`.
-  - [?] Verify that the text is `"Please Wait..."`.
-  - [?] Verify that the text has the correct foreground color and font.
+  - [✅] Create a new instance of `DMProgressView` with custom `loadingTextProperties`.
+  - [✅] Set the `text` to `"Please wait..."`, `foregroundColor` to `.red`, `lineLimit` to `1`, `linePadding` to `8` from `top:leading:bottom:trailing` and `font` to `.headline`.
+  - [✅] Verify that the text is `"Please Wait..."`.
+  - [✅] Verify that the text has the correct foreground color and font.
 - **Expected Result**:
   - The text is styled correctly with the specified properties.
 - **Status**: ? / 🚧 / ❌ / ✅
@@ -79,10 +79,10 @@
 
 ---
 
-### Scenario 6: ? Verify Snapshot Testing
+### Scenario 7: ? Verify Snapshot Testing
 - **Description**: Use snapshot testing to verify the visual appearance of the `DMProgressView`.
 - **Steps**:
-  - [?] Create a new instance of `DMProgressView` with default settings.
+  - [?] Create a new instance of `DMProgressView` with default and fully custom settings.
   - [?] Render the view using a snapshot testing library (e.g., `SnapshotTesting` or `XCTest`).
   - [?] Compare the rendered view with a reference snapshot.
   - [?] Verify that the snapshot matches the reference image.

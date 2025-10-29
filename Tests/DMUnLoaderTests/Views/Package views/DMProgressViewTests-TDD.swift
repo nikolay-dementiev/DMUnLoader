@@ -24,6 +24,10 @@ struct DMProgressViewTDD: View {
             let minSize: CGFloat = 30
             VStack {
                 Text(loadingTextProperties.text)
+                    .foregroundColor(loadingTextProperties.foregroundColor)
+                    .font(loadingTextProperties.font)
+                    .lineLimit(loadingTextProperties.lineLimit)
+                    .padding(loadingTextProperties.linePadding)
                     .tag(DMProgressViewOwnSettings.textTag)
                 
                 ProgressView()
@@ -156,6 +160,47 @@ final class DMProgressViewTests_TDD: XCTestCase {
             named: "size-that-fits-dark"
         )
         */
+    }
+    
+    // MARK: Scenario 3: Verify Loading Text Behavior
+    
+    @MainActor
+    func testThatLoadingTextHasCorrectStyle() throws {
+        let settings = DMProgressViewDefaultSettings(
+            loadingTextProperties: .init(
+                text: "Please wait...",
+                foregroundColor: .red,
+                font: .headline,
+                lineLimit: 1,
+                linePadding: .init(top: 8,
+                                   leading: 8,
+                                   bottom: 8,
+                                   trailing: 8)
+            )
+        )
+        let sut = makeSUT(settings: settings)
+        
+        let text = try sut
+            .inspect()
+            .find(viewWithTag: DMProgressViewOwnSettings.textTag)
+            .text()
+        
+        let loadingTextProperties = settings.loadingTextProperties
+        XCTAssertEqual(try text.string(),
+                       loadingTextProperties.text,
+                       "The Text view should display the correct text")
+        XCTAssertEqual(try text.attributes().foregroundColor(),
+                       loadingTextProperties.foregroundColor,
+                       "The Text view should have the correct foreground color")
+        XCTAssertEqual(try text.attributes().font(),
+                       loadingTextProperties.font,
+                       "The Text view should have the correct font")
+        XCTAssertEqual(try text.lineLimit(),
+                       loadingTextProperties.lineLimit,
+                       "The Text view should have the correct line limit")
+        XCTAssertEqual(try text.padding(),
+                       loadingTextProperties.linePadding,
+                       "The Text view should have the correct padding")
     }
     
     // MARK: - Helpers
