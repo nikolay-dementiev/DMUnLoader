@@ -156,10 +156,12 @@ extension ProgressTextProperties: Hashable {
 public struct ProgressIndicatorProperties {
     
     /// The size of the progress indicator.
-    public var size: ControlSize
+    public let size: ControlSize
     
     /// The tint color of the progress indicator.
-    public var tintColor: Color?
+    public let tintColor: Color?
+    
+    public let style = CircularProgressViewStyle()
     
     /// Initializes a new instance of `ProgressIndicatorProperties` with optional customizations.
     /// - Parameters:
@@ -182,6 +184,10 @@ public struct ProgressIndicatorProperties {
 }
 
 extension ProgressIndicatorProperties: Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(size)
         hasher.combine(tintColor)

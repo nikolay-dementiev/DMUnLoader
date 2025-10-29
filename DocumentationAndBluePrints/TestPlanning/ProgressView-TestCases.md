@@ -14,13 +14,13 @@
 
 ## 2. Test Scenarios
 
-### Scenario 1: 🚧 Verify Default Initialization
+### Scenario 1: ✅ Verify Default Initialization
 - **Description**: Check if the `DMProgressView` is initialized correctly with default settings.
 - **Steps**:
   - [✅] Create a new instance of `DMProgressView` with default settings (`DMLoadingDefaultViewSettings`).
   - [✅] Verify that the DMProgressView is confirm to `View`.
   - [✅] Verify that the progress indicator and text are displayed.
-  - [?] Verify that the text is `"Loading..."`.
+  - [✅] Verify that the text is `"Loading..."`.
 - **Expected Result**:
   - The view is initialized correctly with default settings.
   - The text `"Loading..."` is displayed.
@@ -28,13 +28,14 @@
 
 ---
 
-### Scenario 2: ? Verify Progress Indicator Behavior
+### Scenario 2: 🚧 Verify Progress Indicator Behavior
 - **Description**: Check if the progress indicator is styled correctly based on the `progressIndicatorProperties`.
 - **Steps**:
-  - [?] Create a new instance of `DMProgressView` with custom `progressIndicatorProperties`.
-  - [?] Set the `size` to `.small` and `tintColor` to `.green`.
-  - [?] Verify that the progress indicator size is small.
-  - [?] Verify that the tint color is green.
+  - [✅] Create a new instance of `DMProgressView` with custom `progressIndicatorProperties`.
+  - [✅] Set the `size` to `.small` and `tintColor` to `.green`.
+  - [🚧] Verify that the progress indicator size is small. -> Can't Verify directly due to `ViewInspector` doesn't provide how to read `controlSize` for iOS. Should Be verified via SnapshotTesting.
+  - [✅] Verify that the tint color is green.
+  - [✅] Verify that the style is `.circular`
 - **Expected Result**:
   - The progress indicator is styled correctly with the specified size and tint color.
 - **Status**: ? / 🚧 / ❌ / ✅

@@ -1,4 +1,3 @@
-//
 //  DMUnLoader
 //
 //  Created by Mykola Dementiev
@@ -21,7 +20,6 @@ struct DMProgressViewTDD: View {
         let progressIndicatorProperties = settingsProvider.progressIndicatorProperties
         
         ZStack(alignment: .center) {
-            
             let minSize: CGFloat = 30
             VStack {
                 Text(loadingTextProperties.text)
@@ -29,7 +27,9 @@ struct DMProgressViewTDD: View {
                 
                 ProgressView()
                     .controlSize(progressIndicatorProperties.size)
-                    .progressViewStyle(.circular)
+                    .progressViewStyle(progressIndicatorProperties.style)
+                    .tint(progressIndicatorProperties.tintColor)
+                    .layoutPriority(1)
                     .tag(DMProgressViewOwnSettings.progressViewTag)
             }
             .frame(minWidth: minSize,
@@ -83,6 +83,52 @@ final class DMProgressViewTests_TDD: XCTestCase {
         XCTAssertNotNil(progressView,
                         "The ProgressView should be rendered")
     }
+    
+    // MARK: Scenario 2: Verify Progress Indicator Behavior
+    
+    @MainActor
+    func testThatProgressIndicatorHasCorrectStyle() throws {
+        let settings = DMProgressViewDefaultSettings(
+            progressIndicatorProperties: ProgressIndicatorProperties(
+                tintColor: .green
+            )
+        )
+        let sut = makeSUT(settings: settings)
+        
+        let progressView = try sut
+            .inspect()
+            .find(viewWithTag: DMProgressViewOwnSettings.progressViewTag)
+            .progressView()
+        
+        let progressViewStyle = try? progressView.progressViewStyle() as? CircularProgressViewStyle
+        XCTAssertNotNil(progressViewStyle,
+                        "The ProgressView should be `CircularProgressViewStyle` type")
+        
+        let progressViewLayoutPriority = try? progressView.layoutPriority()
+        XCTAssertEqual(progressViewLayoutPriority,
+                       1,
+                       "The ProgressView should have layout priority equal `1`")
+        XCTAssertEqual(try progressView.tint(),
+                       settings.progressIndicatorProperties.tintColor,
+                       "The ProgressView should have the correct tint color")
+        
+        /* `controlSize` - Not implemented in ViewInspector for iOS
+        XCTAssertEqual(try progressView.controlSize(),
+                       .regular,
+                       "The ProgressView should have the correct control size")
+        */
+    }
+    
+//    @MainActor
+//    func testThatProgressIndicatorHasCorrctSize() throws {
+//        let settings = DMProgressViewDefaultSettings(
+//            progressIndicatorProperties: ProgressIndicatorProperties(
+//                size: .small
+//            )
+//        )
+//        let sut = makeSUT(settings: settings)
+//        
+//    }
     
     // MARK: - Helpers
     
