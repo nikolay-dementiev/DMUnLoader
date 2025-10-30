@@ -226,10 +226,12 @@ final class DMProgressViewTests_TDD: XCTestCase {
                        "The foreground color of the VStack should match the loading container foreground color")
     }
     
+    // MARK: Scenario 5: Verify Geometry and Layout
+    
     @MainActor
-    func testThatContainerRespectsLayoutConstraints() throws {
+    func testThatViewAdaptsToDifferentGeometrySizes() throws {
         let settings = DMProgressViewDefaultSettings(
-            frameGeometrySize: CGSize(width: 500, height: 500)
+            frameGeometrySize: CGSize(width: 400, height: 400)
         )
         let geometry = settings.frameGeometrySize
         let minSize = min(geometry.width - 20,

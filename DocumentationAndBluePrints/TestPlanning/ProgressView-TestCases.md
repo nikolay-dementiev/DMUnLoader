@@ -56,25 +56,23 @@
 ---
 
 ### Scenario 4: ✅ Verify Container Appearance
-- **Description**: Check if the container view has the correct foreground color and respects layout constraints.
+- **Description**: Check if the container view has the correct foreground color.
 - **Steps**:
   - [✅] Create a new instance of `DMProgressView` with a custom `loadingContainerForegroundColor`.
   - [✅] Set the `loadingContainerForegroundColor` to `.blue`.
-  - [✅] Set the `frameGeometrySize` to `(width: 500, height: 500)`
   - [✅] Verify that the container view has a blue foreground color.
-  - [✅] Verify that the container view `minWidth` = settings frameGeometrySizes' `min(width-20,height-20, 30)`, `maxWidth` = settings.width/2, `minHeight` = `min(width-20,height-20, 30)`, `maxHeight` = `settings.height / 2`.
 - **Expected Result**:
   - The container view has the correct foreground color.
 - **Status**: ? / 🚧 / ❌ / ✅
 
 ---
 
-### Scenario 5: ? Verify Geometry and Layout
+### Scenario 5: ✅ Verify Geometry and Layout
 - **Description**: Check if the layout adapts dynamically based on the `frameGeometrySize`.
 - **Steps**:
-  - [?] Create a new instance of `DMProgressView` with a custom `frameGeometrySize`.
-  - [?] Set the `frameGeometrySize` to `CGSize(width: 400, height: 400)`.
-  - [?] Verify that the layout adapts to the provided size.
+  - [✅] Create a new instance of `DMProgressView` with a custom `frameGeometrySize`.
+  - [✅] Set the `frameGeometrySize` to `CGSize(width: 400, height: 400)`.
+  - [✅] Verify that the layout adapts to the provided size.
 - **Expected Result**:
   - The layout adapts dynamically to the provided geometry and constraints.
 - **Status**: ? / 🚧 / ❌ / ✅
