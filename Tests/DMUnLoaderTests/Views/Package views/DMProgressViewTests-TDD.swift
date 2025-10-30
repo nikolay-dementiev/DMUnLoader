@@ -21,8 +21,10 @@ struct DMProgressViewTDD: View {
         let loadingTextProperties = settingsProvider.loadingTextProperties
         let progressIndicatorProperties = settingsProvider.progressIndicatorProperties
         
+        let minSize: CGFloat = 30
         ZStack(alignment: .center) {
-            let minSize: CGFloat = 30
+            Color(settingsProvider.loadingContainerBackgroundColor)
+                .tag(DMProgressViewOwnSettings.containerbackgroundColorViewTag)
             VStack {
                 Text(loadingTextProperties.text)
                     .foregroundColor(loadingTextProperties.foregroundColor)
@@ -38,15 +40,13 @@ struct DMProgressViewTDD: View {
                     .layoutPriority(1)
                     .tag(DMProgressViewOwnSettings.progressViewTag)
             }
-            .frame(minWidth: minSize,
-                   maxWidth: geometry.width / 2,
-                   minHeight: minSize,
-                   maxHeight: geometry.height / 2)
-            .fixedSize()
-            .foregroundColor(settingsProvider.loadingContainerForegroundColor)
-            .tag(DMProgressViewOwnSettings.vStackViewTag)
-            .fixedSize()
         }
+        .frame(minWidth: minSize,
+               maxWidth: geometry.width / 2,
+               minHeight: minSize,
+               maxHeight: geometry.height / 2)
+        .fixedSize()
+        .tag(DMProgressViewOwnSettings.zStackViewTag)
     }
 }
 
@@ -154,7 +154,7 @@ final class DMProgressViewTests_TDD: XCTestCase {
             ),
             named: "iPhone13Pro-dark"
         )
-        /*
+        
         assertSnapshot(
             of: sut,
             as: .image(
@@ -163,7 +163,6 @@ final class DMProgressViewTests_TDD: XCTestCase {
             ),
             named: "size-that-fits-dark"
         )
-        */
     }
     
     // MARK: Scenario 3: Verify Loading Text Behavior
@@ -212,18 +211,19 @@ final class DMProgressViewTests_TDD: XCTestCase {
     @MainActor
     func testThatContainerHasCorrectForegroundColor() throws {
         let settings = DMProgressViewDefaultSettings(
-            loadingContainerForegroundColor: .blue
+            loadingContainerBackgroundColor: .blue
         )
         let sut = makeSUT(settings: settings)
         
-        let vStack = try sut
+        let containerBackgroundColor = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.vStackViewTag)
-            .vStack()
+            .find(viewWithTag: DMProgressViewOwnSettings.zStackViewTag)
+            .find(viewWithTag: DMProgressViewOwnSettings.containerbackgroundColorViewTag)
+            .color()
         
-        XCTAssertEqual(try? vStack.foregroundColor(),
-                       settings.loadingContainerForegroundColor,
-                       "The foreground color of the VStack should match the loading container foreground color")
+        XCTAssertEqual(try? containerBackgroundColor.value().hashValue,
+                       settings.loadingContainerBackgroundColor.hashValue,
+                       "The foreground color of the container should match the loading container foreground color")
     }
     
     // MARK: Scenario 5: Verify Geometry and Layout
@@ -240,11 +240,11 @@ final class DMProgressViewTests_TDD: XCTestCase {
         
         let sut = makeSUT(settings: settings)
         
-        let vStack = try sut
+        let zStack = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.vStackViewTag)
-            .vStack()
-        let flexFrame = try? vStack.flexFrame()
+            .find(viewWithTag: DMProgressViewOwnSettings.zStackViewTag)
+            .zStack()
+        let flexFrame = try? zStack.flexFrame()
         
         XCTAssertEqual(flexFrame?.minWidth,
                        minSize,
@@ -258,6 +258,52 @@ final class DMProgressViewTests_TDD: XCTestCase {
         XCTAssertEqual(flexFrame?.maxHeight,
                        geometry.height / 2,
                        "The VStack should have the correct maximum height")
+    }
+    
+    // MARK: Scenario 7: Verify Snapshot Testing
+    
+    @MainActor
+    func testThatViewMatchesSnapshotWithDefaultSettings() {
+        let settings = DMProgressViewDefaultSettings()
+        let sut = makeSUT(settings: settings)
+        
+        assertSnapshot(
+            of: sut,
+            as: .image(
+                layout: .device(config: .iPhone13Pro),
+                traits: .init(userInterfaceStyle: .dark)
+            ),
+            named: "iPhone13Pro-dark"
+        )
+    }
+    
+    @MainActor
+    func testThatViewMatchesSnapshotWithCustomSettings() {
+        let settings = DMProgressViewDefaultSettings(
+            loadingTextProperties: ProgressTextProperties(
+                text: "Wait a bit...\nsecond line...\nthird line...",
+                foregroundColor: .yellow,
+                font: .title2,
+                lineLimit: 2,
+                linePadding: EdgeInsets(top: 2, leading: 6, bottom: 3, trailing: 6)
+            ),
+            progressIndicatorProperties: ProgressIndicatorProperties(
+                size: .large,
+                tintColor: .orange
+            ),
+            loadingContainerBackgroundColor: .blue.opacity(0.5),
+            frameGeometrySize: CGSize(width: 400, height: 400)
+        )
+        let sut = makeSUT(settings: settings)
+        
+        assertSnapshot(
+            of: sut,
+            as: .image(
+                layout: .device(config: .iPhone13Pro),
+                traits: .init(userInterfaceStyle: .dark)
+            ),
+            named: "iPhone13Pro-dark"
+        )
     }
     
     // MARK: - Helpers

@@ -22,7 +22,7 @@ struct MockDMProgressViewSettings: DMProgressViewSettings {
         tintColor: .blue
     )
     
-    var loadingContainerForegroundColor: Color = .white
+    var loadingContainerBackgroundColor: Color = .white
     
     var frameGeometrySize: CGSize = CGSize(width: 200, height: 200)
 }
@@ -31,7 +31,7 @@ extension MockDMProgressViewSettings: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(loadingTextProperties)
         hasher.combine(progressIndicatorProperties)
-        hasher.combine(loadingContainerForegroundColor)
+        hasher.combine(loadingContainerBackgroundColor)
         hasher.combine(frameGeometrySize)
     }
 }

@@ -167,7 +167,7 @@ final class DMProgressViewTests: XCTestCase {
                        "The VStack should have the correct maximum height")
         
         XCTAssertEqual(try? vStack.foregroundColor(),
-                       settingsProvider.loadingContainerForegroundColor,
+                       settingsProvider.loadingContainerBackgroundColor,
                        "The foreground color of the VStack should match the loading container foreground color")
     }
 }

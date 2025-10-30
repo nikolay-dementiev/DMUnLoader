@@ -79,13 +79,13 @@
 
 ---
 
-### Scenario 7: ? Verify Snapshot Testing
+### Scenario 7: ✅ Verify Snapshot Testing
 - **Description**: Use snapshot testing to verify the visual appearance of the `DMProgressView`.
 - **Steps**:
-  - [?] Create a new instance of `DMProgressView` with default and fully custom settings.
-  - [?] Render the view using a snapshot testing library (e.g., `SnapshotTesting` or `XCTest`).
-  - [?] Compare the rendered view with a reference snapshot.
-  - [?] Verify that the snapshot matches the reference image.
+  - [✅] Create a new instance of `DMProgressView` with <ins>one default</ins> **and** <ins>one fully</ins> custom settings.
+  - [✅] Render the view using a snapshot testing library (e.g., `SnapshotTesting` or `XCTest`).
+  - [✅] Compare the rendered view with a reference snapshot.
+  - [✅] Verify that the snapshot matches the reference image.
 - **Expected Result**:
   - The rendered view matches the reference snapshot.
   - If the test fails, update the reference snapshot after verifying the changes.

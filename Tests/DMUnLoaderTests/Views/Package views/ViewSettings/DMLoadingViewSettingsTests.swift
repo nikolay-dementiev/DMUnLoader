@@ -143,8 +143,8 @@ final class DMLoadingViewSettingsTests: XCTestCase {
         XCTAssertEqual(settings.progressIndicatorProperties.tintColor,
                        Color.white,
                        "Default progress indicator tint color should be white")
-        XCTAssertEqual(settings.loadingContainerForegroundColor,
-                       Color.primary,
+        XCTAssertEqual(settings.loadingContainerBackgroundColor,
+                       Color.clear,
                        "Default container foreground color should be primary")
         XCTAssertEqual(settings.frameGeometrySize.width,
                        300,
@@ -177,7 +177,7 @@ final class DMLoadingViewSettingsTests: XCTestCase {
         let settings = DMProgressViewDefaultSettings(
             loadingTextProperties: customTextProperties,
             progressIndicatorProperties: customIndicatorProperties,
-            loadingContainerForegroundColor: customContainerForegroundColor,
+            loadingContainerBackgroundColor: customContainerForegroundColor,
             frameGeometrySize: customFrameGeometrySize
         )
         
@@ -190,7 +190,7 @@ final class DMLoadingViewSettingsTests: XCTestCase {
         XCTAssertEqual(settings.progressIndicatorProperties.tintColor,
                        Color.blue,
                        "Progress indicator tint color should match the custom value")
-        XCTAssertEqual(settings.loadingContainerForegroundColor,
+        XCTAssertEqual(settings.loadingContainerBackgroundColor,
                        Color.green,
                        "Container foreground color should match the custom value")
         XCTAssertEqual(settings.frameGeometrySize.width,

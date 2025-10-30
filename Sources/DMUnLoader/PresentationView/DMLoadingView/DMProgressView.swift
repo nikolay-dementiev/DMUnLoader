@@ -22,6 +22,12 @@ enum DMProgressViewOwnSettings {
     
     /// The tag assigned to the vertical stack view (`VStack`) that organizes the content.
     static let vStackViewTag: Int = 2205
+    
+    /// The tag assigned to the ztack view (`ZStack`) that organizes the content.
+    static let zStackViewTag: Int = 2206
+    
+    /// The tag assigned to the container color
+    static let containerbackgroundColorViewTag: Int = 2107
 }
 
 /// A custom SwiftUI view that displays a progress indicator with optional text.
@@ -79,7 +85,7 @@ struct DMProgressView: View {
                    minHeight: minSize,
                    maxHeight: geometry.height / 2)
             .fixedSize()
-            .foregroundColor(settingsProvider.loadingContainerForegroundColor)
+            .foregroundColor(settingsProvider.loadingContainerBackgroundColor)
             .tag(DMProgressViewOwnSettings.vStackViewTag)
         }
         .tag(DMProgressViewOwnSettings.containerViewTag)

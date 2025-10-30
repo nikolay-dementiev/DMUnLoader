@@ -27,5 +27,5 @@ struct MockLoadingViewSettingsProvider: DMProgressViewSettings {
         tintColor: .green
     )
     
-    var loadingContainerForegroundColor: Color = .white
+    var loadingContainerBackgroundColor: Color = .white
 }

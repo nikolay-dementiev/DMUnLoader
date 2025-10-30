@@ -16,8 +16,8 @@ public protocol DMProgressViewSettings {
     /// Properties related to the progress indicator displayed in the loading view.
     var progressIndicatorProperties: ProgressIndicatorProperties { get }
     
-    /// The foreground color of the loading container.
-    var loadingContainerForegroundColor: Color { get }
+    /// The background color of the loading container.
+    var loadingContainerBackgroundColor: Color { get }
     
     /// The size of the frame geometry for the loading view.
     var frameGeometrySize: CGSize { get }
@@ -34,7 +34,7 @@ public struct DMProgressViewDefaultSettings: DMProgressViewSettings {
     public let progressIndicatorProperties: ProgressIndicatorProperties
     
     /// The foreground color of the loading container.
-    public let loadingContainerForegroundColor: Color
+    public let loadingContainerBackgroundColor: Color
     
     /// The size of the frame geometry for the loading view.
     public let frameGeometrySize: CGSize
@@ -56,12 +56,12 @@ public struct DMProgressViewDefaultSettings: DMProgressViewSettings {
     ///   ```
     public init(loadingTextProperties: ProgressTextProperties = ProgressTextProperties(),
                 progressIndicatorProperties: ProgressIndicatorProperties = ProgressIndicatorProperties(),
-                loadingContainerForegroundColor: Color = Color.primary,
+                loadingContainerBackgroundColor: Color = Color.clear,
                 frameGeometrySize: CGSize = CGSize(width: 300, height: 300)) {
         
         self.loadingTextProperties = loadingTextProperties
         self.progressIndicatorProperties = progressIndicatorProperties
-        self.loadingContainerForegroundColor = loadingContainerForegroundColor
+        self.loadingContainerBackgroundColor = loadingContainerBackgroundColor
         self.frameGeometrySize = frameGeometrySize
     }
 }
@@ -78,7 +78,7 @@ extension DMProgressViewDefaultSettings: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(loadingTextProperties)
         hasher.combine(progressIndicatorProperties)
-        hasher.combine(loadingContainerForegroundColor)
+        hasher.combine(loadingContainerBackgroundColor)
         hasher.combine(frameGeometrySize)
     }
 }
