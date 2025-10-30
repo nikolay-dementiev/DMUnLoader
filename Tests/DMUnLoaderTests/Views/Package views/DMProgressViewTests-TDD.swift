@@ -54,7 +54,7 @@ final class DMProgressViewTests_TDD: XCTestCase {
     
     override func invokeTest() {
         withSnapshotTesting(
-            record: .failed,
+            record: .never,
             diffTool: .ksdiff
         ) {
             super.invokeTest()
@@ -147,7 +147,7 @@ final class DMProgressViewTests_TDD: XCTestCase {
         let sut = makeSUT(settings: settings)
         
         assertSnapshot(
-            of: sut,
+            of: LoadingViewContainer<DMProgressViewTDD>(overlayView: { sut }),
             as: .image(
                 layout: .device(config: .iPhone13Pro),
                 traits: .init(userInterfaceStyle: .dark)
@@ -265,7 +265,7 @@ final class DMProgressViewTests_TDD: XCTestCase {
     @MainActor
     func testThatViewMatchesSnapshotWithDefaultSettings() {
         let settings = DMProgressViewDefaultSettings()
-        let sut = makeSUT(settings: settings)
+        let sut = makeSUTWithContainer(settings: settings)
         
         assertSnapshot(
             of: sut,
@@ -294,7 +294,7 @@ final class DMProgressViewTests_TDD: XCTestCase {
             loadingContainerBackgroundColor: .blue.opacity(0.5),
             frameGeometrySize: CGSize(width: 400, height: 400)
         )
-        let sut = makeSUT(settings: settings)
+        let sut = makeSUTWithContainer(settings: settings)
         
         assertSnapshot(
             of: sut,
@@ -313,5 +313,14 @@ final class DMProgressViewTests_TDD: XCTestCase {
         settings: DMProgressViewSettings = MockDMProgressViewSettings()
     ) -> DMProgressViewTDD {
         DMProgressViewTDD(settings: settings)
+    }
+    
+    @MainActor
+    private func makeSUTWithContainer(
+        settings: DMProgressViewSettings = MockDMProgressViewSettings()
+    ) -> LoadingViewContainer<DMProgressViewTDD> {
+        LoadingViewContainer {
+            DMProgressViewTDD(settings: settings)
+        }
     }
 }
