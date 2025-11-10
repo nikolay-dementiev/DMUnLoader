@@ -1,0 +1,28 @@
+workflows:
+  ios-app-workflow:
+    name: iOS App Workflow
+
+    triggering:
+      events:
+        - push
+        - tag
+        - pull_request
+      branch_patterns:
+        - pattern: "*"
+          include: true
+          source: true
+
+    scripts:
+      - name: Install mobsfscan
+        script: |
+          pip3 install --upgrade mobsfscan
+      - name: Run mobsfscan
+        script: |
+          mobsfscan --json --type ios -o mobsfscan_result.json .
+      - name: Upload mobsfscan results
+        script: |
+          mkdir -p artifacts
+          mv mobsfscan_result.json artifacts/
+
+    artifacts:
+      - artifacts/mobsfscan_result.json

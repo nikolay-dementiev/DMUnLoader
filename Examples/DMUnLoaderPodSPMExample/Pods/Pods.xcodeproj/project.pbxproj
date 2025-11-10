@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 71;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -111,7 +111,7 @@
 		13B9412589F08EEEE2F0BB2464FB9A21 /* DMLoadableType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMLoadableType.swift; path = Sources/DMUnLoader/DMLoadableType.swift; sourceTree = "<group>"; };
 		14A5222E145A6CC72BAF6D3EB4C831A8 /* DMVariableBlurView-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMVariableBlurView-prefix.pch"; sourceTree = "<group>"; };
 		18DF3D9954F6342D75D51C51848076C4 /* DMActionResultValue.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMActionResultValue.swift; path = Sources/DMAction/DMActionResultValue.swift; sourceTree = "<group>"; };
-		1BE012CA65B865392C95F0D9EC15B61C /* DMUnLoader.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = DMUnLoader.podspec; sourceTree = "<group>"; tabWidth = 2; };
+		1BE012CA65B865392C95F0D9EC15B61C /* DMUnLoader.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = DMUnLoader.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		1CDF3927161D0C2C5542C7631CF94EBF /* CustomViewSize.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CustomViewSize.swift; sourceTree = "<group>"; };
 		2094B4ADB60CC2FF63D261FCF257DFE1 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		20ECDF98CC04ADDE15219AA4BD9E2CC2 /* DMUnLoader-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DMUnLoader-dummy.m"; sourceTree = "<group>"; };
@@ -122,7 +122,7 @@
 		2BD442E1F16DB65AC98C23D4682F7F14 /* DMAction.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMAction.swift; path = Sources/DMAction/DMAction.swift; sourceTree = "<group>"; };
 		2C3414127DB262B3506DD85BC50BAF3F /* DMAction.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DMAction.release.xcconfig; sourceTree = "<group>"; };
 		31BA407AC05DC05AB24238918FDFDBEF /* DMButtonAction.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DMButtonAction.swift; path = Sources/DMAction/DMButtonAction.swift; sourceTree = "<group>"; };
-		31F3ADF6D39E701DF192817D5B6747B4 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		31F3ADF6D39E701DF192817D5B6747B4 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
 		32B5692A580B7916501AB8737A633575 /* DMLoadableTypeSuccess.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMLoadableTypeSuccess.swift; sourceTree = "<group>"; };
 		356E83C6D18FAC77A67FA1EE76B16AAC /* DMAction-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DMAction-dummy.m"; sourceTree = "<group>"; };
 		35FDE1589162C0D63833ED742B88E2E8 /* DMProgressViewSettings.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DMProgressViewSettings.swift; sourceTree = "<group>"; };
@@ -149,10 +149,10 @@
 		8B1ECC599D574425EB1E96FC595569BE /* Duration+TimeInterval.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "Duration+TimeInterval.swift"; sourceTree = "<group>"; };
 		909683393C1DD71C42C39FC37AAB8E25 /* DMUnLoader-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DMUnLoader-umbrella.h"; sourceTree = "<group>"; };
 		987AACD9FB1085A53FC90CBA3A148089 /* DMUnLoader-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "DMUnLoader-Info.plist"; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		A2C8AB517A6BD662FFB441F3BAFD592C /* DMVariableBlurView.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = DMVariableBlurView.modulemap; sourceTree = "<group>"; };
 		A46962910D6E2ECF232C8C2D2AFD61F7 /* DMVariableBlurView-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "DMVariableBlurView-Info.plist"; sourceTree = "<group>"; };
-		AC07AB28377870978E15896F7A44CDE2 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		AC07AB28377870978E15896F7A44CDE2 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
 		AC445AA7475527C70B5C9B8BC7563459 /* Pods-DMUnLoaderPodSPMExample-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DMUnLoaderPodSPMExample-frameworks.sh"; sourceTree = "<group>"; };
 		AFA26E3A804F87994F8361DF6C042A41 /* DMAction */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = DMAction; path = DMAction.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B00B12566C242B879C1A4A39A836DFCF /* Pods-DMUnLoaderPodSPMExample-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-DMUnLoaderPodSPMExample-acknowledgements.markdown"; sourceTree = "<group>"; };
@@ -268,6 +268,7 @@
 				801C22F3FAE8DAFC2E2ACEDB357137BC /* DMErrorView.swift */,
 				D6B4FB8B73D6EEA04726A9B819056912 /* DMErrorViewSettings.swift */,
 			);
+			name = DMErrorView;
 			path = DMErrorView;
 			sourceTree = "<group>";
 		};
@@ -276,6 +277,7 @@
 			children = (
 				B1CD817A9CB1286A5AAFAE529C52D9C8 /* DMHudButtonStyle.swift */,
 			);
+			name = Buttons;
 			path = Buttons;
 			sourceTree = "<group>";
 		};
@@ -284,6 +286,7 @@
 			children = (
 				B041A1613053481256EB152D906CFA6A /* Atomic.swift */,
 			);
+			name = Atomic;
 			path = Atomic;
 			sourceTree = "<group>";
 		};
@@ -313,6 +316,7 @@
 				E8D3D3FD4C96733E4A44F83DAA2FC10F /* DMVariableBlurView.swift */,
 				87952ECA90264CF43B81640051E23324 /* Support Files */,
 			);
+			name = DMVariableBlurView;
 			path = DMVariableBlurView;
 			sourceTree = "<group>";
 		};
@@ -341,6 +345,7 @@
 				78ABBC93C1CFDF6DE2F5AED99BE1185E /* Inspection.swift */,
 				5B35BE4F9D184304B849D49550770412 /* SchemaArguments.swift */,
 			);
+			name = Debug;
 			path = Debug;
 			sourceTree = "<group>";
 		};
@@ -362,6 +367,7 @@
 				E9DCCF5EEDBAA596BD6329E7B30B88B1 /* DMSceneDelegateBase.swift */,
 				2526AFBE10F6D5A172067577C830E735 /* DMSceneDelegateHelper.swift */,
 			);
+			name = ClientAppBridging;
 			path = ClientAppBridging;
 			sourceTree = "<group>";
 		};
@@ -371,6 +377,7 @@
 				11A0E7272496D70C28DB6562AAB8EFE5 /* DMSuccessView.swift */,
 				419B3355B62ED26BCD807FB121F12D96 /* DMSuccessViewSettings.swift */,
 			);
+			name = DMSuccessView;
 			path = DMSuccessView;
 			sourceTree = "<group>";
 		};
@@ -416,6 +423,7 @@
 				FE2E2790FAB66667D385122FE39FEF62 /* String+Pointer.swift */,
 				1266199FC34645C6662A16EC3A1E10DC /* View+HUD.swift */,
 			);
+			name = Extensions;
 			path = Extensions;
 			sourceTree = "<group>";
 		};
@@ -439,6 +447,7 @@
 				F55CD7DE8A490D62539F61BBD6E7C36B /* DMProgressView.swift */,
 				35FDE1589162C0D63833ED742B88E2E8 /* DMProgressViewSettings.swift */,
 			);
+			name = DMLoadingView;
 			path = DMLoadingView;
 			sourceTree = "<group>";
 		};
@@ -509,6 +518,7 @@
 				31BA407AC05DC05AB24238918FDFDBEF /* DMButtonAction.swift */,
 				A55C69BE76CE794207437A865CB6737D /* Support Files */,
 			);
+			name = DMAction;
 			path = DMAction;
 			sourceTree = "<group>";
 		};
@@ -654,6 +664,8 @@
 				en,
 			);
 			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
+			minimizedProjectReferenceProxies = 0;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 6AF046B2827F1E45FB1D2B4DC40BE6A8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
