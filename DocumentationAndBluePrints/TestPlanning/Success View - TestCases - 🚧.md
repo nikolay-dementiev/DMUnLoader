@@ -10,7 +10,7 @@
 
 ## 2. Test Scenarios
 
-### Scenario 1: ? Verify Default Initialization
+### Scenario 1: 🚧 Verify Default Initialization
 - **Description**: Check if the `DMSuccessView` is initialized correctly with default settings.
 - **Steps**:
   - [?] Create a new instance of `DMSuccessView` with default settings (`DMSuccessDefaultViewSettings`).
