@@ -10,12 +10,12 @@
 
 ## 2. Test Scenarios
 
-### Scenario 1: 🚧 Verify Default Initialization
+### Scenario 1: ✅ Verify Default Initialization
 - **Description**: Check if the `DMSuccessView` is initialized correctly with default settings.
 - **Steps**:
-  - [?] Create a new instance of `DMSuccessView` with default settings (`DMSuccessDefaultViewSettings`).
-  - [?] Verify that the success image is displayed as a checkmark circle icon.
-  - [?] Verify that the success text is `"Success!"`.
+  - [✅] Create a new instance of `DMSuccessView` with default settings (`DMSuccessDefaultViewSettings`).
+  - [✅] Verify that the success image is displayed as a checkmark circle icon.
+  - [✅] Verify that the success text is `"Success!"`.
 - **Expected Result**:
   - The view is initialized correctly with default settings.
   - The success image and text match the expected behavior.
@@ -23,14 +23,14 @@
 
 ---
 
-### Scenario 2: ? Verify Success Image Behavior
+### Scenario 2: ✅ Verify Success Image Behavior
 - **Description**: Check if the success image is styled correctly based on the `successImageProperties`.
 - **Steps**:
-  - [?] Create a new instance of `DMSuccessView` with custom `successImageProperties`.
-  - [?] Set the `image` to `Image(systemName: "star.fill")`, `foregroundColor` to `.yellow`, and `frame` to `CustomSizeView(width: 60, height: 60)`.
-  - [?] Verify that the success image is displayed with the correct image.
-  - [?] Verify that the foreground color is yellow.
-  - [?] Verify that the frame size is 60x60.
+  - [✅] Create a new instance of `DMSuccessView` with custom `successImageProperties`.
+  - [✅] Set the `image` to `Image(systemName: "star.fill")`, `foregroundColor` to `.yellow`, and `frame` to `CustomViewSize(width: 60, height: 60)`.
+  - [✅] Verify that the success image is displayed with the correct image.
+  - [✅] Verify that the foreground color is yellow.
+  - [✅] Verify that the frame size is 60x60.
 - **Expected Result**:
   - The success image is styled correctly with the specified properties.
 - **Status**: ? / 🚧 / ❌ / ✅
