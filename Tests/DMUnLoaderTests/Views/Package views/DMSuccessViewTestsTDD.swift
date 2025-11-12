@@ -19,7 +19,7 @@ private struct DMSuccessViewTDD: View {
     var body: some View {
         let successImageProperties = settingsProvider.successImageProperties
         
-        VStack {
+        VStack(spacing: settingsProvider.spacingBetweenElements) {
             successImageProperties.image
                 .resizable()
                 .frame(width: successImageProperties.frame.width,
@@ -32,6 +32,7 @@ private struct DMSuccessViewTDD: View {
             if let successText = successTextProperties.text {
                 Text(successText)
                     .foregroundColor(successTextProperties.foregroundColor)
+                    .frame(alignment: successTextProperties.alignment)
                     .tag(DMSuccessViewOwnSettings.textTag)
             }
         }
@@ -244,10 +245,84 @@ final class DMSuccessViewTestsTDD: XCTestCase {
         )
     }
     
+    // MARK: Scenario 4: Verify Layout and Alignment
+    
+    func testThatTheImageVerticallyAligned() throws {
+        let sut = makeSUT(settings: DMSuccessDefaultViewSettings())
+        
+        let image = try sut
+            .inspect()
+            .find(viewWithTag: DMSuccessViewOwnSettings.imageTag)
+            .image()
+        
+        XCTAssertEqual(
+            try image.fixedAlignment(),
+            .center,
+            "The ImageView should be center aligned"
+        )
+    }
+    
+    func testThatTheTextVerticallyAligned() throws {
+        let sut = makeSUT(settings: DMSuccessDefaultViewSettings())
+        
+        let text = try sut
+            .inspect()
+            .find(viewWithTag: DMSuccessViewOwnSettings.textTag)
+            .text()
+        
+        XCTAssertEqual(
+            try text.fixedAlignment(),
+            .center,
+            "The TextView should be center aligned"
+        )
+    }
+    
+    func testRendersImageFrame() throws {
+        let settings = DMSuccessDefaultViewSettings()
+        let sut = makeSUT(settings: settings)
+        
+        let imageView = try sut
+            .inspect()
+            .find(viewWithTag: DMSuccessViewOwnSettings.imageTag)
+            .image()
+        
+        let fixedImageFrame = try? imageView.fixedFrame()
+        let successImageProperties = settings.successImageProperties
+        
+        XCTAssertEqual(fixedImageFrame?.width,
+                       successImageProperties.frame.width,
+                       "The ImageView frame should have the correct frame width")
+        XCTAssertEqual(fixedImageFrame?.height,
+                       successImageProperties.frame.height,
+                       "The ImageView height should have the correct frame height")
+        XCTAssertEqual(fixedImageFrame?.alignment,
+                       successImageProperties.frame.alignment,
+                       "The ImageView frame should have the correct frame alignment")
+    }
+    
+    func testSpacingBetweenTheImageAndTextIsConsistent() throws {
+        let expectedSpacing: CGFloat = 15.0
+        let settings = DMSuccessDefaultViewSettings(
+            spacingBetweenElements: expectedSpacing
+        )
+        let sut = makeSUT(settings: settings)
+        
+        let containerView = try sut
+            .inspect()
+            .find(viewWithTag: DMSuccessViewOwnSettings.containerViewTag)
+            .vStack()
+        
+        XCTAssertEqual(
+            try containerView.spacing(),
+            expectedSpacing,
+            "The spacing between image and text should be `\(expectedSpacing)`"
+        )
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(
-        settings: DMSuccessViewSettings = DMSuccessDefaultViewSettings()
+        settings: DMSuccessViewSettings
     ) -> DMSuccessViewTDD {
         let sut = DMSuccessViewTDD(
             settings: settings

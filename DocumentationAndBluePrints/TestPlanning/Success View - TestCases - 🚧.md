@@ -50,12 +50,12 @@
 
 ---
 
-### Scenario 4: ? Verify Layout and Alignment
+### Scenario 4: ✅ Verify Layout and Alignment
 - **Description**: Check if the layout ensures proper alignment and spacing between the image and text.
 - **Steps**:
-  - [?] Create a new instance of `DMSuccessView` with default settings.
-  - [?] Verify that the image and text are vertically aligned.
-  - [?] Verify that the spacing between the image and text is consistent.
+  - [✅] Create a new instance of `DMSuccessView` with default settings.
+  - [✅] Verify that the image and text are vertically aligned by `.center`.
+  - [✅] Verify that the spacing between the image and text is consistent.
 - **Expected Result**:
   - The layout ensures proper alignment and spacing between the image and text.
 - **Status**: ? / 🚧 / ❌ / ✅
