@@ -213,6 +213,37 @@ final class DMSuccessViewTestsTDD: XCTestCase {
         )
     }
     
+    // MARK: Scenario 3: Verify Success Text Behavior
+    
+    func testCustomSuccessTextRendering() throws {
+        let expectedText = "Operation Completed!"
+        let expectedForegroundColor = Color.green
+        let settings = DMSuccessDefaultViewSettings(
+            successTextProperties: .init(
+                text: expectedText,
+                foregroundColor: expectedForegroundColor
+            )
+        )
+        let sut = makeSUT(settings: settings)
+        
+        let text = try sut
+            .inspect()
+            .find(viewWithTag: DMSuccessViewOwnSettings.textTag)
+            .text()
+        
+        XCTAssertEqual(
+            try text.string(),
+            expectedText,
+            "The custom success text should match the `\(expectedText)`"
+        )
+        
+        XCTAssertEqual(
+            try text.attributes().foregroundColor(),
+            expectedForegroundColor,
+            "The custom success text foreground color should be `\(expectedForegroundColor)`"
+        )
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(

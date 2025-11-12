@@ -37,13 +37,13 @@
 
 ---
 
-### Scenario 3: ? Verify Success Text Behavior
+### Scenario 3: ✅ Verify Success Text Behavior
 - **Description**: Check if the success text is styled correctly based on the `successTextProperties`.
 - **Steps**:
-  - [?] Create a new instance of `DMSuccessView` with custom `successTextProperties`.
-  - [?] Set the `text` to `"Operation Completed!"` and `foregroundColor` to `.black`.
-  - [?] Verify that the success text is `"Operation Completed!"`.
-  - [?] Verify that the foreground color is black.
+  - [✅] Create a new instance of `DMSuccessView` with custom `successTextProperties`.
+  - [✅] Set the `text` to `"Operation Completed!"` and `foregroundColor` to `.green`.
+  - [✅] Verify that the success text is `"Operation Completed!"`.
+  - [✅] Verify that the foreground color is green.
 - **Expected Result**:
   - The success text is styled correctly with the specified properties.
 - **Status**: ? / 🚧 / ❌ / ✅
