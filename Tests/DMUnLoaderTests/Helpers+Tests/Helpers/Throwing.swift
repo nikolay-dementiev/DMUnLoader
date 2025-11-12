@@ -8,7 +8,7 @@ import XCTest
 
 func XCTAssertThrows<T>(_ expression: @autoclosure () throws -> T,
                         _ message: String,
-                        file: StaticString = #file,
+                        file: StaticString = #filePath,
                         line: UInt = #line) {
     do {
         _ = try expression()

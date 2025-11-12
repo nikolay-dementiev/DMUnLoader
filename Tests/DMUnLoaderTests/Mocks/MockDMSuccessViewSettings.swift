@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MockDMSuccessViewSettings: DMSuccessViewSettings {
+    var spacingBetweenElements: CGFloat?
+    
     var successImageProperties: SuccessImageProperties = SuccessImageProperties(
         image: Image(systemName: "checkmark.circle.fill"),
         frame: CustomViewSize(width: 50, height: 50),

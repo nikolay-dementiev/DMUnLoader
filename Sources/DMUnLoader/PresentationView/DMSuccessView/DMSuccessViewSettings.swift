@@ -10,6 +10,8 @@ import SwiftUI
 /// Conforming types must provide properties for the success image and text.
 public protocol DMSuccessViewSettings {
     
+    var spacingBetweenElements: CGFloat? { get }
+    
     /// Properties related to the success image displayed in the success view.
     var successImageProperties: SuccessImageProperties { get }
     
@@ -20,12 +22,15 @@ public protocol DMSuccessViewSettings {
 /// A concrete implementation of the `DMSuccessViewSettings` protocol.
 /// This struct provides default settings for a success view, with customizable properties.
 public struct DMSuccessDefaultViewSettings: DMSuccessViewSettings {
+    /// The spacing between the success image and text elements.
+    public let spacingBetweenElements: CGFloat?
     
     /// Properties related to the success image displayed in the success view.
     public let successImageProperties: SuccessImageProperties
     
     /// Properties related to the success text displayed in the success view.
     public let successTextProperties: SuccessTextProperties
+    
     
     /// Initializes a new instance of `DMSuccessDefaultViewSettings` with optional customizations.
     /// - Parameters:
@@ -39,10 +44,12 @@ public struct DMSuccessDefaultViewSettings: DMSuccessViewSettings {
     ///   )
     ///   ```
     public init(successImageProperties: SuccessImageProperties = SuccessImageProperties(),
-                successTextProperties: SuccessTextProperties = SuccessTextProperties()) {
+                successTextProperties: SuccessTextProperties = SuccessTextProperties(),
+                spacingBetweenElements: CGFloat? = nil) {
         
         self.successImageProperties = successImageProperties
         self.successTextProperties = successTextProperties
+        self.spacingBetweenElements = spacingBetweenElements
     }
 }
 
@@ -54,6 +61,7 @@ extension DMSuccessDefaultViewSettings: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(successImageProperties)
         hasher.combine(successTextProperties)
+        hasher.combine(spacingBetweenElements)
     }
 }
 
@@ -112,10 +120,12 @@ extension SuccessImageProperties: Hashable {
 public struct SuccessTextProperties {
     
     /// The text to display as the success message.
-    public var text: String?
+    public let text: String?
     
     /// The foreground color of the text.
-    public var foregroundColor: Color?
+    public let foregroundColor: Color?
+    
+    public let alignment: Alignment
     
     /// Initializes a new instance of `SuccessTextProperties` with optional customizations.
     /// - Parameters:
@@ -130,10 +140,12 @@ public struct SuccessTextProperties {
     ///   ```
     public init(
         text: String? = "Success!",
-        foregroundColor: Color? = .white
+        foregroundColor: Color? = .white,
+        alignment: Alignment = .center
     ) {
         self.text = text
         self.foregroundColor = foregroundColor
+        self.alignment = alignment
     }
 }
 
