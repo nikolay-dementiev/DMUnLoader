@@ -1,5 +1,5 @@
 {
-  "originHash" : "f3b275f285fd53771587db688ff8d72c151c44fd3250c098bc8ade7d117ba883",
+  "originHash" : "616162a93ec93a3be61985d7e8072aec87dfab0cf44d45170fc248c00568e178",
   "pins" : [
     {
       "identity" : "dmaction",
@@ -16,7 +16,7 @@
       "location" : "https://github.com/nikolay-dementiev/DMVariableBlurView.git",
       "state" : {
         "branch" : "main",
-        "revision" : "274a7072257a9f4eb626bfe57016b9ae4b4cc9c8"
+        "revision" : "196724164c898d03a977370157a2c4996e30b091"
       }
     },
     {
@@ -53,15 +53,6 @@
       "state" : {
         "branch" : "main",
         "revision" : "5c864493d1231a79f48cd4212f4410acad959306"
-      }
-    },
-    {
-      "identity" : "viewinspector",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nalexn/ViewInspector",
-      "state" : {
-        "revision" : "e9a06346499a3a889165647e3f23f8a7b2609a1c",
-        "version" : "0.10.3"
       }
     },
     {

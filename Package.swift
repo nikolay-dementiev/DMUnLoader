@@ -21,7 +21,9 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/GayleDunham/SwiftLintPlugin.git", branch: "main"),
-        .package(url: "https://github.com/nalexn/ViewInspector", from: "0.10.1"),
+//        .package(url: "https://github.com/nalexn/ViewInspector", from: "0.10.1"),
+        .package(path: "../ViewInspector"),
+//        .package(url: "https://github.com/nikolay-dementiev/ViewInspector.git", branch: "0.10.4"),
         .package(url: "https://github.com/nikolay-dementiev/DMAction.git", branch: "main"),
         .package(url: "https://github.com/nikolay-dementiev/DMVariableBlurView.git", branch: "main"),
         .package(

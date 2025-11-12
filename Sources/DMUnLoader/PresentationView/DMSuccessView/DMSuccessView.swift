@@ -24,35 +24,19 @@ enum DMSuccessViewOwnSettings {
 /// This view uses a settings provider to configure the appearance of the success view.
 struct DMSuccessView: View {
     
-    /// The settings provider responsible for configuring the success view's appearance.
     let settingsProvider: DMSuccessViewSettings
-    
-    /// An optional object associated with the success state, providing additional context or a custom message.
     let assosiatedObject: DMLoadableTypeSuccess?
     
-    /// Initializes a new instance of `DMSuccessView`.
-    /// - Parameters:
-    ///   - settingsProvider: The settings provider responsible for configuring the success view's appearance.
-    ///   - assosiatedObject: An optional object associated with the success state. Defaults to `nil`.
-    /// - Example:
-    ///   ```swift
-    ///   let settings = DMSuccessDefaultViewSettings()
-    ///   let successView = DMSuccessView(settings: settings, assosiatedObject: "Operation Completed!")
-    ///   ```
     init(settings settingsProvider: DMSuccessViewSettings,
          assosiatedObject: DMLoadableTypeSuccess? = nil) {
         self.settingsProvider = settingsProvider
         self.assosiatedObject = assosiatedObject
     }
     
-    /// The body of the `DMSuccessView`.
-    /// - Returns: A view that displays a success image and optional text based on the provided settings and associated object.
-    /// - Behavior:
-    ///   - Displays a resizable image with properties defined in `successImageProperties`.
-    ///   - Displays optional text derived from the `assosiatedObject` or `successTextProperties`.
     var body: some View {
         let successImageProperties = settingsProvider.successImageProperties
-        VStack {
+        
+        VStack(spacing: settingsProvider.spacingBetweenElements) {
             successImageProperties.image
                 .resizable()
                 .frame(width: successImageProperties.frame.width,
@@ -65,6 +49,7 @@ struct DMSuccessView: View {
             if let successText = assosiatedObject?.description ?? successTextProperties.text {
                 Text(successText)
                     .foregroundColor(successTextProperties.foregroundColor)
+                    .frame(alignment: successTextProperties.alignment)
                     .tag(DMSuccessViewOwnSettings.textTag)
             }
         }
