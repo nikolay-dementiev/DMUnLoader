@@ -31,7 +31,6 @@ public struct DMSuccessDefaultViewSettings: DMSuccessViewSettings {
     /// Properties related to the success text displayed in the success view.
     public let successTextProperties: SuccessTextProperties
     
-    
     /// Initializes a new instance of `DMSuccessDefaultViewSettings` with optional customizations.
     /// - Parameters:
     ///   - successImageProperties: The properties for the success image. Defaults to `SuccessImageProperties()`.
