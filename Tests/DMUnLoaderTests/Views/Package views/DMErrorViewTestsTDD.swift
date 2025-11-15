@@ -11,9 +11,16 @@ import ViewInspector
 
 struct DMErrorViewTDD: View {
     let settingsProvider: DMErrorViewSettings
+    let onRetry: DMAction?
+    let onClose: DMAction
     
-    init(settings settingsProvider: DMErrorViewSettings) {
+    init(settings settingsProvider: DMErrorViewSettings,
+         onRetry: DMAction? = nil,
+         onClose: DMAction) {
+        
         self.settingsProvider = settingsProvider
+        self.onRetry = onRetry
+        self.onClose = onClose
     }
     
     var body: some View {
@@ -26,6 +33,11 @@ struct DMErrorViewTDD: View {
             Text(errorText)
                 .tag(DMErrorViewOwnSettings.errorTextViewTag)
         }
+        
+        let closeButtonSettings = settingsProvider.actionButtonCloseSettings
+        Button(closeButtonSettings.text,
+               action: onClose.simpleAction)
+        .tag(DMErrorViewOwnSettings.actionButtonCloseViewTag)
     }
 }
 
@@ -87,6 +99,65 @@ final class DMErrorViewTestsTDD: XCTestCase {
         )
     }
     
+    func testThatThe_CloseButton_IsPresent() throws {
+        // Given
+        let defaultSettings = DMErrorDefaultViewSettings()
+        
+        // When
+        let sut = makeSUT(
+            settings: defaultSettings,
+            onClose: DMButtonAction { }
+        )
+        
+        let button = try sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.actionButtonCloseViewTag)
+            .button()
+        
+        let textOnButton = try button.labelView().text().string()
+        
+        // Then
+        XCTAssertEqual(textOnButton,
+                       defaultSettings.actionButtonCloseSettings.text,
+                       "The Close Button should display the correct label from settings")
+        
+        XCTAssertEqual(textOnButton,
+                       "Close",
+                       "The Close Button should display the correct label: `Close`")
+    }
+    
+    func testThatThe_RetryButton_IsAbsentWhen_OnRetry_IsNotProvided() throws {
+        // Given
+        let defaultSettings = DMErrorDefaultViewSettings()
+        
+        // When
+        let sut = makeSUT(
+            settings: defaultSettings,
+            onClose: DMButtonAction { }
+        )
+        
+        // Then
+        try verifyThatTheCloseButtonIsPresent(
+            sut: sut,
+            expectedTextFromSettings: defaultSettings.actionButtonCloseSettings.text,
+            expectedTextString: "Close"
+        )
+    }
+    
+    // MARK: - Helpers
+    
+    private func makeSUT(
+        settings: DMErrorViewSettings,
+        onClose: DMAction
+    ) -> DMErrorViewTDD {
+        let sut = DMErrorViewTDD(
+            settings: settings,
+            onClose: onClose
+        )
+        
+        return sut
+    }
+    
     private func checkErrorViewImageCorrespondsToSettings(
         sut: DMErrorViewTDD,
         expectedImageSettings: ErrorImageSettings,
@@ -112,7 +183,9 @@ final class DMErrorViewTestsTDD: XCTestCase {
     private func checkErrorTextCorrespondsToSettings(
         sut: DMErrorViewTDD,
         expectedTextFromSettings: String?,
-        expectedTextString: String?
+        expectedTextString: String?,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) throws {
         guard expectedTextFromSettings?.isEmpty == false
                 || expectedTextString?.isEmpty == false else {
@@ -129,22 +202,14 @@ final class DMErrorViewTestsTDD: XCTestCase {
         let textFormSUT = try? text.string()
         XCTAssertEqual(textFormSUT,
                        expectedTextFromSettings,
-                       "The \(sut.self) text should match the settings")
+                       "The \(sut.self) text should match the settings",
+                       file: file,
+                       line: line)
         
         XCTAssertEqual(textFormSUT,
                        expectedTextString,
-                       "The \(sut.self) text should match the expected text: `\(String(describing: expectedTextString))`")
-    }
-    
-    // MARK: - Helpers
-    
-    private func makeSUT(
-        settings: DMErrorViewSettings
-    ) -> DMErrorViewTDD {
-        let sut = DMErrorViewTDD(
-            settings: settings
-        )
-        
-        return sut
+                       "The \(sut.self) text should match the expected text: `\(String(describing: expectedTextString))`",
+                       file: file,
+                       line: line)
     }
 }
