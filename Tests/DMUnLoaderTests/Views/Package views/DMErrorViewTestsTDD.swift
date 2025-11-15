@@ -33,24 +33,53 @@ struct DMErrorViewTDD: View {
 final class DMErrorViewTestsTDD: XCTestCase {
     
     // MARK: Scenario 1: Verify Default Initialization
-    func testInitializationWithDefaultSettings() throws {
+    
+    func testErrorViewImageCorrespondsToDefaultSettings() throws {
         // Given
         let defaultSettings = DMErrorDefaultViewSettings()
         
         // When
-        let sut = makeSUT(settings: defaultSettings)
+        let sut = makeSUT(
+            settings: defaultSettings,
+            onClose: DMButtonAction { }
+        )
         
         // Then
         try checkErrorViewImageCorrespondsToSettings(
             sut: sut,
             expectedImageSettings: defaultSettings.errorImageSettings
         )
+    }
+    
+    func testErrorTextCorrespondsToDefaultSettings() throws {
+        // Given
+        let defaultSettings = DMErrorDefaultViewSettings()
         
-        try checkErrorTextCorrespondsToSettings(
-            sut: sut,
-            expectedTextFromSettings: defaultSettings.errorText,
-            expectedTextString: "An error has occured!"
+        // When
+        let sut = makeSUT(
+            settings: defaultSettings,
+            onClose: DMButtonAction { }
         )
+        
+        // Then
+        try checkErrorTextCorrespondsToSettings(
+           sut: sut,
+           expectedTextFromSettings: defaultSettings.errorText,
+           expectedTextString: "An error has occured!"
+       )
+    }
+    
+    func testErrorTextCorrespondsToAnEmptySettings() throws {
+        // Given
+        let defaultSettings = DMErrorDefaultViewSettings()
+        
+        // When
+        let sut = makeSUT(
+            settings: defaultSettings,
+            onClose: DMButtonAction { }
+        )
+        
+        // Then
         try checkErrorTextCorrespondsToSettings(
             sut: sut,
             expectedTextFromSettings: nil,
@@ -60,7 +89,9 @@ final class DMErrorViewTestsTDD: XCTestCase {
     
     private func checkErrorViewImageCorrespondsToSettings(
         sut: DMErrorViewTDD,
-        expectedImageSettings: ErrorImageSettings
+        expectedImageSettings: ErrorImageSettings,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) throws {
         // When
         let image = try sut
@@ -72,7 +103,9 @@ final class DMErrorViewTestsTDD: XCTestCase {
         try sutImageNameConfirmToExpectedImage(
             sutImage: image,
             expectedImage: expectedImageSettings.image,
-            expectedImageName: "exclamationmark.triangle"
+            expectedImageName: "exclamationmark.triangle",
+            file: file,
+            line: line
         )
     }
     
