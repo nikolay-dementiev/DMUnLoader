@@ -27,6 +27,7 @@ struct DMErrorViewTDD: View {
         let imageSettings = settingsProvider.errorImageSettings
         
         imageSettings.image
+            .resizable()
             .frame(width: imageSettings.frameSize.width,
                    height: imageSettings.frameSize.height,
                    alignment: imageSettings.frameSize.alignment)
@@ -195,7 +196,8 @@ final class DMErrorViewTestsTDD: XCTestCase {
         // Then
         XCTAssertEqual(
             try imageView.actualImage(),
-            imageSettings.image,
+            imageSettings.image
+                .resizable(),
             "The image view should display the custom image"
         )
     }
@@ -272,6 +274,34 @@ final class DMErrorViewTestsTDD: XCTestCase {
             try imageView.fixedAlignment(),
             expectedAlignment,
             "The image view should have the correct alignment from settings: `\(String(describing: expectedAlignment))`"
+        )
+    }
+    
+    func testThatThe_ErrorImage_ResizableParameters_ConfirmToExpectedDefault() throws {
+        // Given
+        let imageSettings = makeCustomImageSettingsForScenario2()
+        let customSettings = DMErrorDefaultViewSettings(
+            errorImageSettings: imageSettings
+        )
+        
+        // When
+        let sut = makeSUT(settings: customSettings)
+        let imageView = try sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.imageViewTag)
+            .image()
+        let resizableParameters = try imageView.actualImage().resizableParameters()
+        
+        // Then
+        XCTAssertEqual(
+            resizableParameters.capInsets,
+            EdgeInsets(),
+            "The resizable image capInsets should be equal to EdgeInsets()"
+        )
+        XCTAssertEqual(
+            resizableParameters.resizingMode,
+            .stretch,
+            "The resizable image resizingMode should be .stretch"
         )
     }
     
