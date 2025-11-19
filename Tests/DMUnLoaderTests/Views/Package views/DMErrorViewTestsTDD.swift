@@ -28,7 +28,8 @@ struct DMErrorViewTDD: View {
         
         imageSettings.image
             .frame(width: imageSettings.frameSize.width,
-                   height: imageSettings.frameSize.height)
+                   height: imageSettings.frameSize.height,
+                   alignment: imageSettings.frameSize.alignment)
             .foregroundStyle(imageSettings.foregroundColor)
             .tag(DMErrorViewOwnSettings.imageViewTag)
         
@@ -251,6 +252,29 @@ final class DMErrorViewTestsTDD: XCTestCase {
         )
     }
     
+    func testThatThe_ErrorImage_Aligment_CorresponsToSettings() throws {
+        // Given
+        let imageSettings = makeCustomImageSettings()
+        let customSettings = DMErrorDefaultViewSettings(
+            errorImageSettings: imageSettings
+        )
+        let expectedAlignment = customSettings.errorImageSettings.frameSize.alignment
+        
+        // When
+        let sut = makeSUT(settings: customSettings)
+        let imageView = try sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.imageViewTag)
+            .image()
+        
+        // Then
+        XCTAssertEqual(
+            try imageView.fixedAlignment(),
+            expectedAlignment,
+            "The image view should have the correct alignment from settings: `\(String(describing: expectedAlignment))`"
+        )
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(
@@ -325,7 +349,11 @@ final class DMErrorViewTestsTDD: XCTestCase {
     private func makeCustomImageSettings() -> ErrorImageSettings {
         let errorImage = Image("xmark.octagon")
         let expectedForegroudColor = Color.orange
-        let expectedFrameSize = CustomViewSize(width: 60, height: 60)
+        let expectedFrameSize = CustomViewSize(
+            width: 60,
+            height: 60,
+            alignment: .bottomTrailing
+        )
         
         let imageSettings = ErrorImageSettings(
             image: errorImage,

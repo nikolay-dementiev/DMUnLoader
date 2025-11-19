@@ -33,10 +33,11 @@
 - **Description**: Check if the error image is styled correctly based on the `errorImageSettings`.
 - **Steps**:
   - [✅] Create a new instance of `DMErrorView` with custom `errorImageSettings`.
-  - [✅] Set the `image` to `Image(systemName: "xmark.octagon")`, `foregroundColor` to `.orange`, and `frameSize` to `CGSize(width: 60, height: 60)`.
+  - [✅] Set the `image` to `Image(systemName: "xmark.octagon")`, `foregroundColor` to `.orange`, and `frameSize` to `CGSize(width: 60, height: 60)` and `alignment` to `.bottomTrailing`.
   - [✅] Verify that the error image is displayed with the correct image.
   - [✅] Verify that the foreground color is orange.
-  - [?] Verify that the frame size is 60x60.
+  - [✅] Verify that the frame size is 60x60.
+  - [✅] Verify that the image alignment is `.bottomTrailing`.
 - **Expected Result**:
   - The error image is styled correctly with the specified properties.
 - **Status**: ? / 🚧 / ❌ / ✅
