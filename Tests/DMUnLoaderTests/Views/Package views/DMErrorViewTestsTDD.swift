@@ -172,12 +172,45 @@ final class DMErrorViewTestsTDD: XCTestCase {
         XCTAssertNotNil(button, "The Retry Button should be present")
     }
     
+    // MARK: Scenario 2: Verify Error Image Behavior
+    
+    func testThatThe_ErrorImage_IsDisplayedWithTheCorrectImage_WithCustomImageSettings() throws {
+        // Given
+        let errorImage = Image("xmark.octagon")
+        
+        let imageSettings = ErrorImageSettings(
+            image: errorImage,
+            foregroundColor: .orange,
+            frameSize: .init(
+                width: 60,
+                height: 60
+            )
+        )
+        let customSettings = DMErrorDefaultViewSettings(
+            errorImageSettings: imageSettings
+        )
+        
+        // When
+        let sut = makeSUT(settings: customSettings)
+        let imageView = try sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.imageViewTag)
+            .image()
+        
+        // Then
+        XCTAssertEqual(
+            try imageView.actualImage(),
+            errorImage,
+            "The image view should display the custom image"
+        )
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(
         settings: DMErrorViewSettings,
         onRetry: DMAction? = nil,
-        onClose: DMAction
+        onClose: DMAction = DMButtonAction { }
     ) -> DMErrorViewTDD {
         let sut = DMErrorViewTDD(
             settings: settings,
