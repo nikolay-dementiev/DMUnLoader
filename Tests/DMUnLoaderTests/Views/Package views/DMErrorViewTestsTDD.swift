@@ -27,6 +27,7 @@ struct DMErrorViewTDD: View {
         let imageSettings = settingsProvider.errorImageSettings
         
         imageSettings.image
+            .foregroundStyle(imageSettings.foregroundColor)
             .tag(DMErrorViewOwnSettings.imageViewTag)
         
         if let errorText = settingsProvider.errorText {
@@ -83,10 +84,10 @@ final class DMErrorViewTestsTDD: XCTestCase {
         
         // Then
         try checkErrorTextCorrespondsToSettings(
-           sut: sut,
-           expectedTextFromSettings: defaultSettings.errorText,
-           expectedTextString: "An error has occured!"
-       )
+            sut: sut,
+            expectedTextFromSettings: defaultSettings.errorText,
+            expectedTextString: "An error has occured!"
+        )
     }
     
     func test_ErrorText_CorrespondsTo_AnEmpty_Settings() throws {
@@ -177,10 +178,11 @@ final class DMErrorViewTestsTDD: XCTestCase {
     func testThatThe_ErrorImage_IsDisplayedWithTheCorrectImage_WithCustomImageSettings() throws {
         // Given
         let errorImage = Image("xmark.octagon")
+        let expectedForegroudColor: Color = .orange
         
         let imageSettings = ErrorImageSettings(
             image: errorImage,
-            foregroundColor: .orange,
+            foregroundColor: expectedForegroudColor,
             frameSize: .init(
                 width: 60,
                 height: 60
@@ -202,6 +204,12 @@ final class DMErrorViewTestsTDD: XCTestCase {
             try imageView.actualImage(),
             errorImage,
             "The image view should display the custom image"
+        )
+        
+        XCTAssertEqual(
+            try imageView.foregroundStyleShapeStyle(Color.self),
+            expectedForegroudColor,
+            "The image view should display the custom image foreground color: `\(expectedForegroudColor)`)`"
         )
     }
     
@@ -232,7 +240,7 @@ final class DMErrorViewTestsTDD: XCTestCase {
             .inspect()
             .find(viewWithTag: DMErrorViewOwnSettings.imageViewTag)
             .image()
-
+        
         // Then
         try sutImageNameConfirmToExpectedImage(
             sutImage: image,
@@ -260,7 +268,7 @@ final class DMErrorViewTestsTDD: XCTestCase {
             .inspect()
             .find(viewWithTag: DMErrorViewOwnSettings.errorTextViewTag)
             .text()
-
+        
         // Then
         let textFormSUT = try? text.string()
         XCTAssertEqual(textFormSUT,
