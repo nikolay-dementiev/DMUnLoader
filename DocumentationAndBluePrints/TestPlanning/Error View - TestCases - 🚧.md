@@ -57,14 +57,14 @@
   - The error text is styled correctly with the specified properties.
 - **Status**: ? / 🚧 / ❌ / ✅
 
-### Scenario 4: ✅ Verify Error Behavior
+### Scenario 4: ? Verify Error Behavior
 - **Description**: Check if the error is styled correctly based on the `errorTextSettings`.
 - **Steps**:
-  - [] Create a new instance of `DMErrorView` with custom `errorTextSettings`.
-  - [] Set the `error` to `NSError(domain: "TestError", code: 1404, userInfo: [NSLocalizedDescriptionKey: "Something went wrong"])`.
-  - [] Set the description `errorText` to `"Oops! Something went wrong."`, `foregroundColor` to `.red`, and `multilineTextAlignment` to `.leading` and padding to `EdgeInsets(top: 11,leading: 16,bottom: 12,trailing: 17)`.
-  - [] Verify that the error text is `"Something went wrong"`.
-  - [] Verify that the error text description is `"Oops! Something went wrong."`.
+  - [✅] Create a new instance of `DMErrorView` with custom `errorTextSettings`.
+  - [✅] Set the `error` to `NSError(domain: "TestError", code: 1404, userInfo: [NSLocalizedDescriptionKey: "Something went wrong"])`.
+  - [✅] Set the title `errorText` to `"Oops! Something went wrong."`, `foregroundColor` to `.red`, and `multilineTextAlignment` to `.leading` and padding to `EdgeInsets(top: 11,leading: 16,bottom: 12,trailing: 17)`.
+  - [✅] Verify that the error text is `"Something went wrong"`.
+  - [✅] Verify that the error text title is `"Oops! Something went wrong."`.
   - [] Verify that the foreground color is red.
   - [] Verify that the alignment is leading.
   - [] Verify that the padding is `EdgeInsets(top: 11,leading: 16,bottom: 12,trailing: 17)`.

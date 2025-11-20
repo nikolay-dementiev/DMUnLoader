@@ -446,6 +446,32 @@ final class DMErrorViewTestsTDD: XCTestCase {
             error.localizedDescription,
             """
             The exeption error text view should display the custom error
+            text from the view's error: `\(String(describing: error.localizedDescription))`
+            """
+        )
+    }
+    
+    func testThatThe_Error_IsDisplayedWithThe_TitleText_BasedOnSetings() throws {
+        // Given
+        let customSettings = makeCustomSettingsForScenario3And4()
+        let error = makeNSErrorForScenario4()
+        
+        // When
+        let sut = makeSUT(
+            settings: customSettings,
+            error: error
+        )
+        let errorTitleTextView = try sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.errorTextViewTag)
+            .text()
+        
+        // Then
+        XCTAssertEqual(
+            try errorTitleTextView.string(),
+            customSettings.errorText,
+            """
+            The exeption error text view should display the custom error
             text from settings: `\(String(describing: customSettings.errorText))`
             """
         )
