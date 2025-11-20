@@ -555,6 +555,48 @@ final class DMErrorViewTestsTDD: XCTestCase {
         )
     }
     
+    // MARK: Scenario 5: Verify Action Buttons Behavior
+    func testThatThe_CloseButton_IsDisplayedWithThe_Text_BasedOnSetings() throws {
+        // Given
+        let customSettings = makeCustomSettingsForActionButton()
+
+        // When
+        let sut = makeSUT(
+            settings: customSettings,
+            onClose: DMButtonAction { }
+        )
+        let closeButton = try sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.actionButtonCloseViewTag)
+            .button()
+        
+        // Then
+        XCTAssertEqual(
+            try closeButton.labelView().text().string(),
+            customSettings.actionButtonCloseSettings.text,
+            "The close button should display the custom text from settings: `\(customSettings.actionButtonCloseSettings.text)`"
+            )
+    }
+    
+    func testThatThe_RetryButton_IsNOTDisplayed_When_OnRetryAction_DoesNotProvided() throws {
+        // Given
+        let customSettings = makeCustomSettingsForActionButton()
+
+        // When
+        let sut = makeSUT(
+            settings: customSettings,
+            onClose: DMButtonAction { }
+        )
+        let retryButton = try? sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.actionButtonRetryViewTag)
+            .button()
+        
+        // Then
+        XCTAssertNil(retryButton,
+                     "The retry button should NOT be displayed when onRetry action is not provided")
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(
@@ -661,6 +703,17 @@ final class DMErrorViewTestsTDD: XCTestCase {
         return DMErrorDefaultViewSettings(
             errorText: "Oops! Something went wrong.",
             errorTextSettings: textSettings,
+        )
+    }
+    
+    private func makeCustomSettingsForActionButton() -> DMErrorDefaultViewSettings {
+        DMErrorDefaultViewSettings(
+            actionButtonCloseSettings: ActionButtonSettings(
+                text: "Dismiss"
+            ),
+            actionButtonRetrySettings: ActionButtonSettings(
+                text: "Try Again"
+            )
         )
     }
     

@@ -75,11 +75,11 @@
 
 ---
 
-### Scenario 5: ? Verify Action Buttons Behavior
+### Scenario 5: 🚧 Verify Action Buttons Behavior
 - **Description**: Check if the "Close" and "Retry" buttons are styled and behave correctly.
 - **Steps**:
-  - [?] Create a new instance of `DMErrorView` with custom `actionButtonCloseSettings` and `actionButtonRetrySettings`.
-  - [?] Set the "Close" button text to `"Dismiss"` and the "Retry" button text to `"Try Again"`.
+  - [✅] Create a new instance of `DMErrorView` with custom `actionButtonCloseSettings` and `actionButtonRetrySettings`.
+  - [✅] Set the "Close" button text to `"Dismiss"` and the "Retry" button text to `"Try Again"`.
   - [?] Verify that the "Close" button is present and styled correctly.
   - [?] Verify that the "Retry" button is present and styled correctly when `onRetry` is provided.
   - [?] Simulate a tap on the "Close" button and verify that the `onClose` action is triggered.
