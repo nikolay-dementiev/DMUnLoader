@@ -57,7 +57,7 @@
   - The error text is styled correctly with the specified properties.
 - **Status**: ? / 🚧 / ❌ / ✅
 
-### Scenario 4: ? Verify Error Behavior
+### Scenario 4: ✅ Verify Error Behavior
 - **Description**: Check if the error is styled correctly based on the `errorTextSettings`.
 - **Steps**:
   - [✅] Create a new instance of `DMErrorView` with custom `errorTextSettings`.
