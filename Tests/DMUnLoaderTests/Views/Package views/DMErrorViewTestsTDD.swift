@@ -305,6 +305,30 @@ final class DMErrorViewTestsTDD: XCTestCase {
         )
     }
     
+    // MARK: Scenario 3: Verify Error Text Behavior
+    
+    func testThatThe_ErrorText_IsDisplayedWithTheTextBasedOnSetings() throws {
+        // Given
+        let customSettings = makeCustomSettingsForScenario3()
+        
+        // When
+        let sut = makeSUT(settings: customSettings)
+        let errorTextView = try sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.errorTextViewTag)
+            .text()
+        
+        // Then
+        XCTAssertEqual(
+            try errorTextView.string(),
+            customSettings.errorText,
+            """
+            The error text view should display the custom error
+            text from settings: `\(String(describing: customSettings.errorText))`
+            """
+        )
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(
@@ -392,5 +416,17 @@ final class DMErrorViewTestsTDD: XCTestCase {
         )
         
         return imageSettings
+    }
+    
+    private func makeCustomSettingsForScenario3() -> DMErrorDefaultViewSettings {
+        let textSettings = ErrorTextSettings(
+            foregroundColor: Color.red,
+            multilineTextAlignment: .leading
+        )
+        
+        return DMErrorDefaultViewSettings(
+            errorText: "Oops! Something went wrong.",
+            errorTextSettings: textSettings,
+        )
     }
 }
