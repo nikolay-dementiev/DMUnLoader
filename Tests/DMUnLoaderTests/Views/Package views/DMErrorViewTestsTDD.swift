@@ -17,9 +17,9 @@ struct DMErrorViewTDD: View {
     let onRetry: DMAction?
     let onClose: DMAction
     
-    #if DEBUG
+#if DEBUG
     let inspection: Inspection<Self>? = getInspectionIfAvailable()
-    #endif
+#endif
     
     init(settings settingsProvider: DMErrorViewSettings,
          error: Error,
@@ -57,16 +57,15 @@ struct DMErrorViewTDD: View {
             
             let closeButtonSettings = settingsProvider.actionButtonCloseSettings
             HStack {
-                Button(closeButtonSettings.text,
-                       action: onClose.simpleAction)
-                .buttonStyle(closeButtonSettings.styleFactory())
+                ActionButton(settings: closeButtonSettings,
+                             action: onClose)
                 .tag(DMErrorViewOwnSettings.actionButtonCloseViewTag)
                 
                 if let onRetry = onRetry {
                     let retryButtonSettings = settingsProvider.actionButtonRetrySettings
                     
-                    Button(retryButtonSettings.text,
-                           action: onRetry.simpleAction)
+                    ActionButton(settings: retryButtonSettings,
+                                 action: onRetry)
                     .tag(DMErrorViewOwnSettings.actionButtonRetryViewTag)
                 }
             }
@@ -76,11 +75,33 @@ struct DMErrorViewTDD: View {
         .fixedSize(horizontal: true, vertical: false)
         .tag(DMErrorViewOwnSettings.containerVStackViewTag)
         
-        #if DEBUG
+#if DEBUG
         .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in
             inspection?.visit(self, $0)
         }
-        #endif
+#endif
+    }
+    
+}
+
+extension DMErrorViewTDD {
+    
+    struct ActionButton: View {
+        let action: DMAction
+        let settings: ActionButtonSettings
+        
+        init(settings: ActionButtonSettings,
+             action: DMAction) {
+            self.action = action
+            self.settings = settings
+        }
+        
+        var body: some View {
+            Button(settings.text,
+                   action: action.simpleAction)
+            .buttonStyle(settings.styleFactory())
+            .tag(DMErrorViewOwnSettings.actionButtonButtoViewTag)
+        }
     }
     
     struct ErrorText: View {
@@ -586,6 +607,7 @@ final class DMErrorViewTestsTDD: XCTestCase {
     }
     
     // MARK: Scenario 5: Verify Action Buttons Behavior
+    
     func testThatThe_CloseButton_IsDisplayedWithThe_Text_BasedOnSetings() throws {
         // Given
         let customSettings = makeCustomSettingsForActionButton()
@@ -627,17 +649,9 @@ final class DMErrorViewTestsTDD: XCTestCase {
                      "The retry button should NOT be displayed when onRetry action is not provided")
     }
     
-    func testThatThe_CloseButton_IsStyledCorrectlyAccordingToSettings() throws {
+    func testThatThe_ViewWithCloseButton_IsStyledCorrectlyAccordingToSettings() throws {
         // Given
-        let customSettings = DMErrorDefaultViewSettings(
-            errorText: "",
-            actionButtonCloseSettings: ActionButtonSettings(
-                text: "Dismiss"
-            ),
-            actionButtonRetrySettings: ActionButtonSettings(
-                text: "Try Again"
-            )
-        )
+        let customSettings = makeCustomSettingsForActionButton(errorText: "")
         
         // When
         let sut = makeSUT(
@@ -646,13 +660,58 @@ final class DMErrorViewTestsTDD: XCTestCase {
             onClose: DMButtonAction { }
         )
         
+        // Then
         assertSnapshot(
             of: LoadingViewContainer<DMErrorViewTDD>(overlayView: { sut }),
             as: .image(
                 layout: .sizeThatFits,
                 traits: .init(userInterfaceStyle: .light)
             ),
-            named: "CloseButton-sizeThatFits-light"
+            named: "ViewWith-CloseButton-sizeThatFits-light"
+        )
+    }
+    
+    func testThatThe_RetryButton_IsDisplayedWithThe_Text_BasedOnSetings_When_OnRetry_IsProvided() throws {
+        // Given
+        let customSettings = makeCustomSettingsForActionButton()
+
+        // When
+        let sut = makeSUT(
+            settings: customSettings,
+            onRetry: DMButtonAction { },
+        )
+        let retryButton = try sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.actionButtonRetryViewTag)
+            .button()
+        
+        // Then
+        XCTAssertEqual(
+            try retryButton.labelView().text().string(),
+            customSettings.actionButtonRetrySettings.text,
+            "The retry button should display the custom text from settings: `\(customSettings.actionButtonRetrySettings.text)`"
+            )
+    }
+    
+    func testThatThe_ViewWithRetryButton_IsStyledCorrectlyAccordingToSettings() throws {
+        // Given
+        let customSettings = makeCustomSettingsForActionButton(errorText: "")
+        
+        // When
+        let sut = makeSUT(
+            settings: customSettings,
+            error: DMAppError.custom(nil),
+            onRetry: DMButtonAction { },
+        )
+        
+        // Then
+        assertSnapshot(
+            of: LoadingViewContainer<DMErrorViewTDD>(overlayView: { sut }),
+            as: .image(
+                layout: .sizeThatFits,
+                traits: .init(userInterfaceStyle: .light)
+            ),
+            named: "ViewWith-RetryButton-sizeThatFits-light"
         )
     }
     
@@ -765,8 +824,9 @@ final class DMErrorViewTestsTDD: XCTestCase {
         )
     }
     
-    private func makeCustomSettingsForActionButton() -> DMErrorDefaultViewSettings {
+    private func makeCustomSettingsForActionButton(errorText: String? = nil) -> DMErrorDefaultViewSettings {
         DMErrorDefaultViewSettings(
+            errorText: errorText,
             actionButtonCloseSettings: ActionButtonSettings(
                 text: "Dismiss"
             ),
