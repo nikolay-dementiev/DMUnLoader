@@ -715,6 +715,34 @@ final class DMErrorViewTestsTDD: XCTestCase {
         )
     }
     
+    func testThatTapOnTheCloseButtonTrigegrOnCloseAction() throws {
+        // Given
+        let customSettings = makeCustomSettingsForActionButton()
+        let buttonTapExp = expectation(description: "Close button tap action triggered")
+        
+        // When
+        let sut = makeSUT(
+            settings: customSettings,
+            onClose: DMButtonAction {
+                buttonTapExp.fulfill()
+            }
+        )
+        
+        let expInspection = sut.inspection!.inspect { view in
+            try view
+                .find(viewWithTag: DMErrorViewOwnSettings.actionButtonCloseViewTag)
+                .button()
+                .tap()
+        }
+        
+        // Then
+        ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
+        
+        wait(for: [expInspection], timeout: 0.05)
+        wait(for: [buttonTapExp], timeout: 0.055)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(
