@@ -11,14 +11,17 @@ import ViewInspector
 
 struct DMErrorViewTDD: View {
     let settingsProvider: DMErrorViewSettings
+    let error: Error
     let onRetry: DMAction?
     let onClose: DMAction
     
     init(settings settingsProvider: DMErrorViewSettings,
+         error: Error,
          onRetry: DMAction? = nil,
          onClose: DMAction) {
         
         self.settingsProvider = settingsProvider
+        self.error = error
         self.onRetry = onRetry
         self.onClose = onClose
     }
@@ -36,12 +39,14 @@ struct DMErrorViewTDD: View {
             .tag(DMErrorViewOwnSettings.imageViewTag)
         
         if let errorText = settingsProvider.errorText {
-            Text(errorText)
-                .foregroundStyle(textSettings.foregroundColor)
-                .multilineTextAlignment(textSettings.multilineTextAlignment)
-                .padding(textSettings.padding)
+            ErrorText(errorText,
+                      settings: textSettings)
                 .tag(DMErrorViewOwnSettings.errorTextViewTag)
         }
+        
+        ErrorText(error.localizedDescription,
+                  settings: settingsProvider.errorTextSettings)
+        .tag(DMErrorViewOwnSettings.errorTextFormExeptionContainerViewTag)
         
         let closeButtonSettings = settingsProvider.actionButtonCloseSettings
         Button(closeButtonSettings.text,
@@ -54,6 +59,25 @@ struct DMErrorViewTDD: View {
             Button(retryButtonSettings.text,
                    action: onRetry.simpleAction)
             .tag(DMErrorViewOwnSettings.actionButtonRetryViewTag)
+        }
+    }
+    
+    struct ErrorText: View {
+        let errorText: String
+        let settings: ErrorTextSettings
+        
+        init(_ errorText: String,
+             settings: ErrorTextSettings) {
+            self.errorText = errorText
+            self.settings = settings
+        }
+        
+        var body: some View {
+            Text(errorText)
+                .foregroundStyle(settings.foregroundColor)
+                .multilineTextAlignment(settings.multilineTextAlignment)
+                .padding(settings.padding)
+                .tag(DMErrorViewOwnSettings.errorTextViewTag)
         }
     }
 }
@@ -313,7 +337,7 @@ final class DMErrorViewTestsTDD: XCTestCase {
     
     func testThatThe_ErrorText_IsDisplayedWithThe_Text_BasedOnSetings() throws {
         // Given
-        let customSettings = makeCustomSettingsForScenario3()
+        let customSettings = makeCustomSettingsForScenario3And4()
         
         // When
         let sut = makeSUT(settings: customSettings)
@@ -335,7 +359,7 @@ final class DMErrorViewTestsTDD: XCTestCase {
     
     func testThatThe_ErrorText_IsDisplayedWithThe_ForegroundColor_BasedOnSetings() throws {
         // Given
-        let customSettings = makeCustomSettingsForScenario3()
+        let customSettings = makeCustomSettingsForScenario3And4()
         
         // When
         let sut = makeSUT(settings: customSettings)
@@ -357,7 +381,7 @@ final class DMErrorViewTestsTDD: XCTestCase {
     
     func testThatThe_ErrorText_IsDisplayedWithThe_Alignment_BasedOnSetings() throws {
         // Given
-        let customSettings = makeCustomSettingsForScenario3()
+        let customSettings = makeCustomSettingsForScenario3And4()
         
         // When
         let sut = makeSUT(settings: customSettings)
@@ -379,7 +403,7 @@ final class DMErrorViewTestsTDD: XCTestCase {
     
     func testThatThe_ErrorText_IsDisplayedWithThe_Padding_BasedOnSetings() throws {
         // Given
-        let customSettings = makeCustomSettingsForScenario3()
+        let customSettings = makeCustomSettingsForScenario3And4()
         
         // When
         let sut = makeSUT(settings: customSettings)
@@ -399,15 +423,45 @@ final class DMErrorViewTestsTDD: XCTestCase {
         )
     }
     
+    // MARK: Scenario 4: Verify Error Behavior
+    
+    func testThatThe_Error_IsDisplayedWithThe_Text_BasedOnSetings() throws {
+        // Given
+        let customSettings = makeCustomSettingsForScenario3And4()
+        let error = makeNSErrorForScenario4()
+        
+        // When
+        let sut = makeSUT(
+            settings: customSettings,
+            error: error
+        )
+        let errorTextView = try sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.errorTextFormExeptionContainerViewTag)
+            .text()
+        
+        // Then
+        XCTAssertEqual(
+            try errorTextView.string(),
+            error.localizedDescription,
+            """
+            The exeption error text view should display the custom error
+            text from settings: `\(String(describing: customSettings.errorText))`
+            """
+        )
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(
         settings: DMErrorViewSettings,
+        error: Error = NSError(domain: "TestErrorDomain", code: 1, userInfo: nil),
         onRetry: DMAction? = nil,
         onClose: DMAction = DMButtonAction { }
     ) -> DMErrorViewTDD {
         let sut = DMErrorViewTDD(
             settings: settings,
+            error: error,
             onRetry: onRetry,
             onClose: onClose
         )
@@ -488,7 +542,7 @@ final class DMErrorViewTestsTDD: XCTestCase {
         return imageSettings
     }
     
-    private func makeCustomSettingsForScenario3() -> DMErrorDefaultViewSettings {
+    private func makeCustomSettingsForScenario3And4() -> DMErrorDefaultViewSettings {
         let textSettings = ErrorTextSettings(
             foregroundColor: Color.red,
             multilineTextAlignment: .leading,
@@ -503,6 +557,14 @@ final class DMErrorViewTestsTDD: XCTestCase {
         return DMErrorDefaultViewSettings(
             errorText: "Oops! Something went wrong.",
             errorTextSettings: textSettings,
+        )
+    }
+    
+    private func makeNSErrorForScenario4() -> NSError {
+        NSError(
+            domain: "TestError",
+            code: 1404,
+            userInfo: [NSLocalizedDescriptionKey: "Something went wrong"]
         )
     }
 }
