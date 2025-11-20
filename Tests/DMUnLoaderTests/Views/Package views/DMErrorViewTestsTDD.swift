@@ -477,6 +477,32 @@ final class DMErrorViewTestsTDD: XCTestCase {
         )
     }
     
+    func testThatThe_Error_IsDisplayedWithThe_ForegroundColor_BasedOnSetings() throws {
+        // Given
+        let customSettings = makeCustomSettingsForScenario3And4()
+        let error = makeNSErrorForScenario4()
+        
+        // When
+        let sut = makeSUT(
+            settings: customSettings,
+            error: error
+        )
+        let errorTextView = try sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.errorTextFormExeptionContainerViewTag)
+            .text()
+        
+        // Then
+        XCTAssertEqual(
+            try errorTextView.foregroundStyleShapeStyle(Color.self),
+            customSettings.errorTextSettings.foregroundColor,
+                """
+                The error text view should display the custom foreground color 
+                from settings: `\(String(describing: customSettings.errorTextSettings.foregroundColor))`
+                """
+        )
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(
