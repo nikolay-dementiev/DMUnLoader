@@ -44,7 +44,7 @@
 
 ---
 
-### Scenario 3: ? Verify Error Text Behavior
+### Scenario 3: ✅ Verify Error Text Behavior
 - **Description**: Check if the error text is styled correctly based on the `errorTextSettings`.
 - **Steps**:
   - [✅] Create a new instance of `DMErrorView` with custom `errorTextSettings`.
