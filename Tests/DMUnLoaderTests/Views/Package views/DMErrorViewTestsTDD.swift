@@ -333,9 +333,9 @@ final class DMErrorViewTestsTDD: XCTestCase {
         )
     }
     
-    // MARK: Scenario 3: Verify Error Text Behavior
+    // MARK: Scenario 3: Verify Error Title Behavior
     
-    func testThatThe_ErrorText_IsDisplayedWithThe_Text_BasedOnSetings() throws {
+    func testThatThe_TitleErrorText_IsDisplayedWithThe_Text_BasedOnSetings() throws {
         // Given
         let customSettings = makeCustomSettingsForScenario3And4()
         
@@ -351,13 +351,13 @@ final class DMErrorViewTestsTDD: XCTestCase {
             try errorTextView.string(),
             customSettings.errorText,
             """
-            The error text view should display the custom error
+            The error text view should display the custom error title
             text from settings: `\(String(describing: customSettings.errorText))`
             """
         )
     }
     
-    func testThatThe_ErrorText_IsDisplayedWithThe_ForegroundColor_BasedOnSetings() throws {
+    func testThatThe_TitleErrorText_IsDisplayedWithThe_ForegroundColor_BasedOnSetings() throws {
         // Given
         let customSettings = makeCustomSettingsForScenario3And4()
         
@@ -373,13 +373,13 @@ final class DMErrorViewTestsTDD: XCTestCase {
             try errorTextView.foregroundStyleShapeStyle(Color.self),
             customSettings.errorTextSettings.foregroundColor,
             """
-            The error text view should display the custom foreground color 
+            The title error text view should display the custom foreground color 
             from settings: `\(String(describing: customSettings.errorTextSettings.foregroundColor))`
             """
         )
     }
     
-    func testThatThe_ErrorText_IsDisplayedWithThe_Alignment_BasedOnSetings() throws {
+    func testThatThe_TitleErrorText_IsDisplayedWithThe_Alignment_BasedOnSetings() throws {
         // Given
         let customSettings = makeCustomSettingsForScenario3And4()
         
@@ -395,13 +395,13 @@ final class DMErrorViewTestsTDD: XCTestCase {
             try errorTextView.multilineTextAlignment(),
             customSettings.errorTextSettings.multilineTextAlignment,
             """
-            The error text view should display the custom alignment from settings: 
+            The title error text view should display the custom alignment from settings: 
             `\(String(describing: customSettings.errorTextSettings.multilineTextAlignment))`
             """
         )
     }
     
-    func testThatThe_ErrorText_IsDisplayedWithThe_Padding_BasedOnSetings() throws {
+    func testThatThe_TitleErrorText_IsDisplayedWithThe_Padding_BasedOnSetings() throws {
         // Given
         let customSettings = makeCustomSettingsForScenario3And4()
         
@@ -417,7 +417,7 @@ final class DMErrorViewTestsTDD: XCTestCase {
             try errorTextView.padding(),
             customSettings.errorTextSettings.padding,
             """
-            The error text view should display the custom padding from settings:
+            The title error text view should display the custom padding from settings:
             `\(String(describing: customSettings.errorTextSettings.padding))`
             """
         )
