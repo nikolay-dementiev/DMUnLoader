@@ -50,7 +50,7 @@
   - [✅] Create a new instance of `DMErrorView` with custom `errorTextSettings`.
   - [✅] Set the `errorText` to `"Oops! Something went wrong."`, `foregroundColor` to `.red`, and `multilineTextAlignment` to `.leading`.
   - [✅] Verify that the error text is `"Oops! Something went wrong."`.
-  - [?] Verify that the foreground color is red.
+  - [✅] Verify that the foreground color is red.
   - [?] Verify that the alignment is leading.
 - **Expected Result**:
   - The error text is styled correctly with the specified properties.

@@ -25,6 +25,7 @@ struct DMErrorViewTDD: View {
     
     var body: some View {
         let imageSettings = settingsProvider.errorImageSettings
+        let textSettings = settingsProvider.errorTextSettings
         
         imageSettings.image
             .resizable()
@@ -36,6 +37,7 @@ struct DMErrorViewTDD: View {
         
         if let errorText = settingsProvider.errorText {
             Text(errorText)
+                .foregroundStyle(textSettings.foregroundColor)
                 .tag(DMErrorViewOwnSettings.errorTextViewTag)
         }
         
@@ -325,6 +327,28 @@ final class DMErrorViewTestsTDD: XCTestCase {
             """
             The error text view should display the custom error
             text from settings: `\(String(describing: customSettings.errorText))`
+            """
+        )
+    }
+    
+    func testThatThe_ErrorText_IsDisplayedWithTheForegroundColorBasedOnSetings() throws {
+        // Given
+        let customSettings = makeCustomSettingsForScenario3()
+        
+        // When
+        let sut = makeSUT(settings: customSettings)
+        let errorTextView = try sut
+            .inspect()
+            .find(viewWithTag: DMErrorViewOwnSettings.errorTextViewTag)
+            .text()
+        
+        // Then
+        XCTAssertEqual(
+            try errorTextView.foregroundStyleShapeStyle(Color.self),
+            customSettings.errorTextSettings.foregroundColor,
+            """
+            The error text view should display the custom foreground color 
+            from settings: `\(String(describing: customSettings.errorTextSettings.foregroundColor))`
             """
         )
     }
