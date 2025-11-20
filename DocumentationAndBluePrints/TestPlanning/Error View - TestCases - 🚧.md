@@ -83,7 +83,7 @@
   - [✅] Verify that the "Close" button is present and styled correctly.
   - [✅] Verify that the "Retry" button is present and styled correctly when `onRetry` is provided.
   - [✅] Simulate a tap on the "Close" button and verify that the `onClose` action is triggered.
-  - [?] Simulate a tap on the "Retry" button and verify that the `onRetry` action is triggered.
+  - [✅] Simulate a tap on the "Retry" button and verify that the `onRetry` action is triggered.
 - **Expected Result**:
   - The buttons are displayed and styled correctly.
   - The actions are triggered as expected.

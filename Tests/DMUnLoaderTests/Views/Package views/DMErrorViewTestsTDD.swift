@@ -715,7 +715,7 @@ final class DMErrorViewTestsTDD: XCTestCase {
         )
     }
     
-    func testThatTapOnTheCloseButtonTrigegrOnCloseAction() throws {
+    func testThat_TapOnTheCloseButton_Trigger_OnCloseAction() throws {
         // Given
         let customSettings = makeCustomSettingsForActionButton()
         let buttonTapExp = expectation(description: "Close button tap action triggered")
@@ -731,6 +731,34 @@ final class DMErrorViewTestsTDD: XCTestCase {
         let expInspection = sut.inspection!.inspect { view in
             try view
                 .find(viewWithTag: DMErrorViewOwnSettings.actionButtonCloseViewTag)
+                .button()
+                .tap()
+        }
+        
+        // Then
+        ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
+        
+        wait(for: [expInspection], timeout: 0.05)
+        wait(for: [buttonTapExp], timeout: 0.055)
+    }
+    
+    func testThatTap_OnTheRetryButton_Trigger_OnRetryAction() throws {
+        // Given
+        let customSettings = makeCustomSettingsForActionButton()
+        let buttonTapExp = expectation(description: "Retry button tap action triggered")
+        
+        // When
+        let sut = makeSUT(
+            settings: customSettings,
+            onRetry: DMButtonAction {
+                buttonTapExp.fulfill()
+            }
+        )
+        
+        let expInspection = sut.inspection!.inspect { view in
+            try view
+                .find(viewWithTag: DMErrorViewOwnSettings.actionButtonRetryViewTag)
                 .button()
                 .tap()
         }
