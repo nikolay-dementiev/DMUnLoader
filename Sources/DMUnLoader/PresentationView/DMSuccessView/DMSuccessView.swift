@@ -56,3 +56,27 @@ struct DMSuccessView: View {
         .tag(DMSuccessViewOwnSettings.containerViewTag)
     }
 }
+
+#Preview("DefaultSettings") {
+    PreviewRenderOwner {
+        DMSuccessView(settings: DMSuccessDefaultViewSettings())
+    }
+}
+
+#Preview("CustomSettings") {
+    PreviewRenderOwner {
+        DMSuccessView(settings: DMSuccessDefaultViewSettings(
+            successImageProperties: .init(
+                image: Image(systemName: "checkmark.seal.fill"),
+                frame: .init(width: 120, height: 120, alignment: .center),
+                foregroundColor: .cyan
+            ),
+            successTextProperties: .init(
+                text: "Operation Completed Successfully Operation Completed Successfully!",
+                foregroundColor: .yellow,
+                alignment: .center
+            ),
+            spacingBetweenElements: 20
+        ))
+    }
+}

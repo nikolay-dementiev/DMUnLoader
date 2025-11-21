@@ -72,3 +72,28 @@ struct DMProgressView: View {
         .tag(DMProgressViewOwnSettings.zStackViewTag)
     }
 }
+
+#Preview("DefaultSettings") {
+    PreviewRenderOwner {
+        DMProgressView(settings: DMProgressViewDefaultSettings())
+    }
+}
+
+#Preview("CustomSettings") {
+    PreviewRenderOwner {
+        DMProgressView(settings: DMProgressViewDefaultSettings(
+            loadingTextProperties: .init(
+                text: "Loading super long text...",
+                foregroundColor: .white,
+                font: .headline,
+                lineLimit: 2,
+                linePadding: .init(top: 5, leading: 10, bottom: 5, trailing: 10)
+            ),
+            progressIndicatorProperties: .init(
+                size: .large,
+                tintColor: .yellow
+            ),
+            frameGeometrySize: .init(width: 200, height: 200)
+        ))
+    }
+}

@@ -117,7 +117,7 @@ struct DMErrorView: View {
             .padding(.top, 5)
             .tag(DMErrorViewOwnSettings.buttonContainersHStackViewTag)
         }
-        .fixedSize(horizontal: true, vertical: false)
+//        .fixedSize(horizontal: true, vertical: false)
         .tag(DMErrorViewOwnSettings.containerVStackViewTag)
     }
 }
@@ -184,36 +184,41 @@ extension DMErrorView {
     }
 }
 
-#Preview("Basic: 2 buttons") {
+#Preview("DefaultSettings") {
     PreviewRenderOwner {
         DMErrorView(settings: DMErrorDefaultViewSettings(),
-                    error: DMAppError.custom("Something went wrong"),
+                    error: DMAppError.custom(
+                        "Something went wrong"
+                    ),
+                    onClose: DMButtonAction {}
+        )
+    }
+}
+
+#Preview("2 buttons") {
+    PreviewRenderOwner {
+        DMErrorView(settings: DMErrorDefaultViewSettings(
+            errorText: "An error has occured! An error has occured! An error has occured! An error has occured!",
+            actionButtonCloseSettings: .init(
+                text: "X"
+                )
+                
+        ),
+                    error: DMAppError.custom("Something went wrong Something went wrong Something went wrong"),
                     onRetry: DMButtonAction({ _ in }),
                     onClose: DMButtonAction({ _ in }))
     }
 }
 
-#Preview("Basic: 1 button") {
+#Preview("1 button") {
     PreviewRenderOwner {
-        DMErrorView(settings: DMErrorDefaultViewSettings(),
-                    error: DMAppError.custom("Something went wrong"),
+        DMErrorView(settings: DMErrorDefaultViewSettings(
+            errorText: "An error has occured! An error has occured! An error has occured! An error has occured!",
+            actionButtonCloseSettings: .init(
+                text: "X"
+                )
+        ),
+                    error: DMAppError.custom("Something went wrong Something went wrong Something went wrong"),
                     onClose: DMButtonAction({ _ in }))
-    }
-}
-
-private struct PreviewRenderOwner<Content: View>: View {
-    @ViewBuilder let content: Content
-    
-    init(_ content: () -> Content) {
-        self.content = content()
-    }
-
-    var body: some View {
-        Group {
-            content
-        }
-        .padding(15)
-        .background(Color.gray.opacity(0.8))
-        .cornerRadius(10)
     }
 }
