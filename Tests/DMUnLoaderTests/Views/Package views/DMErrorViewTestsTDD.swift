@@ -729,7 +729,12 @@ final class DMErrorViewTestsTDD: XCTestCase {
             }
         )
         
-        let expInspection = sut.inspection!.inspect { view in
+        guard let sutInspection = sut.inspection else {
+            XCTFail("Inspection not available on SUT")
+            return
+        }
+        
+        let expInspection = sutInspection.inspect { view in
             try view
                 .find(viewWithTag: DMErrorViewOwnSettings.actionButtonCloseViewTag)
                 .button()
@@ -756,7 +761,12 @@ final class DMErrorViewTestsTDD: XCTestCase {
             }
         )
         
-        let expInspection = sut.inspection!.inspect { view in
+        guard let sutInspection = sut.inspection else {
+            XCTFail("Inspection not available on SUT")
+            return
+        }
+        
+        let expInspection = sutInspection.inspect { view in
             try view
                 .find(viewWithTag: DMErrorViewOwnSettings.actionButtonRetryViewTag)
                 .button()
