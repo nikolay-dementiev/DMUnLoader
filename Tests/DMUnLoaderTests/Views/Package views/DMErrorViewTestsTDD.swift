@@ -72,7 +72,6 @@ struct DMErrorViewTDD: View {
             .padding(.top, 5)
             .tag(DMErrorViewOwnSettings.buttonContainersHStackViewTag)
         }
-        .fixedSize(horizontal: true, vertical: false)
         .tag(DMErrorViewOwnSettings.containerVStackViewTag)
         
 #if DEBUG
@@ -81,7 +80,6 @@ struct DMErrorViewTDD: View {
         }
 #endif
     }
-    
 }
 
 extension DMErrorViewTDD {
@@ -665,10 +663,10 @@ final class DMErrorViewTestsTDD: XCTestCase {
         assertSnapshot(
             of: LoadingViewContainer<DMErrorViewTDD>(overlayView: { sut }),
             as: .image(
-                layout: .sizeThatFits,
+                layout: .device(config: .iPhone13Pro),
                 traits: .init(userInterfaceStyle: .light)
             ),
-            named: "ViewWith-CloseButton-sizeThatFits-light"
+            named: "ViewWith-CloseButton-iPhone13Pro-light"
         )
     }
     
@@ -717,10 +715,10 @@ final class DMErrorViewTestsTDD: XCTestCase {
             assertSnapshot(
                 of: LoadingViewContainer<DMErrorViewTDD>(overlayView: { updatedView }),
                 as: .image(
-                    layout: .sizeThatFits,
+                    layout: .device(config: .iPhone13Pro),
                     traits: .init(userInterfaceStyle: .light)
                 ),
-                named: "ViewWith-RetryButton-sizeThatFits-light"
+                named: "ViewWith-RetryButton-iPhone13Pro-light"
             )
         }
         
@@ -793,6 +791,36 @@ final class DMErrorViewTestsTDD: XCTestCase {
         // Then
         wait(for: [expInspection], timeout: 0.05)
         wait(for: [buttonTapExp], timeout: 0.055)
+    }
+    
+    // MARK: Scenario 6: Verify Snapshot Testing
+    
+    func testThat_ErrorView_Renders_Correctly_When_DefaultSettings_Provided() throws {
+        // Given
+        let defaultSettings = DMErrorDefaultViewSettings()
+        
+        // When
+        let sut = makeSUT(
+            settings: defaultSettings
+        )
+        
+        // Then
+        assertSnapshot(
+            of: LoadingViewContainer<DMErrorViewTDD>(overlayView: { sut }),
+            as: .image(
+                layout: .device(config: .iPhone13Pro),
+                traits: .init(userInterfaceStyle: .light)
+            ),
+            named: "DefaultSettings-iPhone13Pro-light"
+        )
+        assertSnapshot(
+            of: LoadingViewContainer<DMErrorViewTDD>(overlayView: { sut }),
+            as: .image(
+                layout: .device(config: .iPhone13Pro),
+                traits: .init(userInterfaceStyle: .dark)
+            ),
+            named: "DefaultSettings-iPhone13Pro-dark"
+        )
     }
     
     // MARK: - Helpers

@@ -91,13 +91,13 @@
 
 ---
 
-### Scenario 6: ? Verify Snapshot Testing
+### Scenario 6: ✅ Verify Snapshot Testing For DefaultSettings
 - **Description**: Use snapshot testing to verify the visual appearance of the `DMErrorView`.
 - **Steps**:
-  - [?] Create a new instance of `DMErrorView` with default settings.
-  - [?] Render the view using a snapshot testing library (e.g., `SnapshotTesting` or `XCTest`).
-  - [?] Compare the rendered view with a reference snapshot.
-  - [?] Verify that the snapshot matches the reference image.
+  - [✅] Create a new instance of `DMErrorView` with default settings.
+  - [✅] Render the view using a snapshot testing library (e.g., `SnapshotTesting` or `XCTest`).
+  - [✅] Compare the rendered view with a reference snapshot.
+  - [✅] Verify that the snapshot matches the reference image.
 - **Expected Result**:
   - The rendered view matches the reference snapshot.
   - If the test fails, update the snapshot only after verifying intentional UI changes.
