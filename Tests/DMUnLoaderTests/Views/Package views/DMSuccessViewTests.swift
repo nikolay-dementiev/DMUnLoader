@@ -107,27 +107,6 @@ final class DMSuccessViewTests: XCTestCase {
         try sutImageResizableParametersConfirmToExpectedDefault(sutImage: image)
     }
     
-    private func sutImageNameConfirmToExpectedImage(
-        sutImage: InspectableView<ViewType.Image>,
-        expectedImage: Image,
-        expectedImageName: String,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) throws {
-        let imageFormSUT = try sutImage.actualImage().name()
-        
-        XCTAssertEqual(
-            imageFormSUT,
-            try expectedImage.name(),
-            "The custom success image should match the settings"
-        )
-        XCTAssertEqual(
-            imageFormSUT,
-            expectedImageName,
-            "The custom success image should be '\(expectedImageName)'"
-        )
-    }
-    
     private func sutImageForegroundColorConfirmToExpectedColor(
         sutImage: InspectableView<ViewType.Image>,
         expectedForegroundColorInSettings: Color?,
@@ -140,12 +119,16 @@ final class DMSuccessViewTests: XCTestCase {
         XCTAssertEqual(
             imageForegroundColorFormSUT,
             expectedForegroundColorInSettings,
-            "Success image foreground color should match the settings"
+            "Success image foreground color should match the settings",
+            file: file,
+            line: line
         )
         XCTAssertEqual(
             imageForegroundColorFormSUT,
             expectedForegroundColor,
-            "Success image foreground color should be \(expectedForegroundColor)"
+            "Success image foreground color should be \(expectedForegroundColor)",
+            file: file,
+            line: line
         )
     }
     
@@ -163,15 +146,23 @@ final class DMSuccessViewTests: XCTestCase {
             "Expected size": expectedSize
         ]
             .forEach { key, value in
-                XCTAssertEqual(fixedImageFrame.width,
-                               value.width,
-                               "The ImageView `\(key)` frame should have the correct frame width")
+                XCTAssertEqual(
+                    fixedImageFrame.width,
+                    value.width,
+                    "The ImageView `\(key)` frame should have the correct frame width",
+                    file: file,
+                    line: line
+                )
                 XCTAssertEqual(fixedImageFrame.height,
                                value.height,
-                               "The ImageView `\(key)` height should have the correct frame height")
+                               "The ImageView `\(key)` height should have the correct frame height",
+                               file: file,
+                               line: line)
                 XCTAssertEqual(fixedImageFrame.alignment,
                                value.alignment,
-                               "The ImageView `\(key)` frame should have the correct frame alignment")
+                               "The ImageView `\(key)` frame should have the correct frame alignment",
+                               file: file,
+                               line: line)
             }
     }
     
@@ -184,12 +175,16 @@ final class DMSuccessViewTests: XCTestCase {
         XCTAssertEqual(
             resizableParameters.capInsets,
             EdgeInsets(),
-            "The resizable image capInsets should be equal to EdgeInsets()"
+            "The resizable image capInsets should be equal to EdgeInsets()",
+            file: file,
+            line: line
         )
         XCTAssertEqual(
             resizableParameters.resizingMode,
             .stretch,
-            "The resizable image resizingMode should be .stretch"
+            "The resizable image resizingMode should be .stretch",
+            file: file,
+            line: line
         )
     }
     

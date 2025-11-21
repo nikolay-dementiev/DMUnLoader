@@ -90,6 +90,7 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
                         .background(Color.gray.opacity(animateTheAppearance ? 0.8 : 0.1))
                         .cornerRadius(10)
                         .scaleEffect(animateTheAppearance ? 1 : 0.9)
+                        .padding(15)
                 }
                 .transition(.opacity)
                 .animation(.easeInOut, value: loadingManager.loadableState)

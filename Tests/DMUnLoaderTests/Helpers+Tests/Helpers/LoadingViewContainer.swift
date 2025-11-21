@@ -19,6 +19,7 @@ struct LoadingViewContainer<Content: View>: View {
                 .background(Color.gray.opacity(0.8))
                 .cornerRadius(10)
                 .scaleEffect(1)
+                .padding(15)
         }
     }
 }

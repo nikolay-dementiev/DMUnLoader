@@ -1,5 +1,9 @@
 # Test Scenarios: "Success View (`DMSuccessView`)"
 
+## 0.0 The Mockup design
+
+![](../Assets/Success-on-empty-screen.png)
+
 ## 1. General Information
 - **Module**: DMSuccessView
 - **Description**: A custom SwiftUI view that displays a success state with an image and optional text. It uses a settings provider (`DMSuccessViewSettings`) to configure its appearance.

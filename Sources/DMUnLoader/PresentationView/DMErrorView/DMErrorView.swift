@@ -16,9 +16,6 @@ enum DMErrorViewOwnSettings {
     /// The tag assigned to the image view displayed in the error view.
     static let imageViewTag: Int = 3020
     
-    /// The tag assigned to the container view for the error text provided by the settings provider.
-    static let errorTextFormProviderContainerViewTag: Int = 3030
-    
     /// The tag assigned to the error text view displayed in the error view.
     static let errorTextViewTag: Int = 3031
     
@@ -41,75 +38,59 @@ enum DMErrorViewOwnSettings {
 /// A custom SwiftUI view that displays an error state with an image, error text, and optional action buttons.
 /// This view uses a settings provider to configure the appearance of the error view.
 struct DMErrorView: View {
-    
-    /// The settings provider responsible for configuring the error view's appearance.
     let settingsProvider: DMErrorViewSettings
-    
-    /// The error that occurred.
     let error: Error
-    
-    /// An optional action to retry the operation.
     let onRetry: DMAction?
-    
-    /// An action to close the error view.
     let onClose: DMAction
     
-    /// Initializes a new instance of `DMErrorView`.
-    /// - Parameters:
-    ///   - settingsProvider: The settings provider responsible for configuring the error view's appearance.
-    ///   - error: The error that occurred.
-    ///   - onRetry: An optional action to retry the operation. Defaults to `nil`.
-    ///   - onClose: An action to close the error view.
-    /// - Example:
-    ///   ```swift
-    ///   let settings = DMErrorDefaultViewSettings()
-    ///   let error = NSError(domain: "Example", code: 404, userInfo: nil)
-    ///   let onClose = DMButtonAction({ _ in })
-    ///   let errorView = DMErrorView(settings: settings, error: error, onClose: onClose)
-    ///   ```
+#if DEBUG
+    let inspection: Inspection<Self>? = getInspectionIfAvailable()
+#endif
+    
     init(settings settingsProvider: DMErrorViewSettings,
          error: Error,
          onRetry: DMAction? = nil,
          onClose: DMAction) {
+        
         self.settingsProvider = settingsProvider
         self.error = error
         self.onRetry = onRetry
         self.onClose = onClose
     }
     
-    /// The body of the `DMErrorView`.
-    /// - Returns: A view that displays an error image, error text, and optional action buttons based on the provided settings.
-    /// - Behavior:
-    ///   - Displays an image configured by `errorImageSettings`.
-    ///   - Displays optional error text provided by the settings provider or derived from the exception.
-    ///   - Displays "Close" and "Retry" buttons if actions are provided.
     var body: some View {
-        
         let imageSettings = settingsProvider.errorImageSettings
+        let textSettings = settingsProvider.errorTextSettings
+        
         VStack {
             imageSettings.image
                 .resizable()
                 .frame(width: imageSettings.frameSize.width,
-                       height: imageSettings.frameSize.height)
-                .foregroundColor(imageSettings.foregroundColor)
+                       height: imageSettings.frameSize.height,
+                       alignment: imageSettings.frameSize.alignment)
+                .foregroundStyle(imageSettings.foregroundColor)
                 .tag(DMErrorViewOwnSettings.imageViewTag)
             
             if let errorText = settingsProvider.errorText {
                 ErrorText(errorText,
-                          settings: settingsProvider.errorTextSettings)
-                .tag(DMErrorViewOwnSettings.errorTextFormProviderContainerViewTag)
+                          settings: textSettings)
+                .tag(DMErrorViewOwnSettings.errorTextViewTag)
             }
             
             ErrorText(error.localizedDescription,
                       settings: settingsProvider.errorTextSettings)
             .tag(DMErrorViewOwnSettings.errorTextFormExeptionContainerViewTag)
             
+            let closeButtonSettings = settingsProvider.actionButtonCloseSettings
             HStack {
-                ActionButton(settings: settingsProvider.actionButtonCloseSettings,
+                ActionButton(settings: closeButtonSettings,
                              action: onClose)
                 .tag(DMErrorViewOwnSettings.actionButtonCloseViewTag)
+                
                 if let onRetry = onRetry {
-                    ActionButton(settings: settingsProvider.actionButtonRetrySettings,
+                    let retryButtonSettings = settingsProvider.actionButtonRetrySettings
+                    
+                    ActionButton(settings: retryButtonSettings,
                                  action: onRetry)
                     .tag(DMErrorViewOwnSettings.actionButtonRetryViewTag)
                 }
@@ -117,34 +98,28 @@ struct DMErrorView: View {
             .padding(.top, 5)
             .tag(DMErrorViewOwnSettings.buttonContainersHStackViewTag)
         }
-        .fixedSize(horizontal: true, vertical: false)
         .tag(DMErrorViewOwnSettings.containerVStackViewTag)
+        
+#if DEBUG
+        .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in
+            inspection?.visit(self, $0)
+        }
+#endif
     }
 }
 
 extension DMErrorView {
     
-    /// A custom SwiftUI view representing an action button in the error view.
     struct ActionButton: View {
-        
-        /// The action to perform when the button is tapped.
         let action: DMAction
-        
-        /// The settings that configure the appearance of the button.
         let settings: ActionButtonSettings
         
-        /// Initializes a new instance of `ActionButton`.
-        /// - Parameters:
-        ///   - settings: The settings that configure the appearance of the button.
-        ///   - action: The action to perform when the button is tapped.
         init(settings: ActionButtonSettings,
              action: DMAction) {
             self.action = action
             self.settings = settings
         }
         
-        /// The body of the `ActionButton`.
-        /// - Returns: A styled button with the specified text, background color, and corner radius.
         var body: some View {
             Button(settings.text,
                    action: action.simpleAction)
@@ -153,30 +128,19 @@ extension DMErrorView {
         }
     }
     
-    /// A custom SwiftUI view representing error text in the error view.
     struct ErrorText: View {
-        
-        /// The error text to display.
         let errorText: String
-        
-        /// The settings that configure the appearance of the text.
         let settings: ErrorTextSettings
         
-        /// Initializes a new instance of `ErrorText`.
-        /// - Parameters:
-        ///   - errorText: The error text to display.
-        ///   - settings: The settings that configure the appearance of the text.
         init(_ errorText: String,
              settings: ErrorTextSettings) {
             self.errorText = errorText
             self.settings = settings
         }
         
-        /// The body of the `ErrorText`.
-        /// - Returns: Styled text with the specified foreground color, alignment, and padding.
         var body: some View {
             Text(errorText)
-                .foregroundColor(settings.foregroundColor)
+                .foregroundStyle(settings.foregroundColor)
                 .multilineTextAlignment(settings.multilineTextAlignment)
                 .padding(settings.padding)
                 .tag(DMErrorViewOwnSettings.errorTextViewTag)
@@ -184,36 +148,41 @@ extension DMErrorView {
     }
 }
 
-#Preview("Basic: 2 buttons") {
+#Preview("DefaultSettings") {
     PreviewRenderOwner {
         DMErrorView(settings: DMErrorDefaultViewSettings(),
-                    error: DMAppError.custom("Something went wrong"),
+                    error: DMAppError.custom(
+                        "Something went wrong"
+                    ),
+                    onClose: DMButtonAction {}
+        )
+    }
+}
+
+#Preview("2 buttons") {
+    PreviewRenderOwner {
+        DMErrorView(settings: DMErrorDefaultViewSettings(
+            errorText: "An error has occured! An error has occured! An error has occured! An error has occured!",
+            actionButtonCloseSettings: .init(
+                text: "X"
+                )
+                
+        ),
+                    error: DMAppError.custom("Something went wrong Something went wrong Something went wrong"),
                     onRetry: DMButtonAction({ _ in }),
                     onClose: DMButtonAction({ _ in }))
     }
 }
 
-#Preview("Basic: 1 button") {
+#Preview("1 button") {
     PreviewRenderOwner {
-        DMErrorView(settings: DMErrorDefaultViewSettings(),
-                    error: DMAppError.custom("Something went wrong"),
+        DMErrorView(settings: DMErrorDefaultViewSettings(
+            errorText: "An error has occured! An error has occured! An error has occured! An error has occured!",
+            actionButtonCloseSettings: .init(
+                text: "X"
+                )
+        ),
+                    error: DMAppError.custom("Something went wrong Something went wrong Something went wrong"),
                     onClose: DMButtonAction({ _ in }))
-    }
-}
-
-private struct PreviewRenderOwner<Content: View>: View {
-    @ViewBuilder let content: Content
-    
-    init(_ content: () -> Content) {
-        self.content = content()
-    }
-
-    var body: some View {
-        Group {
-            content
-        }
-        .padding(15)
-        .background(Color.gray.opacity(0.8))
-        .cornerRadius(10)
     }
 }
