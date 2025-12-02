@@ -8,26 +8,47 @@ import XCTest
 @testable import DMUnLoader
 import SwiftUI
 import SnapshotTesting
+import ViewInspector
 
 struct DMLoadingView_TDD<LLM: DMLoadingManager>: View {
     @ObservedObject private(set) var loadingManager: LLM
+    @State private var animateTheAppearance = false
+    
+#if DEBUG
+    let inspection: Inspection<Self>? = getInspectionIfAvailable()
+#endif
     
     init(loadingManager: LLM) {
         self.loadingManager = loadingManager
     }
     
     var body: some View {
-        let loadableState = loadingManager.loadableState
-        switch loadableState {
-        case .none:
-            EmptyView()
-                .tag(DMLoadingViewOwnSettings.emptyViewTag)
-        case .loading(let provider):
-            provider.getLoadingView()
-                .tag(DMLoadingViewOwnSettings.loadingViewTag)
-        default:
-            EmptyView()
+        ZStack {
+            let loadableState = loadingManager.loadableState
+            switch loadableState {
+            case .none:
+                EmptyView()
+                    .tag(DMLoadingViewOwnSettings.emptyViewTag)
+            case .loading(let provider):
+                provider.getLoadingView()
+                    .scaleEffect(animateTheAppearance ? 1 : 0.9)
+                    .tag(DMLoadingViewOwnSettings.loadingViewTag)
+            default:
+                EmptyView()
+            }
         }
+        .transition(.opacity)
+        .animation(.easeInOut, value: loadingManager.loadableState)
+        .onAppear {
+            animateTheAppearance.toggle()
+        }
+        .animation(Animation.spring(duration: 0.2),
+                   value: animateTheAppearance)
+#if DEBUG
+        .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in
+            inspection?.visit(self, $0)
+        }
+#endif
     }
 }
 
@@ -94,16 +115,29 @@ final class DMLoadingViewTests_TDD: XCTestCase {
         // When
         let sut = makeSUT(manager: loadingManager)
         
-        // Then
-        assertSnapshot(
-            of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .light)
-            ),
-            named: "View-LoadingState-iPhone13Pro-light",
-            record: false
+        let inspection = try XCTUnwrap(
+            sut.inspection,
+            "Inspection should be available in debug mode"
         )
+        
+        // Then
+        let exp = inspection.inspect { view in
+            let actualView = try view.actualView()
+            
+            assertSnapshot(
+                of: actualView,
+                as: .image(
+                    layout: .device(config: .iPhone13Pro),
+                    traits: .init(userInterfaceStyle: .light)
+                ),
+                named: "View-LoadingState-iPhone13Pro-light",
+                record: false
+            )
+        }
+        
+        ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
+        wait(for: [exp], timeout: 0.3)
     }
     
     func testLoadingView_AssignTagFromSettingsToEmptyStateView_WhenLoadingStateIsLoading() throws {
@@ -125,6 +159,54 @@ final class DMLoadingViewTests_TDD: XCTestCase {
         // Then
         XCTAssertNotNil(loadingView,
                         "The LoadingView should have the correct tag assigned from settings: `\(tagToFindTheView)`")
+    }
+    
+    func testLoadingView_TheOverlayAnimatesSmoothly_IntoView() throws {
+        // Given
+        let provider = StubDMLoadingViewProvider()
+        let loadingManager = StubDMLoadingManager(
+            loadableState: .loading(
+                provider: provider.eraseToAnyViewProvider()
+            )
+        )
+        let animationDuration: Double = 0.2
+        
+        // When
+        let sut = makeSUT(manager: loadingManager)
+        
+        let inspection = try XCTUnwrap(
+            sut.inspection,
+            "Inspection should be available in debug mode"
+        )
+        
+        // Then
+        assertSnapshot(
+            of: sut,
+            as: .image(
+                layout: .device(config: .iPhone13Pro),
+                traits: .init(userInterfaceStyle: .light)
+            ),
+            named: "BeforeAnimation-iPhone13Pro-light",
+            record: false
+        )
+        
+        let exp = inspection.inspect(after: animationDuration + 0.01) { view in
+            let actualView = try view.actualView()
+            
+            assertSnapshot(
+                of: actualView,
+                as: .image(
+                    layout: .device(config: .iPhone13Pro),
+                    traits: .init(userInterfaceStyle: .light)
+                ),
+                named: "AfterAnimation-iPhone13Pro-light",
+                record: false
+            )
+        }
+        
+        ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
+        wait(for: [exp], timeout: animationDuration + 0.05)
     }
     
     // MARK: - Helpers

@@ -29,7 +29,7 @@
   - [✅] Initialize the `DMLoadingView` with `loadableState = .loading`.
   - [✅] Use snapshot testing to verify the appearance of the loading view.
   - [✅] Inspect the view hierarchy to ensure the tag `0203` is assigned to the loading view.
-  - [?] Verify that the overlay animates smoothly into view.
+  - [✅] Verify that the overlay animates smoothly into view.
 - **Expected Result**:
   - The loading view is displayed with a semi-transparent overlay.
   - The tag `0203` is assigned to the loading view.
