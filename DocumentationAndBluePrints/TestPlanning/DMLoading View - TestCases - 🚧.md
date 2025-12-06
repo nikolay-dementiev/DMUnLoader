@@ -23,7 +23,7 @@
 
 ---
 
-### Scenario 2: 🚧 Verify Loading State (`.loading`)
+### Scenario 2: ✅ Verify Loading State (`.loading`)
 - **Description**: Check if the `DMLoadingView` correctly displays the loading state.
 - **Steps**:
   - [✅] Initialize the `DMLoadingView` with `loadableState = .loading`.
@@ -41,8 +41,8 @@
 ### Scenario 3: Verify Failure State (`.failure`)
 - **Description**: Check if the `DMLoadingView` correctly displays the failure state.
 - **Steps**:
-  - [?] Initialize the `DMLoadingView` with `loadableState = .failure`.
-  - [?] Use snapshot testing to verify the appearance of the failure view.
+  - [✅] Initialize the `DMLoadingView` with `loadableState = .failure`.
+  - [✅] Use snapshot testing to verify the appearance of the failure view.
   - [?] Inspect the view hierarchy to ensure the tag `0304` is assigned to the failure view.
   - [?] Verify that the failure view includes an error message and optional retry/close buttons.
 - **Expected Result**:

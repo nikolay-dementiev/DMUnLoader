@@ -33,6 +33,12 @@ struct DMLoadingView_TDD<LLM: DMLoadingManager>: View {
                 provider.getLoadingView()
                     .scaleEffect(animateTheAppearance ? 1 : 0.9)
                     .tag(DMLoadingViewOwnSettings.loadingViewTag)
+            case let .failure(error, provider, onRetry):
+                provider.getErrorView(
+                    error: error,
+                    onRetry: onRetry,
+                    onClose: DMButtonAction(loadingManager.hide)
+                )
             default:
                 EmptyView()
             }
@@ -207,6 +213,47 @@ final class DMLoadingViewTests_TDD: XCTestCase {
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
         wait(for: [exp], timeout: animationDuration + 0.05)
+    }
+    
+    // MARK: - Scenario 3: Verify Failure State (`.failure`)
+    
+    func testLoadingView_ShowsFailureView_WhenLoadingStateIsFailure() throws {
+        // Given
+        let provider = StubDMLoadingViewProvider()
+        let loadingManager = StubDMLoadingManager(
+            loadableState: .failure(
+                error: DMUnLoader.DMAppError.custom("Test Error"),
+                provider: provider.eraseToAnyViewProvider(),
+                onRetry: DMButtonAction {}
+            )
+        )
+        
+        // When
+        let sut = makeSUT(manager: loadingManager)
+        
+        let inspection = try XCTUnwrap(
+            sut.inspection,
+            "Inspection should be available in debug mode"
+        )
+        
+        // Then
+        let exp = inspection.inspect { view in
+            let actualView = try view.actualView()
+            
+            assertSnapshot(
+                of: actualView,
+                as: .image(
+                    layout: .device(config: .iPhone13Pro),
+                    traits: .init(userInterfaceStyle: .light)
+                ),
+                named: "View-FailureState-iPhone13Pro-light",
+                record: false
+            )
+        }
+        
+        ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
+        wait(for: [exp], timeout: 0.3)
     }
     
     // MARK: - Helpers
