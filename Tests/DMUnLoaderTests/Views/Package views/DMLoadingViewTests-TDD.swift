@@ -22,31 +22,41 @@ struct DMLoadingView_TDD<LLM: DMLoadingManager>: View {
         self.loadingManager = loadingManager
     }
     
+    @ViewBuilder
+    private var overlayView: some View {
+        let loadableState = loadingManager.loadableState
+        switch loadableState {
+        case .none:
+            EmptyView()
+                .tag(DMLoadingViewOwnSettings.emptyViewTag)
+        case let .failure(error, provider, onRetry):
+            provider.getErrorView(
+                error: error,
+                onRetry: onRetry,
+                onClose: DMButtonAction(loadingManager.hide)
+            )
+            .tag(DMLoadingViewOwnSettings.failureViewTag)
+        case let .loading(provider):
+            provider.getLoadingView()
+                .tag(DMLoadingViewOwnSettings.loadingViewTag)
+        default:
+            EmptyView()
+        }
+    }
+    
     var body: some View {
         ZStack {
             let loadableState = loadingManager.loadableState
             switch loadableState {
             case .none:
-                EmptyView()
-                    .tag(DMLoadingViewOwnSettings.emptyViewTag)
-            case .loading(let provider):
-                provider.getLoadingView()
-                    .scaleEffect(animateTheAppearance ? 1 : 0.9)
-                    .tag(DMLoadingViewOwnSettings.loadingViewTag)
-            case let .failure(error, provider, onRetry):
-                provider.getErrorView(
-                    error: error,
-                    onRetry: onRetry,
-                    onClose: DMButtonAction(loadingManager.hide)
-                )
+                overlayView
+            case .failure, .loading, .success:
+                overlayView
                 .scaleEffect(animateTheAppearance ? 1 : 0.9)
-                .tag(DMLoadingViewOwnSettings.failureViewTag)
-            default:
-                EmptyView()
+                .transition(.opacity)
+                .animation(.easeInOut, value: loadingManager.loadableState)
             }
         }
-        .transition(.opacity)
-        .animation(.easeInOut, value: loadingManager.loadableState)
         .onAppear {
             animateTheAppearance.toggle()
         }
