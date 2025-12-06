@@ -43,7 +43,7 @@
 - **Steps**:
   - [✅] Initialize the `DMLoadingView` with `loadableState = .failure`.
   - [✅] Use snapshot testing to verify the appearance of the failure view.
-  - [?] Inspect the view hierarchy to ensure the tag `0304` is assigned to the failure view.
+  - [✅] Inspect the view hierarchy to ensure the tag `0304` is assigned to the failure view.
   - [?] Verify that the failure view includes an error message and optional retry/close buttons.
 - **Expected Result**:
   - The failure view is displayed with a semi-transparent overlay.

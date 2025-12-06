@@ -39,6 +39,7 @@ struct DMLoadingView_TDD<LLM: DMLoadingManager>: View {
                     onRetry: onRetry,
                     onClose: DMButtonAction(loadingManager.hide)
                 )
+                .tag(DMLoadingViewOwnSettings.failureViewTag)
             default:
                 EmptyView()
             }
@@ -254,6 +255,28 @@ final class DMLoadingViewTests_TDD: XCTestCase {
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
         wait(for: [exp], timeout: 0.3)
+    }
+    
+    func testLoadingView_AssignTagFromSettingsToFailureStateView_WhenLoadingStateIsFailure() throws {
+        // Given
+        let provider = StubDMLoadingViewProvider()
+        let loadingManager = StubDMLoadingManager(
+            loadableState: .failure(
+                error: DMUnLoader.DMAppError.custom("Test Error"),
+                provider: provider.eraseToAnyViewProvider()
+            )
+        )
+        
+        // When
+        let sut = makeSUT(manager: loadingManager)
+        let tagToFindTheView = DMLoadingViewOwnSettings.failureViewTag
+        let failureView = try sut
+            .inspect()
+            .find(viewWithTag: tagToFindTheView)
+        
+        // Then
+        XCTAssertNotNil(failureView,
+                        "The FailureView should have the correct tag assigned from settings: `\(tagToFindTheView)`")
     }
     
     // MARK: - Helpers
