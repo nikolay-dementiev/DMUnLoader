@@ -53,11 +53,11 @@
 
 ---
 
-### Scenario 4: Verify Success State (`.success`)
+### Scenario 4: 🚧 Verify Success State (`.success`)
 - **Description**: Check if the `DMLoadingView` correctly displays the success state.
 - **Steps**:
-  - [?] Initialize the `DMLoadingView` with `loadableState = .success`.
-  - [?] Use snapshot testing to verify the appearance of the success view.
+  - [✅] Initialize the `DMLoadingView` with `loadableState = .success`.
+  - [✅] Use snapshot testing to verify the appearance of the success view.
   - [?] Inspect the view hierarchy to ensure the tag `0405` is assigned to the success view.
   - [?] Verify that the success view includes a success message and optional call-to-action elements.
 - **Expected Result**:

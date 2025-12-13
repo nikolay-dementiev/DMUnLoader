@@ -39,8 +39,8 @@ struct DMLoadingView_TDD<LLM: DMLoadingManager>: View {
         case let .loading(provider):
             provider.getLoadingView()
                 .tag(DMLoadingViewOwnSettings.loadingViewTag)
-        default:
-            EmptyView()
+        case let .success(object, provider):
+            provider.getSuccessView(object: object)
         }
     }
     
@@ -260,6 +260,46 @@ final class DMLoadingViewTests_TDD: XCTestCase {
                     ),
             record: false
         )
+    }
+    
+    // MARK: - Scenario 4: Verify Success State (`.success`)
+    
+    func testLoadingView_ShowsSuccessView_WhenLoadingStateIsSuccess() throws {
+        // Given
+        let provider = StubDMLoadingViewProvider()
+        let loadingManager = StubDMLoadingManager(
+            loadableState: .success(
+                "Test Success",
+                provider: provider.eraseToAnyViewProvider()
+            )
+        )
+        
+        // When
+        let sut = makeSUT(manager: loadingManager)
+        
+        let inspection = try XCTUnwrap(
+            sut.inspection,
+            "Inspection should be available in debug mode"
+        )
+        
+        // Then
+        let exp = inspection.inspect { view in
+            let actualView = try view.actualView()
+            
+            assertSnapshot(
+                of: actualView,
+                as: .image(
+                    layout: .device(config: .iPhone13Pro),
+                    traits: .init(userInterfaceStyle: .light)
+                ),
+                named: "View-SuccessState-iPhone13Pro-light",
+                record: false
+            )
+        }
+        
+        ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
+        wait(for: [exp], timeout: 0.3)
     }
     
     // MARK: - Helpers
