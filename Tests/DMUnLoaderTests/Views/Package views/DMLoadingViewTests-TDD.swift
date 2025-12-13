@@ -325,6 +325,18 @@ final class DMLoadingViewTests_TDD: XCTestCase {
                         "The SuccessView should have the correct tag assigned from settings: `\(tagToFindTheView)`")
     }
     
+    func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Success() throws {
+        let provider = StubDMLoadingViewProvider()
+        try testLoadingView_TheOverlayAnimatesSmoothly_IntoView(
+            state:
+                    .success(
+                        "Test Success",
+                        provider: provider.eraseToAnyViewProvider()
+                    ),
+            record: false
+        )
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT<LM: DMLoadingManager>(manager loadingManager: LM) -> DMLoadingView_TDD<LM> {
