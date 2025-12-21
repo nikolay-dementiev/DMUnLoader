@@ -18,7 +18,11 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     
     /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
     /// - Note: This property is thread-safe and emits changes via `loadableStateSubject`.
-    @Published public internal(set) var loadableState: DMLoadableType
+    @Published public internal(set) var loadableState: DMLoadableType {
+        willSet {
+            handleInactivityTimer(forState: newValue)
+        }
+    }
     
     /// A cancellable subscription used to manage the inactivity timer.
     private var inactivityTimerCancellable: AnyCancellable?
@@ -37,6 +41,8 @@ public final class DMLoadingManagerMain: DMLoadingManager {
                 settings: DMLoadingManagerSettings) {
         self.loadableState = loadableState
         self.settings = settings
+        
+        handleInactivityTimer(forState: loadableState)
     }
     
     public convenience init() {
@@ -52,8 +58,6 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     public func showLoading<PR: DMLoadingViewProvider>(
         provider: PR
     ) {
-        stopInactivityTimer()
-        
         loadableState = .loading(
             provider: provider.eraseToAnyViewProvider()
         )
@@ -69,8 +73,6 @@ public final class DMLoadingManagerMain: DMLoadingManager {
         _ message: DMLoadableTypeSuccess,
         provider: PR
     ) {
-        startInactivityTimer()
-        
         loadableState = .success(
             message,
             provider: provider.eraseToAnyViewProvider()
@@ -93,8 +95,6 @@ public final class DMLoadingManagerMain: DMLoadingManager {
         provider: PR,
         onRetry: DMAction? = nil
     ) {
-        startInactivityTimer()
-        
         loadableState = .failure(
             error: error,
             provider: provider.eraseToAnyViewProvider(),
@@ -113,6 +113,17 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     }
     
     // MARK: Timer Management
+    
+    private func handleInactivityTimer(forState state: DMLoadableType? = nil) {
+        switch state ?? loadableState {
+        case .success,
+                .failure:
+            startInactivityTimer()
+        case .none,
+                .loading:
+            stopInactivityTimer()
+        }
+    }
     
     /// Starts the inactivity timer, which automatically hides the loading state after the specified delay.
     private func startInactivityTimer() {
