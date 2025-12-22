@@ -1,0 +1,77 @@
+---
+format_version: '23'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: ios
+app:
+  envs:
+  - TEST_SHARD_COUNT: 2
+  - BITRISE_PROJECT_PATH: Package.swift
+    opts:
+      is_expand: false
+  - BITRISE_SCHEME: DMUnLoader
+    opts:
+      is_expand: false
+  - BITRISE_DISTRIBUTION_METHOD: development
+    opts:
+      is_expand: false
+pipelines:
+  run_tests:
+    workflows:
+      build_for_testing: {}
+      test_without_building:
+        depends_on:
+        - build_for_testing
+        parallel: "$TEST_SHARD_COUNT"
+workflows:
+  run_tests:
+    summary: Run your Xcode tests and get the test report.
+    description: The workflow will first clone your Git repository, cache and
+      install your project's dependencies if any, run your Xcode tests and save
+      the test results.
+    steps:
+    - activate-ssh-key@4:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@8: {}
+    #- restore-cocoapods-cache@2: {}
+    - restore-spm-cache@2: {}
+    #- cocoapods-install@2:
+    #    inputs:
+    #    - is_cache_disabled: 'true'
+    - script@1:
+        title: Install xcbeautify
+        inputs:
+        - content: |
+            if !command -v xcbeautify &> /dev/null; then
+              echo "Installing xcbeautify..."
+              brew install xcbeautify
+            else
+              echo "xcbeautify is already installed."
+            fi
+    - xcode-test@6:
+        inputs:
+        - project_path: "$BITRISE_PROJECT_PATH"
+        - scheme: "$BITRISE_SCHEME"
+        - destination: platform=iOS Simulator,name=iPhone 13 Pro,OS=17.5
+        - test_repetition_mode: retry_on_failure
+        - cache_level: none
+        - maximum_test_repetitions: 5
+        - relaunch_tests_for_each_repetition: "yes"
+    #   - save-cocoapods-cache@1: {}
+    - save-spm-cache@1: {}
+    - deploy-to-bitrise-io@2: {}
+    triggers:
+      push:
+      - branch: develop
+      pull_request:
+      - source_branch: "*"
+  test_without_building:
+    steps:
+    - pull-intermediate-files@1: {}
+    - xcode-test-without-building@0:
+        inputs:
+        - only_testing: "$BITRISE_TEST_SHARDS_PATH/$BITRISE_IO_PARALLEL_INDEX"
+        - xctestrun: "$BITRISE_TEST_BUNDLE_PATH/all_tests.xctestrun"
+meta:
+  bitrise.io:
+    stack: osx-xcode-26.2.x-edge
+    machine_type_id: g2.mac.medium
