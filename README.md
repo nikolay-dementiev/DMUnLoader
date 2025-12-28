@@ -36,8 +36,8 @@ Built with **SwiftUI**, it supports both **UIKit** and **SwiftUI** environments,
    - [📦 Swift Package Manager](#-swift-package-manager)
    - [🍫 CocoaPods](#-cocoapods)
 - [🛠 Usage](#-usage)
-   - [![](./DocumentationAndBluePrints/Assets/icons8-swiftui-16.png) SwiftUI Integration](#swiftui-integration)
-   - [![](./DocumentationAndBluePrints/Assets/icons8-uikit-16.png) UIKit Integration](#uikit-integration)
+   - [![](./DocumentationAndBluePrints/Assets/icons8-swiftui-16.png) SwiftUI Integration](#-swiftui-integration)
+   - [![](./DocumentationAndBluePrints/Assets/icons8-uikit-16.png) UIKit Integration](#-uikit-integration)
 - [🎨 Customization](#-customization)
    - [🖌 Custom Views](#-custom-views)
    - [⚙ Settings Configuration](#-settings-configuration)
@@ -113,7 +113,7 @@ pod 'DMUnLoader', :git => 'https://github.com/nikolay-dementiev/DMUnLoader.git'
 ## 🛠 Usage
 ### ![](./DocumentationAndBluePrints/Assets/icons8-swiftui-24.png) SwiftUI Integration
 
-Here is an pseudocode example of how to use **DMUnLoader** in a **SwiftUI** project *(for real code example, please check the **[Example Project](#example-project)**)*:
+Here is an pseudocode example of how to use **DMUnLoader** in a **SwiftUI** project *(for real code example, please check the **[Example Project](#-example-project)**)*:
 
 ```Swift
 import SwiftUI
@@ -155,7 +155,7 @@ struct LoadingContentViewSwiftUI<Provider: DMLoadingViewProvider,
 ```
 
 ### ![](./DocumentationAndBluePrints/Assets/icons8-uikit-24.png) UIKit Integration
-For **UIKit** projects, here is an pseudocode example of how to use **DMUnLoader** *(for real code example, please check the **[Example Project](#example-project)**)*:
+For **UIKit** projects, here is an pseudocode example of how to use **DMUnLoader** *(for real code example, please check the **[Example Project](#-example-project)**)*:
 
 ```swift 
 import UIKit
@@ -320,7 +320,7 @@ loadingManager.showSuccess("Data successfully loaded!",
 ---
 
 ## 🧪 Example Project
-The **DMUnLoaderPodSPMExample** project (`../Examples/DMUnLoaderPodSPMExample/DMUnLoaderPodSPMExample.*`) demonstrates how to use the `SDK` in both **SwiftUI** and **UIKit** environments. It includes two schemes:
+The **DMUnLoaderPodSPMExample** project <a href="./Examples/DMUnLoaderPodSPMExample/DMUnLoaderPodSPMExample.xcworkspace" target="_blank">(./Examples/DMUnLoaderPodSPMExample/DMUnLoaderPodSPMExample.xcworkspace)</a> demonstrates how to use the `SDK` in both **SwiftUI** and **UIKit** environments. It includes two schemes:
 
 - **`Debug-SwiftUI`**: Demonstrates integration with `SwiftUI`.
 - **`Debug-UIKit`**: Demonstrates integration with `UIKit`.
@@ -339,9 +339,9 @@ To run the example project:
 All dialogs (**Error**, **Loading**, **Success**) are displayed in a separate system window, ensuring they overlay the entire app interface without leaving interactive elements (e.g., `Tab Bars`) active. This approach is inspired by [SwiftUI HUD](https://www.fivestars.blog/articles/swiftui-hud/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d) HUD and [SwiftUI Windows](https://www.fivestars.blog/articles/swiftui-windows/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d).
 
 ### 📦🍫 2. Dual Dependency Manager Usage in Test Project
-The [DMUnLoaderPodSPMExample](#example-project) test project demonstrates how to use the `SDK` with both **Swift Package Manager** (SPM) and **CocoaPods** simultaneously. This ensures seamless integration of the `SDK` regardless of the dependency manager used. For more details, refer to [this article](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d).
+The [DMUnLoaderPodSPMExample](#-example-project) test project demonstrates how to use the `SDK` with both **Swift Package Manager** (SPM) and **CocoaPods** simultaneously. This ensures seamless integration of the `SDK` regardless of the dependency manager used. For more details, refer to [this article](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d).
 
->Important Note: This dual dependency manager setup is specific to this [DMUnLoaderPodSPMExample](#example-project) test project and is not intended for production use. The main `SDK` itself supports installation via either SPM or CocoaPods, but not both simultaneously in a single target.
+>Important Note: This dual dependency manager setup is specific to this [DMUnLoaderPodSPMExample](#-example-project) test project and is not intended for production use. The main `SDK` itself supports installation via either SPM or CocoaPods, but not both simultaneously in a single target.
 
 ### 🎯 3. TDD Approach
 Huge parts of the `SDK` were rewritten using a Test-Driven Development (BDD/TDD) approach to ensure robustness and reliability. The suporting documnents can be found in `DocumentationAndBluePrints` folder.
