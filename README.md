@@ -36,8 +36,8 @@ Built with **SwiftUI**, it supports both **UIKit** and **SwiftUI** environments,
    - [📦 Swift Package Manager](#-swift-package-manager)
    - [🍫 CocoaPods](#-cocoapods)
 - [🛠 Usage](#-usage)
-   - [<img src="./DocumentationAndBluePrints/Assets/icons8-swiftui.svg?raw=true" alt="Loading Demo" style="max-height: 16px; aspect-ratio: 1/1; object-fit: scale-dow;"> SwiftUI Integration](#swiftui-integration)
-   - [<img src="./DocumentationAndBluePrints/Assets/icons8-uikit-48.png?raw=true" alt="Loading Demo" style="max-height: 16px; aspect-ratio: 1/1; object-fit: scale-dow;"> UIKit Integration](#uikit-integration)
+   - [![](./DocumentationAndBluePrints/Assets/icons8-swiftui-16.png) SwiftUI Integration](#swiftui-integration)
+   - [![](./DocumentationAndBluePrints/Assets/icons8-uikit-16.png) UIKit Integration](#uikit-integration)
 - [🎨 Customization](#-customization)
    - [🖌 Custom Views](#-custom-views)
    - [⚙ Settings Configuration](#-settings-configuration)
@@ -111,7 +111,7 @@ pod 'DMUnLoader', :git => 'https://github.com/nikolay-dementiev/DMUnLoader.git'
 ---
 
 ## 🛠 Usage
-### <img src="./DocumentationAndBluePrints/Assets/icons8-swiftui.svg?raw=true" alt="Loading Demo" style="max-height: 24px; aspect-ratio: 1/1; object-fit: scale-dow;"> SwiftUI Integration
+### ![](./DocumentationAndBluePrints/Assets/icons8-swiftui-24.png) SwiftUI Integration
 
 Here is an pseudocode example of how to use **DMUnLoader** in a **SwiftUI** project *(for real code example, please check the **[Example Project](#example-project)**)*:
 
@@ -154,7 +154,7 @@ struct LoadingContentViewSwiftUI<Provider: DMLoadingViewProvider,
 }
 ```
 
-### <img src="./DocumentationAndBluePrints/Assets/icons8-uikit-48.png?raw=true" alt="Loading Demo" style="max-height: 24px; aspect-ratio: 1/1; object-fit: scale-dow;"> UIKit Integration
+### ![](./DocumentationAndBluePrints/Assets/icons8-uikit-24.png) UIKit Integration
 For **UIKit** projects, here is an pseudocode example of how to use **DMUnLoader** *(for real code example, please check the **[Example Project](#example-project)**)*:
 
 ```swift 
