@@ -320,7 +320,7 @@ loadingManager.showSuccess("Data successfully loaded!",
 ---
 
 ## 🧪 Example Project
-The **DMUnLoaderPodSPMExample** project <a href="./Examples/DMUnLoaderPodSPMExample/DMUnLoaderPodSPMExample.xcworkspace" target="_blank">(./Examples/DMUnLoaderPodSPMExample/DMUnLoaderPodSPMExample.xcworkspace)</a> demonstrates how to use the `SDK` in both **SwiftUI** and **UIKit** environments. It includes two schemes:
+The **DMUnLoaderPodSPMExample** project <a href="./Examples/DMUnLoaderPodSPMExample/" target="_blank">(./Examples/DMUnLoaderPodSPMExample/**DMUnLoaderPodSPMExample.xcworkspace**)</a> demonstrates how to use the `SDK` in both **SwiftUI** and **UIKit** environments. It includes two schemes:
 
 - **`Debug-SwiftUI`**: Demonstrates integration with `SwiftUI`.
 - **`Debug-UIKit`**: Demonstrates integration with `UIKit`.
