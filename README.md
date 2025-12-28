@@ -6,14 +6,15 @@
 [![Platform](https://img.shields.io/badge/platform-iOS-blue)](https://developer.apple.com/ios)
 [![SPM Compatible](https://img.shields.io/badge/SPM-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/DMUnLoader.svg?style=flat-square)](https://img.shields.io/cocoapods/v/DMUnLoader.svg)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader?ref=badge_small)
 
 <p align="center">
-  <img src="./DocumentationAndBluePrints/Assets/DMUnloade_mainImage.png?raw=true" alt="DMAction-SDK-logo" style="max-height: 400px; aspect-ratio: 16/9; object-fit: scale-dow;">
+  <img src="./DocumentationAndBluePrints/Assets/DMUnloade_mainImage.png?raw=true" alt="DMAction-SDK-logo" style="max-height: 400px; aspect-ratio: 1536/1024; object-fit: scale-dow;">
 </p>
 
 ## Overview
 
-The SDK simplifies the integration of common dialog states (`Error`, `Loading`, `Success`) in iOS applications. Only one state can be displayed at a time, ensuring a sequential and consistent behavior. 
+The `SDK` simplifies the integration of common dialog states (`Error`, `Loading`, `Success`) in iOS applications. Only one state can be displayed at a time, ensuring a sequential and consistent behavior. 
 Built with **SwiftUI**, it supports both **UIKit** and **SwiftUI** environments, making it suitable for modern app development.
 
 ### Key features include:
@@ -30,29 +31,29 @@ Built with **SwiftUI**, it supports both **UIKit** and **SwiftUI** environments,
 ## Table of Contents
 
 - [🎬 Demo: Loading, Success & Error States](#-demo-loading-success--error-states)
-- [🧭 Very High-Level Architecture in Picture](#🧭-very-high-level-architecture-in-picture)
-- [📥 Installation](#📥-installation)
-   - [📦 Swift Package Manager](#📦-swift-package-manager)
-   - [🍫 CocoaPods](#🍫-cocoapods)
-- [🛠 Usage](#🛠-usage)
-   - [🌀 SwiftUI Integration](#🌀-swiftui-integration)
-   - [📱 UIKit Integration](#📱-uikit-integration)
-- [🎨 Customization](#🎨-customization)
-   - [🖌 Custom Views](#🖌-custom-views)
-   - [⚙ Settings Configuration](#⚙-settings-configuration)
-- [🧪 Example Project](#🧪-example-project)
-- [🚀 Advanced Features](#🚀-advanced-features)
-   - [🔁 Retry and Fallback Actions](#🔁-retry-and-fallback-actions)
-   - [🌫 Dynamic Blur Effects](#🌫-dynamic-blur-effects)
-- [🧩 Implementation Details](#🧩-implementation-details)
-    1. [🪟 Separate System Window](#🪟-1-separate-system-window)
-    2. [📦🍫 Dual Dependency Manager Usage in Test Project](#📦🍫-2-dual-dependency-manager-usage-in-test-project)
-    3. [🎯 TDD Approach](#🎯-3-tdd-approach)
-    4. [🌫 Custom Blur Effects](#🌫-4-custom-blur-effects)
-    5. [🔁 Retry and Fallback Actions](#🔁-5-retry-and-fallback-actions)
-- [🚧 Future Enhancements](#🚧-future-enhancements)
-- [📜 License](#📜-license)
-- [🙏 Acknowledgments](#🙏-acknowledgments)
+- [🧭 Very High-Level Architecture in Picture](#-very-high-level-architecture-in-picture)
+- [📥 Installation](#-installation)
+   - [📦 Swift Package Manager](#-swift-package-manager)
+   - [🍫 CocoaPods](#-cocoapods)
+- [🛠 Usage](#-usage)
+   - [![](./DocumentationAndBluePrints/Assets/icons8-swiftui-16.png) SwiftUI Integration](#-swiftui-integration)
+   - [![](./DocumentationAndBluePrints/Assets/icons8-uikit-16.png) UIKit Integration](#-uikit-integration)
+- [🎨 Customization](#-customization)
+   - [🖌 Custom Views](#-custom-views)
+   - [⚙ Settings Configuration](#-settings-configuration)
+- [🧪 Example Project](#-example-project)
+- [🚀 Advanced Features](#-advanced-features)
+   - [🔁 Retry and Fallback Actions](#-retry-and-fallback-actions)
+   - [🌫 Dynamic Blur Effects](#-dynamic-blur-effects)
+- [🧩 Implementation Details](#-implementation-details)
+    1. [🪟 Separate System Window](#-1-separate-system-window)
+    2. [📦🍫 Dual Dependency Manager Usage in Test Project](#-2-dual-dependency-manager-usage-in-test-project)
+    3. [🎯 TDD Approach](#-3-tdd-approach)
+    4. [🌫 Custom Blur Effects](#-4-custom-blur-effects)
+    5. [🔁 Retry and Fallback Actions](#-5-retry-and-fallback-actions)
+- [🚧 Future Enhancements](#-future-enhancements)
+- [🙏 Acknowledgments](#-acknowledgments)
+- [📜 License](#-license)
 
 ---
 
@@ -110,9 +111,9 @@ pod 'DMUnLoader', :git => 'https://github.com/nikolay-dementiev/DMUnLoader.git'
 ---
 
 ## 🛠 Usage
-### 🌀 SwiftUI Integration
+### ![](./DocumentationAndBluePrints/Assets/icons8-swiftui-24.png) SwiftUI Integration
 
-Here is an pseudocode example of how to use **DMUnLoader** in a **SwiftUI** project *(for real code example, please check the **[Example Project](#example-project)**)*:
+Here is an pseudocode example of how to use **DMUnLoader** in a **SwiftUI** project *(for real code example, please check the **[Example Project](#-example-project)**)*:
 
 ```Swift
 import SwiftUI
@@ -153,8 +154,8 @@ struct LoadingContentViewSwiftUI<Provider: DMLoadingViewProvider,
 }
 ```
 
-### 📱 UIKit Integration
-For **UIKit** projects, here is an pseudocode example of how to use **DMUnLoader** *(for real code example, please check the **[Example Project](#example-project)**)*:
+### ![](./DocumentationAndBluePrints/Assets/icons8-uikit-24.png) UIKit Integration
+For **UIKit** projects, here is an pseudocode example of how to use **DMUnLoader** *(for real code example, please check the **[Example Project](#-example-project)**)*:
 
 ```swift 
 import UIKit
@@ -262,6 +263,7 @@ final class LoadingContentViewUIKit<
 }
 ```
 
+---
 
 ## 🎨 Customization
 ### 🖌 Custom Views
@@ -292,7 +294,7 @@ struct CustomDMLoadingViewProvider: DMLoadingViewProvider {
 }
 ```
 
-### ⚙ Settings Configuration
+## ⚙ Settings Configuration
 The SDK allows you to customize the appearance of the built-in views by configuring settings such as text properties, colors, and layout. All these settings will be picked up by using `Provider` object. Only interested to you settings can be overridden - the rest will be used as default ones (because `DMLoadingViewProvider` protocol has default implementation on SDK side). Here's an example:
 
 ```Swift
@@ -317,8 +319,8 @@ loadingManager.showSuccess("Data successfully loaded!",
 
 ---
 
-### 🧪 Example Project
-The **DMUnLoaderPodSPMExample** project (`../Examples/DMUnLoaderPodSPMExample/DMUnLoaderPodSPMExample.*`) demonstrates how to use the `SDK` in both **SwiftUI** and **UIKit** environments. It includes two schemes:
+## 🧪 Example Project
+The **DMUnLoaderPodSPMExample** project <a href="./Examples/DMUnLoaderPodSPMExample/" target="_blank">(./Examples/DMUnLoaderPodSPMExample/**DMUnLoaderPodSPMExample.xcworkspace**)</a> demonstrates how to use the `SDK` in both **SwiftUI** and **UIKit** environments. It includes two schemes:
 
 - **`Debug-SwiftUI`**: Demonstrates integration with `SwiftUI`.
 - **`Debug-UIKit`**: Demonstrates integration with `UIKit`.
@@ -332,27 +334,27 @@ To run the example project:
 
 ---
 
-### 🧩 Implementation Details
-#### 🪟 1. Separate System Window
+## 🧩 Implementation Details
+### 🪟 1. Separate System Window
 All dialogs (**Error**, **Loading**, **Success**) are displayed in a separate system window, ensuring they overlay the entire app interface without leaving interactive elements (e.g., `Tab Bars`) active. This approach is inspired by [SwiftUI HUD](https://www.fivestars.blog/articles/swiftui-hud/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d) HUD and [SwiftUI Windows](https://www.fivestars.blog/articles/swiftui-windows/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d).
 
-#### 📦🍫 2. Dual Dependency Manager Usage in Test Project
-The [DMUnLoaderPodSPMExample](#example-project) test project demonstrates how to use the `SDK` with both **Swift Package Manager** (SPM) and **CocoaPods** simultaneously. This ensures seamless integration of the `SDK` regardless of the dependency manager used. For more details, refer to [this article](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d).
+### 📦🍫 2. Dual Dependency Manager Usage in Test Project
+The [DMUnLoaderPodSPMExample](#-example-project) test project demonstrates how to use the `SDK` with both **Swift Package Manager** (SPM) and **CocoaPods** simultaneously. This ensures seamless integration of the `SDK` regardless of the dependency manager used. For more details, refer to [this article](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d).
 
->Important Note: This dual dependency manager setup is specific to this [DMUnLoaderPodSPMExample](#example-project) test project and is not intended for production use. The main `SDK` itself supports installation via either SPM or CocoaPods, but not both simultaneously in a single target.
+>Important Note: This dual dependency manager setup is specific to this [DMUnLoaderPodSPMExample](#-example-project) test project and is not intended for production use. The main `SDK` itself supports installation via either SPM or CocoaPods, but not both simultaneously in a single target.
 
-#### 🎯 3. TDD Approach
+### 🎯 3. TDD Approach
 Huge parts of the `SDK` were rewritten using a Test-Driven Development (BDD/TDD) approach to ensure robustness and reliability. The suporting documnents can be found in `DocumentationAndBluePrints` folder.
 
-#### 🌫 4. Custom Blur Effects
+### 🌫 4. Custom Blur Effects
 The `SDK` leverages the [**DMVariableBlurView**](https://github.com/nikolay-dementiev/DMVariableBlurView) library to apply dynamic blur effects to views.
 
-#### 🔁 5. Retry and Fallback Actions
+### 🔁 5. Retry and Fallback Actions
 The SDK supports retry and fallback mechanisms for handling failed actions. For more information, see the [**DMAction** GitHub page](https://github.com/nikolay-dementiev/DMAction).
 
 ---
 
-### 🚧 Future Enhancements
+## 🚧 Future Enhancements
 The following features are planned for future releases:
 
 - **Accessibility IDs** for views.
@@ -360,28 +362,28 @@ The following features are planned for future releases:
 - **Localization** for text on views.
 - **Analytics** integration to track events within the SDK.
 - Enhanced **loggin** capabilities for error reporting.
----
-
-### 📜 License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 
 ---
 
-### 🤝 Contributing
+## 🤝 Contributing
 Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or feature requests.
 
-
 ---
 
-### 📬 Contact
+## 📬 Contact
 For questions or feedback, feel free to contact me via [@-mail](nikolas.dementiev@gmail.com).
 
 ---
-
 
 ### 🙏 Acknowledgments
 1. Inspiration for the separate window approach:[SwiftUI HUD](https://www.fivestars.blog/articles/swiftui-hud/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d) and [SwiftUI Windows](https://www.fivestars.blog/articles/swiftui-windows/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d)
 2. Managing dependencies with both `SPM` and `CocoaPods` dependency manager: [this article](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14?spm=a2ty_o01.29997173.0.0.31de5171JtCMAz)
 3. Retry and Fallback Logic: [**DMAction** GitHub page](https://github.com/nikolay-dementiev/DMAction)
 4. Dynamic Blur Effects: [**DMVariableBlurView** GitHub page](https://github.com/nikolay-dementiev/DMVariableBlurView)
+
+---
+
+## 📜 License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader?ref=badge_large&issueType=license)
