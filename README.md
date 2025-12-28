@@ -6,6 +6,7 @@
 [![Platform](https://img.shields.io/badge/platform-iOS-blue)](https://developer.apple.com/ios)
 [![SPM Compatible](https://img.shields.io/badge/SPM-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/DMUnLoader.svg?style=flat-square)](https://img.shields.io/cocoapods/v/DMUnLoader.svg)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader?ref=badge_small)
 
 <p align="center">
   <img src="./DocumentationAndBluePrints/Assets/DMUnloade_mainImage.png?raw=true" alt="DMAction-SDK-logo" style="max-height: 400px; aspect-ratio: 1536/1024; object-fit: scale-dow;">
@@ -51,8 +52,8 @@ Built with **SwiftUI**, it supports both **UIKit** and **SwiftUI** environments,
     4. [🌫 Custom Blur Effects](#-4-custom-blur-effects)
     5. [🔁 Retry and Fallback Actions](#-5-retry-and-fallback-actions)
 - [🚧 Future Enhancements](#-future-enhancements)
-- [📜 License](#-license)
 - [🙏 Acknowledgments](#-acknowledgments)
+- [📜 License](#-license)
 
 ---
 
@@ -364,11 +365,6 @@ The following features are planned for future releases:
 
 ---
 
-## 📜 License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
 ## 🤝 Contributing
 Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or feature requests.
 
@@ -384,3 +380,10 @@ For questions or feedback, feel free to contact me via [@-mail](nikolas.dementie
 2. Managing dependencies with both `SPM` and `CocoaPods` dependency manager: [this article](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14?spm=a2ty_o01.29997173.0.0.31de5171JtCMAz)
 3. Retry and Fallback Logic: [**DMAction** GitHub page](https://github.com/nikolay-dementiev/DMAction)
 4. Dynamic Blur Effects: [**DMVariableBlurView** GitHub page](https://github.com/nikolay-dementiev/DMVariableBlurView)
+
+---
+
+## 📜 License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader?ref=badge_large&issueType=license)
