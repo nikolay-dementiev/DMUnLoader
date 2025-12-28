@@ -1,11 +1,11 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DMUnLoader'
-  s.version          = '0.1.30'
+  s.version          = '1.0.0'
   s.summary          = 'Universal Loader & Result handling SDK'
   s.description      = <<-DESC
   
-TODO: Add long description of the pod here.
+The SDK simplifies the integration of common dialog states (Error, Loading, Success) in iOS applications. Only one state can be displayed at a time, ensuring a sequential and consistent behavior. Built with SwiftUI, it supports both UIKit and SwiftUI environments, making it suitable for modern app development.
                        DESC
 
   s.homepage         = 'https://github.com/nikolay-dementiev/DMUnLoader'
@@ -17,7 +17,7 @@ TODO: Add long description of the pod here.
   #s.watchos.deployment_target = "7.0"
   #s.visionos.deployment_target = "1.0"
   
-  s.source           = { :git => 'https://github.com/nikolay-dementiev/DMUnLoader.git', :tag => "v#{s.version}" }
+  s.source           = { :git => 'https://github.com/nikolay-dementiev/DMUnLoader.git', :tag => s.version.to_s }
   s.source_files = 'Sources/**/*.{swift,h,m,c}'
   s.exclude_files = 'Examples/**', 'Sources/Deprecated/'
   s.weak_framework = "XCTest"
