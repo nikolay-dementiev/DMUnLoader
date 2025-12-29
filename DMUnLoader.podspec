@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DMUnLoader'
-  s.version          = '1.0.2'
+  s.version          = '1.0.3'
   s.summary          = 'Universal Loader & Result handling SDK'
   s.description      = <<-DESC
   
