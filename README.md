@@ -1,86 +1,84 @@
-# DMUnLoader 
-#### Universal Loader & Result Handler
+# DMUnLoader
+**Universal Loader & Result Handler**
 
 [![Build Status](https://app.bitrise.io/app/9e391394-db73-473f-998a-2026373de643/status.svg?token=mL8evw6RHiRtfKSiQ82zuw&branch=develop)](https://app.bitrise.io/app/9e391394-db73-473f-998a-2026373de643)
-[![Swift Version](https://img.shields.io/badge/Swift-5-orange)](https://swift.org)
-[![Platform](https://img.shields.io/badge/platform-iOS-blue)](https://developer.apple.com/ios)
-[![SPM Compatible](https://img.shields.io/badge/SPM-compatible-orange?style=flat-square)](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat-square)
-[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/DMUnLoader.svg?style=flat-square)](https://img.shields.io/cocoapods/v/DMUnLoader.svg)
+[![Swift](https://img.shields.io/badge/Swift-5%2B-orange)](https://swift.org)
+[![Swift tools version](https://img.shields.io/badge/Swift_tools-6.0-darkorange)](https://swift.org/package-manager/)
+[![Platform](https://img.shields.io/badge/platform-iOS_17%2B-blue)](https://developer.apple.com/ios)
+[![SPM Compatible](https://img.shields.io/badge/SPM-compatible-orange?style=flat-square)](#swift-package-manager)
+[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/DMUnLoader.svg?style=flat-square)](https://cocoapods.org/pods/DMUnLoader)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader?ref=badge_small)
 
 <p align="center">
-  <img src="./DocumentationAndBluePrints/Assets/DMUnloade_mainImage.png?raw=true" alt="DMAction-SDK-logo" style="max-height: 400px; aspect-ratio: 1536/1024; object-fit: scale-dow;">
+  <img src="./DocumentationAndBluePrints/Assets/DMUnloade_mainImage.png?raw=true" alt="DMUnLoader SDK logo" style="max-height: 400px; aspect-ratio: 1536/1024; object-fit: scale-down;">
 </p>
 
 ## Overview
 
-The `SDK` simplifies the integration of common dialog states (`Error`, `Loading`, `Success`) in iOS applications. Only one state can be displayed at a time, ensuring a sequential and consistent behavior. 
-Built with **SwiftUI**, it supports both **UIKit** and **SwiftUI** environments, making it suitable for modern app development.
+`DMUnLoader` presents mutually exclusive loading, error, and success states in iOS applications. It is built with SwiftUI and works in both SwiftUI and UIKit apps.
 
-### Key features include:
-- **Separate System Window:** Dialogs are displayed in a dedicated system window, ensuring they overlay the entire app interface without leaving interactive elements (e.g., Tab Bars) active. Inspired by [fivestars.blog](https://www.fivestars.blog/): 
-    - [SwiftUI HUD](https://https://www.fivestars.blog//articles/SwiftUI-hud/) 
-    - [SwiftUI Windows](https://https://www.fivestars.blog//articles/SwiftUI-windows/)
-- **Customizable Views:** Replace default views (`DMErrorView`, `DMProgressView`, `DMSuccessView`) with custom implementations via the `DMLoadingViewProvider` protocol (**by using `dependency invertion` pronciple**).
-- **Settings Configuration:** Fine-tune the appearance of built-in views using settings like text properties, colors, and layout.
-- **Retry & Fallback Logic:** Incorporates robust action handling using retry and fallback mechanisms. For more information, refer to [DMAction documentation](https://medium.com/@mykola.dementiev/handling-actions-in-swift-using-retry-and-fallback-feature-fab138d35165) or [DMAction github page](https://github.com/nikolay-dementiev/DMAction).
-- **Dynamic Blur Effects:** Integrates with the [`DMVariableBlurView`](https://github.com/nikolay-dementiev/DMVariableBlurView) library to apply dynamic blur effects.
+### Key features
 
----
-
-## Table of Contents
-
-- [🎬 Demo: Loading, Success & Error States](#-demo-loading-success--error-states)
-- [🧭 Very High-Level Architecture in Picture](#-very-high-level-architecture-in-picture)
-- [📥 Installation](#-installation)
-   - [📦 Swift Package Manager](#-swift-package-manager)
-   - [🍫 CocoaPods](#-cocoapods)
-- [🛠 Usage](#-usage)
-   - [![](./DocumentationAndBluePrints/Assets/icons8-SwiftUI-16.png) SwiftUI Integration](#-SwiftUI-integration)
-   - [![](./DocumentationAndBluePrints/Assets/icons8-uikit-16.png) UIKit Integration](#-uikit-integration)
-- [🎨 Customization](#-customization)
-   - [🖌 Custom Views](#-custom-views)
-   - [⚙ Settings Configuration](#-settings-configuration)
-- [🧪 Example Project](#-example-project)
-- [🚀 Advanced Features](#-advanced-features)
-   - [🔁 Retry and Fallback Actions](#-retry-and-fallback-actions)
-   - [🌫 Dynamic Blur Effects](#-dynamic-blur-effects)
-- [🧩 Implementation Details](#-implementation-details)
-    1. [🪟 Separate System Window](#-1-separate-system-window)
-    2. [📦🍫 Dual Dependency Manager Usage in Test Project](#-2-dual-dependency-manager-usage-in-test-project)
-    3. [🎯 TDD Approach](#-3-tdd-approach)
-    4. [🌫 Custom Blur Effects](#-4-custom-blur-effects)
-    5. [🔁 Retry and Fallback Actions](#-5-retry-and-fallback-actions)
-- [🚧 Future Enhancements](#-future-enhancements)
-- [🙏 Acknowledgments](#-acknowledgments)
-- [📜 License](#-license)
+- **Dedicated overlay window:** Presents states above the app's main interface and blocks interaction with controls underneath. The window approach was inspired by:
+    - [Custom HUDs in SwiftUI](https://www.fivestars.blog/articles/swiftui-hud/)
+    - [How to layer multiple windows in SwiftUI](https://www.fivestars.blog/articles/swiftui-windows/)
+- **Custom views:** The `DMLoadingViewProvider` protocol lets clients replace `DMErrorView`, `DMProgressView`, and `DMSuccessView`.
+- **Configurable appearance:** Override text, color, layout, and auto-hide settings while retaining defaults for everything else.
+- **Retry and fallback:** Composes retry and fallback behavior through `DMAction`. See the [DMAction article](https://medium.com/@mykola.dementiev/handling-actions-in-swift-using-retry-and-fallback-feature-fab138d35165) or the [DMAction GitHub repository](https://github.com/nikolay-dementiev/DMAction).
+- **Dynamic blur:** Uses [`DMVariableBlurView`](https://github.com/nikolay-dementiev/DMVariableBlurView) to render the blur behind active states.
 
 ---
 
-## 🎬 Demo: Loading, Success & Error States
-<!-- was made within: https://ezgif.com/combine/ and https://ezgif.com/video-to-gif) -->
+## Contents
 
-Watch how `DMUnLoader` behaves in different states with `default` (left) and `custom` (right) settings:
+- [Demo](#demo)
+- [Architecture](#architecture)
+- [Installation](#installation)
+  - [Swift Package Manager](#swift-package-manager)
+  - [CocoaPods](#cocoapods)
+- [Usage](#usage)
+  - [SwiftUI](#swiftui)
+  - [UIKit](#uikit)
+- [Customization](#customization)
+  - [Custom views](#custom-views)
+  - [Settings](#settings)
+- [Example project](#example-project)
+- [Implementation details](#implementation-details)
+  - [Separate overlay window](#separate-overlay-window)
+  - [Dependency-manager test project](#dependency-manager-test-project)
+  - [Test-driven development](#test-driven-development)
+  - [Custom blur](#custom-blur)
+  - [Retry and fallback](#retry-and-fallback)
+- [Contributing](#contributing)
+- [Contact](#contact)
+- [References](#references)
+- [License](#license)
 
-- **Loading State**:  
+---
+
+## Demo
+
+The examples below show the default views on the left and customized views on the right.
+
+- **Loading state:**
 <p align="left">
-  <img src="./DocumentationAndBluePrints/Assets/TestProject-ScreenRecording/Loadiing-Default+Custom-Recording.gif?raw=true" alt="Loading Demo" style="max-height: 500px; aspect-ratio: 640/694; object-fit: scale-dow;">
+  <img src="./DocumentationAndBluePrints/Assets/TestProject-ScreenRecording/Loadiing-Default+Custom-Recording.gif?raw=true" alt="Loading state demo" style="max-height: 500px; aspect-ratio: 640/694; object-fit: scale-down;">
 </p>
 
-- **Success State**:  
+- **Success state:**
 <p align="left">
-  <img src="./DocumentationAndBluePrints/Assets/TestProject-ScreenRecording/Success-Default+Custom-Recording.gif?raw=true" alt="Success Demo" style="max-height: 500px; aspect-ratio: 640/694; object-fit: scale-dow;">
+  <img src="./DocumentationAndBluePrints/Assets/TestProject-ScreenRecording/Success-Default+Custom-Recording.gif?raw=true" alt="Success state demo" style="max-height: 500px; aspect-ratio: 640/694; object-fit: scale-down;">
 </p>
 
-- **Error State**:  
+- **Error state:**
 <p align="left">
-  <img src="./DocumentationAndBluePrints/Assets/TestProject-ScreenRecording/Error-Default+Custom-Recording.gif?raw=true" alt="Error Demo" style="max-height: 500px; aspect-ratio: 640/694; object-fit: scale-dow;">
+  <img src="./DocumentationAndBluePrints/Assets/TestProject-ScreenRecording/Error-Default+Custom-Recording.gif?raw=true" alt="Error state demo" style="max-height: 500px; aspect-ratio: 640/694; object-fit: scale-down;">
 </p>
 
 ---
 
-### 🧭 Very High-Level Architecture in Picture
-> click on the image to view it in full screen mode
+## Architecture
+> Click the image to open it at full size.
 <p align="center">
   <a href="./DocumentationAndBluePrints/Assets/plantumUML-base APP+SDK schema.svg?raw=true" target="_blank">
     <img src="./DocumentationAndBluePrints/Assets/plantumUML-base APP+SDK schema.svg?raw=true" alt="High-Level Architecture" style="max-height: 800px; aspect-ratio: 3012 / 1870; object-fit: scale-down;">
@@ -89,301 +87,258 @@ Watch how `DMUnLoader` behaves in different states with `default` (left) and `cu
 
 ---
 
-## 📥 Installation
+## Installation
 
-### 📦 Swift Package Manager
+### Swift Package Manager
 
 To integrate **DMUnLoader** using **Swift Package Manager**, add the following dependency to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/nikolay-dementiev/DMUnLoader.git", from: "1.0.0")
+    .package(url: "https://github.com/nikolay-dementiev/DMUnLoader.git", from: "1.0.3")
 ]
 ```
 
-### 🍫 CocoaPods
-To integrate `DMUnLoader` using `CocoaPods`, add the following line to your Podfile:
+### CocoaPods
+To integrate `DMUnLoader` with CocoaPods, add the following dependency to your `Podfile`:
 
 ```ruby
-pod 'DMUnLoader', :git => 'https://github.com/nikolay-dementiev/DMUnLoader.git'
+pod 'DMUnLoader', '~> 1.0.3'
 ```
 
 ---
 
-## 🛠 Usage
-### ![](./DocumentationAndBluePrints/Assets/icons8-SwiftUI-24.png) SwiftUI Integration
+## Usage
+### SwiftUI
 
-Here is a pseudocode example of how to use **DMUnLoader** in a **SwiftUI** project *(for real code example, please check the **[Example Project](#-example-project)**)*:
+`DMRootLoadingView` creates the loading manager and passes it to your root content view. The same manager presents loading, success, and failure states.
 
-```Swift
+```swift
 import SwiftUI
 import DMUnLoader
 
 @main
-struct DMUnLoaderPodSPMExampleApp: App {
+struct ExampleApp: App {
     @UIApplicationDelegateAdaptor private var delegate: DMAppDelegateType
-    
+
     var body: some Scene {
         WindowGroup {
-            DMRootLoadingView { loadingManager in // DMRootLoadingView - handles `sceneDelegate` by itself
-                LoadingContentViewSwiftUI(
+            DMRootLoadingView { loadingManager in
+                ContentView(
                     loadingManager: loadingManager,
-                    provider: DefaultDMLoadingViewProvider() // OR CustomDMLoadingViewProvider() --> need to be implemented by the client! See `DMUnLoaderPodSPMExample` for details
+                    provider: DefaultDMLoadingViewProvider()
                 )
             }
         }
     }
 }
 
+struct ContentView<
+    LM: DMLoadingManager,
+    Provider: DMLoadingViewProvider
+>: View {
+    let loadingManager: LM
+    let provider: Provider
 
-struct LoadingContentViewSwiftUI<Provider: DMLoadingViewProvider,
-                                 LM: DMLoadingManager>: View {
-    var loadingManager: LM
-    var provider: Provider
-    
     var body: some View {
         VStack {
-            Button("Simulate Loading", action: showDownloads)
-                .buttonStyle(.dmBorderedCorner)
-            Button("Simulate Error", action: simulateAnError)
-                .buttonStyle(.dmBorderedCorner)
-            Button("Simulate Success", action: simulateSuccess)
-                .buttonStyle(.dmBorderedCorner)
+            Button("Show loading") {
+                loadingManager.showLoading(provider: provider)
+            }
+
+            Button("Show success") {
+                loadingManager.showSuccess("Data successfully loaded!", provider: provider)
+            }
         }
     }
 }
 ```
 
-### ![](./DocumentationAndBluePrints/Assets/icons8-uikit-24.png) UIKit Integration
-For **UIKit** projects, Here is a pseudocode example of how to use **DMUnLoader** *(for real code example, please check the **[Example Project](#-example-project)**)*:
+### UIKit
 
-```swift 
+UIKit integration installs `DMSceneDelegateTypeUIKit` as the scene delegate. `DMSceneDelegateHelper` supplies the root view controller and receives the loading manager.
+
+```swift
 import UIKit
 import DMUnLoader
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
-    var window: UIWindow?
-    
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        
-        let configuration = UISceneConfiguration(name: "Default Configuration",
-                                                 sessionRole: connectingSceneSession.role)
-
+final class AppDelegate: UIResponder, UIApplicationDelegate {
+    func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        let configuration = UISceneConfiguration(
+            name: "Default Configuration",
+            sessionRole: connectingSceneSession.role
+        )
         configuration.delegateClass = DMSceneDelegateTypeUIKit<AppDelegateHelper>.self
-        
         return configuration
     }
 }
 
+struct AppDelegateHelper {}
+
 extension AppDelegateHelper: DMSceneDelegateHelper {
-    static func makeUIKitRootViewHierarhy<LM: DMLoadingManager>(loadingManager: LM) -> UIViewController {
-         DefaultSettingsViewController(
-            loadingManager: loadingManager
-        )
+    static func makeUIKitRootViewHierarhy<LM: DMLoadingManager>(
+        loadingManager: LM
+    ) -> UIViewController {
+        LoadingViewController(loadingManager: loadingManager)
     }
 }
 
-final class DefaultSettingsViewController<LM: DMLoadingManager>: UIViewController {
-    private(set) weak var loadingManager: LM?
-    
-    init(loadingManager: LM?) {
+final class LoadingViewController<LM: DMLoadingManager>: UIViewController {
+    private let loadingManager: LM
+    private let provider = DefaultDMLoadingViewProvider()
+
+    init(loadingManager: LM) {
         self.loadingManager = loadingManager
-        ...
+        super.init(nibName: nil, bundle: nil)
     }
-    
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is unavailable")
+    }
+
     override func loadView() {
-        ...
-        let newCustedView =  LoadingContentViewUIKit()
-        newCustedView.configure(
-            loadingManager: loadingManager,
-            provider: DefaultDMLoadingViewProvider() // OR CustomDMLoadingViewProvider() --> need to be implemented by the client! See `DMUnLoaderPodSPMExample` for details
-        )
-        
-        view = newCustedView
-        ...
-    }
-}
-
-final class LoadingContentViewUIKit<
-    Provider: DMLoadingViewProvider,
-    LM: DMLoadingManager
->: UIView {
-    private var loadingManager: LM?
-    private var provider: Provider?
-    
-    private let stackView = UIStackView()
-
-    ...
-    
-    func configure(loadingManager: LM?, provider: Provider?) {
-        self.loadingManager = loadingManager
-        self.provider = provider
-    }
-    
-    private func setupUI() {
-        ....
-        addSubview(stackView)
-        
-        // Buttons
-        let buttonShowDownloads = UIButton(type: .system)
-        buttonShowDownloads.addTarget(self, action: #selector(showDownloads), for: .touchUpInside)
-        stackView.addArrangedSubview(buttonShowDownloads)
-
-        let buttonSimulateAnError = UIButton(type: .system)
-        buttonSimulateAnError.addTarget(self, action: #selector(buttonSimulateAnError), for: .touchUpInside)
-        stackView.addArrangedSubview(buttonSimulateAnError)
-
-        let buttonSimulateSuccess = UIButton(type: .system)
-        buttonSimulateSuccess.addTarget(self, action: #selector(buttonSimulateSuccess), for: .touchUpInside)
-        stackView.addArrangedSubview(buttonSimulateSuccess)
-        ...
-    }
-    
-    @objc func showDownloads() {
-        loadingManager?.showSuccess("Data successfully loaded!",
-                                    provider: provider)
+        let button = UIButton(type: .system)
+        button.setTitle("Show success", for: .normal)
+        button.addTarget(self, action: #selector(showSuccess), for: .touchUpInside)
+        view = button
     }
 
-    @objc func simulateAnError() {
-        let error = DMAppError.custom("Some test Error occured!")
-        loadingManager?.showFailure(error,
-                                    provider: provider,
-                                    onRetry: DMButtonAction { [weak self] completion in
-            ....
-        }
-            .retry(2)
-            .fallbackTo(DMButtonAction(...)))
-    }
-
-    @objc func simulateSuccess() {
-        loadingManager?.showSuccess("Data successfully loaded!",
-                                    provider: provider)
+    @objc
+    private func showSuccess() {
+        loadingManager.showSuccess("Data successfully loaded!", provider: provider)
     }
 }
 ```
 
+> API compatibility note: released versions currently expose `makeUIKitRootViewHierarhy`. The example keeps that spelling so it matches the public protocol. A source-compatible migration should add `makeUIKitRootViewHierarchy` and deprecate the old name before the documentation switches to the corrected API.
+
 ---
 
-## 🎨 Customization
-### 🖌 Custom Views
-You can replace the default views (**DMErrorView**, **DMProgressView**, **DMSuccessView**) with your own custom views by conforming to the **DMLoadingViewProvider** protocol. Here's an example:
+## Customization
+### Custom views
+Conform a class to `DMLoadingViewProvider` to replace the default loading, error, and success views:
 
-```Swift
-struct CustomDMLoadingViewProvider: DMLoadingViewProvider {
+```swift
+import SwiftUI
+import DMUnLoader
+
+final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
+    @MainActor
     func getLoadingView() -> some View {
         Text("Custom Loading View")
             .padding()
             .background(Color.blue)
     }
 
-    func getErrorView(error: Error, onRetry: DMAction?, onClose: DMAction) -> some View {
+    @MainActor
+    func getErrorView(
+        error: Error,
+        onRetry: DMAction?,
+        onClose: DMAction
+    ) -> some View {
         VStack {
             Text("Custom Error View")
             if let onRetry = onRetry {
                 Button("Retry", action: onRetry.simpleAction)
             }
-            Button("Close this", action: onClose.simpleAction)
+            Button("Close", action: onClose.simpleAction)
         }
     }
 
+    @MainActor
     func getSuccessView(object: DMLoadableTypeSuccess) -> some View {
         Text("Custom Success View")
     }
-    ...
 }
 ```
 
-## ⚙ Settings Configuration
-The SDK allows you to customize the appearance of the built-in views by configuring settings such as text properties, colors, and layout. All these settings will be picked up by using `Provider` object. Only interested to you settings can be overridden - the rest will be used as default ones (because `DMLoadingViewProvider` protocol has default implementation on SDK side). Here's an example:
+### Settings
+Override only the settings you need; `DMLoadingViewProvider` supplies defaults for the rest. This example changes the auto-hide delay and success icon color:
 
-```Swift
-struct CustomDMLoadingViewProvider: DMLoadingViewProvider {
-    ...
+```swift
+extension CustomDMLoadingViewProvider {
+    var loadingManagerSettings: DMLoadingManagerSettings {
+        CustomLoadingManagerSettings()
+    }
 
-    var loadingManagerSettings: DMLoadingManagerSettings { CustomLoadingManagerSettings() }
-    
     private struct CustomLoadingManagerSettings: DMLoadingManagerSettings {
         var autoHideDelay: Duration = .seconds(4)
     }
-    
+
     var successViewSettings: DMSuccessViewSettings {
-        DMSuccessDefaultViewSettings(successImageProperties: SuccessImageProperties(foregroundColor: .green))
+        DMSuccessDefaultViewSettings(
+            successImageProperties: SuccessImageProperties(
+                foregroundColor: .green
+            )
+        )
     }
 }
 
 let provider = CustomDMLoadingViewProvider()
-loadingManager.showSuccess("Data successfully loaded!",
-                            provider: provider)
+loadingManager.showSuccess(
+    "Data successfully loaded!",
+    provider: provider
+)
 ```
 
 ---
 
-## 🧪 Example Project
-The **DMUnLoaderPodSPMExample** project <a href="./Examples/DMUnLoaderPodSPMExample/" target="_blank">(./Examples/DMUnLoaderPodSPMExample/**DMUnLoaderPodSPMExample.xcworkspace**)</a> demonstrates how to use the `SDK` in both **SwiftUI** and **UIKit** environments. It includes two schemes:
+## Example project
+The [DMUnLoaderPodSPMExample](./Examples/DMUnLoaderPodSPMExample/) project demonstrates the SDK in SwiftUI and UIKit. It includes two schemes:
 
-- **`Debug-SwiftUI`**: Demonstrates integration with `SwiftUI`.
-- **`Debug-UIKit`**: Demonstrates integration with `UIKit`.
+- **`Debug-SwiftUI`:** SwiftUI integration.
+- **`Debug-UIKit`:** UIKit integration.
 
 To run the example project:
 
 1. Clone the repository.
-2. run `pod install`; select the appropriate Depenency manager (`POD` or `SMP`) if neded; `POD` will be used by default (the commad like: `DEPENDENCY_MANAGER=POD pod install`)
+2. Run `pod install`. CocoaPods is the default dependency manager. To select one explicitly, run either `DEPENDENCY_MANAGER=POD pod install` or `DEPENDENCY_MANAGER=SPM pod install`.
 3. Open `DMUnLoaderPodSPMExample.xcworkspace` in Xcode.
 4. Select the desired scheme and run the app.
 
 ---
 
-## 🧩 Implementation Details
-### 🪟 1. Separate System Window
-All dialogs (**Error**, **Loading**, **Success**) are displayed in a separate system window, ensuring they overlay the entire app interface without leaving interactive elements (e.g., `Tab Bars`) active. This approach is inspired by [SwiftUI HUD](https://https://www.fivestars.blog//articles/SwiftUI-hud/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d) HUD and [SwiftUI Windows](https://https://www.fivestars.blog//articles/SwiftUI-windows/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d).
+## Implementation details
+### Separate overlay window
+DMUnLoader presents loading, error, and success views in a dedicated overlay window above the app's main interface. The approach was inspired by [Custom HUDs in SwiftUI](https://www.fivestars.blog/articles/swiftui-hud/) and [How to layer multiple windows in SwiftUI](https://www.fivestars.blog/articles/swiftui-windows/).
 
-### 📦🍫 2. Dual Dependency Manager Usage in Test Project
-The [DMUnLoaderPodSPMExample](#-example-project) test project demonstrates how to use the `SDK` with both **Swift Package Manager** (SPM) and **CocoaPods** simultaneously. This ensures seamless integration of the `SDK` regardless of the dependency manager used. For more details, refer to [this article](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d).
+### Dependency-manager test project
+The [DMUnLoaderPodSPMExample](#-example-project) project can resolve the SDK through either Swift Package Manager or CocoaPods. See [Using Swift Package Manager and CocoaPods with the same SDK](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14) for the setup.
 
->Important Note: This dual dependency manager setup is specific to this [DMUnLoaderPodSPMExample](#-example-project) test project and is not intended for production use. The main `SDK` itself supports installation via either SPM or CocoaPods, but not both simultaneously in a single target.
+> This dual dependency-manager setup exists only in the example project. An application target should integrate DMUnLoader through either SPM or CocoaPods, not both.
 
-### 🎯 3. TDD Approach
-Huge parts of the `SDK` were rewritten using a Test-Driven Development (BDD/TDD) approach to ensure robustness and reliability. The suporting documnents can be found in `DocumentationAndBluePrints` folder.
+### Test-driven development
+Core views and the loading manager were developed through a test-driven workflow. Test plans and design notes are available in the [`DocumentationAndBluePrints`](./DocumentationAndBluePrints/) folder.
 
-### 🌫 4. Custom Blur Effects
-The `SDK` leverages the [**DMVariableBlurView**](https://github.com/nikolay-dementiev/DMVariableBlurView) library to apply dynamic blur effects to views.
+### Custom blur
+The SDK uses [DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView) to apply variable blur effects.
 
-### 🔁 5. Retry and Fallback Actions
-The SDK supports retry and fallback mechanisms for handling failed actions. For more information, see the [**DMAction** GitHub page](https://github.com/nikolay-dementiev/DMAction).
-
----
-
-## 🚧 Future Enhancements
-The following features are planned for future releases:
-
-- **Accessibility IDs** for views.
-- Support for **Dark/Light themes**.
-- **Localization** for text on views.
-- **Analytics** integration to track events within the SDK.
-- Enhanced **loggin** capabilities for error reporting.
+### Retry and fallback
+The SDK composes retry and fallback behavior with [DMAction](https://github.com/nikolay-dementiev/DMAction).
 
 ---
 
-## 🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or feature requests.
+## Contributing
+Contributions are welcome. Open an issue for a bug or feature request, or submit a pull request with a proposed change.
 
 ---
 
-## 📬 Contact
-For questions or feedback, feel free to contact me via [@-mail](nikolas.dementiev@gmail.com).
+## Contact
+For questions or feedback, contact me at [nikolas.dementiev@gmail.com](mailto:nikolas.dementiev@gmail.com).
 
 ---
 
-### 🙏 Acknowledgments
-1. Inspiration for the separate window approach:[SwiftUI HUD](https://https://www.fivestars.blog//articles/SwiftUI-hud/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d) and [SwiftUI Windows](https://https://www.fivestars.blog//articles/SwiftUI-windows/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d)
-2. Managing dependencies with both `SPM` and `CocoaPods` dependency manager: [this article](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14?spm=a2ty_o01.29997173.0.0.31de5171JtCMAz)
-3. Retry and Fallback Logic: [**DMAction** GitHub page](https://github.com/nikolay-dementiev/DMAction)
-4. Dynamic Blur Effects: [**DMVariableBlurView** GitHub page](https://github.com/nikolay-dementiev/DMVariableBlurView)
+## References
+1. The separate-window approach was inspired by [Custom HUDs in SwiftUI](https://www.fivestars.blog/articles/swiftui-hud/) and [How to layer multiple windows in SwiftUI](https://www.fivestars.blog/articles/swiftui-windows/).
+2. The example project's SPM/CocoaPods configuration is described in [Using Swift Package Manager and CocoaPods with the same SDK](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14).
 
 ---
 
-## 📜 License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader?ref=badge_large&issueType=license)
+## License
+DMUnLoader is available under the MIT License. See [LICENSE](LICENSE) for details.
