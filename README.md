@@ -18,9 +18,9 @@ The `SDK` simplifies the integration of common dialog states (`Error`, `Loading`
 Built with **SwiftUI**, it supports both **UIKit** and **SwiftUI** environments, making it suitable for modern app development.
 
 ### Key features include:
-- **Separate System Window:** Dialogs are displayed in a dedicated system window, ensuring they overlay the entire app interface without leaving interactive elements (e.g., Tab Bars) active. Inspired by [fivestars.blog](www.fivestars.blog): 
-    - [SwiftUI HUD](https://www.fivestars.blog/articles/swiftui-hud/) 
-    - [SwiftUI Windows](https://www.fivestars.blog/articles/swiftui-windows/)
+- **Separate System Window:** Dialogs are displayed in a dedicated system window, ensuring they overlay the entire app interface without leaving interactive elements (e.g., Tab Bars) active. Inspired by [fivestars.blog](https://www.fivestars.blog/): 
+    - [SwiftUI HUD](https://https://www.fivestars.blog//articles/SwiftUI-hud/) 
+    - [SwiftUI Windows](https://https://www.fivestars.blog//articles/SwiftUI-windows/)
 - **Customizable Views:** Replace default views (`DMErrorView`, `DMProgressView`, `DMSuccessView`) with custom implementations via the `DMLoadingViewProvider` protocol (**by using `dependency invertion` pronciple**).
 - **Settings Configuration:** Fine-tune the appearance of built-in views using settings like text properties, colors, and layout.
 - **Retry & Fallback Logic:** Incorporates robust action handling using retry and fallback mechanisms. For more information, refer to [DMAction documentation](https://medium.com/@mykola.dementiev/handling-actions-in-swift-using-retry-and-fallback-feature-fab138d35165) or [DMAction github page](https://github.com/nikolay-dementiev/DMAction).
@@ -36,7 +36,7 @@ Built with **SwiftUI**, it supports both **UIKit** and **SwiftUI** environments,
    - [📦 Swift Package Manager](#-swift-package-manager)
    - [🍫 CocoaPods](#-cocoapods)
 - [🛠 Usage](#-usage)
-   - [![](./DocumentationAndBluePrints/Assets/icons8-swiftui-16.png) SwiftUI Integration](#-swiftui-integration)
+   - [![](./DocumentationAndBluePrints/Assets/icons8-SwiftUI-16.png) SwiftUI Integration](#-SwiftUI-integration)
    - [![](./DocumentationAndBluePrints/Assets/icons8-uikit-16.png) UIKit Integration](#-uikit-integration)
 - [🎨 Customization](#-customization)
    - [🖌 Custom Views](#-custom-views)
@@ -111,9 +111,9 @@ pod 'DMUnLoader', :git => 'https://github.com/nikolay-dementiev/DMUnLoader.git'
 ---
 
 ## 🛠 Usage
-### ![](./DocumentationAndBluePrints/Assets/icons8-swiftui-24.png) SwiftUI Integration
+### ![](./DocumentationAndBluePrints/Assets/icons8-SwiftUI-24.png) SwiftUI Integration
 
-Here is an pseudocode example of how to use **DMUnLoader** in a **SwiftUI** project *(for real code example, please check the **[Example Project](#-example-project)**)*:
+Here is a pseudocode example of how to use **DMUnLoader** in a **SwiftUI** project *(for real code example, please check the **[Example Project](#-example-project)**)*:
 
 ```Swift
 import SwiftUI
@@ -155,7 +155,7 @@ struct LoadingContentViewSwiftUI<Provider: DMLoadingViewProvider,
 ```
 
 ### ![](./DocumentationAndBluePrints/Assets/icons8-uikit-24.png) UIKit Integration
-For **UIKit** projects, here is an pseudocode example of how to use **DMUnLoader** *(for real code example, please check the **[Example Project](#-example-project)**)*:
+For **UIKit** projects, Here is a pseudocode example of how to use **DMUnLoader** *(for real code example, please check the **[Example Project](#-example-project)**)*:
 
 ```swift 
 import UIKit
@@ -336,7 +336,7 @@ To run the example project:
 
 ## 🧩 Implementation Details
 ### 🪟 1. Separate System Window
-All dialogs (**Error**, **Loading**, **Success**) are displayed in a separate system window, ensuring they overlay the entire app interface without leaving interactive elements (e.g., `Tab Bars`) active. This approach is inspired by [SwiftUI HUD](https://www.fivestars.blog/articles/swiftui-hud/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d) HUD and [SwiftUI Windows](https://www.fivestars.blog/articles/swiftui-windows/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d).
+All dialogs (**Error**, **Loading**, **Success**) are displayed in a separate system window, ensuring they overlay the entire app interface without leaving interactive elements (e.g., `Tab Bars`) active. This approach is inspired by [SwiftUI HUD](https://https://www.fivestars.blog//articles/SwiftUI-hud/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d) HUD and [SwiftUI Windows](https://https://www.fivestars.blog//articles/SwiftUI-windows/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d).
 
 ### 📦🍫 2. Dual Dependency Manager Usage in Test Project
 The [DMUnLoaderPodSPMExample](#-example-project) test project demonstrates how to use the `SDK` with both **Swift Package Manager** (SPM) and **CocoaPods** simultaneously. This ensures seamless integration of the `SDK` regardless of the dependency manager used. For more details, refer to [this article](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d).
@@ -376,7 +376,7 @@ For questions or feedback, feel free to contact me via [@-mail](nikolas.dementie
 ---
 
 ### 🙏 Acknowledgments
-1. Inspiration for the separate window approach:[SwiftUI HUD](https://www.fivestars.blog/articles/swiftui-hud/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d) and [SwiftUI Windows](https://www.fivestars.blog/articles/swiftui-windows/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d)
+1. Inspiration for the separate window approach:[SwiftUI HUD](https://https://www.fivestars.blog//articles/SwiftUI-hud/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d) and [SwiftUI Windows](https://https://www.fivestars.blog//articles/SwiftUI-windows/?spm=a2ty_o01.29997173.0.0.31de5171XJJ06d)
 2. Managing dependencies with both `SPM` and `CocoaPods` dependency manager: [this article](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14?spm=a2ty_o01.29997173.0.0.31de5171JtCMAz)
 3. Retry and Fallback Logic: [**DMAction** GitHub page](https://github.com/nikolay-dementiev/DMAction)
 4. Dynamic Blur Effects: [**DMVariableBlurView** GitHub page](https://github.com/nikolay-dementiev/DMVariableBlurView)
