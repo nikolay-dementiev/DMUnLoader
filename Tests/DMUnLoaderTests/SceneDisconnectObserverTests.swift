@@ -15,33 +15,33 @@ import DMUnLoader
 final class SceneDisconnectObserverTests: XCTestCase {
 
     func test_disconnect_ofTheObservedScene_callsBack() {
-        let (sut, center, scene, calls) = makeSUT()
+        let fixture = makeSUT()
 
-        center.post(name: UIScene.didDisconnectNotification, object: scene)
+        fixture.center.post(name: UIScene.didDisconnectNotification, object: fixture.scene)
 
-        XCTAssertEqual(calls.count, 1, "the disconnect of the observed scene is reported")
-        withExtendedLifetime(sut) {}
+        XCTAssertEqual(fixture.calls.count, 1, "the disconnect of the observed scene is reported")
+        withExtendedLifetime(fixture) {}
     }
 
     func test_disconnect_ofAnotherScene_doesNotCallBack() {
-        let (sut, center, scene, calls) = makeSUT()
+        let fixture = makeSUT()
         // The observed scene stays alive: a new object could otherwise take its address,
         // and a notification center compares objects by address.
         let anotherScene = NSObject()
 
-        center.post(name: UIScene.didDisconnectNotification, object: anotherScene)
+        fixture.center.post(name: UIScene.didDisconnectNotification, object: anotherScene)
 
-        XCTAssertEqual(calls.count, 0, "another scene's disconnect is not this scene's")
-        withExtendedLifetime((sut, scene)) {}
+        XCTAssertEqual(fixture.calls.count, 0, "another scene's disconnect is not this scene's")
+        withExtendedLifetime(fixture) {}
     }
 
     func test_otherNotification_ofTheObservedScene_doesNotCallBack() {
-        let (sut, center, scene, calls) = makeSUT()
+        let fixture = makeSUT()
 
-        center.post(name: UIScene.didEnterBackgroundNotification, object: scene)
+        fixture.center.post(name: UIScene.didEnterBackgroundNotification, object: fixture.scene)
 
-        XCTAssertEqual(calls.count, 0, "a scene that only enters the background is still connected")
-        withExtendedLifetime(sut) {}
+        XCTAssertEqual(fixture.calls.count, 0, "a scene that only enters the background is still connected")
+        withExtendedLifetime(fixture) {}
     }
 
     func test_disconnect_afterTheObserverIsReleased_doesNotCallBack() {
@@ -64,10 +64,14 @@ final class SceneDisconnectObserverTests: XCTestCase {
         var count = 0
     }
 
-    private func makeSUT(
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) -> (sut: SceneDisconnectObserver, center: NotificationCenter, scene: NSObject, calls: CallCounter) {
+    private struct Fixture {
+        let sut: SceneDisconnectObserver
+        let center: NotificationCenter
+        let scene: NSObject
+        let calls: CallCounter
+    }
+
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> Fixture {
         let center = NotificationCenter()
         let scene = NSObject()
         let calls = CallCounter()
@@ -75,6 +79,6 @@ final class SceneDisconnectObserverTests: XCTestCase {
             calls.count += 1
         }
         trackForMemoryLeaks(sut, file: file, line: line)
-        return (sut, center, scene, calls)
+        return Fixture(sut: sut, center: center, scene: scene, calls: calls)
     }
 }
