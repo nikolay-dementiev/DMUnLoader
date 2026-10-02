@@ -55,6 +55,36 @@ final class HUDWindowTests: XCTestCase {
         XCTAssertTrue(waitUntil(releasedFirst == nil, in: scene), "the HUD keeps no replaced manager alive")
     }
 
+    /// A phone gives an app one scene, so this runs where the system supports more, such as
+    /// an iPad. The test keeps the second scene's delegate alive, as a host may: the HUD window
+    /// must still leave with its scene.
+    func test_secondScene_showsItsOwnHUD_andClosingItRemovesOnlyThatOne() throws {
+        let app = UIApplication.shared
+        try XCTSkipUnless(app.supportsMultipleScenes, "a second scene needs a device that supports multiple scenes")
+        let (firstScene, firstDelegate) = try connectedSceneDelegate()
+        _ = waitForHUDWindows(in: firstScene)
+        let secondScene = try openScene(besides: firstScene)
+        _ = waitUntil(ExampleSceneDelegate.current !== firstDelegate, in: firstScene)
+        let secondDelegate = ExampleSceneDelegate.current
+        weak var secondHUD: UIWindow?
+        autoreleasepool {
+            secondHUD = waitForHUDWindows(in: secondScene).first
+        }
+        let secondSceneShowedAHUD = secondHUD != nil
+
+        app.requestSceneSessionDestruction(secondScene.session, options: nil)
+        let closed = waitUntil(app.connectedScenes.count == 1, in: firstScene)
+
+        XCTAssertTrue(secondSceneShowedAHUD, "the second scene shows a HUD window of its own")
+        XCTAssertTrue(closed, "the second scene disconnects")
+        XCTAssertTrue(
+            waitUntil(secondHUD == nil, in: firstScene),
+            "the closed scene's HUD window is released, although its scene delegate is alive"
+        )
+        XCTAssertEqual(hudWindows(in: firstScene).count, 1, "the first scene keeps its HUD window")
+        XCTAssertNotNil(secondDelegate, "the second scene's delegate stays alive until the end of the test")
+    }
+
     // MARK: - Helpers
 
     private func windowScene() -> UIWindowScene? {
@@ -69,6 +99,21 @@ final class HUDWindowTests: XCTestCase {
             "the SwiftUI path installs DMSceneDelegateBase and the root view registers it"
         )
         return (scene, sceneDelegate)
+    }
+
+    /// Opens another scene of the app. The system may decline, as the iPadOS 18.6 simulator
+    /// does; the test is then skipped with the system's reason.
+    private func openScene(besides scene: UIWindowScene) throws -> UIWindowScene {
+        var declined: (any Error)?
+        UIApplication.shared.activateSceneSession(for: UISceneSessionActivationRequest()) { declined = $0 }
+        _ = waitUntil(UIApplication.shared.connectedScenes.count > 1 || declined != nil, in: scene)
+        if let declined {
+            throw XCTSkip("the system declined to open a second scene: \(declined.localizedDescription)")
+        }
+        let otherScene = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first { $0 !== scene }
+        return try XCTUnwrap(otherScene, "the second scene connects")
     }
 
     /// The HUD window is the window of the library's own window class in the scene.
