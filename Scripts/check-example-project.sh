@@ -18,10 +18,17 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 EXAMPLE="Examples/DMUnLoaderExample"
 PROJECT="DMUnLoaderExample.xcodeproj"
+GENERATOR_VERSION="2.45.3"
 
 if ! command -v xcodegen > /dev/null; then
-    echo "check-example-project: xcodegen is not installed, nothing was compared." >&2
+    echo "check-example-project: XcodeGen is not installed. The project was generated with $GENERATOR_VERSION." >&2
     exit 2
+fi
+
+INSTALLED="$(xcodegen --version | sed 's/^Version: //')"
+if [ "$INSTALLED" != "$GENERATOR_VERSION" ]; then
+    echo "check-example-project: note: the project was generated with XcodeGen $GENERATOR_VERSION," >&2
+    echo "  this machine has $INSTALLED. A difference may come from the generator, not from the spec." >&2
 fi
 
 WORK="$(mktemp -d)"
