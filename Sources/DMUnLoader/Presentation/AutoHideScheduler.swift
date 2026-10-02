@@ -12,7 +12,8 @@ import Combine
 /// the delay has passed.
 @MainActor
 package protocol AutoHideScheduler {
-    /// Calls `hide` on the main actor once `delay` has passed. Cancelling or releasing the
-    /// returned value before then keeps `hide` from being called.
+    /// Calls `hide` on the main actor once `delay` has passed, never from within this call.
+    /// Cancelling or releasing the returned value before then keeps `hide` from being
+    /// called. The loading manager also ignores a `hide` that arrives after it cancelled.
     func schedule(after delay: Duration, _ hide: @escaping @MainActor () -> Void) -> AnyCancellable
 }
