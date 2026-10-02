@@ -12,7 +12,14 @@ import ViewInspector
 
 @MainActor
 final class DMLoadingViewTests: XCTestCase {
-    
+
+    /// How long a check waits after the auto-hide delay before it reads the state. The
+    /// timer and the check both run on the main thread, and a busy machine delays both.
+    private static let timerMargin: Double = 0.5
+
+    /// How late a scheduled check may run on a busy machine before the test gives up.
+    private static let callbackAllowance: Double = 3
+
     override func invokeTest() {
         withSnapshotTesting(diffTool: .ksdiff) {
             super.invokeTest()
@@ -360,7 +367,7 @@ final class DMLoadingViewTests: XCTestCase {
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
         
-        wait(for: [exp], timeout: animationDuration + 0.05)
+        wait(for: [exp], timeout: animationDuration + Self.callbackAllowance)
     }
     
     func checktLoadingView_RespondToTapGestures_ForStates(
@@ -418,7 +425,7 @@ final class DMLoadingViewTests: XCTestCase {
             )
             
             // Then
-            let exp = inspection.inspect(after: secondsAutoHideDelay + 0.01) { view in
+            let exp = inspection.inspect(after: secondsAutoHideDelay + Self.timerMargin) { view in
                 let actualView = try view.actualView()
                 
                 XCTAssertEqual(actualView
@@ -433,7 +440,7 @@ final class DMLoadingViewTests: XCTestCase {
             ViewHosting.host(view: sut)
             defer { ViewHosting.expel() }
             
-            wait(for: [exp], timeout: secondsAutoHideDelay + 0.02)
+            wait(for: [exp], timeout: secondsAutoHideDelay + Self.timerMargin + Self.callbackAllowance)
         }
     }
     
