@@ -92,11 +92,18 @@ public final class DMSceneDelegateBase<
             return
         }
         
-        let toastViewController = UIHostingController(rootView: DMHudSceneView(loadingManager: loadingManager))
-        
-        toastViewController.view.backgroundColor = .clear
-        
         let toastWindow = DMPassThroughWindow(windowScene: windowScene)
+        // The window knows the state before it becomes visible; the view reports every
+        // change after that. The window owns the view, so the view holds it weakly.
+        toastWindow.interceptsTouches = loadingManager.loadableState.showsHUD
+        let toastViewController = UIHostingController(
+            rootView: DMHudSceneView(loadingManager: loadingManager) { [weak toastWindow] showsHUD in
+                toastWindow?.interceptsTouches = showsHUD
+            }
+        )
+
+        toastViewController.view.backgroundColor = .clear
+
         toastWindow.rootViewController = toastViewController
         toastWindow.isHidden = false
         self.toastWindow = toastWindow

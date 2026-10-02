@@ -8,16 +8,23 @@ import SwiftUI
 
 struct DMHudSceneView<LM: DMLoadingManager>: View {
     @ObservedObject var loadingManager: LM
+    private let onShowsHUDChange: (Bool) -> Void
 
-    init(loadingManager: LM) {
+    /// - Parameter onShowsHUDChange: Called when the view appears and whenever the state
+    ///   of `loadingManager` turns from showing no HUD to showing one, or back.
+    init(loadingManager: LM, onShowsHUDChange: @escaping (Bool) -> Void = { _ in }) {
         self.loadingManager = loadingManager
+        self.onShowsHUDChange = onShowsHUDChange
     }
-    
+
     var body: some View {
         Color.clear
             .ignoresSafeArea(.all)
             .hudCenter(loadingManager: loadingManager) {
                 DMLoadingView(loadingManager: loadingManager)
+            }
+            .onChange(of: loadingManager.loadableState.showsHUD, initial: true) { _, showsHUD in
+                onShowsHUDChange(showsHUD)
             }
     }
 }
