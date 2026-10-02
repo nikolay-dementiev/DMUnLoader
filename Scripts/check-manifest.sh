@@ -9,17 +9,29 @@
 #    that has an unstable dependency, a build plugin of a dependency runs in every
 #    consumer's build, and a manifest that reads the environment describes more than one
 #    package.
-# 2. Fixtures/Consumer builds in Swift 6 and in Swift 5 language mode, and its own sources
+# 2. A consumer that asks for the package by version resolves it. This runs against a
+#    throw-away tagged copy of the tracked files: a consumer that depends on the checkout
+#    by path cannot show that failure.
+# 3. Fixtures/Consumer builds in Swift 6 and in Swift 5 language mode, and its own sources
 #    compile without a warning. It uses the released API and the README samples, so if it
 #    stops building, a consumer's code stops building.
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+MODULE="DMUnLoader"
 WORK="$ROOT/.build/check-manifest"
 FAILED=0
 
 mkdir -p "$WORK"
+
+# The copy that the version probe tags lives in a folder this run creates, and leaves with it.
+PROBE=""
+# shellcheck disable=SC2329  # invoked by the trap below
+cleanup() {
+    if [ -n "$PROBE" ]; then rm -rf "$PROBE"; fi
+}
+trap cleanup EXIT
 
 # 1. Static check of the manifest.
 swift package --package-path "$ROOT" dump-package > "$WORK/manifest.json"
@@ -56,7 +68,42 @@ else
     echo "check-manifest: no unstable requirement, no plugin and no environment switch in Package.swift."
 fi
 
-# 2. The consumer fixture.
+# 2. Resolution by version, against a throw-away copy of the tracked files with a tag.
+PROBE="$(mktemp -d "$WORK/version-probe.XXXXXX")"
+mkdir -p "$PROBE/package" "$PROBE/consumer/Sources/Probe"
+(cd "$ROOT" && git ls-files -z | rsync -a --files-from=- --from0 ./ "$PROBE/package/")
+# The probe repository takes nothing from the git configuration of whoever runs this:
+# no signing, no hooks, no identity.
+probe_git() {
+    git -C "$PROBE/package" \
+        -c user.name=probe -c user.email=probe@example.invalid \
+        -c commit.gpgsign=false -c tag.gpgSign=false -c core.hooksPath=/dev/null \
+        "$@"
+}
+probe_git init -q
+probe_git add -A
+probe_git commit -q -m probe
+probe_git tag 99.0.0
+cat > "$PROBE/consumer/Package.swift" <<EOF
+// swift-tools-version: 6.0
+import PackageDescription
+let package = Package(
+    name: "Probe",
+    platforms: [.iOS(.v17)],
+    dependencies: [.package(url: "file://$PROBE/package", from: "99.0.0")],
+    targets: [.target(name: "Probe", dependencies: [.product(name: "$MODULE", package: "package")])]
+)
+EOF
+echo "import $MODULE" > "$PROBE/consumer/Sources/Probe/Probe.swift"
+if swift package --package-path "$PROBE/consumer" resolve > "$WORK/version-resolution.log" 2>&1; then
+    echo "check-manifest: a version requirement on the package resolves."
+else
+    echo "check-manifest: a version requirement on the package does not resolve:" >&2
+    grep -E "error:|cannot be used|unstable" "$WORK/version-resolution.log" | cut -c1-300 | head -5 >&2 || true
+    FAILED=1
+fi
+
+# 3. The consumer fixture.
 
 # A fresh build folder every run, so a product of an older build cannot hide a failure.
 # The fetched dependencies are kept between runs.
