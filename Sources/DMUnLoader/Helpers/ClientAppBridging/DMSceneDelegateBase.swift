@@ -64,16 +64,13 @@ public final class DMSceneDelegateBase<
 >: UIResponder, UIWindowSceneDelegate, ObservableObject {
     public var loadingManager: LM? {
         didSet {
-            guard let windowScene else {
-                return
-            }
-            setupHudWindow(in: windowScene)
+            overlay.loadingManagerDidChange(to: loadingManager)
         }
     }
-    
-    private var toastWindow: UIWindow?
+
+    private let overlay = HUDOverlayLifecycle()
     weak var windowScene: UIWindowScene?
-    
+
     public func scene(
         _ scene: UIScene,
         willConnectTo session: UISceneSession,
@@ -82,30 +79,12 @@ public final class DMSceneDelegateBase<
         guard let windowScene = scene as? UIWindowScene else {
             return
         }
-        
+
         self.windowScene = windowScene
+        overlay.sceneDidConnect(presenter: OverlayWindowPresenter(windowScene: windowScene))
     }
-    
+
     func setupHudWindow(in scene: UIWindowScene) {
-        guard let windowScene = windowScene,
-              let loadingManager = loadingManager else {
-            return
-        }
-        
-        let toastWindow = DMPassThroughWindow(windowScene: windowScene)
-        // The window knows the state before it becomes visible; the view reports every
-        // change after that. The window owns the view, so the view holds it weakly.
-        toastWindow.interceptsTouches = loadingManager.loadableState.showsHUD
-        let toastViewController = UIHostingController(
-            rootView: DMHudSceneView(loadingManager: loadingManager) { [weak toastWindow] showsHUD in
-                toastWindow?.interceptsTouches = showsHUD
-            }
-        )
-
-        toastViewController.view.backgroundColor = .clear
-
-        toastWindow.rootViewController = toastViewController
-        toastWindow.isHidden = false
-        self.toastWindow = toastWindow
+        overlay.loadingManagerDidChange(to: loadingManager)
     }
 }

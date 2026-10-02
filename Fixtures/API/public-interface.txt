@@ -86,7 +86,7 @@
     get
     set
   }
-  @_Concurrency.MainActor @preconcurrency @_hasInitialValue final private var toastWindow: UIKit.UIWindow?
+  @_Concurrency.MainActor @preconcurrency @_hasInitialValue final private let overlay: DMUnLoader.HUDOverlayLifecycle
   @_Concurrency.MainActor @preconcurrency @_hasInitialValue weak final internal var windowScene: UIKit.UIWindowScene?
   @_Concurrency.MainActor @preconcurrency @objc final public func scene(_ scene: UIKit.UIScene, willConnectTo session: UIKit.UISceneSession, options connectionOptions: UIKit.UIScene.ConnectionOptions)
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
