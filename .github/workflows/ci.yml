@@ -1,0 +1,150 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Mondays, 05:17 UTC. An early warning when a new runner image or OS breaks the package.
+    - cron: "17 5 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    # Named explicitly, so a failing xcodebuild in front of a pipe fails the step.
+    shell: bash
+
+jobs:
+  lint:
+    name: lint
+    runs-on: macos-26
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Lint
+        run: Scripts/lint.sh
+
+  test:
+    # The newest hosted Xcode with the newest runtime, and the oldest hosted runtime.
+    # The sources need Swift 6.2, so the older image also uses an Xcode 26.
+    # iOS 17 is not on a hosted image: that run is a recorded local step.
+    name: test (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: iOS 26.5
+            runner: macos-26
+            xcode: /Applications/Xcode_26.6.app
+            destination: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5
+          - name: iOS 18.6
+            runner: macos-15
+            xcode: /Applications/Xcode_26.3.app
+            destination: platform=iOS Simulator,name=iPhone 16 Pro,OS=18.6
+    env:
+      DEVELOPER_DIR: ${{ matrix.xcode }}/Contents/Developer
+      DESTINATION: ${{ matrix.destination }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build and test
+        run: |
+          mkdir -p .build/results/ci
+          xcodebuild clean build test \
+            -scheme DMUnLoader \
+            -sdk iphonesimulator \
+            -destination "$DESTINATION" \
+            -enableCodeCoverage YES \
+            -resultBundlePath .build/results/ci/package.xcresult \
+            -skipPackagePluginValidation \
+            2>&1 | tee .build/results/ci/package.log
+      - name: No warning from this repository
+        run: Scripts/check-warnings.sh .build/results/ci/package.log
+      - name: Coverage floor
+        run: Scripts/coverage-gate.sh .build/results/ci/package.xcresult
+      - name: Upload the result bundle
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: package-${{ matrix.runner }}-xcresult
+          path: .build/results/ci/package.xcresult
+
+  consumer:
+    name: consumer
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build the library in Release
+        # Tests run in Debug. Code inside "#if DEBUG" must not hide a broken release build.
+        run: |
+          xcodebuild build \
+            -scheme DMUnLoader \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -skipPackagePluginValidation
+      - name: Check what a consumer gets
+        run: Scripts/check-manifest.sh
+
+  api:
+    # The interface text depends on the compiler, so this job runs on one pinned Xcode.
+    name: api
+    runs-on: macos-26
+    timeout-minutes: 15
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Compare the public interface with the baseline
+        run: Scripts/check-api.sh
+
+  example:
+    name: example (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: iOS 26.5
+            runner: macos-26
+            xcode: /Applications/Xcode_26.6.app
+            destination: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5
+          - name: iOS 18.6
+            runner: macos-15
+            xcode: /Applications/Xcode_26.3.app
+            destination: platform=iOS Simulator,name=iPhone 16 Pro,OS=18.6
+    env:
+      DEVELOPER_DIR: ${{ matrix.xcode }}/Contents/Developer
+      DESTINATION: ${{ matrix.destination }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build the example and run its tests
+        run: |
+          mkdir -p .build/results/ci
+          xcodebuild test \
+            -project Examples/DMUnLoaderExample/DMUnLoaderExample.xcodeproj \
+            -scheme DMUnLoaderExample \
+            -destination "$DESTINATION" \
+            -resultBundlePath .build/results/ci/example.xcresult \
+            -skipPackagePluginValidation \
+            2>&1 | tee .build/results/ci/example.log
+      - name: No warning from this repository
+        run: Scripts/check-warnings.sh .build/results/ci/example.log
+      - name: Upload the result bundle
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: example-${{ matrix.runner }}-xcresult
+          path: .build/results/ci/example.xcresult
