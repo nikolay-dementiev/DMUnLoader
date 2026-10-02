@@ -14,10 +14,7 @@ import ViewInspector
 final class DMLoadingViewTests: XCTestCase {
     
     override func invokeTest() {
-        withSnapshotTesting(
-            record: .missing,
-            diffTool: .ksdiff
-        ) {
+        withSnapshotTesting(diffTool: .ksdiff) {
             super.invokeTest()
         }
     }
@@ -32,14 +29,10 @@ final class DMLoadingViewTests: XCTestCase {
         let sut = makeSUT(manager: loadingManager)
         
         // Then
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .light)
-            ),
-            named: "View-EmptyState-No-Overlay-or-Background-iPhone13Pro-light",
-            record: false
+            style: .light,
+            named: "View-EmptyState-No-Overlay-or-Background-iPhone13Pro-light"
         )
     }
     
@@ -82,12 +75,9 @@ final class DMLoadingViewTests: XCTestCase {
         let exp = inspection.inspect { view in
             let actualView = try view.actualView()
             
-            assertSnapshot(
+            assertImageSnapshot(
                 of: actualView,
-                as: .image(
-                    layout: .device(config: .iPhone13Pro),
-                    traits: .init(userInterfaceStyle: .light)
-                ),
+                style: .light,
                 named: "View-LoadingState-iPhone13Pro-light"
             )
         }
@@ -151,12 +141,9 @@ final class DMLoadingViewTests: XCTestCase {
         let exp = inspection.inspect { view in
             let actualView = try view.actualView()
             
-            assertSnapshot(
+            assertImageSnapshot(
                 of: actualView,
-                as: .image(
-                    layout: .device(config: .iPhone13Pro),
-                    traits: .init(userInterfaceStyle: .light)
-                ),
+                style: .light,
                 named: "View-FailureState-iPhone13Pro-light"
             )
         }
@@ -223,12 +210,9 @@ final class DMLoadingViewTests: XCTestCase {
         let exp = inspection.inspect { view in
             let actualView = try view.actualView()
             
-            assertSnapshot(
+            assertImageSnapshot(
                 of: actualView,
-                as: .image(
-                    layout: .device(config: .iPhone13Pro),
-                    traits: .init(userInterfaceStyle: .light)
-                ),
+                style: .light,
                 named: "View-SuccessState-iPhone13Pro-light"
             )
         }
@@ -333,7 +317,6 @@ final class DMLoadingViewTests: XCTestCase {
     
     private func testLoadingView_TheOverlayAnimatesSmoothly_IntoView(
         state: DMLoadableType,
-        record recording: Bool? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
@@ -354,14 +337,10 @@ final class DMLoadingViewTests: XCTestCase {
         )
         
         // Then
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .light)
-            ),
+            style: .light,
             named: "BeforeAnimation-\(state.rawValue)-iPhone13Pro-light",
-            record: recording,
             file: file,
             line: line
         )
@@ -369,14 +348,10 @@ final class DMLoadingViewTests: XCTestCase {
         let exp = inspection.inspect(after: animationDuration + 0.01) { view in
             let actualView = try view.actualView()
             
-            assertSnapshot(
+            assertImageSnapshot(
                 of: actualView,
-                as: .image(
-                    layout: .device(config: .iPhone13Pro),
-                    traits: .init(userInterfaceStyle: .light)
-                ),
+                style: .light,
                 named: "AfterAnimation-\(state.rawValue)-iPhone13Pro-light",
-                record: recording,
                 file: file,
                 line: line
             )

@@ -16,10 +16,7 @@ import SnapshotTesting
 final class DMErrorViewTests: XCTestCase {
     
     override func invokeTest() {
-        withSnapshotTesting(
-            record: .missing,
-            diffTool: .ksdiff
-        ) {
+        withSnapshotTesting(diffTool: .ksdiff) {
             super.invokeTest()
         }
     }
@@ -549,12 +546,9 @@ final class DMErrorViewTests: XCTestCase {
         )
         
         // Then
-        assertSnapshot(
+        assertImageSnapshot(
             of: LoadingViewContainer<DMErrorView>(overlayView: { sut }),
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .light)
-            ),
+            style: .light,
             named: "ViewWith-CloseButton-iPhone13Pro-light"
         )
     }
@@ -601,12 +595,9 @@ final class DMErrorViewTests: XCTestCase {
                 try view.actualView(),
                 "Failed to extract the actual view from the inspect"
             )
-            assertSnapshot(
+            assertImageSnapshot(
                 of: LoadingViewContainer<DMErrorView>(overlayView: { updatedView }),
-                as: .image(
-                    layout: .device(config: .iPhone13Pro),
-                    traits: .init(userInterfaceStyle: .light)
-                ),
+                style: .light,
                 named: "ViewWith-RetryButton-iPhone13Pro-light"
             )
         }
@@ -694,20 +685,14 @@ final class DMErrorViewTests: XCTestCase {
         )
         
         // Then
-        assertSnapshot(
+        assertImageSnapshot(
             of: LoadingViewContainer<DMErrorView>(overlayView: { sut }),
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .light)
-            ),
+            style: .light,
             named: "DefaultSettings-iPhone13Pro-light"
         )
-        assertSnapshot(
+        assertImageSnapshot(
             of: LoadingViewContainer<DMErrorView>(overlayView: { sut }),
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            style: .dark,
             named: "DefaultSettings-iPhone13Pro-dark"
         )
     }
@@ -750,24 +735,18 @@ final class DMErrorViewTests: XCTestCase {
         )
         
         // Then
-        assertSnapshot(
+        assertImageSnapshot(
             of: LoadingViewContainer<DMErrorView>(overlayView: { sut }),
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .light)
-            ),
+            style: .light,
             named: "CustomSettingsSettings-iPhone13Pro-light"
         )
-        assertSnapshot(
+        assertImageSnapshot(
             of: LoadingViewContainer<DMErrorView>(overlayView: { sut }),
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            style: .dark,
             named: "CustomSettingsSettings-iPhone13Pro-dark"
         )
     }
-    
+
     // MARK: - Helpers
     
     private func makeSUT(

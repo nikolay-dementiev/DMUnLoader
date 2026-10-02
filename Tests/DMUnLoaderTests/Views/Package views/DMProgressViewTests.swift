@@ -12,10 +12,7 @@ import SnapshotTesting
 final class DMProgressViewTests: XCTestCase {
     
     override func invokeTest() {
-        withSnapshotTesting(
-            record: .missing,
-            diffTool: .ksdiff
-        ) {
+        withSnapshotTesting(diffTool: .ksdiff) {
             super.invokeTest()
         }
     }
@@ -105,21 +102,16 @@ final class DMProgressViewTests: XCTestCase {
         )
         let sut = makeSUT(settings: settings)
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: LoadingViewContainer<DMProgressView>(overlayView: { sut }),
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            style: .dark,
             named: "iPhone13Pro-dark"
         )
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .sizeThatFits,
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            layout: .sizeThatFits,
+            style: .dark,
             named: "size-that-fits-dark"
         )
     }
@@ -226,12 +218,9 @@ final class DMProgressViewTests: XCTestCase {
         let settings = DMProgressViewDefaultSettings()
         let sut = makeSUTWithContainer(settings: settings)
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            style: .dark,
             named: "iPhone13Pro-dark"
         )
     }
@@ -255,12 +244,9 @@ final class DMProgressViewTests: XCTestCase {
         )
         let sut = makeSUTWithContainer(settings: settings)
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            style: .dark,
             named: "iPhone13Pro-dark"
         )
     }
