@@ -27,13 +27,27 @@ targets:
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+  DMUnLoaderExampleUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests, Shared]
+    dependencies:
+      - target: DMUnLoaderExample
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dmunloader.example.uitests
 schemes:
   DMUnLoaderExample:
     build:
       targets:
         DMUnLoaderExample: all
+        DMUnLoaderExampleUITests: [test]
     run:
       config: Debug
+    test:
+      config: Debug
+      targets:
+        - DMUnLoaderExampleUITests
   DMUnLoaderExample-UIKit:
     build:
       targets:

@@ -10,6 +10,7 @@
 		0A5D4518EB6A56D7539CE00C /* DemoIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E16D65638614EA3C956C2F8 /* DemoIdentifier.swift */; };
 		0B47BE2022558EB8CD4E1509 /* ExampleLoadingSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16660AEC2BF9535391B9CAEA /* ExampleLoadingSettings.swift */; };
 		0E9C45D4847AED97FA48EA7D /* LaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218EE0BE1A164D671904E880 /* LaunchOptions.swift */; };
+		124A89197F6CEF22DB1844C9 /* HUDTouchRoutingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28C0C39764ECE45B86E77AE /* HUDTouchRoutingUITests.swift */; };
 		1275CD3E62AF076E03957658 /* DemoScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B745F9BAB7B7EEA5A8598D /* DemoScreen.swift */; };
 		15B2B0A09098F48E75DFF9A7 /* StickyLoadingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B35249BF416C1DDC15E662 /* StickyLoadingManager.swift */; };
 		41FBC344C0A502A77B4B5740 /* DMUnLoader in Frameworks */ = {isa = PBXBuildFile; productRef = 7AE14DE50D5C64CE5060A002 /* DMUnLoader */; };
@@ -18,8 +19,19 @@
 		74C2EE6C9B006477AA6A7B4C /* SwiftUIExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29ED3E9CF26B03114E3A862 /* SwiftUIExampleApp.swift */; };
 		B7D74AE858DBCAB2C0FCB04A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F0F2E466438E4E7C6FBC83 /* main.swift */; };
 		C75C7CD56B9F8FF615D4FFB4 /* CustomManagerExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8726532E8540580DC7456156 /* CustomManagerExampleApp.swift */; };
+		E10233402F3D22D3CFB205F6 /* DemoIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E16D65638614EA3C956C2F8 /* DemoIdentifier.swift */; };
 		E2003A8662AC3B283755D74D /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9B045F96927479CD97C592 /* DemoViewController.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D03169B81F356B0929548F6D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 81F84367794AF14D1C6D00E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 514C97066E02B2D7E2B25EAC;
+			remoteInfo = DMUnLoaderExample;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		10F0F2E466438E4E7C6FBC83 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -27,11 +39,13 @@
 		218EE0BE1A164D671904E880 /* LaunchOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchOptions.swift; sourceTree = "<group>"; };
 		23840751DF2881DE7A8DB8C9 /* UIKitExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitExample.swift; sourceTree = "<group>"; };
 		31B745F9BAB7B7EEA5A8598D /* DemoScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoScreen.swift; sourceTree = "<group>"; };
+		4103162BFA5C5DAE4AE38872 /* DMUnLoaderExampleUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DMUnLoaderExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B9B045F96927479CD97C592 /* DemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewController.swift; sourceTree = "<group>"; };
 		6117800B5E50CBBC568746F8 /* DemoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoModel.swift; sourceTree = "<group>"; };
 		711B968FD60CC3CA5C010DD3 /* DMUnLoaderExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DMUnLoaderExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E16D65638614EA3C956C2F8 /* DemoIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoIdentifier.swift; sourceTree = "<group>"; };
 		8726532E8540580DC7456156 /* CustomManagerExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomManagerExampleApp.swift; sourceTree = "<group>"; };
+		A28C0C39764ECE45B86E77AE /* HUDTouchRoutingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDTouchRoutingUITests.swift; sourceTree = "<group>"; };
 		A29ED3E9CF26B03114E3A862 /* SwiftUIExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIExampleApp.swift; sourceTree = "<group>"; };
 		A4B35249BF416C1DDC15E662 /* StickyLoadingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyLoadingManager.swift; sourceTree = "<group>"; };
 		EE1803954730B803A412171D /* DMUnLoader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DMUnLoader; path = ../..; sourceTree = SOURCE_ROOT; };
@@ -65,6 +79,14 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
+		40C30F665354FBE8FFA924D6 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				A28C0C39764ECE45B86E77AE /* HUDTouchRoutingUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
 		4D35432FE46A7442C2D4459A /* Demo */ = {
 			isa = PBXGroup;
 			children = (
@@ -81,6 +103,7 @@
 				F3A91E2E80C7A58E928011B6 /* App */,
 				2FF10CC0CCA613B65B8BB588 /* Packages */,
 				3701CCB98A0A8F8111182CD6 /* Shared */,
+				40C30F665354FBE8FFA924D6 /* UITests */,
 				B88488D326646EA257DFBE2E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -99,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				711B968FD60CC3CA5C010DD3 /* DMUnLoaderExample.app */,
+				4103162BFA5C5DAE4AE38872 /* DMUnLoaderExampleUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -146,6 +170,24 @@
 			productReference = 711B968FD60CC3CA5C010DD3 /* DMUnLoaderExample.app */;
 			productType = "com.apple.product-type.application";
 		};
+		68DAED1E918ACD7218F48667 /* DMUnLoaderExampleUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7B6B57AF2AE9CFE4911F292F /* Build configuration list for PBXNativeTarget "DMUnLoaderExampleUITests" */;
+			buildPhases = (
+				8678CAC01565E9094BD62DA1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				861EC7FC6E9DFE484F9BFDA0 /* PBXTargetDependency */,
+			);
+			name = DMUnLoaderExampleUITests;
+			packageProductDependencies = (
+			);
+			productName = DMUnLoaderExampleUITests;
+			productReference = 4103162BFA5C5DAE4AE38872 /* DMUnLoaderExampleUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -157,6 +199,10 @@
 				TargetAttributes = {
 					514C97066E02B2D7E2B25EAC = {
 						ProvisioningStyle = Automatic;
+					};
+					68DAED1E918ACD7218F48667 = {
+						ProvisioningStyle = Automatic;
+						TestTargetID = 514C97066E02B2D7E2B25EAC;
 					};
 				};
 			};
@@ -178,11 +224,21 @@
 			projectRoot = "";
 			targets = (
 				514C97066E02B2D7E2B25EAC /* DMUnLoaderExample */,
+				68DAED1E918ACD7218F48667 /* DMUnLoaderExampleUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8678CAC01565E9094BD62DA1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E10233402F3D22D3CFB205F6 /* DemoIdentifier.swift in Sources */,
+				124A89197F6CEF22DB1844C9 /* HUDTouchRoutingUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BB7217579620D0A15474084B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -202,6 +258,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		861EC7FC6E9DFE484F9BFDA0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 514C97066E02B2D7E2B25EAC /* DMUnLoaderExample */;
+			targetProxy = D03169B81F356B0929548F6D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		04AD5A28670A31791BDB47D8 /* Debug */ = {
@@ -239,6 +303,22 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.dmunloader.example.app;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		1EC156C4BCD64CBD870CE7E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmunloader.example.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DMUnLoaderExample;
 			};
 			name = Release;
 		};
@@ -305,6 +385,22 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
 				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		68322B62CDA1D28AD142210E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmunloader.example.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = DMUnLoaderExample;
 			};
 			name = Debug;
 		};
@@ -375,6 +471,15 @@
 			buildConfigurations = (
 				650EEA690B747EDF991BA1B7 /* Debug */,
 				971ED0747B5F3A871FE03FA7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7B6B57AF2AE9CFE4911F292F /* Build configuration list for PBXNativeTarget "DMUnLoaderExampleUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68322B62CDA1D28AD142210E /* Debug */,
+				1EC156C4BCD64CBD870CE7E1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
