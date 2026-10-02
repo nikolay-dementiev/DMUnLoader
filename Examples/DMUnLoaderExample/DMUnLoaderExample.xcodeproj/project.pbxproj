@@ -20,6 +20,7 @@
 		B7D74AE858DBCAB2C0FCB04A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F0F2E466438E4E7C6FBC83 /* main.swift */; };
 		C75C7CD56B9F8FF615D4FFB4 /* CustomManagerExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8726532E8540580DC7456156 /* CustomManagerExampleApp.swift */; };
 		D199BCEF28B89A92761152D7 /* HUDAppearanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A1B87BBCDBE6666F23F34 /* HUDAppearanceUITests.swift */; };
+		D93C24BB41B50E126F13CB4B /* HUDControlsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995DF0E1B6C2877B33ECA9CE /* HUDControlsUITests.swift */; };
 		E10233402F3D22D3CFB205F6 /* DemoIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E16D65638614EA3C956C2F8 /* DemoIdentifier.swift */; };
 		E2003A8662AC3B283755D74D /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9B045F96927479CD97C592 /* DemoViewController.swift */; };
 /* End PBXBuildFile section */
@@ -47,6 +48,7 @@
 		711B968FD60CC3CA5C010DD3 /* DMUnLoaderExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DMUnLoaderExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E16D65638614EA3C956C2F8 /* DemoIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoIdentifier.swift; sourceTree = "<group>"; };
 		8726532E8540580DC7456156 /* CustomManagerExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomManagerExampleApp.swift; sourceTree = "<group>"; };
+		995DF0E1B6C2877B33ECA9CE /* HUDControlsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDControlsUITests.swift; sourceTree = "<group>"; };
 		A28C0C39764ECE45B86E77AE /* HUDTouchRoutingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDTouchRoutingUITests.swift; sourceTree = "<group>"; };
 		A29ED3E9CF26B03114E3A862 /* SwiftUIExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIExampleApp.swift; sourceTree = "<group>"; };
 		A4B35249BF416C1DDC15E662 /* StickyLoadingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyLoadingManager.swift; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				084A1B87BBCDBE6666F23F34 /* HUDAppearanceUITests.swift */,
+				995DF0E1B6C2877B33ECA9CE /* HUDControlsUITests.swift */,
 				A28C0C39764ECE45B86E77AE /* HUDTouchRoutingUITests.swift */,
 			);
 			path = UITests;
@@ -239,6 +242,7 @@
 			files = (
 				E10233402F3D22D3CFB205F6 /* DemoIdentifier.swift in Sources */,
 				D199BCEF28B89A92761152D7 /* HUDAppearanceUITests.swift in Sources */,
+				D93C24BB41B50E126F13CB4B /* HUDControlsUITests.swift in Sources */,
 				124A89197F6CEF22DB1844C9 /* HUDTouchRoutingUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
