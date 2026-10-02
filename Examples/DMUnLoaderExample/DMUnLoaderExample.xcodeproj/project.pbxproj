@@ -11,21 +11,29 @@
 		0B47BE2022558EB8CD4E1509 /* ExampleLoadingSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16660AEC2BF9535391B9CAEA /* ExampleLoadingSettings.swift */; };
 		0E9C45D4847AED97FA48EA7D /* LaunchOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 218EE0BE1A164D671904E880 /* LaunchOptions.swift */; };
 		1275CD3E62AF076E03957658 /* DemoScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B745F9BAB7B7EEA5A8598D /* DemoScreen.swift */; };
+		15B2B0A09098F48E75DFF9A7 /* StickyLoadingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B35249BF416C1DDC15E662 /* StickyLoadingManager.swift */; };
 		41FBC344C0A502A77B4B5740 /* DMUnLoader in Frameworks */ = {isa = PBXBuildFile; productRef = 7AE14DE50D5C64CE5060A002 /* DMUnLoader */; };
 		4DA85DDD5AC257F6376B6CC5 /* DemoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6117800B5E50CBBC568746F8 /* DemoModel.swift */; };
+		7390936781EE32912242567B /* UIKitExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23840751DF2881DE7A8DB8C9 /* UIKitExample.swift */; };
 		74C2EE6C9B006477AA6A7B4C /* SwiftUIExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29ED3E9CF26B03114E3A862 /* SwiftUIExampleApp.swift */; };
 		B7D74AE858DBCAB2C0FCB04A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F0F2E466438E4E7C6FBC83 /* main.swift */; };
+		C75C7CD56B9F8FF615D4FFB4 /* CustomManagerExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8726532E8540580DC7456156 /* CustomManagerExampleApp.swift */; };
+		E2003A8662AC3B283755D74D /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9B045F96927479CD97C592 /* DemoViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		10F0F2E466438E4E7C6FBC83 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		16660AEC2BF9535391B9CAEA /* ExampleLoadingSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleLoadingSettings.swift; sourceTree = "<group>"; };
 		218EE0BE1A164D671904E880 /* LaunchOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchOptions.swift; sourceTree = "<group>"; };
+		23840751DF2881DE7A8DB8C9 /* UIKitExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKitExample.swift; sourceTree = "<group>"; };
 		31B745F9BAB7B7EEA5A8598D /* DemoScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoScreen.swift; sourceTree = "<group>"; };
+		5B9B045F96927479CD97C592 /* DemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewController.swift; sourceTree = "<group>"; };
 		6117800B5E50CBBC568746F8 /* DemoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoModel.swift; sourceTree = "<group>"; };
 		711B968FD60CC3CA5C010DD3 /* DMUnLoaderExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DMUnLoaderExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E16D65638614EA3C956C2F8 /* DemoIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoIdentifier.swift; sourceTree = "<group>"; };
+		8726532E8540580DC7456156 /* CustomManagerExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomManagerExampleApp.swift; sourceTree = "<group>"; };
 		A29ED3E9CF26B03114E3A862 /* SwiftUIExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIExampleApp.swift; sourceTree = "<group>"; };
+		A4B35249BF416C1DDC15E662 /* StickyLoadingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyLoadingManager.swift; sourceTree = "<group>"; };
 		EE1803954730B803A412171D /* DMUnLoader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DMUnLoader; path = ../..; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -62,6 +70,7 @@
 			children = (
 				6117800B5E50CBBC568746F8 /* DemoModel.swift */,
 				16660AEC2BF9535391B9CAEA /* ExampleLoadingSettings.swift */,
+				A4B35249BF416C1DDC15E662 /* StickyLoadingManager.swift */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -79,6 +88,7 @@
 		9C91B4F985F147182249FD4F /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				8726532E8540580DC7456156 /* CustomManagerExampleApp.swift */,
 				31B745F9BAB7B7EEA5A8598D /* DemoScreen.swift */,
 				A29ED3E9CF26B03114E3A862 /* SwiftUIExampleApp.swift */,
 			);
@@ -93,6 +103,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D05C033CD8796B89966948CC /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				5B9B045F96927479CD97C592 /* DemoViewController.swift */,
+				23840751DF2881DE7A8DB8C9 /* UIKitExample.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
 		F3A91E2E80C7A58E928011B6 /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -100,6 +119,7 @@
 				10F0F2E466438E4E7C6FBC83 /* main.swift */,
 				4D35432FE46A7442C2D4459A /* Demo */,
 				9C91B4F985F147182249FD4F /* SwiftUI */,
+				D05C033CD8796B89966948CC /* UIKit */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -167,12 +187,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C75C7CD56B9F8FF615D4FFB4 /* CustomManagerExampleApp.swift in Sources */,
 				0A5D4518EB6A56D7539CE00C /* DemoIdentifier.swift in Sources */,
 				4DA85DDD5AC257F6376B6CC5 /* DemoModel.swift in Sources */,
 				1275CD3E62AF076E03957658 /* DemoScreen.swift in Sources */,
+				E2003A8662AC3B283755D74D /* DemoViewController.swift in Sources */,
 				0B47BE2022558EB8CD4E1509 /* ExampleLoadingSettings.swift in Sources */,
 				0E9C45D4847AED97FA48EA7D /* LaunchOptions.swift in Sources */,
+				15B2B0A09098F48E75DFF9A7 /* StickyLoadingManager.swift in Sources */,
 				74C2EE6C9B006477AA6A7B4C /* SwiftUIExampleApp.swift in Sources */,
+				7390936781EE32912242567B /* UIKitExample.swift in Sources */,
 				B7D74AE858DBCAB2C0FCB04A /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

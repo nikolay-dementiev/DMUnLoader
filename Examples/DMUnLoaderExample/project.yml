@@ -34,3 +34,19 @@ schemes:
         DMUnLoaderExample: all
     run:
       config: Debug
+  DMUnLoaderExample-UIKit:
+    build:
+      targets:
+        DMUnLoaderExample: all
+    run:
+      config: Debug
+      commandLineArguments:
+        "--uikit": true
+  DMUnLoaderExample-CustomManager:
+    build:
+      targets:
+        DMUnLoaderExample: all
+    run:
+      config: Debug
+      commandLineArguments:
+        "--custom-manager": true
