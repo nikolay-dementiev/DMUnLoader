@@ -77,6 +77,56 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         )
     }
 
+    func test_sceneDidDisconnect_afterAManagerWasShown_removesTheHUD() {
+        let (sut, presenter) = makeSUT()
+        sut.sceneDidConnect(presenter: presenter)
+        sut.loadingManagerDidChange(to: DMLoadingManagerMain())
+
+        sut.sceneDidDisconnect()
+
+        XCTAssertEqual(presenter.dismissCount, 1, "the HUD leaves with its scene")
+    }
+
+    func test_managerSet_afterTheSceneDisconnected_presentsNothing() {
+        let (sut, presenter) = makeSUT()
+        sut.sceneDidConnect(presenter: presenter)
+        sut.sceneDidDisconnect()
+
+        sut.loadingManagerDidChange(to: DMLoadingManagerMain())
+
+        XCTAssertTrue(presenter.presented.isEmpty, "a disconnected scene shows no HUD")
+    }
+
+    func test_reconnect_afterADisconnect_presentsTheManagerOnTheNewScene() {
+        let (sut, firstScene) = makeSUT()
+        let secondScene = HUDOverlayPresenterSpy()
+        let manager = DMLoadingManagerMain()
+        sut.sceneDidConnect(presenter: firstScene)
+        sut.loadingManagerDidChange(to: manager)
+        sut.sceneDidDisconnect()
+
+        sut.sceneDidConnect(presenter: secondScene)
+
+        XCTAssertEqual(
+            secondScene.presented.map(ObjectIdentifier.init),
+            [ObjectIdentifier(manager)],
+            "the manager comes back with the scene"
+        )
+    }
+
+    func test_twoScenes_disconnectOfOne_keepsTheHUDOfTheOther() {
+        let (first, firstPresenter) = makeSUT()
+        let (second, secondPresenter) = makeSUT()
+        first.sceneDidConnect(presenter: firstPresenter)
+        second.sceneDidConnect(presenter: secondPresenter)
+        first.loadingManagerDidChange(to: DMLoadingManagerMain())
+        second.loadingManagerDidChange(to: DMLoadingManagerMain())
+
+        first.sceneDidDisconnect()
+
+        XCTAssertEqual(secondPresenter.dismissCount, 0, "each scene has a lifecycle and a HUD of its own")
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(

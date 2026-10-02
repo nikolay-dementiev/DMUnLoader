@@ -44,6 +44,8 @@ package final class HUDOverlayLifecycle {
         presentCurrentManager()
     }
 
+    package func sceneDidDisconnect() {}
+
     private func presentCurrentManager() {
         guard let presenter, let currentManager, presentedManager != currentManager.id else {
             return
