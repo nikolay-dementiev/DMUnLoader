@@ -13,7 +13,9 @@ enum SnapshotSettings {
 
     /// The share of pixels that has to match: all of them. A missing button, a changed word
     /// or a clipped line changes a small share of a full-screen image, so a lower value
-    /// lets each of them pass.
+    /// lets each of them pass. On the GPU path the library reads the failing share back as
+    /// a 16-bit float, so a few failing pixels may not count; each of those defects changes
+    /// thousands.
     static let precision: Float = 1
 
     /// How close one pixel has to be to its reference, where 1 is identical. It absorbs the
@@ -22,9 +24,16 @@ enum SnapshotSettings {
     static let perceptualPrecision: Float = 0.98
 
     /// A missing reference is recorded on a developer's machine, and the test fails once.
-    /// With `CI` set nothing is ever written: a missing reference is a failure.
-    static var record: SnapshotTestingConfiguration.Record {
-        ProcessInfo.processInfo.environment["CI"] == nil ? .missing : .never
+    /// With `CI` set nothing is ever written: a missing reference is a failure. With
+    /// `SNAPSHOT_TESTING_RECORD` set, the library's own record mode applies, so references
+    /// can be re-recorded on purpose. A test runner in the simulator sees a variable that
+    /// `xcodebuild` passes as `TEST_RUNNER_<name>`.
+    static var record: SnapshotTestingConfiguration.Record? {
+        let environment = ProcessInfo.processInfo.environment
+        if environment["SNAPSHOT_TESTING_RECORD"] != nil {
+            return nil
+        }
+        return environment["CI"] == nil ? .missing : .never
     }
 
     /// Rendering differs between OS versions, so every version has its own references.
