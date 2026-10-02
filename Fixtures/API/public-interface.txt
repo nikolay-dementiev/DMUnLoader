@@ -16,25 +16,6 @@
   }
   public typealias Body = @_opaqueReturnTypeOf("$s10DMUnLoader17DMRootLoadingViewV4bodyQrvp", 0) __<LM, Content>
 }
-@_Concurrency.MainActor final public class DMLoadingManagerMain : DMUnLoader.DMLoadingManager {
-  @_Concurrency.MainActor final public let settings: any DMUnLoader.DMLoadingManagerSettings
-  @Combine.Published<DMUnLoader.DMLoadableType> @_projectedValueProperty($loadableState) @_Concurrency.MainActor final public var loadableState: DMUnLoader.DMLoadableType {
-    get
-  }
-  @_Concurrency.MainActor final private var _loadableState: Combine.Published<DMUnLoader.DMLoadableType>
-  @_Concurrency.MainActor final public var $loadableState: Combine.Published<DMUnLoader.DMLoadableType>.Publisher {
-    get
-  }
-  @_Concurrency.MainActor @_hasInitialValue final private var inactivityTimerCancellable: Combine.AnyCancellable?
-  @_Concurrency.MainActor public init(state loadableState: DMUnLoader.DMLoadableType, settings: any DMUnLoader.DMLoadingManagerSettings)
-  @_Concurrency.MainActor convenience public init()
-  @_Concurrency.MainActor final public func showLoading<PR>(provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
-  @_Concurrency.MainActor final public func showSuccess<PR>(_ message: any DMUnLoader.DMLoadableTypeSuccess, provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
-  @_Concurrency.MainActor final public func showFailure<PR>(_ error: any Swift.Error, provider: PR, onRetry: (any DMAction.DMAction)? = nil) where PR : DMUnLoader.DMLoadingViewProvider
-  @_Concurrency.MainActor final public func hide()
-  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
-  @objc deinit
-}
 @_Concurrency.MainActor public protocol DMLoadingManager : Combine.ObservableObject {
   @_Concurrency.MainActor var loadableState: DMUnLoader.DMLoadableType { get }
   @_Concurrency.MainActor var settings: any DMUnLoader.DMLoadingManagerSettings { get }
@@ -45,6 +26,26 @@
   @_Concurrency.MainActor init()
 }
 @_exported import DMAction
+@_hasMissingDesignatedInitializers @_Concurrency.MainActor final public class DMLoadingManagerMain : DMUnLoader.DMLoadingManager {
+  @_Concurrency.MainActor final public let settings: any DMUnLoader.DMLoadingManagerSettings
+  @Combine.Published<DMUnLoader.DMLoadableType> @_projectedValueProperty($loadableState) @_Concurrency.MainActor final public var loadableState: DMUnLoader.DMLoadableType {
+    get
+  }
+  @_Concurrency.MainActor final private var _loadableState: Combine.Published<DMUnLoader.DMLoadableType>
+  @_Concurrency.MainActor final public var $loadableState: Combine.Published<DMUnLoader.DMLoadableType>.Publisher {
+    get
+  }
+  @_Concurrency.MainActor @_hasInitialValue final private var inactivityTimerCancellable: Combine.AnyCancellable?
+  @_Concurrency.MainActor final private let autoHideScheduler: any DMUnLoader.AutoHideScheduler
+  @_Concurrency.MainActor public init(state loadableState: DMUnLoader.DMLoadableType, settings: any DMUnLoader.DMLoadingManagerSettings)
+  @_Concurrency.MainActor convenience public init()
+  @_Concurrency.MainActor final public func showLoading<PR>(provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor final public func showSuccess<PR>(_ message: any DMUnLoader.DMLoadableTypeSuccess, provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor final public func showFailure<PR>(_ error: any Swift.Error, provider: PR, onRetry: (any DMAction.DMAction)? = nil) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor final public func hide()
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  @objc deinit
+}
 @_hasMissingDesignatedInitializers final public class AnyDMLoadingViewProviderTypeErasurer<LoadingViewType, ErrorViewType, SuccessViewType> : DMUnLoader.DMLoadingViewProvider where LoadingViewType : SwiftUICore.View, ErrorViewType : SwiftUICore.View, SuccessViewType : SwiftUICore.View {
   final private let _getLoadingView: () -> LoadingViewType
   final private let _getErrorView: (any Swift.Error, (any DMAction.DMAction)?, any DMAction.DMAction) -> ErrorViewType

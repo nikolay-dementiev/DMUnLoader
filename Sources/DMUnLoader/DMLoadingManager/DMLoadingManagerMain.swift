@@ -27,6 +27,9 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     /// A cancellable subscription used to manage the inactivity timer.
     private var inactivityTimerCancellable: AnyCancellable?
     
+    /// Runs the auto-hide once the delay of `settings` has passed.
+    private let autoHideScheduler: any AutoHideScheduler
+    
     /// Initializes a new instance of `DMLoadingManager`.
     /// - Parameters:
     ///   - id: A unique identifier for the loading manager. Defaults to a new `UUID`.
@@ -41,6 +44,19 @@ public final class DMLoadingManagerMain: DMLoadingManager {
                 settings: DMLoadingManagerSettings) {
         self.loadableState = loadableState
         self.settings = settings
+        self.autoHideScheduler = RunLoopAutoHideScheduler()
+        
+        handleInactivityTimer(forState: loadableState)
+    }
+    
+    /// Creates a manager whose auto-hide runs on `autoHideScheduler`, so a test decides when
+    /// the delay has passed.
+    package init(state loadableState: DMLoadableType,
+                 settings: any DMLoadingManagerSettings,
+                 autoHideScheduler: any AutoHideScheduler) {
+        self.loadableState = loadableState
+        self.settings = settings
+        self.autoHideScheduler = autoHideScheduler
         
         handleInactivityTimer(forState: loadableState)
     }
@@ -128,16 +144,9 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     /// Starts the inactivity timer, which automatically hides the loading state after the specified delay.
     private func startInactivityTimer() {
         stopInactivityTimer()
-        inactivityTimerCancellable = Deferred {
-            Future<Void, Never> { promise in
-                promise(.success(()))
-            }
-        }
-        .delay(for: .seconds(settings.autoHideDelay.timeInterval),
-               scheduler: RunLoop.main)
-        .sink(receiveValue: { [weak self] _ in
+        inactivityTimerCancellable = autoHideScheduler.schedule(after: settings.autoHideDelay) { [weak self] in
             self?.hide()
-        })
+        }
     }
     
     /// Stops the inactivity timer, canceling any pending auto-hide operations.
