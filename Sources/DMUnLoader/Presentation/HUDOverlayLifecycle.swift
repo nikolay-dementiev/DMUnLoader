@@ -44,7 +44,13 @@ package final class HUDOverlayLifecycle {
         presentCurrentManager()
     }
 
-    package func sceneDidDisconnect() {}
+    /// The scene disconnected. Its HUD is removed; the manager is kept and shown again when a
+    /// scene connects.
+    package func sceneDidDisconnect() {
+        presenter?.dismiss()
+        presenter = nil
+        presentedManager = nil
+    }
 
     private func presentCurrentManager() {
         guard let presenter, let currentManager, presentedManager != currentManager.id else {
