@@ -11,7 +11,10 @@ struct SwiftUIExampleApp: App {
     var body: some Scene {
         WindowGroup {
             if let autoHideDelay = LaunchOptions.current.autoHideDelay {
-                HostOwnedManagerRoot(autoHideDelay: autoHideDelay)
+                HostOwnedManagerRoot(
+                    autoHideDelay: autoHideDelay,
+                    startsWithFailure: LaunchOptions.current.startsWithFailure
+                )
             } else {
                 DMRootLoadingView { loadingManager in
                     DemoScreen(loadingManager: loadingManager)
@@ -27,10 +30,16 @@ struct HostOwnedManagerRoot: View {
     @EnvironmentObject private var sceneDelegate: DMSceneDelegateBase<DMLoadingManagerMain>
     @StateObject private var loadingManager: DMLoadingManagerMain
 
-    init(autoHideDelay: Duration) {
+    init(autoHideDelay: Duration, startsWithFailure: Bool = false) {
+        let initialState: DMLoadableType = startsWithFailure
+            ? .failure(
+                error: DemoError.serverDidNotAnswer,
+                provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+            )
+            : .none
         _loadingManager = StateObject(
             wrappedValue: DMLoadingManagerMain(
-                state: .none,
+                state: initialState,
                 settings: ExampleLoadingSettings(autoHideDelay: autoHideDelay)
             )
         )

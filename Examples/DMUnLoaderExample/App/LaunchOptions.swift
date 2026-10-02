@@ -21,12 +21,16 @@ struct LaunchOptions: Sendable {
     let autoHideDelay: Duration?
     /// `--loading-duration <seconds>` changes how long the simulated work takes.
     let loadingDuration: Duration
+    /// `--initial-failure`, with `--auto-hide`, starts with a failure that the manager holds
+    /// before the HUD window exists.
+    let startsWithFailure: Bool
 
     init(arguments: [String]) {
         integration = arguments.contains("--uikit") ? .uiKit : .swiftUI
         usesCustomManager = arguments.contains("--custom-manager")
         autoHideDelay = Self.seconds(after: "--auto-hide", in: arguments)
         loadingDuration = Self.seconds(after: "--loading-duration", in: arguments) ?? .seconds(3)
+        startsWithFailure = arguments.contains("--initial-failure")
     }
 
     private static func seconds(after flag: String, in arguments: [String]) -> Duration? {
