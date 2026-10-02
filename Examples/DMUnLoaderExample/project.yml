@@ -34,6 +34,9 @@ targets:
     sources: [AppTests]
     dependencies:
       - target: DMUnLoaderExample
+      # The tests use the library's types, which live in its framework, not in the app.
+      - package: DMUnLoader
+        product: DMUnLoader
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dmunloader.example.tests

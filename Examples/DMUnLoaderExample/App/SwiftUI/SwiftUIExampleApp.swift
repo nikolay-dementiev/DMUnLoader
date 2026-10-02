@@ -18,6 +18,7 @@ struct SwiftUIExampleApp: App {
             } else {
                 DMRootLoadingView { loadingManager in
                     DemoScreen(loadingManager: loadingManager)
+                        .modifier(SceneDelegateRegistration())
                 }
             }
         }
