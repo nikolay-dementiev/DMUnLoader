@@ -31,6 +31,10 @@ playground.xcworkspace
 
 .build/
 
+# The consumer fixture resolves against the checkout; its resolution output is not source.
+Fixtures/Consumer/Package.resolved
+Fixtures/Consumer/.swiftpm/xcode/package.xcworkspace/xcshareddata/
+
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However
