@@ -125,12 +125,13 @@ jobs:
         with:
           persist-credentials: false
       - name: Build the library with Xcode 26.0.1
+        # xcodebuild accepts no iOS destination with this Xcode on the image ("iOS 26.0 is
+        # not installed"), so SwiftPM builds against its simulator SDK directly.
         run: |
-          xcodebuild build \
-            -scheme DMUnLoader \
-            -sdk iphonesimulator \
-            -destination 'generic/platform=iOS Simulator' \
-            -skipPackagePluginValidation
+          swift build \
+            --triple arm64-apple-ios17.0-simulator \
+            --sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" \
+            --product DMUnLoader
 
   api:
     # The interface text depends on the compiler, so this job runs on one pinned Xcode.
