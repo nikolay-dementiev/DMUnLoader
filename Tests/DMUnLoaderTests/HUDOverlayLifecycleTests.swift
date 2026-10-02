@@ -77,6 +77,43 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         )
     }
 
+    func test_sameManagerSetAgain_afterNil_presentsItAgain() {
+        let (sut, presenter) = makeSUT()
+        sut.sceneDidConnect(presenter: presenter)
+        let manager = DMLoadingManagerMain()
+        sut.loadingManagerDidChange(to: manager)
+        sut.loadingManagerDidChange(to: DMLoadingManagerMain?.none)
+
+        sut.loadingManagerDidChange(to: manager)
+
+        XCTAssertEqual(
+            presenter.presented.map(ObjectIdentifier.init),
+            [ObjectIdentifier(manager), ObjectIdentifier(manager)],
+            "a manager set again after nil gets its HUD back"
+        )
+    }
+
+    func test_otherManagerSet_afterAManagerWasShown_dismissesNothing() {
+        let (sut, presenter) = makeSUT()
+        sut.sceneDidConnect(presenter: presenter)
+        sut.loadingManagerDidChange(to: DMLoadingManagerMain())
+
+        sut.loadingManagerDidChange(to: DMLoadingManagerMain())
+
+        XCTAssertEqual(presenter.dismissCount, 0, "the new manager takes over the HUD: nothing is removed")
+    }
+
+    func test_secondConnect_withoutADisconnect_removesTheHUDOfTheFirstPresenter() {
+        let (sut, firstPresenter) = makeSUT()
+        let secondPresenter = HUDOverlayPresenterSpy()
+        sut.sceneDidConnect(presenter: firstPresenter)
+        sut.loadingManagerDidChange(to: DMLoadingManagerMain())
+
+        sut.sceneDidConnect(presenter: secondPresenter)
+
+        XCTAssertEqual(firstPresenter.dismissCount, 1, "a HUD is left behind by no presenter")
+    }
+
     func test_sceneDidDisconnect_afterAManagerWasShown_removesTheHUD() {
         let (sut, presenter) = makeSUT()
         sut.sceneDidConnect(presenter: presenter)
