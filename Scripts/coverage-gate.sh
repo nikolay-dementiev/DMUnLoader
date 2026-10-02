@@ -11,7 +11,7 @@
 set -euo pipefail
 
 # Percent of the executable lines of the library target that the tests run.
-FLOOR="80.0"
+FLOOR="87.5"
 TARGET="DMUnLoader"
 # Files left out of the measure: "<path under Sources/<target>/>|<why>". Each one is a
 # decision with its reason, never a way to pass the floor. A path that is not in the report
