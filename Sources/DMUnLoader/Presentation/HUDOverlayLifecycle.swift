@@ -22,8 +22,9 @@ package final class HUDOverlayLifecycle {
     package init() {}
 
     /// The scene connected, and `presenter` shows HUDs over it. A manager set before is
-    /// shown now.
+    /// shown now. A presenter of an earlier connect loses its HUD first.
     package func sceneDidConnect(presenter: any HUDOverlayPresenting) {
+        self.presenter?.dismiss()
         self.presenter = presenter
         presentedManager = nil
         presentCurrentManager()
