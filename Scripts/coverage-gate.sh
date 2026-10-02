@@ -13,6 +13,12 @@ set -euo pipefail
 # Percent of the executable lines of the library target that the tests run.
 FLOOR="80.0"
 TARGET="DMUnLoader"
+# Files left out of the measure: "<path under Sources/<target>/>|<why>". Each one is a
+# decision with its reason, never a way to pass the floor. A path that is not in the report
+# stops the gate, so an exclusion cannot outlive its file.
+EXCLUDED=(
+    "PresentationView/Helpers/PreviewRenderOwner.swift|support for the #Preview blocks, which no host runs"
+)
 
 BUNDLE="${1:?give the path of an .xcresult bundle}"
 if [ ! -d "$BUNDLE" ]; then
@@ -30,11 +36,12 @@ if ! xcrun xccov view --report --json "$BUNDLE" > "$REPORT" 2> "$ERRORS"; then
     exit 2
 fi
 
-python3 - "$REPORT" "$TARGET" "$FLOOR" <<'PY'
+python3 - "$REPORT" "$TARGET" "$FLOOR" ${EXCLUDED[@]+"${EXCLUDED[@]}"} <<'PY'
 import json
 import sys
 
 report_path, target_name, floor = sys.argv[1], sys.argv[2], float(sys.argv[3])
+excluded = dict(entry.split("|", 1) for entry in sys.argv[4:])
 with open(report_path) as report_file:
     report = json.load(report_file)
 
@@ -47,6 +54,16 @@ if not targets:
 
 covered = sum(t["coveredLines"] for t in targets)
 executable = sum(t["executableLines"] for t in targets)
+for path, reason in excluded.items():
+    files = [f for t in targets for f in t.get("files", [])
+             if f.get("path", "").endswith(f"/Sources/{target_name}/{path}")]
+    if not files:
+        print(f"coverage-gate: the excluded file {path} is not in the report. Remove its exclusion.", file=sys.stderr)
+        sys.exit(2)
+    for excluded_file in files:
+        covered -= excluded_file["coveredLines"]
+        executable -= excluded_file["executableLines"]
+        print(f"coverage-gate: left out {path} ({excluded_file['executableLines']} lines): {reason}.")
 if executable == 0:
     print(f"coverage-gate: the target {target_name} has no executable lines in the report.", file=sys.stderr)
     sys.exit(2)
