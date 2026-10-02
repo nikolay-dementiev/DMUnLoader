@@ -30,6 +30,10 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     /// Runs the auto-hide once the delay of `settings` has passed.
     private let autoHideScheduler: any AutoHideScheduler
     
+    /// Changes whenever a pending auto-hide is stopped, so a hide the scheduler delivers
+    /// after that cannot hide a newer state.
+    private var autoHideGeneration = 0
+    
     /// Initializes a new instance of `DMLoadingManager`.
     /// - Parameters:
     ///   - id: A unique identifier for the loading manager. Defaults to a new `UUID`.
@@ -144,8 +148,12 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     /// Starts the inactivity timer, which automatically hides the loading state after the specified delay.
     private func startInactivityTimer() {
         stopInactivityTimer()
+        let generation = autoHideGeneration
         inactivityTimerCancellable = autoHideScheduler.schedule(after: settings.autoHideDelay) { [weak self] in
-            self?.hide()
+            guard let self, self.autoHideGeneration == generation else {
+                return
+            }
+            self.hide()
         }
     }
     
@@ -153,6 +161,7 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     private func stopInactivityTimer() {
         inactivityTimerCancellable?.cancel()
         inactivityTimerCancellable = nil
+        autoHideGeneration &+= 1
     }
 }
 

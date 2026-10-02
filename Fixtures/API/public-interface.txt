@@ -37,6 +37,7 @@
   }
   @_Concurrency.MainActor @_hasInitialValue final private var inactivityTimerCancellable: Combine.AnyCancellable?
   @_Concurrency.MainActor final private let autoHideScheduler: any DMUnLoader.AutoHideScheduler
+  @_Concurrency.MainActor @_hasInitialValue final private var autoHideGeneration: Swift.Int
   @_Concurrency.MainActor public init(state loadableState: DMUnLoader.DMLoadableType, settings: any DMUnLoader.DMLoadingManagerSettings)
   @_Concurrency.MainActor convenience public init()
   @_Concurrency.MainActor final public func showLoading<PR>(provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
