@@ -13,11 +13,11 @@ import UIKit
 /// window does not guess it from the view a touch lands on: SwiftUI does not promise
 /// which view that is, and on iOS 18 and later a touch on a SwiftUI button lands on the
 /// hosting view itself.
-final class DMPassThroughWindow: UIWindow {
+package final class DMPassThroughWindow: UIWindow {
     /// Whether a HUD is shown and the window takes the touches.
-    var interceptsTouches = false
+    package var interceptsTouches = false
 
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    package override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         guard interceptsTouches else { return nil }
         return super.hitTest(point, with: event)
     }
