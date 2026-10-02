@@ -2,8 +2,8 @@
 **Universal Loader & Result Handler**
 
 [![Build Status](https://app.bitrise.io/app/9e391394-db73-473f-998a-2026373de643/status.svg?token=mL8evw6RHiRtfKSiQ82zuw&branch=develop)](https://app.bitrise.io/app/9e391394-db73-473f-998a-2026373de643)
-[![Swift](https://img.shields.io/badge/Swift-5%2B-orange)](https://swift.org)
-[![Swift tools version](https://img.shields.io/badge/Swift_tools-6.0-darkorange)](https://swift.org/package-manager/)
+[![Swift](https://img.shields.io/badge/Swift-6.2%2B-orange)](https://swift.org)
+[![Swift tools version](https://img.shields.io/badge/Swift_tools-6.2-darkorange)](https://swift.org/package-manager/)
 [![Platform](https://img.shields.io/badge/platform-iOS_17%2B-blue)](https://developer.apple.com/ios)
 [![SPM Compatible](https://img.shields.io/badge/SPM-compatible-orange?style=flat-square)](#swift-package-manager)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/DMUnLoader.svg?style=flat-square)](https://cocoapods.org/pods/DMUnLoader)
@@ -88,6 +88,9 @@ The examples below show the default views on the left and customized views on th
 ---
 
 ## Installation
+
+DMUnLoader needs a Swift 6.2 compiler, which Xcode 26.0 and later include, and runs on
+iOS 17 and later.
 
 ### Swift Package Manager
 
