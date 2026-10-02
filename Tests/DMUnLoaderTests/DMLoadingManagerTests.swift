@@ -212,10 +212,10 @@ final class DMLoadingManagerTests: XCTestCase {
             description: "Loadable state updated to .none after hide() call"
         )
         
-        observeLoadableState(of: sut) { state in
+        observeLoadableState(of: sut) { _ in
             expectationIdle.fulfill()
         }
-        
+
         sut.hide()
         
         wait(

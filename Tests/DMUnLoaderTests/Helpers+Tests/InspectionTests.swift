@@ -11,15 +11,10 @@ import SwiftUI
 
 final class InspectionTests: XCTestCase {
     
-    var cancellables: Set<AnyCancellable>!
-    
-    override func setUp() {
-        super.setUp()
-        cancellables = []
-    }
-    
+    var cancellables = Set<AnyCancellable>()
+
     override func tearDown() {
-        cancellables = nil
+        cancellables.removeAll()
         var schemaArguments = SchemaArguments()
         schemaArguments.resetSettingToDefault()
         

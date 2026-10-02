@@ -1,7 +1,6 @@
 import SwiftUI
 import DMUnLoader
 
-
 struct ExampleApp: App {
     @UIApplicationDelegateAdaptor private var delegate: DMAppDelegateType
 

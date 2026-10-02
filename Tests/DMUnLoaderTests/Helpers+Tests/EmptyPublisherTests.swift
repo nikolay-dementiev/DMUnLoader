@@ -10,15 +10,10 @@ import Combine
 
 final class EmptyPublisherTests: XCTestCase {
     
-    var cancellables: Set<AnyCancellable>!
-    
-    override func setUp() {
-        super.setUp()
-        cancellables = []
-    }
-    
+    var cancellables = Set<AnyCancellable>()
+
     override func tearDown() {
-        cancellables = nil
+        cancellables.removeAll()
         super.tearDown()
     }
     

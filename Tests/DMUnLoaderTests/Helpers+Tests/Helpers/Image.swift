@@ -20,14 +20,17 @@ extension UIImage {
             height: height
         )
         
-        UIGraphicsBeginImageContext(rect.size)
-        let context = UIGraphicsGetCurrentContext()!
-        context.setFillColor(color.cgColor)
-        context.fill(rect)
-        let img = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return img!
+        // Scale 1, not opaque, standard range: the bitmap the former
+        // UIGraphicsBeginImageContext call produced, without its optionals.
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.opaque = false
+        format.preferredRange = .standard
+
+        return UIGraphicsImageRenderer(size: rect.size, format: format).image { context in
+            color.setFill()
+            context.fill(rect)
+        }
     }
 }
 

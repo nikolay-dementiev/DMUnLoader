@@ -177,7 +177,7 @@ final class AtomicTests: XCTestCase {
         let atomic = Atomic<Int>(42)
         weakAtomicInt.append(atomic)
         
-        atomic.mutate { value in
+        atomic.mutate { _ in
             // No changes to the value
         }
         

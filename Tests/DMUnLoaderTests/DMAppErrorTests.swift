@@ -26,59 +26,70 @@ final class DMAppErrorLocalizedTests: XCTestCase {
     // MARK: NetworkError Tests
     
     // swiftlint:disable:next function_body_length
-    func testNetworkErrorLocalizedDescriptions() {
+    func testNetworkErrorLocalizedDescriptions() throws {
         let inaccessibleError = DMAppError.NetworkError.inaccessible
         XCTAssertEqual(
             inaccessibleError.errorDescription,
-            "The network is inaccessible. Please check your internet connection."
+            "The network is inaccessible. Please check your internet connection.",
+            ".inaccessible should describe the missing connection"
         )
-        
+
         let urlError = URLError(.notConnectedToInternet)
         let urlErrorCase = DMAppError.NetworkError.urlError(urlError)
         XCTAssertEqual(
             urlErrorCase.errorDescription,
-            urlError.localizedDescription
+            urlError.localizedDescription,
+            ".urlError should forward the description of the URLError"
         )
-        
+
         let generalError = NSError(domain: "TestDomain",
                                    code: 1,
                                    userInfo: [NSLocalizedDescriptionKey: "General error"])
         let generalErrorCase = DMAppError.NetworkError.generalError(generalError)
-        XCTAssertEqual(generalErrorCase.errorDescription, "General error")
-        
+        XCTAssertEqual(
+            generalErrorCase.errorDescription,
+            "General error",
+            ".generalError should forward the description of the wrapped error"
+        )
+
         let noResponseError = DMAppError.NetworkError.noResponse
         XCTAssertEqual(
             noResponseError.errorDescription,
-            "No response was received from the server."
+            "No response was received from the server.",
+            ".noResponse should describe the missing response"
         )
-        
-        let invalidResponse = URLResponse(url: URL(string: "http://example.com")!,
+
+        let url = try XCTUnwrap(URL(string: "http://example.com"), "the fixture URL should be valid")
+        let invalidResponse = URLResponse(url: url,
                                           mimeType: nil,
                                           expectedContentLength: 0,
                                           textEncodingName: nil)
         let invalidResponseTypeError = DMAppError.NetworkError.invalidResponseType(invalidResponse)
         XCTAssertTrue(
-            invalidResponseTypeError.errorDescription?.contains("Invalid response type") == true
+            invalidResponseTypeError.errorDescription?.contains("Invalid response type") == true,
+            ".invalidResponseType should name the invalid response type"
         )
-        
-        let httpResponse = HTTPURLResponse(url: URL(string: "http://example.com")!,
-                                           statusCode: 200,
-                                           httpVersion: nil,
-                                           headerFields: nil)!
+
+        let httpResponse = try XCTUnwrap(
+            HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil),
+            "the fixture response with status 200 should be created"
+        )
         let noResponseDataError = DMAppError.NetworkError.noResponseData(httpResponse)
         XCTAssertEqual(
             noResponseDataError.errorDescription,
-            "The server returned an empty response for status code 200."
+            "The server returned an empty response for status code 200.",
+            ".noResponseData should name the status code of the empty response"
         )
-        
-        let endpointResponse = HTTPURLResponse(url: URL(string: "http://example.com")!,
-                                               statusCode: 404,
-                                               httpVersion: nil,
-                                               headerFields: nil)!
+
+        let endpointResponse = try XCTUnwrap(
+            HTTPURLResponse(url: url, statusCode: 404, httpVersion: nil, headerFields: nil),
+            "the fixture response with status 404 should be created"
+        )
         let endpointError = DMAppError.NetworkError.endpointError(endpointResponse, nil)
         XCTAssertEqual(
             endpointError.errorDescription,
-            "Endpoint error with status code 404."
+            "Endpoint error with status code 404.",
+            ".endpointError should name the status code"
         )
         
         let customErrorWithDescription = DMAppError.NetworkError.custom(
@@ -165,18 +176,18 @@ final class DMAppErrorLocalizedTests: XCTestCase {
         )
     }
     
-    func testNSErrorDefaultLocalizedDescription() {
+    func testNSErrorDefaultLocalizedDescription() throws {
         // Create an NSError instance without a custom localized description
         let nsError = NSError(domain: "TestDomain", code: 789)
-        
+
         // Verify that the errorDescription falls back to the default description
-        XCTAssertNotNil(
+        let errorDescription = try XCTUnwrap(
             nsError.errorDescription,
             "errorDescription should not be nil"
         )
-        
+
         XCTAssertTrue(
-            nsError.errorDescription!.contains("TestDomain"),
+            errorDescription.contains("TestDomain"),
             "Default errorDescription should include the domain"
         )
     }

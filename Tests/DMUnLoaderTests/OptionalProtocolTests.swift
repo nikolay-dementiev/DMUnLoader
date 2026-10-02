@@ -36,7 +36,6 @@ final class OptionalProtocolTests: XCTestCase {
     func testUnwrapValueForNone() {
         let optional: String? = nil
         
-        // swiftlint:disable:next assert_throws_error
         XCTAssertThrowsError(try {
             _ = try optional.unwrapValue()
         }(),
@@ -86,19 +85,19 @@ final class OptionalProtocolTests: XCTestCase {
                        "getValueOrNullSting should return '<null>' for a nil optional")
     }
     
-    func testGetValueOrNullStringForNestedOptionals() {
+    func testGetValueOrNullStringForNestedOptionals() throws {
         let nestedOptional: String? = "Hello"
-        
-        let unwrappedOptional: String = nestedOptional.getValueOrNullSting()!
+
+        let unwrappedOptional: String = try XCTUnwrap(nestedOptional.getValueOrNullSting())
         XCTAssertEqual(unwrappedOptional,
                        "Hello",
                        "getValueOrNullSting should handle nested optionals correctly")
     }
-    
-    func testGetValueOrNullStringForNilNestedOptionals() {
+
+    func testGetValueOrNullStringForNilNestedOptionals() throws {
         let nestedOptional: String? = nil
-        
-        XCTAssertEqual(nestedOptional.getValueOrNullSting()!,
+
+        XCTAssertEqual(try XCTUnwrap(nestedOptional.getValueOrNullSting()),
                        "<null>",
                        "getValueOrNullSting should return '<null>' for a nil nested optional")
     }
