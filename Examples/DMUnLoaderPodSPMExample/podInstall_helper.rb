@@ -142,21 +142,6 @@ def clean_xcode_project(project_name)
       puts "#{LOG_ERROR}: Failed to list schemes. Skipping cleaning"
     end
 
-    # Remove DerivedData
-    derived_data_path = File.expand_path('~/Library/Developer/Xcode/DerivedData')
-    if Dir.exist?(derived_data_path)
-      puts "#{LOG_INFO}: Removing DerivedData..."
-      exit_status_derived_data_path_removing = command(
-                                                       "rm -rf #{derived_data_path}",
-                                                       error_text: "Failed to remove '#{derived_data_path}'"
-                                                       )
-      if exit_status_derived_data_path_removing != 0
-        puts "#{LOG_INFO}: ! Try to close the Xcode project and retry once again !"
-      end
-    else
-      puts "#{LOG_INFO}: DerivedData directory not found"
-    end
-
     puts "#{LOG_INFO}: Cleanup complete!"
   rescue StandardError => e
     puts "#{LOG_ERROR}: Error during cleanup: #{e.message}"
