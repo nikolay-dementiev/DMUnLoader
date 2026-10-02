@@ -10,11 +10,8 @@ final class HUDAppearanceUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func test_failureHUD_dimsAndBlursTheContentUnderIt() throws {
-        let app = XCUIApplication()
-        // The failure HUD outlasts the test, so it cannot hide while the picture is taken.
-        app.launchArguments = ["--auto-hide", "600"]
-        app.launch()
+    func test_failureHUD_shownOverContent_dimsAndBlursIt() throws {
+        let app = launchExample()
         let content = app.buttons[DemoIdentifier.content]
         XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown")
         // The status bar shows the time, so only the area of the content is compared.
@@ -29,17 +26,49 @@ final class HUDAppearanceUITests: XCTestCase {
 
     // MARK: - Helpers
 
-    /// The HUD fades and scales in. Screenshots are taken until two in a row are equal.
+    /// Launches the example as its references were recorded: light appearance, the default
+    /// text size, English, and a failure that outlasts the test, so it cannot hide while the
+    /// picture is taken. The appearance of the simulator is restored afterwards.
+    private func launchExample() -> XCUIApplication {
+        let device = XCUIDevice.shared
+        let appearance = device.appearance
+        device.appearance = .light
+        addTeardownBlock { @MainActor in
+            device.appearance = appearance
+        }
+        let app = XCUIApplication()
+        app.launchArguments = [
+            "--auto-hide", "600",
+            "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryL",
+            "-AppleLanguages", "(en)",
+            "-AppleLocale", "en_US"
+        ]
+        app.launch()
+        return app
+    }
+
+    /// The HUD fades in, and the render server draws the blur after the window is on
+    /// screen. A picture counts once three screenshots in a row are equal and at least
+    /// one second lies between the first and the last of them.
     private func settledScreenshot(croppedTo frame: CGRect) throws -> (image: UIImage, screen: String) {
+        var equalSince: Date?
         var previous: Data?
-        for _ in 0..<20 {
+        var equalCount = 0
+        for _ in 0..<40 {
             let screenshot = XCUIScreen.main.screenshot().image
             let cropped = try XCTUnwrap(crop(screenshot, to: frame), "the content area lies inside the screenshot")
             let data = try XCTUnwrap(cropped.pngData(), "the cropped screenshot can be encoded")
             if data == previous {
+                equalCount += 1
+            } else {
+                equalCount = 1
+                equalSince = Date()
+                previous = data
+            }
+            if equalCount >= 3, let equalSince, Date().timeIntervalSince(equalSince) >= 1 {
                 return (cropped, "\(Int(screenshot.size.width))x\(Int(screenshot.size.height))")
             }
-            previous = data
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
         }
         throw ScreenshotError.neverSettled
     }
@@ -61,7 +90,7 @@ private enum ScreenshotError: Error, CustomStringConvertible {
     case neverSettled
 
     var description: String {
-        "the screen kept changing: no two screenshots in a row were equal"
+        "the screen kept changing: no three screenshots in a row over a second were equal"
     }
 }
 
@@ -72,9 +101,11 @@ private enum ScreenshotError: Error, CustomStringConvertible {
 @MainActor
 enum ScreenshotReference {
     /// How far one colour channel of one pixel may be from its reference, out of 255.
-    /// Every pixel has to be within it: a missing blur or a missing dim changes only part
-    /// of the picture, so no share of pixels is allowed to differ.
-    static let channelTolerance = 2
+    /// Every pixel has to be within it. Two runs on one machine give identical pictures;
+    /// the margin is for another machine's GPU, which draws the blur. Measured on iOS 17.5
+    /// and 26.5 with the defects this test exists for: without the blur 49 to 50 percent
+    /// of the pixels are further off than this, without the dim 68 to 69 percent.
+    static let channelTolerance = 16
 
     /// A missing reference is recorded on a developer's machine, and the test fails once.
     /// With `CI` set nothing is ever written: a missing reference is a failure.
