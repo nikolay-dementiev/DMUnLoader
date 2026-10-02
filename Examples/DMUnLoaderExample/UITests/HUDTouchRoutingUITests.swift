@@ -50,16 +50,25 @@ final class HUDTouchRoutingUITests: XCTestCase {
         return app
     }
 
-    /// Two screen points inside the content control: one that the HUD card covers when a
-    /// HUD is shown, and one below the card, where only the backdrop is.
+    /// Two screen points inside the content control: the centre of the screen, which the
+    /// HUD card covers because the card is centred, and a point near the bottom of the
+    /// control, where only the backdrop is.
     ///
-    /// They are taken from the frame before any HUD is shown and resolved against the app,
+    /// They are taken from the frames before any HUD is shown and resolved against the app,
     /// so tapping them never depends on finding the control under a HUD.
-    private func contentTouchPoints(in app: XCUIApplication, content: XCUIElement) -> [XCUICoordinate] {
+    private func contentTouchPoints(
+        in app: XCUIApplication,
+        content: XCUIElement,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [XCUICoordinate] {
         let frame = content.frame
+        let screen = app.frame
+        let centre = CGPoint(x: screen.midX, y: screen.midY)
+        XCTAssertTrue(frame.contains(centre), "the content control covers the centre of the screen", file: file, line: line)
         let origin = app.coordinate(withNormalizedOffset: .zero)
         return [
-            origin.withOffset(CGVector(dx: frame.midX, dy: frame.midY)),
+            origin.withOffset(CGVector(dx: centre.x, dy: centre.y)),
             origin.withOffset(CGVector(dx: frame.midX, dy: frame.maxY - 20))
         ]
     }
@@ -86,7 +95,7 @@ final class HUDTouchRoutingUITests: XCTestCase {
         let content = app.buttons[DemoIdentifier.content]
         XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown", file: file, line: line)
 
-        contentTouchPoints(in: app, content: content).forEach { $0.tap() }
+        contentTouchPoints(in: app, content: content, file: file, line: line).forEach { $0.tap() }
 
         XCTAssertTrue(
             label(of: app.staticTexts[DemoIdentifier.contentTaps], becomes: DemoText.contentTaps(2), within: 5),
@@ -104,7 +113,7 @@ final class HUDTouchRoutingUITests: XCTestCase {
         let app = launchExample(launchArguments)
         let content = app.buttons[DemoIdentifier.content]
         XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown", file: file, line: line)
-        let touchPoints = contentTouchPoints(in: app, content: content)
+        let touchPoints = contentTouchPoints(in: app, content: content, file: file, line: line)
 
         app.buttons[DemoIdentifier.showLoading].tap()
         let loadingText = app.staticTexts["Loading..."]
