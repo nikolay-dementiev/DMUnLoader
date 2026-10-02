@@ -162,6 +162,8 @@ jobs:
         with:
           persist-credentials: false
       - name: Test with the Thread Sanitizer
+        # The snapshot test classes compare images, which says nothing about data races and
+        # is slow under the sanitizer. They run in both test cells.
         run: |
           mkdir -p .build/results/ci
           xcodebuild test \
@@ -169,6 +171,10 @@ jobs:
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' \
             -enableThreadSanitizer YES \
+            -skip-testing:DMUnLoaderTests/DMErrorViewTests \
+            -skip-testing:DMUnLoaderTests/DMLoadingViewTests \
+            -skip-testing:DMUnLoaderTests/DMProgressViewTests \
+            -skip-testing:DMUnLoaderTests/DMSuccessViewTests \
             -resultBundlePath .build/results/ci/thread-sanitizer.xcresult \
             -skipPackagePluginValidation
       - name: Upload the result bundle
