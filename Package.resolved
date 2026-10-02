@@ -1,5 +1,5 @@
 {
-  "originHash" : "6d53f1d518f761b4dd70398aacddde9a36b33bdc138cbc5ad4848b3d22696312",
+  "originHash" : "208c481d2730a02ffd7383477dbecb6f0e270898a65fe10a6ad645589dff33e1",
   "pins" : [
     {
       "identity" : "dmaction",
@@ -58,10 +58,10 @@
     {
       "identity" : "viewinspector",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nikolay-dementiev/ViewInspector.git",
+      "location" : "https://github.com/nalexn/ViewInspector",
       "state" : {
-        "branch" : "0.10.4",
-        "revision" : "bf2bc60b7742a67b66da5d2e17a6259299c2e155"
+        "revision" : "2dacb6e514be19379c605a5a11564d0f3fea89d9",
+        "version" : "0.10.5"
       }
     },
     {
