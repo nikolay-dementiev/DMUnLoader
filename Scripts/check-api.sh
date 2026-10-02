@@ -35,8 +35,10 @@ if [ ! -d "$ROOT/.build/checkouts/DMAction" ] || [ ! -d "$ROOT/.build/checkouts/
     swift package --package-path "$ROOT" resolve > "$WORK/resolve.log" 2>&1
 fi
 
+# The files are passed in one fixed order. A plain sort follows the locale of the machine,
+# and the order of the files is the order in which the compiler emits the declarations.
 swift_files() {
-    find "$1" -name '*.swift' | sort
+    find "$1" -name '*.swift' | LC_ALL=C sort
 }
 
 # The interface names types of the two dependencies, so their modules are emitted first.
@@ -80,9 +82,51 @@ if ! xcrun --sdk iphonesimulator swiftc \
     exit 2
 fi
 
-# Header comments carry the compiler version and flags. Plain imports are not API;
-# the re-export of DMAction starts with an attribute and stays in the text.
-grep -v -E '^(//|import )' "$INTERFACE" > "$CURRENT"
+# Header comments carry the compiler version and flags. Plain imports are not API; the
+# re-export of DMAction starts with an attribute and stays in the text. The compiler emits
+# declarations in the order of the source files, so the top-level declarations are sorted:
+# moving a type to another file must not look like an API change. Empty lines are dropped
+# for the same reason: the compiler leaves them where a source file ends. An attribute that
+# the compiler prints on a line of its own, such as @available, stays with the declaration
+# below it: moving it to another declaration is an API change.
+normalize() {
+    grep -v -E '^(//|import |$)' "$1" | python3 -c '
+import sys
+
+def attributes_only(line):
+    position, end = 0, len(line)
+    while position < end:
+        if line[position].isspace():
+            position += 1
+            continue
+        if line[position] != "@":
+            return False
+        position += 1
+        while position < end and (line[position].isalnum() or line[position] in "_."):
+            position += 1
+        if position < end and line[position] == "(":
+            depth = 0
+            while position < end:
+                depth += {"(": 1, ")": -1}.get(line[position], 0)
+                position += 1
+                if depth == 0:
+                    break
+    return True
+
+blocks, current = [], []
+for line in sys.stdin.read().splitlines():
+    starts_declaration = bool(line) and not line[0].isspace() and line != "}"
+    if starts_declaration and current and not all(attributes_only(held) for held in current):
+        blocks.append("\n".join(current))
+        current = []
+    current.append(line)
+if current:
+    blocks.append("\n".join(current))
+print("\n".join(sorted(blocks)))
+'
+}
+
+normalize "$INTERFACE" > "$CURRENT"
 
 if [ "${1:-}" = "--update" ]; then
     mkdir -p "$(dirname "$BASELINE")"
@@ -96,7 +140,11 @@ if [ ! -f "$BASELINE" ]; then
     exit 2
 fi
 
-if diff -u "$BASELINE" "$CURRENT" > "$WORK/api.diff"; then
+# The baseline goes through the same normalization, so the comparison does not depend on
+# the order of the declarations in either file.
+normalize "$BASELINE" > "$WORK/baseline.txt"
+
+if diff -u --label "$(basename "$BASELINE")" --label "current interface" "$WORK/baseline.txt" "$CURRENT" > "$WORK/api.diff"; then
     echo "check-api: the public interface matches the baseline."
     exit 0
 fi
