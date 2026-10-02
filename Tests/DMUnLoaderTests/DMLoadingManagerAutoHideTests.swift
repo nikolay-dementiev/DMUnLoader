@@ -97,6 +97,19 @@ final class DMLoadingManagerAutoHideTests: XCTestCase {
         XCTAssertFalse(scheduler.scheduled[1].isCancelled, "the hide of the second success stands")
     }
 
+    func test_lateHide_afterTheStateWasReplaced_keepsTheNewerState() {
+        let (sut, scheduler) = makeSUT()
+        sut.showSuccess("Saved", provider: provider)
+        sut.showFailure(DMAppError.custom("Lost"), provider: provider, onRetry: nil)
+
+        // The hide of the success was cancelled; a scheduler may still deliver it late.
+        scheduler.scheduled[0].runHide()
+
+        guard case .failure = sut.loadableState else {
+            return XCTFail("a late hide of the replaced success hid the newer failure: \(sut.loadableState.rawValue)")
+        }
+    }
+
     // MARK: - Payloads
 
     func test_showSuccess_whenShown_keepsTheMessage() {
