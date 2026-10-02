@@ -25,6 +25,7 @@ final class OverlayWindowPresenter: HUDOverlayPresenting {
         // One window per scene: a new manager gets the window, and the controller, of the
         // one it replaces. The root view is swapped, so the replaced manager is released.
         let window = self.window ?? DMPassThroughWindow(windowScene: windowScene)
+        self.window = window
         // The window knows the state before it becomes visible; the view reports every
         // change after that. The window owns the view, so the view holds it weakly.
         window.interceptsTouches = loadingManager.loadableState.showsHUD
@@ -42,7 +43,6 @@ final class OverlayWindowPresenter: HUDOverlayPresenting {
             self.hudController = hudController
         }
         window.isHidden = false
-        self.window = window
     }
 
     func dismiss() {
