@@ -11,6 +11,11 @@
 #
 # The interface text depends on the compiler and the SDK. CI runs this check on one
 # pinned Xcode; after a toolchain change the baseline may need --update with no API change.
+#
+# The compiler runs without -enable-library-evolution. With that flag it rejects the
+# sources ("'ObservableObject' aliases 'Combine.ObservableObject' and cannot be used in a
+# public conformance because 'Combine' was not imported by this file"), and the package is
+# not built for library evolution anyway. The emitted interface is complete without it.
 
 set -euo pipefail
 
