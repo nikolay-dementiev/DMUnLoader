@@ -20,7 +20,6 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/GayleDunham/SwiftLintPlugin.git", branch: "main"),
 //        .package(url: "https://github.com/nalexn/ViewInspector", from: "0.10.1"),
 //        .package(path: "../ViewInspector"),
         .package(url: "https://github.com/nikolay-dementiev/ViewInspector.git", branch: "0.10.4"),
@@ -41,8 +40,7 @@ let package = Package(
                 "DMVariableBlurView"
             ],
             path: "Sources",
-            sources: ["DMUnLoader"],
-            plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
+            sources: ["DMUnLoader"]
         ),
         .testTarget(
             name: "DMUnLoaderTests",
@@ -53,8 +51,7 @@ let package = Package(
                 "DMVariableBlurView",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
-            path: "Tests",
-            plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
+            path: "Tests"
         ),
     ]
 )
