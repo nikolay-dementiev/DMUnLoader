@@ -34,6 +34,8 @@ final class DemoViewController<LM: DMLoadingManager>: UIViewController {
         ])
         triggers.spacing = 12
         triggers.distribution = .fillEqually
+        // The content control below takes the free height, not the row of triggers.
+        triggers.setContentHuggingPriority(.defaultHigh, for: .vertical)
 
         let content = makeContentControl()
 

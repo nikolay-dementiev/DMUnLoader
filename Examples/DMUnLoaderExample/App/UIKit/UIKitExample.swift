@@ -34,6 +34,8 @@ final class UIKitAppDelegate: UIResponder, UIApplicationDelegate {
 
 /// Supplies the root view controller. The library's requirement is not isolated to the
 /// main actor, so the conformance states the isolation it needs to build a view controller.
+/// An isolated conformance needs a Swift 6.2 compiler; in Swift 5 language mode a plain
+/// conformance, as in the README, compiles as well.
 @MainActor
 enum UIKitSceneHelper: @MainActor DMSceneDelegateHelper {
     static func makeUIKitRootViewHierarhy<LM: DMLoadingManager>(loadingManager: LM) -> UIViewController {

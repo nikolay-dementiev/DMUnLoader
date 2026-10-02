@@ -35,6 +35,8 @@ final class DemoModel<LM: DMLoadingManager>: ObservableObject {
                 // Cancelled: a newer state replaced the loading HUD and must stay as it is.
                 return
             }
+            // A cancel can also arrive after the sleep ended and before this task resumed.
+            guard !Task.isCancelled else { return }
             self?.showSuccess()
         }
     }

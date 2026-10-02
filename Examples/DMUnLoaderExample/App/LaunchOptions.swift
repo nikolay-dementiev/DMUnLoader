@@ -16,6 +16,8 @@ struct LaunchOptions: Sendable {
     /// `--custom-manager` replaces `DMLoadingManagerMain` with `StickyLoadingManager`.
     let usesCustomManager: Bool
     /// `--auto-hide <seconds>` changes how long a success or a failure stays on screen.
+    /// Only the SwiftUI launch with `DMLoadingManagerMain` reads it: the UIKit scene delegate
+    /// creates its own manager, and `StickyLoadingManager` has no timer.
     let autoHideDelay: Duration?
     /// `--loading-duration <seconds>` changes how long the simulated work takes.
     let loadingDuration: Duration
