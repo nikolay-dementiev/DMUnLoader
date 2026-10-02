@@ -747,6 +747,28 @@ final class DMErrorViewTests: XCTestCase {
         )
     }
 
+    // MARK: Scenario 7: Verify Long Content
+
+    func test_errorView_longErrorText_wrapsOverSeveralLines() {
+        // Given
+        let longErrorText = "The request could not be completed because the server did not answer in time. "
+            + "Check the connection and try again in a moment."
+        let settings = DMErrorDefaultViewSettings(errorText: longErrorText)
+
+        // When
+        let sut = makeSUT(
+            settings: settings,
+            onRetry: DMButtonAction {}
+        )
+
+        // Then
+        assertImageSnapshot(
+            of: LoadingViewContainer<DMErrorView>(overlayView: { sut }),
+            style: .light,
+            named: "LongErrorText-iPhone13Pro-light"
+        )
+    }
+
     // MARK: - Helpers
     
     private func makeSUT(
