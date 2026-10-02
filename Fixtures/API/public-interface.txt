@@ -1,14 +1,10 @@
 @_Concurrency.MainActor @preconcurrency public struct AnyButtonStyle : SwiftUI.ButtonStyle {
-  @_Concurrency.MainActor @preconcurrency private let _makeBody: (DMUnLoader.AnyButtonStyle.Configuration) -> SwiftUICore.AnyView
   @_Concurrency.MainActor @preconcurrency public init<S>(_ style: S) where S : SwiftUI.ButtonStyle
   @_Concurrency.MainActor @preconcurrency public func makeBody(configuration: DMUnLoader.AnyButtonStyle.Configuration) -> some SwiftUICore.View
   
   public typealias Body = @_opaqueReturnTypeOf("$s10DMUnLoader14AnyButtonStyleV8makeBody13configurationQr7SwiftUI0dE13ConfigurationV_tF", 0) __
 }
 @_Concurrency.MainActor @preconcurrency public struct DMRootLoadingView<LM, Content> : SwiftUICore.View where LM : DMUnLoader.DMLoadingManager, Content : SwiftUICore.View {
-  @_Concurrency.MainActor @preconcurrency @_hasInitialValue private var _sceneDelegate: SwiftUICore.EnvironmentObject<DMUnLoader.DMSceneDelegateBase<LM>>
-  @_Concurrency.MainActor @preconcurrency @_hasInitialValue private var _loadingManager: SwiftUICore.StateObject<LM>
-  @_Concurrency.MainActor @preconcurrency private let content: (LM) -> Content
   @_Concurrency.MainActor @preconcurrency public init(@SwiftUICore.ViewBuilder content: @escaping (LM) -> Content)
   @_Concurrency.MainActor @preconcurrency public init(@SwiftUICore.ViewBuilder content: @escaping (DMUnLoader.DMLoadingManagerMain) -> Content) where LM == DMUnLoader.DMLoadingManagerMain
   @_Concurrency.MainActor @preconcurrency public var body: some SwiftUICore.View {
@@ -31,13 +27,9 @@
   @Combine.Published<DMUnLoader.DMLoadableType> @_projectedValueProperty($loadableState) @_Concurrency.MainActor final public var loadableState: DMUnLoader.DMLoadableType {
     get
   }
-  @_Concurrency.MainActor final private var _loadableState: Combine.Published<DMUnLoader.DMLoadableType>
   @_Concurrency.MainActor final public var $loadableState: Combine.Published<DMUnLoader.DMLoadableType>.Publisher {
     get
   }
-  @_Concurrency.MainActor @_hasInitialValue final private var inactivityTimerCancellable: Combine.AnyCancellable?
-  @_Concurrency.MainActor final private let autoHideScheduler: any DMUnLoader.AutoHideScheduler
-  @_Concurrency.MainActor @_hasInitialValue final private var autoHideGeneration: Swift.Int
   @_Concurrency.MainActor public init(state loadableState: DMUnLoader.DMLoadableType, settings: any DMUnLoader.DMLoadingManagerSettings)
   @_Concurrency.MainActor convenience public init()
   @_Concurrency.MainActor final public func showLoading<PR>(provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
@@ -48,13 +40,6 @@
   @objc deinit
 }
 @_hasMissingDesignatedInitializers final public class AnyDMLoadingViewProviderTypeErasurer<LoadingViewType, ErrorViewType, SuccessViewType> : DMUnLoader.DMLoadingViewProvider where LoadingViewType : SwiftUICore.View, ErrorViewType : SwiftUICore.View, SuccessViewType : SwiftUICore.View {
-  final private let _getLoadingView: () -> LoadingViewType
-  final private let _getErrorView: (any Swift.Error, (any DMAction.DMAction)?, any DMAction.DMAction) -> ErrorViewType
-  final private let _getSuccessView: (any DMUnLoader.DMLoadableTypeSuccess) -> SuccessViewType
-  final private let _loadingManagerSettings: () -> any DMUnLoader.DMLoadingManagerSettings
-  final private let _loadingViewSettings: () -> any DMUnLoader.DMProgressViewSettings
-  final private let _errorViewSettings: () -> any DMUnLoader.DMErrorViewSettings
-  final private let _successViewSettings: () -> any DMUnLoader.DMSuccessViewSettings
   final public var loadingManagerSettings: any DMUnLoader.DMLoadingManagerSettings {
     get
   }
@@ -86,20 +71,16 @@
     get
     set
   }
-  @_Concurrency.MainActor @preconcurrency @_hasInitialValue final private let overlay: DMUnLoader.HUDOverlayLifecycle
-  @_Concurrency.MainActor @preconcurrency @_hasInitialValue weak final internal var windowScene: UIKit.UIWindowScene?
   @_Concurrency.MainActor @preconcurrency @objc final public func scene(_ scene: UIKit.UIScene, willConnectTo session: UIKit.UISceneSession, options connectionOptions: UIKit.UIScene.ConnectionOptions)
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
   public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
   @objc deinit
 }
 @_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class DMSceneDelegateUIKit<LM, Helper> : UIKit.UIResponder, UIKit.UIWindowSceneDelegate, Foundation.ObservableObject where LM : DMUnLoader.DMLoadingManager, Helper : DMUnLoader.DMSceneDelegateHelper {
-  @_Concurrency.MainActor @preconcurrency @_hasInitialValue final private let decoratee: DMUnLoader.DMSceneDelegateBase<LM>
   @_Concurrency.MainActor @preconcurrency final public var loadingManager: LM? {
     get
     set
   }
-  @_Concurrency.MainActor @preconcurrency @_hasInitialValue final internal var keyWindow: UIKit.UIWindow?
   @_Concurrency.MainActor @preconcurrency @objc final public func scene(_ scene: UIKit.UIScene, willConnectTo session: UIKit.UISceneSession, options connectionOptions: UIKit.UIScene.ConnectionOptions)
   @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
   public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
@@ -391,15 +372,9 @@ public struct DMSuccessDefaultViewSettings : DMUnLoader.DMSuccessViewSettings {
   public init(successImageProperties: DMUnLoader.SuccessImageProperties = SuccessImageProperties(), successTextProperties: DMUnLoader.SuccessTextProperties = SuccessTextProperties(), spacingBetweenElements: CoreFoundation.CGFloat? = nil)
 }
 public struct ErrorImageSettings {
-  internal let image: SwiftUICore.Image
-  internal let foregroundColor: SwiftUICore.Color?
-  internal let frameSize: DMUnLoader.CustomViewSize
   public init(image: SwiftUICore.Image, foregroundColor: SwiftUICore.Color? = .red, frameSize: DMUnLoader.CustomViewSize = CustomViewSize(width: 50, height: 50))
 }
 public struct ErrorTextSettings {
-  internal let foregroundColor: SwiftUICore.Color?
-  internal let multilineTextAlignment: SwiftUICore.TextAlignment
-  internal let padding: SwiftUICore.EdgeInsets
   public init(foregroundColor: SwiftUICore.Color? = .white, multilineTextAlignment: SwiftUICore.TextAlignment = .center, padding: SwiftUICore.EdgeInsets = EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
 }
 public struct ProgressIndicatorProperties {
