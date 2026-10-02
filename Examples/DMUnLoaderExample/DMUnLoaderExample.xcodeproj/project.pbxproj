@@ -17,6 +17,7 @@
 		4DA85DDD5AC257F6376B6CC5 /* DemoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6117800B5E50CBBC568746F8 /* DemoModel.swift */; };
 		7390936781EE32912242567B /* UIKitExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23840751DF2881DE7A8DB8C9 /* UIKitExample.swift */; };
 		74C2EE6C9B006477AA6A7B4C /* SwiftUIExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29ED3E9CF26B03114E3A862 /* SwiftUIExampleApp.swift */; };
+		816E04951EA9B6498AF767B1 /* HUDWindowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2482A4DC1A35C039F0A97EB /* HUDWindowTests.swift */; };
 		B7D74AE858DBCAB2C0FCB04A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F0F2E466438E4E7C6FBC83 /* main.swift */; };
 		C75C7CD56B9F8FF615D4FFB4 /* CustomManagerExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8726532E8540580DC7456156 /* CustomManagerExampleApp.swift */; };
 		D199BCEF28B89A92761152D7 /* HUDAppearanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A1B87BBCDBE6666F23F34 /* HUDAppearanceUITests.swift */; };
@@ -26,6 +27,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6CE60B0BD0C19BACB1413239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 81F84367794AF14D1C6D00E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 514C97066E02B2D7E2B25EAC;
+			remoteInfo = DMUnLoaderExample;
+		};
 		D03169B81F356B0929548F6D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 81F84367794AF14D1C6D00E4 /* Project object */;
@@ -52,6 +60,8 @@
 		A28C0C39764ECE45B86E77AE /* HUDTouchRoutingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDTouchRoutingUITests.swift; sourceTree = "<group>"; };
 		A29ED3E9CF26B03114E3A862 /* SwiftUIExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIExampleApp.swift; sourceTree = "<group>"; };
 		A4B35249BF416C1DDC15E662 /* StickyLoadingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickyLoadingManager.swift; sourceTree = "<group>"; };
+		D2482A4DC1A35C039F0A97EB /* HUDWindowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDWindowTests.swift; sourceTree = "<group>"; };
+		D9ADDA919782B10EE7B62649 /* DMUnLoaderExampleTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DMUnLoaderExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE1803954730B803A412171D /* DMUnLoader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DMUnLoader; path = ../..; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -67,6 +77,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2BF55163DEB9B2C5883A7DEA /* AppTests */ = {
+			isa = PBXGroup;
+			children = (
+				D2482A4DC1A35C039F0A97EB /* HUDWindowTests.swift */,
+			);
+			path = AppTests;
+			sourceTree = "<group>";
+		};
 		2FF10CC0CCA613B65B8BB588 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				F3A91E2E80C7A58E928011B6 /* App */,
+				2BF55163DEB9B2C5883A7DEA /* AppTests */,
 				2FF10CC0CCA613B65B8BB588 /* Packages */,
 				3701CCB98A0A8F8111182CD6 /* Shared */,
 				40C30F665354FBE8FFA924D6 /* UITests */,
@@ -128,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				711B968FD60CC3CA5C010DD3 /* DMUnLoaderExample.app */,
+				D9ADDA919782B10EE7B62649 /* DMUnLoaderExampleTests.xctest */,
 				4103162BFA5C5DAE4AE38872 /* DMUnLoaderExampleUITests.xctest */,
 			);
 			name = Products;
@@ -157,6 +177,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		46AA0742DDC3BA0A6843EFB9 /* DMUnLoaderExampleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BF74574DA1A2C23009F75146 /* Build configuration list for PBXNativeTarget "DMUnLoaderExampleTests" */;
+			buildPhases = (
+				936DAF0F2A40D315F380F142 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D38544A9A9C3EFE820813764 /* PBXTargetDependency */,
+			);
+			name = DMUnLoaderExampleTests;
+			packageProductDependencies = (
+			);
+			productName = DMUnLoaderExampleTests;
+			productReference = D9ADDA919782B10EE7B62649 /* DMUnLoaderExampleTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		514C97066E02B2D7E2B25EAC /* DMUnLoaderExample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F7DBDB08372873417AF44995 /* Build configuration list for PBXNativeTarget "DMUnLoaderExample" */;
@@ -203,6 +241,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					46AA0742DDC3BA0A6843EFB9 = {
+						ProvisioningStyle = Automatic;
+					};
 					514C97066E02B2D7E2B25EAC = {
 						ProvisioningStyle = Automatic;
 					};
@@ -230,6 +271,7 @@
 			projectRoot = "";
 			targets = (
 				514C97066E02B2D7E2B25EAC /* DMUnLoaderExample */,
+				46AA0742DDC3BA0A6843EFB9 /* DMUnLoaderExampleTests */,
 				68DAED1E918ACD7218F48667 /* DMUnLoaderExampleUITests */,
 			);
 		};
@@ -244,6 +286,14 @@
 				D199BCEF28B89A92761152D7 /* HUDAppearanceUITests.swift in Sources */,
 				D93C24BB41B50E126F13CB4B /* HUDControlsUITests.swift in Sources */,
 				124A89197F6CEF22DB1844C9 /* HUDTouchRoutingUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		936DAF0F2A40D315F380F142 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				816E04951EA9B6498AF767B1 /* HUDWindowTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,6 +322,11 @@
 			isa = PBXTargetDependency;
 			target = 514C97066E02B2D7E2B25EAC /* DMUnLoaderExample */;
 			targetProxy = D03169B81F356B0929548F6D /* PBXContainerItemProxy */;
+		};
+		D38544A9A9C3EFE820813764 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 514C97066E02B2D7E2B25EAC /* DMUnLoaderExample */;
+			targetProxy = 6CE60B0BD0C19BACB1413239 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -327,6 +382,38 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = DMUnLoaderExample;
+			};
+			name = Release;
+		};
+		2234064DD80E0D6A78FC68E7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmunloader.example.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMUnLoaderExample.app/DMUnLoaderExample";
+			};
+			name = Debug;
+		};
+		54480BB9189773EB3A5E64F4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmunloader.example.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DMUnLoaderExample.app/DMUnLoaderExample";
 			};
 			name = Release;
 		};
@@ -488,6 +575,15 @@
 			buildConfigurations = (
 				68322B62CDA1D28AD142210E /* Debug */,
 				1EC156C4BCD64CBD870CE7E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BF74574DA1A2C23009F75146 /* Build configuration list for PBXNativeTarget "DMUnLoaderExampleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2234064DD80E0D6A78FC68E7 /* Debug */,
+				54480BB9189773EB3A5E64F4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

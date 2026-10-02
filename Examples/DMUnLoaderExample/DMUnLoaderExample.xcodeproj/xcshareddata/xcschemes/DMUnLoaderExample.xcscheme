@@ -29,6 +29,20 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "46AA0742DDC3BA0A6843EFB9"
+               BuildableName = "DMUnLoaderExampleTests.xctest"
+               BlueprintName = "DMUnLoaderExampleTests"
+               ReferencedContainer = "container:DMUnLoaderExample.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "68DAED1E918ACD7218F48667"
                BuildableName = "DMUnLoaderExampleUITests.xctest"
                BlueprintName = "DMUnLoaderExampleUITests"
@@ -53,6 +67,17 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "46AA0742DDC3BA0A6843EFB9"
+               BuildableName = "DMUnLoaderExampleTests.xctest"
+               BlueprintName = "DMUnLoaderExampleTests"
+               ReferencedContainer = "container:DMUnLoaderExample.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
          <TestableReference
             skipped = "NO"
             parallelizable = "NO">
