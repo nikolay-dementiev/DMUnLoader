@@ -39,9 +39,9 @@ jobs:
         run: Scripts/check-example-install.sh
 
   test:
-    # The newest hosted Xcode with the newest runtime, and the oldest hosted runtime.
-    # The sources need Swift 6.2, so the older image also uses an Xcode 26.
-    # iOS 17 is not on a hosted image: that run is a recorded local step.
+    # The newest hosted Xcode with the newest runtime, and with the oldest runtime it offers.
+    # The sources need Swift 6.2, so only an Xcode 26 can build them, and no hosted image
+    # gives such an Xcode an iOS 17 or 18 simulator: those runs are recorded local steps.
     name: test (${{ matrix.name }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
@@ -53,10 +53,10 @@ jobs:
             runner: macos-26
             xcode: /Applications/Xcode_26.6.app
             destination: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5
-          - name: iOS 18.6
-            runner: macos-15
-            xcode: /Applications/Xcode_26.3.app
-            destination: platform=iOS Simulator,name=iPhone 16 Pro,OS=18.6
+          - name: iOS 26.2
+            runner: macos-26
+            xcode: /Applications/Xcode_26.6.app
+            destination: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2
     env:
       DEVELOPER_DIR: ${{ matrix.xcode }}/Contents/Developer
       DESTINATION: ${{ matrix.destination }}
@@ -181,10 +181,10 @@ jobs:
             runner: macos-26
             xcode: /Applications/Xcode_26.6.app
             destination: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5
-          - name: iOS 18.6
-            runner: macos-15
-            xcode: /Applications/Xcode_26.3.app
-            destination: platform=iOS Simulator,name=iPhone 16 Pro,OS=18.6
+          - name: iOS 26.2
+            runner: macos-26
+            xcode: /Applications/Xcode_26.6.app
+            destination: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2
     env:
       DEVELOPER_DIR: ${{ matrix.xcode }}/Contents/Developer
       DESTINATION: ${{ matrix.destination }}
