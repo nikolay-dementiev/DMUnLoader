@@ -112,6 +112,26 @@ jobs:
       - name: Check what a consumer gets
         run: Scripts/check-manifest.sh
 
+  floor:
+    # The manifest declares Swift tools 6.2: the oldest hosted Xcode with that compiler has
+    # to build the library.
+    name: floor
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.0.1.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the library with Xcode 26.0.1
+        run: |
+          xcodebuild build \
+            -scheme DMUnLoader \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -skipPackagePluginValidation
+
   api:
     # The interface text depends on the compiler, so this job runs on one pinned Xcode.
     name: api
