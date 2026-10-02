@@ -32,20 +32,15 @@ public final class DMSceneDelegateUIKit<
         decoratee.scene(windowScene,
                         willConnectTo: session,
                         options: connectionOptions)
-        
-        self.loadingManager = .init()
-        
-        setupMainWindow(in: windowScene)
-        setupHudWindow(in: windowScene)
+
+        let loadingManager = LM()
+        setupMainWindow(in: windowScene, loadingManager: loadingManager)
+        // Handed over after the main window is shown, so the HUD window is created above it.
+        self.loadingManager = loadingManager
     }
-    
-    func setupHudWindow(in scene: UIWindowScene) {
-        decoratee.setupHudWindow(in: scene)
-    }
-    
-    private func setupMainWindow(in scene: UIWindowScene) {
-        guard windowScene != nil,
-              let loadingManager = loadingManager else {
+
+    private func setupMainWindow(in scene: UIWindowScene, loadingManager: LM) {
+        guard windowScene != nil else {
             return
         }
 
@@ -82,9 +77,5 @@ public final class DMSceneDelegateBase<
 
         self.windowScene = windowScene
         overlay.sceneDidConnect(presenter: OverlayWindowPresenter(windowScene: windowScene))
-    }
-
-    func setupHudWindow(in scene: UIWindowScene) {
-        overlay.loadingManagerDidChange(to: loadingManager)
     }
 }

@@ -12,4 +12,7 @@
 package protocol HUDOverlayPresenting: AnyObject {
     /// Shows the HUD of `loadingManager`. A HUD shown before is replaced.
     func present<LM: DMLoadingManager>(_ loadingManager: LM)
+
+    /// Removes the HUD. Nothing is shown over the scene afterwards.
+    func dismiss()
 }
