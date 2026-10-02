@@ -64,6 +64,7 @@ public final class DMSceneDelegateBase<
     }
 
     private let overlay = HUDOverlayLifecycle()
+    private var disconnectObserver: SceneDisconnectObserver?
     weak var windowScene: UIWindowScene?
 
     public func scene(
@@ -77,17 +78,13 @@ public final class DMSceneDelegateBase<
 
         self.windowScene = windowScene
         // The notification rather than sceneDidDisconnect(_:), which this public class would
-        // have to declare public. A selector observer is removed when this object goes.
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(windowSceneDidDisconnect),
-            name: UIScene.didDisconnectNotification,
-            object: windowScene
-        )
+        // have to declare public.
+        disconnectObserver = SceneDisconnectObserver(
+            scene: windowScene,
+            notificationCenter: NotificationCenter.default
+        ) { [weak self] in
+            self?.overlay.sceneDidDisconnect()
+        }
         overlay.sceneDidConnect(presenter: OverlayWindowPresenter(windowScene: windowScene))
-    }
-
-    @objc private func windowSceneDidDisconnect() {
-        overlay.sceneDidDisconnect()
     }
 }
