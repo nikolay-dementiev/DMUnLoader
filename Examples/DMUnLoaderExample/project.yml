@@ -30,7 +30,12 @@ targets:
   DMUnLoaderExampleUITests:
     type: bundle.ui-testing
     platform: iOS
-    sources: [UITests, Shared]
+    sources:
+      # The screenshot references are read from the checkout, not from the test bundle.
+      - path: UITests
+        excludes:
+          - "__Snapshots__/**"
+      - Shared
     dependencies:
       - target: DMUnLoaderExample
     settings:
