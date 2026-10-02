@@ -1,0 +1,445 @@
+@preconcurrency import Combine
+@_exported import DMAction
+public protocol DMError : Foundation.LocalizedError {
+}
+public enum DMAppError : DMUnLoader.DMError {
+  case resourceError(type: DMUnLoader.DMAppError.ResourceError)
+  case network(type: DMUnLoader.DMAppError.NetworkError)
+  case custom(_: Swift.String?)
+  case generalError(any DMUnLoader.DMError)
+}
+extension DMUnLoader.DMAppError {
+  public enum ResourceError : DMUnLoader.DMError {
+    case notAvailable
+    case error(any Swift.Error)
+  }
+}
+extension DMUnLoader.DMAppError : Foundation.LocalizedError {
+  public var errorDescription: Swift.String? {
+    get
+  }
+}
+extension DMUnLoader.DMAppError {
+  public enum NetworkError : DMUnLoader.DMError {
+    case inaccessible
+    case urlError(Foundation.URLError)
+    case generalError(any Swift.Error)
+    case noResponse
+    case invalidResponseType(Foundation.URLResponse)
+    case noResponseData(Foundation.HTTPURLResponse)
+    case endpointError(Foundation.HTTPURLResponse, Foundation.Data?)
+    case custom(errorCode: Swift.Int?, errorDescription: Swift.String?)
+  }
+}
+extension Foundation.NSError : @retroactive Foundation.LocalizedError {
+  public var errorDescription: Swift.String? {
+    get
+  }
+}
+extension Foundation.NSError : DMUnLoader.DMError {
+}
+extension DMUnLoader.DMAppError.NetworkError : Foundation.LocalizedError {
+  public var errorDescription: Swift.String? {
+    get
+  }
+}
+extension DMUnLoader.DMAppError.ResourceError : Foundation.LocalizedError {
+  public var errorDescription: Swift.String? {
+    get
+  }
+}
+public enum DMLoadableType : Swift.Hashable, Swift.RawRepresentable {
+  public typealias RawValue = Swift.String
+  case loading(provider: DMUnLoader.AnyDMLoadingViewProvider)
+  case failure(error: any Swift.Error, provider: DMUnLoader.AnyDMLoadingViewProvider, onRetry: (any DMAction.DMAction)? = nil)
+  case success(any DMUnLoader.DMLoadableTypeSuccess, provider: DMUnLoader.AnyDMLoadingViewProvider)
+  case none
+  public var rawValue: DMUnLoader.DMLoadableType.RawValue {
+    get
+  }
+  public init?(rawValue: DMUnLoader.DMLoadableType.RawValue)
+  public static func == (lhs: DMUnLoader.DMLoadableType, rhs: DMUnLoader.DMLoadableType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public protocol DMLoadableTypeSuccess : Swift.CustomStringConvertible {
+}
+extension Swift.String : DMUnLoader.DMLoadableTypeSuccess {
+}
+@_Concurrency.MainActor public protocol DMLoadingManager : Combine.ObservableObject {
+  @_Concurrency.MainActor var loadableState: DMUnLoader.DMLoadableType { get }
+  @_Concurrency.MainActor var settings: any DMUnLoader.DMLoadingManagerSettings { get }
+  @_Concurrency.MainActor func showLoading<PR>(provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor func showSuccess<PR>(_ message: any DMUnLoader.DMLoadableTypeSuccess, provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor func showFailure<PR>(_ error: any Swift.Error, provider: PR, onRetry: (any DMAction.DMAction)?) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor func hide()
+  @_Concurrency.MainActor init()
+}
+@_Concurrency.MainActor final public class DMLoadingManagerMain : DMUnLoader.DMLoadingManager {
+  @_Concurrency.MainActor final public let settings: any DMUnLoader.DMLoadingManagerSettings
+  @Combine.Published<DMUnLoader.DMLoadableType> @_projectedValueProperty($loadableState) @_Concurrency.MainActor final public var loadableState: DMUnLoader.DMLoadableType {
+    get
+  }
+  @_Concurrency.MainActor final private var _loadableState: Combine.Published<DMUnLoader.DMLoadableType>
+  @_Concurrency.MainActor final public var $loadableState: Combine.Published<DMUnLoader.DMLoadableType>.Publisher {
+    get
+  }
+  @_Concurrency.MainActor @_hasInitialValue final private var inactivityTimerCancellable: Combine.AnyCancellable?
+  @_Concurrency.MainActor public init(state loadableState: DMUnLoader.DMLoadableType, settings: any DMUnLoader.DMLoadingManagerSettings)
+  @_Concurrency.MainActor convenience public init()
+  @_Concurrency.MainActor final public func showLoading<PR>(provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor final public func showSuccess<PR>(_ message: any DMUnLoader.DMLoadableTypeSuccess, provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor final public func showFailure<PR>(_ error: any Swift.Error, provider: PR, onRetry: (any DMAction.DMAction)? = nil) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor final public func hide()
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  @objc deinit
+}
+extension DMUnLoader.DMLoadingManagerMain : Swift.Hashable {
+  nonisolated public static func == (lhs: DMUnLoader.DMLoadingManagerMain, rhs: DMUnLoader.DMLoadingManagerMain) -> Swift.Bool
+  nonisolated final public func hash(into hasher: inout Swift.Hasher)
+  nonisolated final public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol DMLoadingManagerSettings {
+  var autoHideDelay: Swift.Duration { get }
+}
+public protocol DMLoadingViewProvider : Combine.ObservableObject, Swift.Hashable {
+  associatedtype LoadingViewType : SwiftUICore.View
+  associatedtype ErrorViewType : SwiftUICore.View
+  associatedtype SuccessViewType : SwiftUICore.View
+  @_Concurrency.MainActor func getLoadingView() -> Self.LoadingViewType
+  @_Concurrency.MainActor func getErrorView(error: any Swift.Error, onRetry: (any DMAction.DMAction)?, onClose: any DMAction.DMAction) -> Self.ErrorViewType
+  @_Concurrency.MainActor func getSuccessView(object: any DMUnLoader.DMLoadableTypeSuccess) -> Self.SuccessViewType
+  var loadingManagerSettings: any DMUnLoader.DMLoadingManagerSettings { get }
+  var loadingViewSettings: any DMUnLoader.DMProgressViewSettings { get }
+  var errorViewSettings: any DMUnLoader.DMErrorViewSettings { get }
+  var successViewSettings: any DMUnLoader.DMSuccessViewSettings { get }
+}
+extension DMUnLoader.DMLoadingViewProvider {
+  public static func == (lhs: Self, rhs: Self) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+}
+extension DMUnLoader.DMLoadingViewProvider {
+  @_Concurrency.MainActor public func getLoadingView() -> some SwiftUICore.View
+  
+  @_Concurrency.MainActor public func getErrorView(error: any Swift.Error, onRetry: (any DMAction.DMAction)?, onClose: any DMAction.DMAction) -> some SwiftUICore.View
+  
+  @_Concurrency.MainActor public func getSuccessView(object: any DMUnLoader.DMLoadableTypeSuccess) -> some SwiftUICore.View
+  
+  public var loadingManagerSettings: any DMUnLoader.DMLoadingManagerSettings {
+    get
+  }
+  public var loadingViewSettings: any DMUnLoader.DMProgressViewSettings {
+    get
+  }
+  public var errorViewSettings: any DMUnLoader.DMErrorViewSettings {
+    get
+  }
+  public var successViewSettings: any DMUnLoader.DMSuccessViewSettings {
+    get
+  }
+}
+public class DefaultDMLoadingViewProvider : @_Concurrency.MainActor DMUnLoader.DMLoadingViewProvider {
+  final public let loadingManagerSettings: any DMUnLoader.DMLoadingManagerSettings
+  final public let loadingViewSettings: any DMUnLoader.DMProgressViewSettings
+  final public let errorViewSettings: any DMUnLoader.DMErrorViewSettings
+  final public let successViewSettings: any DMUnLoader.DMSuccessViewSettings
+  public init(loadingManagerSettings: (any DMUnLoader.DMLoadingManagerSettings)? = nil, loadingViewSettings: (any DMUnLoader.DMProgressViewSettings)? = nil, errorViewSettings: (any DMUnLoader.DMErrorViewSettings)? = nil, successViewSettings: (any DMUnLoader.DMSuccessViewSettings)? = nil)
+  public typealias ErrorViewType = @_opaqueReturnTypeOf("$s10DMUnLoader21DMLoadingViewProviderPAAE08getErrorD05error7onRetry0I5CloseQrs0G0_p_8DMActionAI_pSgA2I_ptF", 0) __<DMUnLoader.DefaultDMLoadingViewProvider>
+  public typealias LoadingViewType = @_opaqueReturnTypeOf("$s10DMUnLoader21DMLoadingViewProviderPAAE010getLoadingD0QryF", 0) __<DMUnLoader.DefaultDMLoadingViewProvider>
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  public typealias SuccessViewType = @_opaqueReturnTypeOf("$s10DMUnLoader21DMLoadingViewProviderPAAE010getSuccessD06objectQrAA014DMLoadableTypeG0_p_tF", 0) __<DMUnLoader.DefaultDMLoadingViewProvider>
+  @objc deinit
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_Concurrency.MainActor @preconcurrency public struct DMRootLoadingView<LM, Content> : SwiftUICore.View where LM : DMUnLoader.DMLoadingManager, Content : SwiftUICore.View {
+  @_Concurrency.MainActor @preconcurrency @_hasInitialValue private var _sceneDelegate: SwiftUICore.EnvironmentObject<DMUnLoader.DMSceneDelegateBase<LM>>
+  @_Concurrency.MainActor @preconcurrency @_hasInitialValue private var _loadingManager: SwiftUICore.StateObject<LM>
+  @_Concurrency.MainActor @preconcurrency private let content: (LM) -> Content
+  @_Concurrency.MainActor @preconcurrency public init(@SwiftUICore.ViewBuilder content: @escaping (LM) -> Content)
+  @_Concurrency.MainActor @preconcurrency public init(@SwiftUICore.ViewBuilder content: @escaping (DMUnLoader.DMLoadingManagerMain) -> Content) where LM == DMUnLoader.DMLoadingManagerMain
+  @_Concurrency.MainActor @preconcurrency public var body: some SwiftUICore.View {
+    get
+  }
+  public typealias Body = @_opaqueReturnTypeOf("$s10DMUnLoader17DMRootLoadingViewV4bodyQrvp", 0) __<LM, Content>
+}
+@_hasMissingDesignatedInitializers final public class AnyDMLoadingViewProviderTypeErasurer<LoadingViewType, ErrorViewType, SuccessViewType> : DMUnLoader.DMLoadingViewProvider where LoadingViewType : SwiftUICore.View, ErrorViewType : SwiftUICore.View, SuccessViewType : SwiftUICore.View {
+  final private let _getLoadingView: () -> LoadingViewType
+  final private let _getErrorView: (any Swift.Error, (any DMAction.DMAction)?, any DMAction.DMAction) -> ErrorViewType
+  final private let _getSuccessView: (any DMUnLoader.DMLoadableTypeSuccess) -> SuccessViewType
+  final private let _loadingManagerSettings: () -> any DMUnLoader.DMLoadingManagerSettings
+  final private let _loadingViewSettings: () -> any DMUnLoader.DMProgressViewSettings
+  final private let _errorViewSettings: () -> any DMUnLoader.DMErrorViewSettings
+  final private let _successViewSettings: () -> any DMUnLoader.DMSuccessViewSettings
+  final public var loadingManagerSettings: any DMUnLoader.DMLoadingManagerSettings {
+    get
+  }
+  final public var loadingViewSettings: any DMUnLoader.DMProgressViewSettings {
+    get
+  }
+  final public var errorViewSettings: any DMUnLoader.DMErrorViewSettings {
+    get
+  }
+  final public var successViewSettings: any DMUnLoader.DMSuccessViewSettings {
+    get
+  }
+  @_Concurrency.MainActor final public func getLoadingView() -> LoadingViewType
+  @_Concurrency.MainActor final public func getErrorView(error: any Swift.Error, onRetry: (any DMAction.DMAction)?, onClose: any DMAction.DMAction) -> ErrorViewType
+  @_Concurrency.MainActor final public func getSuccessView(object: any DMUnLoader.DMLoadableTypeSuccess) -> SuccessViewType
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  @objc deinit
+  final public var hashValue: Swift.Int {
+    get
+  }
+}
+extension DMUnLoader.DMLoadingViewProvider {
+  @_Concurrency.MainActor public func eraseToAnyViewProvider() -> DMUnLoader.AnyDMLoadingViewProvider
+}
+public typealias AnyDMLoadingViewProvider = DMUnLoader.AnyDMLoadingViewProviderTypeErasurer<SwiftUICore.AnyView, SwiftUICore.AnyView, SwiftUICore.AnyView>
+public typealias DMAppDelegateType = DMUnLoader.DMAppDelegate<DMUnLoader.DMLoadingManagerMain>
+@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class DMAppDelegate<LM> : ObjectiveC.NSObject, UIKit.UIApplicationDelegate where LM : DMUnLoader.DMLoadingManager {
+  @_Concurrency.MainActor @preconcurrency @objc final public func application(_ application: UIKit.UIApplication, configurationForConnecting connectingSceneSession: UIKit.UISceneSession, options: UIKit.UIScene.ConnectionOptions) -> UIKit.UISceneConfiguration
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
+  @objc deinit
+}
+public typealias DMSceneDelegateTypeUIKit<Helper> = DMUnLoader.DMSceneDelegateUIKit<DMUnLoader.DMLoadingManagerMain, Helper> where Helper : DMUnLoader.DMSceneDelegateHelper
+@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class DMSceneDelegateUIKit<LM, Helper> : UIKit.UIResponder, UIKit.UIWindowSceneDelegate, Foundation.ObservableObject where LM : DMUnLoader.DMLoadingManager, Helper : DMUnLoader.DMSceneDelegateHelper {
+  @_Concurrency.MainActor @preconcurrency @_hasInitialValue final private let decoratee: DMUnLoader.DMSceneDelegateBase<LM>
+  @_Concurrency.MainActor @preconcurrency final public var loadingManager: LM? {
+    get
+    set
+  }
+  @_Concurrency.MainActor @preconcurrency @_hasInitialValue final internal var keyWindow: UIKit.UIWindow?
+  @_Concurrency.MainActor @preconcurrency @objc final public func scene(_ scene: UIKit.UIScene, willConnectTo session: UIKit.UISceneSession, options connectionOptions: UIKit.UIScene.ConnectionOptions)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @_Concurrency.MainActor @preconcurrency final public class DMSceneDelegateBase<LM> : UIKit.UIResponder, UIKit.UIWindowSceneDelegate, Foundation.ObservableObject where LM : DMUnLoader.DMLoadingManager {
+  @_hasStorage @_Concurrency.MainActor @preconcurrency @_hasInitialValue final public var loadingManager: LM? {
+    get
+    set
+  }
+  @_Concurrency.MainActor @preconcurrency @_hasInitialValue final private var toastWindow: UIKit.UIWindow?
+  @_Concurrency.MainActor @preconcurrency @_hasInitialValue weak final internal var windowScene: UIKit.UIWindowScene?
+  @_Concurrency.MainActor @preconcurrency @objc final public func scene(_ scene: UIKit.UIScene, willConnectTo session: UIKit.UISceneSession, options connectionOptions: UIKit.UIScene.ConnectionOptions)
+  @_Concurrency.MainActor @preconcurrency @objc override dynamic public init()
+  public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
+  @objc deinit
+}
+public protocol DMSceneDelegateHelper {
+  static func makeUIKitRootViewHierarhy<LM>(loadingManager: LM) -> UIKit.UIViewController where LM : DMUnLoader.DMLoadingManager
+}
+
+
+
+
+@available(iOS, obsoleted: 18.0, message: "CGSize conforms to Hashable in iOS 18 and later")
+extension CoreFoundation.CGSize : @retroactive Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+}
+extension SwiftUICore.EdgeInsets : @retroactive Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Swift.Optional {
+  public func isSomeValue() -> Swift.Bool
+  public func unwrapValue() throws -> Any
+}
+extension SwiftUICore.View {
+  @_Concurrency.MainActor @preconcurrency public func foregroundStyle<S>(_ style: S?) -> some SwiftUICore.View where S : SwiftUICore.ShapeStyle
+  
+}
+public struct CustomViewSize {
+  @_hasInitialValue public var width: CoreFoundation.CGFloat?
+  @_hasInitialValue public var height: CoreFoundation.CGFloat?
+  @_hasInitialValue public var alignment: SwiftUICore.Alignment
+  public init(width: CoreFoundation.CGFloat? = nil, height: CoreFoundation.CGFloat? = nil, alignment: SwiftUICore.Alignment = .center)
+}
+extension DMUnLoader.CustomViewSize : Swift.Hashable {
+  public static func == (lhs: DMUnLoader.CustomViewSize, rhs: DMUnLoader.CustomViewSize) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+
+
+
+public protocol DMErrorViewSettings {
+  var errorText: Swift.String? { get }
+  var actionButtonCloseSettings: DMUnLoader.ActionButtonSettings { get }
+  var actionButtonRetrySettings: DMUnLoader.ActionButtonSettings { get }
+  var errorTextSettings: DMUnLoader.ErrorTextSettings { get }
+  var errorImageSettings: DMUnLoader.ErrorImageSettings { get }
+}
+public struct DMErrorDefaultViewSettings : DMUnLoader.DMErrorViewSettings {
+  public let errorText: Swift.String?
+  public let actionButtonCloseSettings: DMUnLoader.ActionButtonSettings
+  public let actionButtonRetrySettings: DMUnLoader.ActionButtonSettings
+  public let errorTextSettings: DMUnLoader.ErrorTextSettings
+  public let errorImageSettings: DMUnLoader.ErrorImageSettings
+  public init(errorText: Swift.String? = "An error has occured!", actionButtonCloseSettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Close"), actionButtonRetrySettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Retry"), errorTextSettings: DMUnLoader.ErrorTextSettings = ErrorTextSettings(), errorImageSettings: DMUnLoader.ErrorImageSettings = ErrorImageSettings(image: Image(systemName: "exclamationmark.triangle")))
+}
+extension DMUnLoader.DMErrorDefaultViewSettings : Swift.Hashable {
+  public static func == (lhs: DMUnLoader.DMErrorDefaultViewSettings, rhs: DMUnLoader.DMErrorDefaultViewSettings) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct ActionButtonSettings : Swift.Identifiable {
+  public let id: Foundation.UUID
+  public let text: Swift.String
+  public let styleFactory: @_Concurrency.MainActor @Sendable () -> DMUnLoader.AnyButtonStyle
+  public init(id: Foundation.UUID = UUID(), text: Swift.String, styleFactory: @escaping @_Concurrency.MainActor @Sendable () -> DMUnLoader.AnyButtonStyle)
+  public init(id: Foundation.UUID = UUID(), text: Swift.String)
+  public typealias ID = Foundation.UUID
+}
+extension DMUnLoader.ActionButtonSettings : Swift.Hashable {
+  public static func == (lhs: DMUnLoader.ActionButtonSettings, rhs: DMUnLoader.ActionButtonSettings) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_Concurrency.MainActor @preconcurrency public struct AnyButtonStyle : SwiftUI.ButtonStyle {
+  @_Concurrency.MainActor @preconcurrency private let _makeBody: (DMUnLoader.AnyButtonStyle.Configuration) -> SwiftUICore.AnyView
+  @_Concurrency.MainActor @preconcurrency public init<S>(_ style: S) where S : SwiftUI.ButtonStyle
+  @_Concurrency.MainActor @preconcurrency public func makeBody(configuration: DMUnLoader.AnyButtonStyle.Configuration) -> some SwiftUICore.View
+  
+  public typealias Body = @_opaqueReturnTypeOf("$s10DMUnLoader14AnyButtonStyleV8makeBody13configurationQr7SwiftUI0dE13ConfigurationV_tF", 0) __
+}
+public struct ErrorTextSettings {
+  internal let foregroundColor: SwiftUICore.Color?
+  internal let multilineTextAlignment: SwiftUICore.TextAlignment
+  internal let padding: SwiftUICore.EdgeInsets
+  public init(foregroundColor: SwiftUICore.Color? = .white, multilineTextAlignment: SwiftUICore.TextAlignment = .center, padding: SwiftUICore.EdgeInsets = EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+}
+extension DMUnLoader.ErrorTextSettings : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  @_implements(Swift.Equatable, ==(_:_:)) public static func __derived_struct_equals(_ a: DMUnLoader.ErrorTextSettings, _ b: DMUnLoader.ErrorTextSettings) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct ErrorImageSettings {
+  internal let image: SwiftUICore.Image
+  internal let foregroundColor: SwiftUICore.Color?
+  internal let frameSize: DMUnLoader.CustomViewSize
+  public init(image: SwiftUICore.Image, foregroundColor: SwiftUICore.Color? = .red, frameSize: DMUnLoader.CustomViewSize = CustomViewSize(width: 50, height: 50))
+}
+extension DMUnLoader.ErrorImageSettings : Swift.Hashable {
+  public static func == (lhs: DMUnLoader.ErrorImageSettings, rhs: DMUnLoader.ErrorImageSettings) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+
+
+public protocol DMProgressViewSettings {
+  var loadingTextProperties: DMUnLoader.ProgressTextProperties { get }
+  var progressIndicatorProperties: DMUnLoader.ProgressIndicatorProperties { get }
+  var loadingContainerBackgroundColor: SwiftUICore.Color { get }
+  var frameGeometrySize: CoreFoundation.CGSize { get }
+}
+public struct DMProgressViewDefaultSettings : DMUnLoader.DMProgressViewSettings {
+  public let loadingTextProperties: DMUnLoader.ProgressTextProperties
+  public let progressIndicatorProperties: DMUnLoader.ProgressIndicatorProperties
+  public let loadingContainerBackgroundColor: SwiftUICore.Color
+  public let frameGeometrySize: CoreFoundation.CGSize
+  public init(loadingTextProperties: DMUnLoader.ProgressTextProperties = ProgressTextProperties(), progressIndicatorProperties: DMUnLoader.ProgressIndicatorProperties = ProgressIndicatorProperties(), loadingContainerBackgroundColor: SwiftUICore.Color = Color.clear, frameGeometrySize: CoreFoundation.CGSize = CGSize(width: 300, height: 300))
+}
+extension DMUnLoader.DMProgressViewDefaultSettings : Swift.Hashable {
+  public static func == (lhs: DMUnLoader.DMProgressViewDefaultSettings, rhs: DMUnLoader.DMProgressViewDefaultSettings) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct ProgressTextProperties {
+  public var text: Swift.String
+  public var alignment: SwiftUICore.TextAlignment
+  public var foregroundColor: SwiftUICore.Color
+  public var font: SwiftUICore.Font
+  @_hasInitialValue public var lineLimit: Swift.Int?
+  public var linePadding: SwiftUICore.EdgeInsets
+  public init(text: Swift.String = "Loading...", alignment: SwiftUICore.TextAlignment = .center, foregroundColor: SwiftUICore.Color = .white, font: SwiftUICore.Font = .body, lineLimit: Swift.Int? = 3, linePadding: SwiftUICore.EdgeInsets = EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+}
+extension DMUnLoader.ProgressTextProperties : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  @_implements(Swift.Equatable, ==(_:_:)) public static func __derived_struct_equals(_ a: DMUnLoader.ProgressTextProperties, _ b: DMUnLoader.ProgressTextProperties) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct ProgressIndicatorProperties {
+  public let size: SwiftUICore.ControlSize
+  public let tintColor: SwiftUICore.Color?
+  @_hasInitialValue public let style: SwiftUI.CircularProgressViewStyle
+  public init(size: SwiftUICore.ControlSize = .large, tintColor: SwiftUICore.Color? = .white)
+}
+extension DMUnLoader.ProgressIndicatorProperties : Swift.Hashable {
+  public static func == (lhs: DMUnLoader.ProgressIndicatorProperties, rhs: DMUnLoader.ProgressIndicatorProperties) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+
+
+public protocol DMSuccessViewSettings {
+  var spacingBetweenElements: CoreFoundation.CGFloat? { get }
+  var successImageProperties: DMUnLoader.SuccessImageProperties { get }
+  var successTextProperties: DMUnLoader.SuccessTextProperties { get }
+}
+public struct DMSuccessDefaultViewSettings : DMUnLoader.DMSuccessViewSettings {
+  public let spacingBetweenElements: CoreFoundation.CGFloat?
+  public let successImageProperties: DMUnLoader.SuccessImageProperties
+  public let successTextProperties: DMUnLoader.SuccessTextProperties
+  public init(successImageProperties: DMUnLoader.SuccessImageProperties = SuccessImageProperties(), successTextProperties: DMUnLoader.SuccessTextProperties = SuccessTextProperties(), spacingBetweenElements: CoreFoundation.CGFloat? = nil)
+}
+extension DMUnLoader.DMSuccessDefaultViewSettings : Swift.Hashable {
+  public static func == (lhs: DMUnLoader.DMSuccessDefaultViewSettings, rhs: DMUnLoader.DMSuccessDefaultViewSettings) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct SuccessImageProperties : Swift.Identifiable {
+  public var id: Foundation.UUID
+  public let image: SwiftUICore.Image
+  public let frame: DMUnLoader.CustomViewSize
+  public let foregroundColor: SwiftUICore.Color?
+  public init(id: Foundation.UUID = UUID(), image: SwiftUICore.Image = Image(systemName: "checkmark.circle.fill"), frame: DMUnLoader.CustomViewSize = .init(width: 50, height: 50), foregroundColor: SwiftUICore.Color? = .green)
+  public typealias ID = Foundation.UUID
+}
+extension DMUnLoader.SuccessImageProperties : Swift.Hashable {
+  public static func == (lhs: DMUnLoader.SuccessImageProperties, rhs: DMUnLoader.SuccessImageProperties) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct SuccessTextProperties {
+  public let text: Swift.String?
+  public let foregroundColor: SwiftUICore.Color?
+  public let alignment: SwiftUICore.Alignment
+  public init(text: Swift.String? = "Success!", foregroundColor: SwiftUICore.Color? = .white, alignment: SwiftUICore.Alignment = .center)
+}
+extension DMUnLoader.SuccessTextProperties : Swift.Hashable {
+  public static func == (lhs: DMUnLoader.SuccessTextProperties, rhs: DMUnLoader.SuccessTextProperties) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension DMUnLoader.DMLoadingManagerMain : Swift.Sendable {}
+extension DMUnLoader.DMRootLoadingView : Swift.Sendable {}
+extension DMUnLoader.DMAppDelegate : Swift.Sendable {}
+extension DMUnLoader.AnyButtonStyle : Swift.Sendable {}
