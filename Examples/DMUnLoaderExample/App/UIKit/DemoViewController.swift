@@ -35,13 +35,7 @@ final class DemoViewController<LM: DMLoadingManager>: UIViewController {
         triggers.spacing = 12
         triggers.distribution = .fillEqually
 
-        let content = makeButton(
-            "Content under the HUD.\nA tap counts when it arrives here.",
-            identifier: DemoIdentifier.content,
-            configuration: .tinted()
-        ) { $0.contentTapped() }
-        content.titleLabel?.textAlignment = .center
-        content.setContentHuggingPriority(.defaultLow, for: .vertical)
+        let content = makeContentControl()
 
         let stack = UIStackView(arrangedSubviews: [contentTapsLabel, retriesLabel, triggers, content])
         stack.axis = .vertical
@@ -75,16 +69,47 @@ final class DemoViewController<LM: DMLoadingManager>: UIViewController {
     private func makeButton(
         _ title: String,
         identifier: String,
-        configuration: UIButton.Configuration = .bordered(),
         action: @escaping (DemoModel<LM>) -> Void
     ) -> UIButton {
-        var configuration = configuration
+        var configuration = UIButton.Configuration.bordered()
         configuration.title = title
         configuration.buttonSize = .large
         let button = UIButton(configuration: configuration, primaryAction: UIAction { [model] _ in
             action(model)
         })
         button.accessibilityIdentifier = identifier
+        return button
+    }
+
+    /// The control under the HUD: a button that fills the rest of the screen, with a text
+    /// that fills the button.
+    private func makeContentControl() -> UIButton {
+        let button = UIButton(primaryAction: UIAction { [model] _ in
+            model.contentTapped()
+        })
+        button.backgroundColor = view.tintColor.withAlphaComponent(0.15)
+        button.layer.cornerRadius = 12
+        button.clipsToBounds = true
+        button.accessibilityLabel = DemoText.contentLabel
+        button.accessibilityIdentifier = DemoIdentifier.content
+        button.setContentHuggingPriority(.defaultLow, for: .vertical)
+
+        let text = UILabel()
+        text.text = DemoText.content
+        text.font = .preferredFont(forTextStyle: .footnote)
+        text.adjustsFontForContentSizeCategory = true
+        text.textColor = view.tintColor
+        text.numberOfLines = 0
+        text.isAccessibilityElement = false
+        text.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        text.translatesAutoresizingMaskIntoConstraints = false
+        button.addSubview(text)
+        NSLayoutConstraint.activate([
+            text.topAnchor.constraint(equalTo: button.topAnchor, constant: 12),
+            text.leadingAnchor.constraint(equalTo: button.leadingAnchor, constant: 12),
+            text.trailingAnchor.constraint(equalTo: button.trailingAnchor, constant: -12),
+            text.bottomAnchor.constraint(lessThanOrEqualTo: button.bottomAnchor, constant: -12)
+        ])
         return button
     }
 }

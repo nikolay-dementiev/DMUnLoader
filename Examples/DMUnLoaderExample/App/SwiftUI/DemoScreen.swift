@@ -28,11 +28,14 @@ struct DemoScreen<LM: DMLoadingManager>: View {
             .controlSize(.large)
 
             Button(action: model.contentTapped) {
-                Text("Content under the HUD.\nA tap counts when it arrives here.")
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                Text(DemoText.content)
+                    .font(.footnote)
+                    .multilineTextAlignment(.leading)
+                    .padding(12)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .background(Color.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
             }
+            .accessibilityLabel(DemoText.contentLabel)
             .accessibilityIdentifier(DemoIdentifier.content)
         }
         .padding()

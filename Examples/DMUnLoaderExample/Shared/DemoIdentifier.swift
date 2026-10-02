@@ -8,8 +8,20 @@ enum DemoIdentifier {
     static let content = "content"
 }
 
-/// The texts of the two counters, so a test compares against the text the app builds.
+/// The texts of the demo screen, so a test compares against the text the app builds.
 enum DemoText {
+    /// What assistive technology reads for the control under the HUD.
+    static let contentLabel = "Content under the HUD"
+
+    /// Fills the control under the HUD, so the dim and the blur of a HUD have something
+    /// to show on.
+    static let content = String(
+        repeating: "This text lies under the HUD. A tap that arrives here is counted above. "
+            + "While a HUD is shown, the overlay dims the screen, blurs its middle "
+            + "and keeps touches away from this control. ",
+        count: 12
+    )
+
     static func contentTaps(_ count: Int) -> String {
         "Content taps: \(count)"
     }
