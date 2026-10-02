@@ -17,9 +17,6 @@ final class DMLoadingViewTests: XCTestCase {
     /// timer and the check both run on the main thread, and a busy machine delays both.
     private static let timerMargin: Double = 0.5
 
-    /// How late a scheduled check may run on a busy machine before the test gives up.
-    private static let callbackAllowance: Double = 3
-
     override func invokeTest() {
         withSnapshotTesting(diffTool: .ksdiff) {
             super.invokeTest()
@@ -91,7 +88,7 @@ final class DMLoadingViewTests: XCTestCase {
         
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: Self.callbackAllowance)
+        wait(for: [exp], timeout: TestTiming.callbackAllowance)
     }
     
     func testLoadingView_AssignTagFromSettingsToEmptyStateView_WhenLoadingStateIsLoading() throws {
@@ -157,7 +154,7 @@ final class DMLoadingViewTests: XCTestCase {
         
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: Self.callbackAllowance)
+        wait(for: [exp], timeout: TestTiming.callbackAllowance)
     }
     
     func testLoadingView_AssignTagFromSettingsToFailureStateView_WhenLoadingStateIsFailure() throws {
@@ -226,7 +223,7 @@ final class DMLoadingViewTests: XCTestCase {
         
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: Self.callbackAllowance)
+        wait(for: [exp], timeout: TestTiming.callbackAllowance)
     }
     
     func testLoadingView_AssignTagFromSettingsToSuccessStateView_WhenLoadingStateIsSuccess() throws {
@@ -367,7 +364,7 @@ final class DMLoadingViewTests: XCTestCase {
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
         
-        wait(for: [exp], timeout: animationDuration + Self.callbackAllowance)
+        wait(for: [exp], timeout: animationDuration + TestTiming.callbackAllowance)
     }
     
     func checktLoadingView_RespondToTapGestures_ForStates(
@@ -440,7 +437,7 @@ final class DMLoadingViewTests: XCTestCase {
             ViewHosting.host(view: sut)
             defer { ViewHosting.expel() }
             
-            wait(for: [exp], timeout: secondsAutoHideDelay + Self.timerMargin + Self.callbackAllowance)
+            wait(for: [exp], timeout: secondsAutoHideDelay + Self.timerMargin + TestTiming.callbackAllowance)
         }
     }
     

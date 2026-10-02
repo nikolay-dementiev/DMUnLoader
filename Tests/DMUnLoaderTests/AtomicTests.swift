@@ -151,7 +151,7 @@ final class AtomicTests: XCTestCase {
         }
         
         wait(for: [expectation],
-             timeout: 0.1)
+             timeout: TestTiming.callbackAllowance)
         
         XCTAssertEqual(atomic.wrappedValue,
                        newValue,

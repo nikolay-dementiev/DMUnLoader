@@ -96,7 +96,7 @@ final class DMLoadingManagerTests: XCTestCase {
         )
         wait(
             for: [expectationIdle],
-            timeout: secondsAutoHideDelay + 0.05
+            timeout: secondsAutoHideDelay + TestTiming.callbackAllowance
         )
     }
     
@@ -150,7 +150,7 @@ final class DMLoadingManagerTests: XCTestCase {
         )
         wait(
             for: [expectationIdle],
-            timeout: secondsAutoHideDelay + 0.05
+            timeout: secondsAutoHideDelay + TestTiming.callbackAllowance
         )
     }
     
@@ -195,7 +195,7 @@ final class DMLoadingManagerTests: XCTestCase {
         )
         wait(
             for: [expectationAfterwordsIdle],
-            timeout: secondsAutoHideDelay + 0.05
+            timeout: secondsAutoHideDelay + TestTiming.callbackAllowance
         )
     }
     
@@ -260,7 +260,7 @@ final class DMLoadingManagerTests: XCTestCase {
         )
         wait(
             for: [expectationIdle],
-            timeout: secondsAutoHideDelay+0.01
+            timeout: secondsAutoHideDelay + TestTiming.callbackAllowance
         )
     }
     
