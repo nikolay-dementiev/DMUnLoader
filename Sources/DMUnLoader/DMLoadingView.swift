@@ -93,7 +93,7 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
             }
         }
         .onAppear {
-            animateTheAppearance.toggle()
+            animateTheAppearance = true
         }
         .animation(Animation.spring(duration: 0.2),
                    value: animateTheAppearance)
