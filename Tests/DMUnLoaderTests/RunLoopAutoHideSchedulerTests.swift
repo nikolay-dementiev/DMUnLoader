@@ -14,7 +14,7 @@ import DMUnLoader
 final class RunLoopAutoHideSchedulerTests: XCTestCase {
 
     func test_schedule_onceTheDelayHasPassed_runsHideOnce() {
-        let sut = RunLoopAutoHideScheduler()
+        let sut = makeSUT()
         let hidden = expectation(description: "hide runs once the delay has passed")
         hidden.assertForOverFulfill = true
 
@@ -27,7 +27,7 @@ final class RunLoopAutoHideSchedulerTests: XCTestCase {
     }
 
     func test_schedule_cancelledBeforeTheDelay_neverRunsHide() {
-        let sut = RunLoopAutoHideScheduler()
+        let sut = makeSUT()
         let hidden = expectation(description: "a cancelled hide never runs")
         hidden.isInverted = true
 
@@ -37,5 +37,11 @@ final class RunLoopAutoHideSchedulerTests: XCTestCase {
         subscription.cancel()
 
         wait(for: [hidden], timeout: 0.5)
+    }
+
+    // MARK: - Helpers
+
+    private func makeSUT() -> RunLoopAutoHideScheduler {
+        RunLoopAutoHideScheduler()
     }
 }

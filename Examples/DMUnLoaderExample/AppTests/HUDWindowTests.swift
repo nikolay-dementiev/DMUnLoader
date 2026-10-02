@@ -10,7 +10,7 @@ import XCTest
 @MainActor
 final class HUDWindowTests: XCTestCase {
 
-    func test_launchedApp_showsOneVisibleHUDWindow() throws {
+    func test_launchedApp_onTheSwiftUIPath_showsOneVisibleHUDWindow() throws {
         let scene = try XCTUnwrap(windowScene(), "the example app has a connected window scene")
 
         let windows = waitForHUDWindows(in: scene)
@@ -36,15 +36,15 @@ final class HUDWindowTests: XCTestCase {
         _ = waitForHUDWindows(in: scene)
 
         sceneDelegate.loadingManager = nil
-        let windowsWithoutManager = waitUntil(hudWindows(in: scene).isEmpty, in: scene)
+        let windowsWithoutManager = waitUntil(hudWindows(in: scene).isEmpty)
 
         sceneDelegate.loadingManager = DMLoadingManagerMain()
         XCTAssertTrue(windowsWithoutManager, "without a manager the scene has no HUD window")
         XCTAssertEqual(hudWindows(in: scene).count, 1, "a new manager brings one HUD window back")
     }
 
-    func test_replacedManager_isReleased() throws {
-        let (scene, sceneDelegate) = try connectedSceneDelegate()
+    func test_replacedManager_afterANewManagerIsSet_isReleased() throws {
+        let (_, sceneDelegate) = try connectedSceneDelegate()
         var first: DMLoadingManagerMain? = DMLoadingManagerMain()
         weak let releasedFirst = first
         sceneDelegate.loadingManager = first
@@ -52,7 +52,7 @@ final class HUDWindowTests: XCTestCase {
 
         sceneDelegate.loadingManager = DMLoadingManagerMain()
 
-        XCTAssertTrue(waitUntil(releasedFirst == nil, in: scene), "the HUD keeps no replaced manager alive")
+        XCTAssertTrue(waitUntil(releasedFirst == nil), "the HUD keeps no replaced manager alive")
     }
 
     /// A phone gives an app one scene, so this runs where the system supports more, such as
@@ -64,7 +64,7 @@ final class HUDWindowTests: XCTestCase {
         let (firstScene, firstDelegate) = try connectedSceneDelegate()
         _ = waitForHUDWindows(in: firstScene)
         let secondScene = try openScene(besides: firstScene)
-        _ = waitUntil(ExampleSceneDelegate.current !== firstDelegate, in: firstScene)
+        _ = waitUntil(ExampleSceneDelegate.current !== firstDelegate)
         let secondDelegate = ExampleSceneDelegate.current
         weak var secondHUD: UIWindow?
         autoreleasepool {
@@ -73,12 +73,12 @@ final class HUDWindowTests: XCTestCase {
         let secondSceneShowedAHUD = secondHUD != nil
 
         app.requestSceneSessionDestruction(secondScene.session, options: nil)
-        let closed = waitUntil(app.connectedScenes.count == 1, in: firstScene)
+        let closed = waitUntil(app.connectedScenes.count == 1)
 
         XCTAssertTrue(secondSceneShowedAHUD, "the second scene shows a HUD window of its own")
         XCTAssertTrue(closed, "the second scene disconnects")
         XCTAssertTrue(
-            waitUntil(secondHUD == nil, in: firstScene),
+            waitUntil(secondHUD == nil),
             "the closed scene's HUD window is released, although its scene delegate is alive"
         )
         XCTAssertEqual(hudWindows(in: firstScene).count, 1, "the first scene keeps its HUD window")
@@ -93,7 +93,7 @@ final class HUDWindowTests: XCTestCase {
 
     private func connectedSceneDelegate() throws -> (UIWindowScene, DMSceneDelegateBase<DMLoadingManagerMain>) {
         let scene = try XCTUnwrap(windowScene(), "the example app has a connected window scene")
-        _ = waitUntil(ExampleSceneDelegate.current != nil, in: scene)
+        _ = waitUntil(ExampleSceneDelegate.current != nil)
         let sceneDelegate = try XCTUnwrap(
             ExampleSceneDelegate.current,
             "the SwiftUI path installs DMSceneDelegateBase and the root view registers it"
@@ -106,7 +106,7 @@ final class HUDWindowTests: XCTestCase {
     private func openScene(besides scene: UIWindowScene) throws -> UIWindowScene {
         var declined: (any Error)?
         UIApplication.shared.activateSceneSession(for: UISceneSessionActivationRequest()) { declined = $0 }
-        _ = waitUntil(UIApplication.shared.connectedScenes.count > 1 || declined != nil, in: scene)
+        _ = waitUntil(UIApplication.shared.connectedScenes.count > 1 || declined != nil)
         if let declined {
             throw XCTSkip("the system declined to open a second scene: \(declined.localizedDescription)")
         }
@@ -124,12 +124,12 @@ final class HUDWindowTests: XCTestCase {
     /// The scene delegate gets its manager when the root view appears, which can be after
     /// the test starts, so the run loop turns until the window exists or time runs out.
     private func waitForHUDWindows(in scene: UIWindowScene) -> [UIWindow] {
-        _ = waitUntil(!hudWindows(in: scene).isEmpty, in: scene)
+        _ = waitUntil(!hudWindows(in: scene).isEmpty)
         return hudWindows(in: scene)
     }
 
     /// Turns the run loop until `condition` holds or ten seconds pass.
-    private func waitUntil(_ condition: @autoclosure () -> Bool, in scene: UIWindowScene) -> Bool {
+    private func waitUntil(_ condition: @autoclosure () -> Bool) -> Bool {
         let deadline = Date().addingTimeInterval(10)
         while !condition(), Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.05))
