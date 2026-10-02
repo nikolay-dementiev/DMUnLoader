@@ -123,8 +123,6 @@ jobs:
           persist-credentials: false
       - name: Check the normalisation of the interface text
         run: Scripts/check-api.sh --self-test
-      - name: Fetch the sources of the two dependencies
-        run: swift package resolve
       - name: Compare the public interface with the baseline
         run: Scripts/check-api.sh
 

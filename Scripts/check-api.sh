@@ -37,11 +37,23 @@ LIBRARY_EVOLUTION="no"
 # Modules of package dependencies that the module imports, compiled first and in this
 # order. One entry per module: "<module>|<source directory>|<compiler flags>", where the
 # flags mirror the manifest of the dependency, including its -package-name.
-# Their sources are the package's resolved checkouts: run `swift package resolve` first.
 DEPENDENCIES=(
     "DMAction|.build/checkouts/DMAction/Sources|-swift-version 6 -parse-as-library -package-name DMAction"
     "DMVariableBlurView|.build/checkouts/DMVariableBlurView/Sources/DMVariableBlurView|-swift-version 6 -parse-as-library -package-name DMVariableBlurView"
 )
+
+# The dependency sources are the package's resolved checkouts. Resolving brings them to the
+# revisions in Package.resolved, or fetches them on a fresh clone. The self-test compiles
+# nothing and skips it.
+if [ "${1:-}" != "--self-test" ]; then
+    PACKAGE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+    mkdir -p "$PACKAGE_ROOT/.build"
+    if ! swift package --package-path "$PACKAGE_ROOT" resolve > "$PACKAGE_ROOT/.build/check-api-resolve.log" 2>&1; then
+        echo "check-api: the package dependencies could not be resolved:" >&2
+        tail -20 "$PACKAGE_ROOT/.build/check-api-resolve.log" >&2
+        exit 2
+    fi
+fi
 
 # ==== End of the settings ===============================================================
 
