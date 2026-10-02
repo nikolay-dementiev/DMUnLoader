@@ -22,6 +22,9 @@ The SDK simplifies the integration of common dialog states (Error, Loading, Succ
   s.exclude_files = 'Examples/**', 'Sources/Deprecated/'
   s.weak_framework = "XCTest"
   s.requires_arc = true
+  # The package access level needs a package name. The setting belongs to the pod's own
+  # target and never reaches the app that installs the pod.
+  s.pod_target_xcconfig = { 'OTHER_SWIFT_FLAGS' => '$(inherited) -package-name DMUnLoader' }
   
   s.cocoapods_version = '>= 1.4.0'
   if s.respond_to?(:swift_versions) then
