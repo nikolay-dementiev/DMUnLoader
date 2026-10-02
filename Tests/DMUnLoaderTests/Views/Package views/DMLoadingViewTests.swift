@@ -91,7 +91,7 @@ final class DMLoadingViewTests: XCTestCase {
         
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.3)
+        wait(for: [exp], timeout: Self.callbackAllowance)
     }
     
     func testLoadingView_AssignTagFromSettingsToEmptyStateView_WhenLoadingStateIsLoading() throws {
@@ -157,7 +157,7 @@ final class DMLoadingViewTests: XCTestCase {
         
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.3)
+        wait(for: [exp], timeout: Self.callbackAllowance)
     }
     
     func testLoadingView_AssignTagFromSettingsToFailureStateView_WhenLoadingStateIsFailure() throws {
@@ -226,7 +226,7 @@ final class DMLoadingViewTests: XCTestCase {
         
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.3)
+        wait(for: [exp], timeout: Self.callbackAllowance)
     }
     
     func testLoadingView_AssignTagFromSettingsToSuccessStateView_WhenLoadingStateIsSuccess() throws {

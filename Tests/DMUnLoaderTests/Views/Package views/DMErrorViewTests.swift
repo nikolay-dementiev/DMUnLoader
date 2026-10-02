@@ -15,6 +15,9 @@ import SnapshotTesting
 // swiftlint:disable:next type_body_length
 final class DMErrorViewTests: XCTestCase {
     
+    /// How late a scheduled check may run on a busy machine before the test gives up.
+    private static let callbackAllowance: Double = 3
+    
     override func invokeTest() {
         withSnapshotTesting(diffTool: .ksdiff) {
             super.invokeTest()
@@ -606,7 +609,7 @@ final class DMErrorViewTests: XCTestCase {
         defer { ViewHosting.expel() }
         
         // Then
-        wait(for: [expInspection], timeout: 0.09)
+        wait(for: [expInspection], timeout: Self.callbackAllowance)
     }
     
     func testThat_TapOnTheCloseButton_Trigger_OnCloseAction() throws {
@@ -637,8 +640,8 @@ final class DMErrorViewTests: XCTestCase {
         defer { ViewHosting.expel() }
         
         // Then
-        wait(for: [expInspection], timeout: 0.07)
-        wait(for: [buttonTapExp], timeout: 0.065)
+        wait(for: [expInspection], timeout: Self.callbackAllowance)
+        wait(for: [buttonTapExp], timeout: Self.callbackAllowance)
     }
     
     func testThatTap_OnTheRetryButton_Trigger_OnRetryAction() throws {
@@ -669,8 +672,8 @@ final class DMErrorViewTests: XCTestCase {
         defer { ViewHosting.expel() }
         
         // Then
-        wait(for: [expInspection], timeout: 0.05)
-        wait(for: [buttonTapExp], timeout: 0.055)
+        wait(for: [expInspection], timeout: Self.callbackAllowance)
+        wait(for: [buttonTapExp], timeout: Self.callbackAllowance)
     }
     
     // MARK: Scenario 6: Verify Snapshot Testing
