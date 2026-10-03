@@ -45,24 +45,28 @@ public struct DMErrorDefaultViewSettings: DMErrorViewSettings {
     /// Settings for the error image displayed in the error view.
     public let errorImageSettings: ErrorImageSettings
     
-    /// Initializes a new instance of `DMErrorDefaultViewSettings` with optional customizations.
+    /// Creates settings for the error view.
     /// - Parameters:
-    ///   - errorText: The error message to display. Defaults to `"An error has occurred!"`.
-    ///   - actionButtonCloseSettings: Settings for the "Close" button. Defaults to `ActionButtonSettings(text: "Close")`.
-    ///   - actionButtonRetrySettings: Settings for the "Retry" button. Defaults to `ActionButtonSettings(text: "Retry")`.
-    ///   - errorTextSettings: Settings for the error text. Defaults to `ErrorTextSettings()`.
-    ///   - errorImageSettings: Settings for the error image. Defaults to an exclamation mark triangle icon.
+    ///   - errorText: The title shown above the description of the error. Defaults to
+    ///     `"An error has occurred!"`. `nil` shows the description only.
+    ///   - actionButtonCloseSettings: Settings for the Close button. Defaults to
+    ///     `ActionButtonSettings(text: "Close")`.
+    ///   - actionButtonRetrySettings: Settings for the Retry button, shown when the failure
+    ///     has a retry action. Defaults to `ActionButtonSettings(text: "Retry")`.
+    ///   - errorTextSettings: Settings for both texts. Defaults to `ErrorTextSettings()`.
+    ///   - errorImageSettings: Settings for the image. Defaults to the
+    ///     `exclamationmark.triangle` symbol.
     /// - Example:
     ///   ```swift
     ///   let customErrorSettings = DMErrorDefaultViewSettings(
     ///       errorText: "Oops! Something went wrong.",
-    ///       actionButtonCloseSettings: ActionButtonSettings(text: "Dismiss", backgroundColor: .red),
-    ///       actionButtonRetrySettings: ActionButtonSettings(text: "Try Again", backgroundColor: .blue),
+    ///       actionButtonCloseSettings: ActionButtonSettings(text: "Dismiss"),
+    ///       actionButtonRetrySettings: ActionButtonSettings(text: "Try Again"),
     ///       errorTextSettings: ErrorTextSettings(foregroundColor: .black, multilineTextAlignment: .leading),
     ///       errorImageSettings: ErrorImageSettings(image: Image(systemName: "xmark.octagon"), foregroundColor: .orange)
     ///   )
     ///   ```
-    public init(errorText: String? = "An error has occured!",
+    public init(errorText: String? = "An error has occurred!",
                 actionButtonCloseSettings: ActionButtonSettings = ActionButtonSettings(text: "Close"),
                 actionButtonRetrySettings: ActionButtonSettings = ActionButtonSettings(text: "Retry"),
                 errorTextSettings: ErrorTextSettings = ErrorTextSettings(),

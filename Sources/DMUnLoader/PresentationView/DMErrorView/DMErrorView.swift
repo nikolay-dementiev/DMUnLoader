@@ -114,7 +114,7 @@ extension DMErrorView {
 #Preview("2 buttons") {
     PreviewRenderOwner {
         DMErrorView(settings: DMErrorDefaultViewSettings(
-            errorText: "An error has occured! An error has occured! An error has occured! An error has occured!",
+            errorText: "An error has occurred! An error has occurred! An error has occurred! An error has occurred!",
             actionButtonCloseSettings: .init(
                 text: "X"
                 )
@@ -129,7 +129,7 @@ extension DMErrorView {
 #Preview("1 button") {
     PreviewRenderOwner {
         DMErrorView(settings: DMErrorDefaultViewSettings(
-            errorText: "An error has occured! An error has occured! An error has occured! An error has occured!",
+            errorText: "An error has occurred! An error has occurred! An error has occurred! An error has occurred!",
             actionButtonCloseSettings: .init(
                 text: "X"
                 )

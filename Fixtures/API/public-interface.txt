@@ -373,7 +373,7 @@ public struct DMErrorDefaultViewSettings : DMUnLoader.DMErrorViewSettings {
   public let actionButtonRetrySettings: DMUnLoader.ActionButtonSettings
   public let errorTextSettings: DMUnLoader.ErrorTextSettings
   public let errorImageSettings: DMUnLoader.ErrorImageSettings
-  public init(errorText: Swift.String? = "An error has occured!", actionButtonCloseSettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Close"), actionButtonRetrySettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Retry"), errorTextSettings: DMUnLoader.ErrorTextSettings = ErrorTextSettings(), errorImageSettings: DMUnLoader.ErrorImageSettings = ErrorImageSettings(image: Image(systemName: "exclamationmark.triangle")))
+  public init(errorText: Swift.String? = "An error has occurred!", actionButtonCloseSettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Close"), actionButtonRetrySettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Retry"), errorTextSettings: DMUnLoader.ErrorTextSettings = ErrorTextSettings(), errorImageSettings: DMUnLoader.ErrorImageSettings = ErrorImageSettings(image: Image(systemName: "exclamationmark.triangle")))
 }
 public struct DMHUDAttachmentFailure : Swift.Error, Swift.Hashable, Swift.Sendable, Swift.CustomStringConvertible {
   public var description: Swift.String {
