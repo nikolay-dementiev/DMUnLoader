@@ -1,0 +1,54 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "hud.failure.close" : {
+      "comment" : "The button that hides a failure HUD.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        }
+      }
+    },
+    "hud.failure.retry" : {
+      "comment" : "The button that runs the retry action of a failure HUD.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        }
+      }
+    },
+    "hud.failure.title" : {
+      "comment" : "The title of a failure HUD, above the description of the error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An error has occurred!"
+          }
+        }
+      }
+    },
+    "hud.loading.text" : {
+      "comment" : "The text of the loading HUD, above the progress indicator.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading..."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

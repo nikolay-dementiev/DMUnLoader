@@ -20,6 +20,7 @@ The SDK simplifies the integration of common dialog states (Error, Loading, Succ
   s.source           = { :git => 'https://github.com/nikolay-dementiev/DMUnLoader.git', :tag => s.version.to_s }
   s.source_files = 'Sources/**/*.{swift,h,m,c}'
   s.exclude_files = 'Examples/**', 'Sources/Deprecated/'
+  s.resource_bundles = { 'DMUnLoader' => ['Sources/DMUnLoader/Resources/Localizable.xcstrings'] }
   s.weak_framework = "XCTest"
   s.requires_arc = true
   # The package access level needs a package name. The setting belongs to the pod's own

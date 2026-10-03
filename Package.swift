@@ -10,6 +10,7 @@ let swiftSettings: [SwiftSetting] = [.enableUpcomingFeature("ExistentialAny")]
 
 let package = Package(
     name: "DMUnLoader",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v17),
 //        .watchOS(.v7),
@@ -40,8 +41,7 @@ let package = Package(
                 "DMAction",
                 "DMVariableBlurView"
             ],
-            path: "Sources",
-            sources: ["DMUnLoader"],
+            resources: [.process("Resources")],
             swiftSettings: swiftSettings
         ),
         .testTarget(
