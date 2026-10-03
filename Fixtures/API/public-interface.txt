@@ -164,6 +164,9 @@ extension DMUnLoader.DMLoadingManagerSettings {
   public var hudWindowLevel: UIKit.UIWindow.Level {
     get
   }
+  public var backdrop: DMUnLoader.DMHUDBackdrop {
+    get
+  }
 }
 extension DMUnLoader.DMLoadingViewProvider {
   @_Concurrency.MainActor public func eraseToAnyViewProvider() -> DMUnLoader.AnyDMLoadingViewProvider
@@ -321,6 +324,7 @@ public protocol DMLoadingManagerSettings {
   var autoHideDelay: Swift.Duration { get }
   var hudDismissal: DMUnLoader.DMHUDDismissalRules { get }
   var hudWindowLevel: UIKit.UIWindow.Level { get }
+  var backdrop: DMUnLoader.DMHUDBackdrop { get }
 }
 public protocol DMLoadingViewProvider : Combine.ObservableObject, Swift.Hashable {
   associatedtype LoadingViewType : SwiftUICore.View
@@ -380,6 +384,12 @@ public struct DMHUDAutoHide : Swift.Hashable, Swift.Sendable {
     get
   }
 }
+public struct DMHUDBackdrop : Swift.Sendable {
+  @_hasInitialValue public static let variableBlur: DMUnLoader.DMHUDBackdrop
+  public static func dim(_ color: SwiftUICore.Color = .black.opacity(0.2)) -> DMUnLoader.DMHUDBackdrop
+  public static func material(_ material: SwiftUICore.Material = .ultraThinMaterial) -> DMUnLoader.DMHUDBackdrop
+  @_hasInitialValue public static let clear: DMUnLoader.DMHUDBackdrop
+}
 public struct DMHUDDismissal : Swift.Hashable, Swift.Sendable {
   public var autoHide: DMUnLoader.DMHUDAutoHide
   public var cardTapHides: Swift.Bool
@@ -406,7 +416,8 @@ public struct DMLoadingManagerDefaultSettings : DMUnLoader.DMLoadingManagerSetti
   public let autoHideDelay: Swift.Duration
   public let hudDismissal: DMUnLoader.DMHUDDismissalRules
   public let hudWindowLevel: UIKit.UIWindow.Level
-  public init(autoHideDelay: Swift.Duration = .seconds(2), hudDismissal: DMUnLoader.DMHUDDismissalRules = DMHUDDismissalRules(), hudWindowLevel: UIKit.UIWindow.Level = .normal)
+  public let backdrop: DMUnLoader.DMHUDBackdrop
+  public init(autoHideDelay: Swift.Duration = .seconds(2), hudDismissal: DMUnLoader.DMHUDDismissalRules = DMHUDDismissalRules(), hudWindowLevel: UIKit.UIWindow.Level = .normal, backdrop: DMUnLoader.DMHUDBackdrop = .variableBlur)
 }
 public struct DMProgressViewDefaultSettings : DMUnLoader.DMProgressViewSettings {
   public let loadingTextProperties: DMUnLoader.ProgressTextProperties

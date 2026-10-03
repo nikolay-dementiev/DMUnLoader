@@ -39,14 +39,29 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
         }
     }
     
+    /// The dim of the backdrop, faded in with the card.
+    @ViewBuilder
+    private var dim: some View {
+        switch loadingManager.settings.backdrop.kind {
+        case .variableBlur:
+            Color.black.opacity(animateTheAppearance ? 0.2 : 0)
+                .ignoresSafeArea()
+        case let .dim(color):
+            color
+                .ignoresSafeArea()
+                .opacity(animateTheAppearance ? 1 : 0)
+        case .material, .clear:
+            EmptyView()
+        }
+    }
+    
     var body: some View {
         ZStack {
             if !viewModel.showsHUD {
                 overlayView
             } else {
                 ZStack {
-                    Color.black.opacity(animateTheAppearance ? 0.2 : 0)
-                        .ignoresSafeArea()
+                    dim
                     
                     // Takes every tap outside the card, whatever the backdrop draws.
                     Color.clear

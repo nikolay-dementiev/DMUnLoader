@@ -39,6 +39,10 @@ public protocol DMLoadingManagerSettings {
     /// Read each time the HUD window starts showing this manager, before the window becomes
     /// visible. A conforming type that does not implement this property gets `.normal`.
     var hudWindowLevel: UIWindow.Level { get }
+
+    /// What the HUD of the loading manager draws behind its card. The default implementation
+    /// returns ``DMHUDBackdrop/variableBlur``, the backdrop of every release so far.
+    var backdrop: DMHUDBackdrop { get }
 }
 
 extension DMLoadingManagerSettings {
@@ -51,6 +55,11 @@ extension DMLoadingManagerSettings {
     /// `.normal`: the level of the HUD window before 1.1.0.
     public var hudWindowLevel: UIWindow.Level {
         .normal
+    }
+
+    /// ``DMHUDBackdrop/variableBlur``: the variable blur under a black dim of opacity 0.2.
+    public var backdrop: DMHUDBackdrop {
+        .variableBlur
     }
 }
 
@@ -74,6 +83,9 @@ public struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings, Sendabl
     /// The level of the window that shows the HUD.
     public let hudWindowLevel: UIWindow.Level
 
+    /// What the HUD draws behind its card.
+    public let backdrop: DMHUDBackdrop
+
     /// - Parameters:
     ///   - autoHideDelay: How long a success or a failure stays before it hides by itself.
     ///     2 seconds when omitted, as for `DMLoadingManagerMain()`.
@@ -81,13 +93,17 @@ public struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings, Sendabl
     ///     `DMHUDDismissalRules()` when omitted: the behaviour before 1.1.0.
     ///   - hudWindowLevel: The level of the window that shows the HUD. `.normal` when omitted:
     ///     the level before 1.1.0.
+    ///   - backdrop: What the HUD draws behind its card. `.variableBlur` when omitted: the
+    ///     backdrop before 1.1.0.
     public init(
         autoHideDelay: Duration = .seconds(2),
         hudDismissal: DMHUDDismissalRules = DMHUDDismissalRules(),
-        hudWindowLevel: UIWindow.Level = .normal
+        hudWindowLevel: UIWindow.Level = .normal,
+        backdrop: DMHUDBackdrop = .variableBlur
     ) {
         self.autoHideDelay = autoHideDelay
         self.hudDismissal = hudDismissal
         self.hudWindowLevel = hudWindowLevel
+        self.backdrop = backdrop
     }
 }
