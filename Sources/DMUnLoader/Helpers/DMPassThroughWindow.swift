@@ -17,8 +17,16 @@ package final class DMPassThroughWindow: UIWindow {
     /// Whether a HUD is shown and the window takes the touches.
     package var interceptsTouches = false
 
+    /// What the accessibility escape gesture does, such as VoiceOver's two-finger scrub.
+    /// Returns whether it hid the HUD, which VoiceOver tells its user.
+    package var escapeHandler: (@MainActor () -> Bool)?
+
     package override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         guard interceptsTouches else { return nil }
         return super.hitTest(point, with: event)
+    }
+
+    package override func accessibilityPerformEscape() -> Bool {
+        escapeHandler?() ?? super.accessibilityPerformEscape()
     }
 }
