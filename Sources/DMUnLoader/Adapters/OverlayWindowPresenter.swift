@@ -43,6 +43,8 @@ final class OverlayWindowPresenter: HUDOverlayPresenting {
             window.rootViewController = hudController
             self.hudController = hudController
         }
+        // Set on every call, so a new manager that takes over the window brings its own level.
+        window.windowLevel = loadingManager.settings.hudWindowLevel
         window.isHidden = false
     }
 

@@ -161,6 +161,9 @@ extension DMUnLoader.DMLoadingManagerSettings {
   public var hudDismissal: DMUnLoader.DMHUDDismissalRules {
     get
   }
+  public var hudWindowLevel: UIKit.UIWindow.Level {
+    get
+  }
 }
 extension DMUnLoader.DMLoadingViewProvider {
   @_Concurrency.MainActor public func eraseToAnyViewProvider() -> DMUnLoader.AnyDMLoadingViewProvider
@@ -317,6 +320,7 @@ public protocol DMLoadableTypeSuccess : Swift.CustomStringConvertible {
 public protocol DMLoadingManagerSettings {
   var autoHideDelay: Swift.Duration { get }
   var hudDismissal: DMUnLoader.DMHUDDismissalRules { get }
+  var hudWindowLevel: UIKit.UIWindow.Level { get }
 }
 public protocol DMLoadingViewProvider : Combine.ObservableObject, Swift.Hashable {
   associatedtype LoadingViewType : SwiftUICore.View
@@ -401,7 +405,8 @@ public struct DMHUDDismissalRules : Swift.Hashable, Swift.Sendable {
 public struct DMLoadingManagerDefaultSettings : DMUnLoader.DMLoadingManagerSettings, Swift.Sendable {
   public let autoHideDelay: Swift.Duration
   public let hudDismissal: DMUnLoader.DMHUDDismissalRules
-  public init(autoHideDelay: Swift.Duration = .seconds(2), hudDismissal: DMUnLoader.DMHUDDismissalRules = DMHUDDismissalRules())
+  public let hudWindowLevel: UIKit.UIWindow.Level
+  public init(autoHideDelay: Swift.Duration = .seconds(2), hudDismissal: DMUnLoader.DMHUDDismissalRules = DMHUDDismissalRules(), hudWindowLevel: UIKit.UIWindow.Level = .normal)
 }
 public struct DMProgressViewDefaultSettings : DMUnLoader.DMProgressViewSettings {
   public let loadingTextProperties: DMUnLoader.ProgressTextProperties
