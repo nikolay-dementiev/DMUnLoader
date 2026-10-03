@@ -157,6 +157,11 @@ extension DMUnLoader.DMLoadingManagerMain : Swift.Hashable {
   }
 }
 extension DMUnLoader.DMLoadingManagerMain : Swift.Sendable {}
+extension DMUnLoader.DMLoadingManagerSettings {
+  public var hudDismissal: DMUnLoader.DMHUDDismissalRules {
+    get
+  }
+}
 extension DMUnLoader.DMLoadingViewProvider {
   @_Concurrency.MainActor public func eraseToAnyViewProvider() -> DMUnLoader.AnyDMLoadingViewProvider
 }
@@ -311,6 +316,7 @@ public protocol DMLoadableTypeSuccess : Swift.CustomStringConvertible {
 }
 public protocol DMLoadingManagerSettings {
   var autoHideDelay: Swift.Duration { get }
+  var hudDismissal: DMUnLoader.DMHUDDismissalRules { get }
 }
 public protocol DMLoadingViewProvider : Combine.ObservableObject, Swift.Hashable {
   associatedtype LoadingViewType : SwiftUICore.View
@@ -360,9 +366,42 @@ public struct DMErrorDefaultViewSettings : DMUnLoader.DMErrorViewSettings {
   public let errorImageSettings: DMUnLoader.ErrorImageSettings
   public init(errorText: Swift.String? = "An error has occured!", actionButtonCloseSettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Close"), actionButtonRetrySettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Retry"), errorTextSettings: DMUnLoader.ErrorTextSettings = ErrorTextSettings(), errorImageSettings: DMUnLoader.ErrorImageSettings = ErrorImageSettings(image: Image(systemName: "exclamationmark.triangle")))
 }
+public struct DMHUDAutoHide : Swift.Hashable, Swift.Sendable {
+  @_hasInitialValue public static let afterAutoHideDelay: DMUnLoader.DMHUDAutoHide
+  @_hasInitialValue public static let never: DMUnLoader.DMHUDAutoHide
+  public static func after(_ delay: Swift.Duration) -> DMUnLoader.DMHUDAutoHide
+  @_implements(Swift.Equatable, ==(_:_:)) public static func __derived_struct_equals(_ a: DMUnLoader.DMHUDAutoHide, _ b: DMUnLoader.DMHUDAutoHide) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct DMHUDDismissal : Swift.Hashable, Swift.Sendable {
+  public var autoHide: DMUnLoader.DMHUDAutoHide
+  public var cardTapHides: Swift.Bool
+  public var backdropTapHides: Swift.Bool
+  public init(autoHide: DMUnLoader.DMHUDAutoHide = .afterAutoHideDelay, cardTapHides: Swift.Bool = true, backdropTapHides: Swift.Bool = true)
+  @_implements(Swift.Equatable, ==(_:_:)) public static func __derived_struct_equals(_ a: DMUnLoader.DMHUDDismissal, _ b: DMUnLoader.DMHUDDismissal) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct DMHUDDismissalRules : Swift.Hashable, Swift.Sendable {
+  public var success: DMUnLoader.DMHUDDismissal
+  public var failureWithoutRetry: DMUnLoader.DMHUDDismissal
+  public var failureWithRetry: DMUnLoader.DMHUDDismissal
+  public init(success: DMUnLoader.DMHUDDismissal = DMHUDDismissal(), failureWithoutRetry: DMUnLoader.DMHUDDismissal = DMHUDDismissal(), failureWithRetry: DMUnLoader.DMHUDDismissal = DMHUDDismissal())
+  @_implements(Swift.Equatable, ==(_:_:)) public static func __derived_struct_equals(_ a: DMUnLoader.DMHUDDismissalRules, _ b: DMUnLoader.DMHUDDismissalRules) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
 public struct DMLoadingManagerDefaultSettings : DMUnLoader.DMLoadingManagerSettings, Swift.Sendable {
   public let autoHideDelay: Swift.Duration
-  public init(autoHideDelay: Swift.Duration = .seconds(2))
+  public let hudDismissal: DMUnLoader.DMHUDDismissalRules
+  public init(autoHideDelay: Swift.Duration = .seconds(2), hudDismissal: DMUnLoader.DMHUDDismissalRules = DMHUDDismissalRules())
 }
 public struct DMProgressViewDefaultSettings : DMUnLoader.DMProgressViewSettings {
   public let loadingTextProperties: DMUnLoader.ProgressTextProperties

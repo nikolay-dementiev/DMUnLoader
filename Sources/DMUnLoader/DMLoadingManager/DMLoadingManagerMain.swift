@@ -135,18 +135,23 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     // MARK: Timer Management
     
     private func handleInactivityTimer(forState state: DMLoadableType) {
-        if AutoHidePolicy.hidesAfterDelay(state.phase) {
-            startInactivityTimer()
+        let delay = AutoHidePolicy.delay(
+            for: state.phase,
+            rules: settings.hudDismissal,
+            autoHideDelay: settings.autoHideDelay
+        )
+        if let delay {
+            startInactivityTimer(after: delay)
         } else {
             stopInactivityTimer()
         }
     }
     
-    /// Starts the inactivity timer, which automatically hides the loading state after the specified delay.
-    private func startInactivityTimer() {
+    /// Starts the inactivity timer, which automatically hides the loading state after `delay`.
+    private func startInactivityTimer(after delay: Duration) {
         stopInactivityTimer()
         let generation = autoHideGeneration
-        inactivityTimerCancellable = autoHideScheduler.schedule(after: settings.autoHideDelay) { [weak self] in
+        inactivityTimerCancellable = autoHideScheduler.schedule(after: delay) { [weak self] in
             guard let self, self.autoHideGeneration == generation else {
                 return
             }

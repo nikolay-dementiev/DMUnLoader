@@ -53,8 +53,8 @@ extension DMLoadableType {
             return .loading
         case .success:
             return .success
-        case .failure:
-            return .failure
+        case let .failure(_, _, onRetry):
+            return onRetry == nil ? .failure : .failureWithRetry
         }
     }
 

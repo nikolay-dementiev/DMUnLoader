@@ -10,8 +10,13 @@ package protocol HUDViewModel {
     /// Whether a HUD is shown: the backdrop, the card and the blur behind them.
     var showsHUD: Bool { get }
 
-    /// A tap on the HUD, outside its buttons.
-    func tapped()
+    /// A tap on the card of the HUD, outside its buttons.
+    func cardTapped()
+
+    /// A tap outside the card. Returns whether the HUD went, for an accessibility escape that
+    /// does what this tap does.
+    @discardableResult
+    func backdropTapped() -> Bool
 
     /// The Close button of a failure.
     func closeTapped()
@@ -31,13 +36,28 @@ package struct DefaultHUDViewModel<LM: DMLoadingManager>: HUDViewModel {
         loadingManager.loadableState.showsHUD
     }
 
-    package func tapped() {
-        if DismissPolicy.tapDismisses(loadingManager.loadableState.phase) {
-            loadingManager.hide()
-        }
+    package func cardTapped() {
+        hide(onTapAt: .card)
+    }
+
+    @discardableResult
+    package func backdropTapped() -> Bool {
+        hide(onTapAt: .backdrop)
     }
 
     package func closeTapped() {
         loadingManager.hide()
+    }
+
+    /// Hides the HUD when the rules of the manager's settings let a tap at `target` hide the
+    /// kind shown, and returns whether it did.
+    @discardableResult
+    private func hide(onTapAt target: HUDTapTarget) -> Bool {
+        let phase = loadingManager.loadableState.phase
+        guard DismissPolicy.tapDismisses(phase, on: target, rules: loadingManager.settings.hudDismissal) else {
+            return false
+        }
+        loadingManager.hide()
+        return phase.showsHUD
     }
 }

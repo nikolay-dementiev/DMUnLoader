@@ -48,10 +48,18 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
                     Color.black.opacity(animateTheAppearance ? 0.2 : 0)
                         .ignoresSafeArea()
                     
-                    overlayView
-                        .padding(15)
-                        .background(Color.gray.opacity(animateTheAppearance ? 0.8 : 0.1))
-                        .cornerRadius(10)
+                    // Takes every tap outside the card, whatever the backdrop draws.
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            _ = viewModel.backdropTapped()
+                        }
+                    
+                    HUDCard(isShown: animateTheAppearance, content: AnyView(overlayView))
+                        .onTapGesture {
+                            viewModel.cardTapped()
+                        }
                         .scaleEffect(animateTheAppearance ? 1 : 0.9)
                         .padding(15)
                 }
@@ -64,8 +72,20 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
         }
         .animation(Animation.spring(duration: 0.2),
                    value: animateTheAppearance)
-        .onTapGesture {
-            viewModel.tapped()
-        }
+    }
+}
+
+/// The card of a shown HUD: the view of the state on a rounded background. A tap anywhere on
+/// the card is a tap on the card, between the lines of its text too.
+struct HUDCard: View {
+    let isShown: Bool
+    let content: AnyView
+    
+    var body: some View {
+        content
+            .padding(15)
+            .background(Color.gray.opacity(isShown ? 0.8 : 0.1))
+            .cornerRadius(10)
+            .contentShape(RoundedRectangle(cornerRadius: 10))
     }
 }
