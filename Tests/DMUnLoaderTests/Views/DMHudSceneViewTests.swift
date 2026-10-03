@@ -22,7 +22,7 @@ final class DMHudSceneViewTests: XCTestCase {
         ViewHosting.host(view: fixture.sut)
         defer { ViewHosting.expel() }
 
-        XCTAssertEqual(waitForReports(fixture.reports, count: 1), [false], "the window learns at once that no HUD is shown")
+        XCTAssertEqual(waitForReports(fixture.reports, count: 1), [.none], "the window learns at once that no HUD is shown")
     }
 
     func test_appearance_whileLoading_reportsThatAHUDIsShown() {
@@ -30,7 +30,7 @@ final class DMHudSceneViewTests: XCTestCase {
         ViewHosting.host(view: fixture.sut)
         defer { ViewHosting.expel() }
 
-        XCTAssertEqual(waitForReports(fixture.reports, count: 1), [true], "the window learns at once that a HUD is shown")
+        XCTAssertEqual(waitForReports(fixture.reports, count: 1), [.loading], "the window learns at once that a HUD is shown")
     }
 
     func test_stateChanges_reportEachTurnBetweenNoHUDAndAHUD() {
@@ -45,8 +45,23 @@ final class DMHudSceneViewTests: XCTestCase {
 
         XCTAssertEqual(
             waitForReports(fixture.reports, count: 3),
-            [false, true, false],
+            [.none, .loading, .none],
             "the window learns when the HUD appears and when it goes"
+        )
+    }
+
+    func test_phaseChangesWhileShown_reportEachPhase() {
+        let fixture = makeSUT(initialState: .loading(provider: Self.provider))
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForReports(fixture.reports, count: 1)
+
+        fixture.manager.showFailure(DMAppError.custom("failed"), provider: DefaultDMLoadingViewProvider())
+
+        XCTAssertEqual(
+            waitForReports(fixture.reports, count: 2),
+            [.loading, .failure],
+            "the window learns that the shown HUD has another phase"
         )
     }
 
@@ -64,7 +79,7 @@ final class DMHudSceneViewTests: XCTestCase {
             until: { _ in !reports.values.isEmpty }
         )
 
-        XCTAssertEqual(reports.values, [false], "the view appeared, and reported that no HUD is shown")
+        XCTAssertEqual(reports.values, [.none], "the view appeared, and reported that no HUD is shown")
         XCTAssertEqual(try RenderedAlphas(of: image).maximum, 0, "without a state the HUD window shows the app through it")
     }
 
@@ -121,7 +136,7 @@ final class DMHudSceneViewTests: XCTestCase {
     }
 
     private final class Reports {
-        var values: [Bool] = []
+        var values: [HUDPhase] = []
     }
 
     private struct Fixture {
@@ -145,7 +160,7 @@ final class DMHudSceneViewTests: XCTestCase {
     }
 
     /// Turns the run loop until `count` reports arrived or the callback allowance passed.
-    private func waitForReports(_ reports: Reports, count: Int) -> [Bool] {
+    private func waitForReports(_ reports: Reports, count: Int) -> [HUDPhase] {
         let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
         while reports.values.count < count, Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.02))
