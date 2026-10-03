@@ -209,7 +209,8 @@ jobs:
           - name: iOS 26.5
             runner: macos-26
             xcode: /Applications/Xcode_26.6.app
-            destination: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5
+            device: iPhone 17 Pro
+            runtime: iOS-26-5
           # Not iOS 26.2 as in the test job: iOS 18.6, the system the touch fix was made
           # for, runs with Xcode 26.3 on macos-15, where the example project builds and the
           # package scheme finds no supported platform. The example on iOS 17.5 is a
@@ -217,31 +218,39 @@ jobs:
           - name: iOS 18.6
             runner: macos-15
             xcode: /Applications/Xcode_26.3.app
-            destination: platform=iOS Simulator,name=iPhone 16 Pro,OS=18.6
+            device: iPhone 16 Pro
+            runtime: iOS-18-6
     env:
       DEVELOPER_DIR: ${{ matrix.xcode }}/Contents/Developer
-      DESTINATION: ${{ matrix.destination }}
+      DEVICE: ${{ matrix.device }}
+      RUNTIME: ${{ matrix.runtime }}
       # Seen by the tests as CI: a missing snapshot reference fails and is never written.
       TEST_RUNNER_CI: "true"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Build the example and run its tests
+      - name: Find the simulator
         run: |
-          mkdir -p .build/results/ci
-          xcodebuild test \
-            -project Examples/DMUnLoaderExample/DMUnLoaderExample.xcodeproj \
-            -scheme DMUnLoaderExample \
-            -destination "$DESTINATION" \
-            -resultBundlePath .build/results/ci/example.xcresult \
-            -skipPackagePluginValidation \
-            2>&1 | tee .build/results/ci/example.log
+          udid="$(xcrun simctl list devices available -j | python3 -c '
+          import json, os, sys
+          devices = json.load(sys.stdin)["devices"]
+          runtime = "com.apple.CoreSimulator.SimRuntime." + os.environ["RUNTIME"]
+          print(next((d["udid"] for d in devices.get(runtime, []) if d["name"] == os.environ["DEVICE"]), ""))
+          ')"
+          if [ -z "$udid" ]; then
+            echo "No available $DEVICE simulator with the runtime $RUNTIME:" >&2
+            xcrun simctl list devices available >&2
+            exit 1
+          fi
+          echo "UDID=$udid" >> "$GITHUB_ENV"
+      - name: Build the example and run its tests, one launch mode at a time
+        run: Scripts/test-example.sh "$UDID" .build/results/ci/example
       - name: No warning from this repository
-        run: Scripts/check-warnings.sh .build/results/ci/example.log
-      - name: Upload the result bundle
+        run: Scripts/check-warnings.sh .build/results/ci/example/build-for-testing.log
+      - name: Upload the result bundles
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: example-${{ matrix.name }}-xcresult
-          path: .build/results/ci/example.xcresult
+          name: example-${{ matrix.name }}-results
+          path: .build/results/ci/example
