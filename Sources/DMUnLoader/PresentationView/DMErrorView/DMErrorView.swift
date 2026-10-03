@@ -42,11 +42,7 @@ struct DMErrorView: View {
     let error: Error
     let onRetry: DMAction?
     let onClose: DMAction
-    
-#if DEBUG
-    let inspection: Inspection<Self>? = getInspectionIfAvailable()
-#endif
-    
+
     init(settings settingsProvider: DMErrorViewSettings,
          error: Error,
          onRetry: DMAction? = nil,
@@ -99,12 +95,6 @@ struct DMErrorView: View {
             .tag(DMErrorViewOwnSettings.buttonContainersHStackViewTag)
         }
         .tag(DMErrorViewOwnSettings.containerVStackViewTag)
-        
-#if DEBUG
-        .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in
-            inspection?.visit(self, $0)
-        }
-#endif
     }
 }
 

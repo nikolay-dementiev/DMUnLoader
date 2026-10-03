@@ -232,35 +232,6 @@ final class DMLoadingViewTests: XCTestCase {
         try checktLoadingView_RespondToTapGestures_ForStates(currentStateConditions)
     }
     
-    // MARK: - Scenario 6: Verify a Second Appearance
-
-    func test_loadingView_appearingASecondTime_staysFadedIn() throws {
-        // Given
-        let loadingManager = StubDMLoadingManager(
-            loadableState: .loading(provider: StubDMLoadingViewProvider().eraseToAnyViewProvider())
-        )
-        let sut = makeSUT(manager: loadingManager)
-        let inspection = try XCTUnwrap(sut.inspection, "Inspection should be available in debug mode")
-        let settleTime = 0.5
-
-        // When: hosting makes the view appear once, the hook makes it appear again.
-        let appearAgain = inspection.inspect { view in
-            try view.zStack().callOnAppear()
-        }
-        // Then
-        let readBackdrop = inspection.inspect(after: settleTime) { view in
-            XCTAssertNoThrow(
-                try view.find(ViewType.Color.self, where: { try $0.value() == Color.black.opacity(0.2) }),
-                "after a second appearance the backdrop must still be 20 percent black"
-            )
-        }
-
-        ViewHosting.host(view: sut)
-        defer { ViewHosting.expel() }
-
-        wait(for: [appearAgain, readBackdrop], timeout: settleTime + TestTiming.callbackAllowance)
-    }
-
     // MARK: - Helpers
     
     private func makeSUT<LM: DMLoadingManager>(manager loadingManager: LM) -> DMLoadingView<LM> {

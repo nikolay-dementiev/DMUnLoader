@@ -35,11 +35,7 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
     @ObservedObject private(set) var loadingManager: LLM
     private let viewModel: any HUDViewModel
     @State private var animateTheAppearance = false
-    
-#if DEBUG
-    let inspection: Inspection<Self>? = getInspectionIfAvailable()
-#endif
-    
+
     init(loadingManager: LLM) {
         self.loadingManager = loadingManager
         self.viewModel = DefaultHUDViewModel(loadingManager: loadingManager)
@@ -97,11 +93,6 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
         .onTapGesture {
             viewModel.tapped()
         }
-#if DEBUG
-        .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in
-            inspection?.visit(self, $0)
-        }
-#endif
         .tag(DMLoadingViewOwnSettings.tapGestureViewTag)
     }
 }
