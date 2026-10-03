@@ -148,6 +148,42 @@ final class HUDWindowTests: XCTestCase {
         sceneDelegate.loadingManager = DMLoadingManagerMain()
     }
 
+    func test_overlay_escapeOnAFailure_hidesTheHUD() throws {
+        let (scene, sceneDelegate) = try connectedSceneDelegate()
+        defer { sceneDelegate.loadingManager = DMLoadingManagerMain() }
+        let manager = DMLoadingManagerMain(
+            state: .failure(
+                error: DMAppError.custom("The server did not answer."),
+                provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+            ),
+            settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
+        )
+        sceneDelegate.loadingManager = manager
+        let window = try XCTUnwrap(waitForHUDWindows(in: scene).first, "a HUD window")
+
+        let escaped = window.accessibilityPerformEscape()
+
+        XCTAssertTrue(escaped, "the escape reports that it hid the failure")
+        XCTAssertEqual(manager.loadableState, .none, "the escape hides the failure, as a tap outside the card does")
+    }
+
+    func test_overlay_escapeWhileLoading_returnsFalse() throws {
+        let (scene, sceneDelegate) = try connectedSceneDelegate()
+        defer { sceneDelegate.loadingManager = DMLoadingManagerMain() }
+        let manager = DMLoadingManagerMain(
+            state: .loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
+            settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
+        )
+        sceneDelegate.loadingManager = manager
+        let window = try XCTUnwrap(waitForHUDWindows(in: scene).first, "a HUD window")
+        let loading = manager.loadableState
+
+        let escaped = window.accessibilityPerformEscape()
+
+        XCTAssertFalse(escaped, "the escape tells VoiceOver that it did nothing while the work runs")
+        XCTAssertEqual(manager.loadableState, loading, "the loading HUD stays until its work ends")
+    }
+
     // MARK: - Root view with an injected manager
 
     func test_injectedRoot_inAWindowOfTheScene_addsOneVisibleHUDWindowToThatScene() throws {

@@ -27,6 +27,22 @@ final class DMPassThroughWindowTests: XCTestCase {
         XCTAssertNotNil(sut.hitTest(CGPoint(x: 50, y: 50), with: nil), "the HUD window takes the touch")
     }
 
+    // MARK: - Accessibility escape
+
+    func test_window_accessibilityEscape_returnsTheHandlersResult() {
+        let sut = makeSUT()
+
+        let withoutHandler = sut.accessibilityPerformEscape()
+        sut.escapeHandler = { true }
+        let handled = sut.accessibilityPerformEscape()
+        sut.escapeHandler = { false }
+        let declined = sut.accessibilityPerformEscape()
+
+        XCTAssertFalse(withoutHandler, "without a handler the escape does nothing")
+        XCTAssertTrue(handled, "the escape reports that the handler hid the HUD")
+        XCTAssertFalse(declined, "the escape reports that the handler kept the HUD")
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> DMPassThroughWindow {
