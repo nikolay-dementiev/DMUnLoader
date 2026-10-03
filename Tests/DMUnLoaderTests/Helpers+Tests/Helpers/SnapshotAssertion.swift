@@ -71,3 +71,32 @@ func assertImageSnapshot<Content: View>(
         )
     }
 }
+
+/// Compares the view of a view controller with its recorded image, under the same name,
+/// tolerance and record mode as a SwiftUI view.
+@MainActor
+func assertImageSnapshot(
+    of controller: UIViewController,
+    on config: ViewImageConfig = .iPhone13Pro,
+    style: UIUserInterfaceStyle,
+    named name: String,
+    file: StaticString = #filePath,
+    testName: String = #function,
+    line: UInt = #line
+) {
+    withSnapshotTesting(record: SnapshotSettings.record) {
+        assertSnapshot(
+            of: controller,
+            as: .image(
+                on: config,
+                precision: SnapshotSettings.precision,
+                perceptualPrecision: SnapshotSettings.perceptualPrecision,
+                traits: .init(userInterfaceStyle: style)
+            ),
+            named: name + SnapshotSettings.osSuffix,
+            file: file,
+            testName: testName,
+            line: line
+        )
+    }
+}
