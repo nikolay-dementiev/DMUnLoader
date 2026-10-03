@@ -11,7 +11,8 @@ import DMUnLoader
 
 /// The SwiftUI entry point creates the loading manager and hands it to the scene delegate,
 /// which shows its HUD. A scene delegate exists without a connected scene, so the view is
-/// hosted with one as its environment object.
+/// hosted with one as its environment object. With an injected manager the view reads no
+/// environment object: those tests host it without one, and a read would stop the run.
 @MainActor
 final class DMRootLoadingViewTests: XCTestCase {
 
@@ -53,6 +54,46 @@ final class DMRootLoadingViewTests: XCTestCase {
         XCTAssertTrue(
             waitUntil { evaluations.values.count > evaluationsBefore },
             "a change of the manager the view created evaluates the content again"
+        )
+    }
+
+    // MARK: - Injected manager
+
+    func test_injectedInit_withoutASceneDelegateInTheEnvironment_givesTheContentTheInjectedManager() {
+        let injected = DMLoadingManagerMain()
+        let evaluations = Managers()
+        let sut = DMRootLoadingView(manager: injected) { (manager: DMLoadingManagerMain) -> Color in
+            evaluations.values.append(manager)
+            return Color.clear
+        }
+        ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
+
+        let shown = waitUntil { !evaluations.values.isEmpty }
+
+        XCTAssertTrue(shown, "the content is shown with no scene delegate in the environment")
+        XCTAssertTrue(
+            evaluations.values.allSatisfy { $0 === injected },
+            "the content gets the injected manager, not one the view creates"
+        )
+    }
+
+    func test_injectedInit_managerChange_evaluatesTheContentAgain() {
+        let injected = DMLoadingManagerMain()
+        let evaluations = Managers()
+        let sut = DMRootLoadingView(manager: injected) { (manager: DMLoadingManagerMain) -> Color in
+            evaluations.values.append(manager)
+            return Color.clear
+        }
+        ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
+        let evaluationsBefore = settledCount(of: evaluations)
+
+        injected.showLoading(provider: DefaultDMLoadingViewProvider())
+
+        XCTAssertTrue(
+            waitUntil { evaluations.values.count > evaluationsBefore },
+            "a change of the injected manager evaluates the content again"
         )
     }
 
