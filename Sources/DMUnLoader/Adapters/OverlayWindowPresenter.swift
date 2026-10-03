@@ -14,6 +14,7 @@ final class OverlayWindowPresenter: HUDOverlayPresenting {
     private weak var windowScene: UIWindowScene?
     private var window: DMPassThroughWindow?
     private var hudController: UIHostingController<AnyView>?
+    private var accessibility: HUDAccessibilityCoordinator?
 
     init(windowScene: UIWindowScene) {
         self.windowScene = windowScene
@@ -27,12 +28,20 @@ final class OverlayWindowPresenter: HUDOverlayPresenting {
         // one it replaces. The root view is swapped, so the replaced manager is released.
         let window = self.window ?? DMPassThroughWindow(windowScene: windowScene)
         self.window = window
+        let accessibility = self.accessibility ?? HUDAccessibilityCoordinator(
+            announcer: SystemAccessibilityAnnouncer(),
+            contentHider: SceneContentHider(hudWindow: window) { [weak window] in
+                window?.windowScene?.windows ?? []
+            }
+        )
+        self.accessibility = accessibility
         // The window knows the state before it becomes visible; the view reports every
         // change after that. The window owns the view, so the view holds it weakly.
         window.interceptsTouches = loadingManager.loadableState.showsHUD
         let rootView = AnyView(
-            DMHudSceneView(loadingManager: loadingManager) { [weak window] phase in
+            DMHudSceneView(loadingManager: loadingManager) { [weak window, weak accessibility] phase in
                 window?.interceptsTouches = phase.showsHUD
+                accessibility?.phaseDidChange(to: phase)
             }
         )
         if let hudController {
@@ -49,6 +58,8 @@ final class OverlayWindowPresenter: HUDOverlayPresenting {
     }
 
     func dismiss() {
+        accessibility?.hudDidGo()
+        accessibility = nil
         guard let window else {
             return
         }
