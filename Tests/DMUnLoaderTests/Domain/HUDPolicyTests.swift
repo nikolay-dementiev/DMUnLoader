@@ -25,13 +25,24 @@ final class AutoHidePolicyTests: XCTestCase {
 final class DismissPolicyTests: XCTestCase {
 
     func test_tapDismisses_noneSuccessAndFailure_isTrue() {
-        XCTAssertTrue(DismissPolicy.tapDismisses(.none), "a tap without a state hides nothing, harmlessly")
-        XCTAssertTrue(DismissPolicy.tapDismisses(.success), "a tap dismisses a success")
-        XCTAssertTrue(DismissPolicy.tapDismisses(.failure), "a tap dismisses a failure")
+        let rules = DMHUDDismissalRules()
+        for target in [HUDTapTarget.card, .backdrop] {
+            XCTAssertTrue(
+                DismissPolicy.tapDismisses(.none, on: target, rules: rules),
+                "a tap without a state hides nothing (\(target))"
+            )
+            XCTAssertTrue(DismissPolicy.tapDismisses(.success, on: target, rules: rules), "a tap dismisses a success (\(target))")
+            XCTAssertTrue(DismissPolicy.tapDismisses(.failure, on: target, rules: rules), "a tap dismisses a failure (\(target))")
+        }
     }
 
     func test_tapDismisses_loading_isFalse() {
-        XCTAssertFalse(DismissPolicy.tapDismisses(.loading), "a tap does not dismiss the loading phase")
+        for target in [HUDTapTarget.card, .backdrop] {
+            XCTAssertFalse(
+                DismissPolicy.tapDismisses(.loading, on: target, rules: DMHUDDismissalRules()),
+                "a tap does not dismiss the loading phase (\(target))"
+            )
+        }
     }
 }
 

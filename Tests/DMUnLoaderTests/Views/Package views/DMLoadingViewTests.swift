@@ -224,22 +224,31 @@ final class DMLoadingViewTests: XCTestCase {
                 error: DMUnLoader.DMAppError.custom("Test Error"),
                 provider: provider.eraseToAnyViewProvider(),
                 onRetry: DMButtonAction {}
-            ), .none),
-            (.none, .none)
+            ), .none)
         ]
         
         // Then
         try checktLoadingView_RespondToTapGestures_ForStates(currentStateConditions)
     }
     
-    func test_tapOnTheView_isReportedToItsViewModel() throws {
+    func test_tapOnTheCard_isReportedToItsViewModel() throws {
         let viewModel = HUDViewModelSpy(showsHUD: true)
         let success = DMLoadableType.success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
         let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: success), viewModel: viewModel)
         
-        try sut.inspect().zStack().callOnTapGesture()
+        try cardOf(sut).callOnTapGesture()
         
-        XCTAssertEqual(viewModel.calls, [.tapped], "a tap on the view goes to its view model, not to the manager")
+        XCTAssertEqual(viewModel.calls, [.cardTapped], "a tap on the card goes to the view model as a tap on the card")
+    }
+    
+    func test_tapOutsideTheCard_isReportedToItsViewModel() throws {
+        let viewModel = HUDViewModelSpy(showsHUD: true)
+        let success = DMLoadableType.success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
+        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: success), viewModel: viewModel)
+        
+        try backdropOf(sut).callOnTapGesture()
+        
+        XCTAssertEqual(viewModel.calls, [.backdropTapped], "a tap outside the card goes to the view model as a backdrop tap")
     }
     
     func test_closeOnAFailure_isReportedToItsViewModel() throws {
@@ -329,37 +338,50 @@ final class DMLoadingViewTests: XCTestCase {
         )
     }
     
+    /// The card of the shown HUD: the one `HUDCard` of the view, which carries the card's tap.
+    private func cardOf<LM: DMLoadingManager>(_ sut: DMLoadingView<LM>) throws -> InspectableView<ViewType.View<HUDCard>> {
+        try sut.inspect().find(HUDCard.self)
+    }
+    
+    /// The layer outside the card that takes the backdrop's tap: the one clear colour of the view.
+    private func backdropOf<LM: DMLoadingManager>(_ sut: DMLoadingView<LM>) throws -> InspectableView<ViewType.Color> {
+        try sut.inspect().find(ViewType.Color.self, where: { try $0.value() == Color.clear })
+    }
+    
     func checktLoadingView_RespondToTapGestures_ForStates(
         _ statesCondition: [(given: DMLoadableType, expected: DMLoadableType)],
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
-        try statesCondition.forEach { currentStateCondition in
-            // Given
-            let loadingManager = StubDMLoadingManager(
-                loadableState: currentStateCondition.given
-            )
-            
-            // When
-            let sut = makeSUT(manager: loadingManager)
-            
-            // The tap gesture sits on the root of the view.
-            let inspectableView = try sut.inspect().zStack()
-            
-            // Then
-            XCTAssertEqual(sut.loadingManager.loadableState,
-                           currentStateCondition.given,
-                           "The loading state should be `\(currentStateCondition.given)` before the user taps the view",
-                           file: file,
-                           line: line)
-            
-            try inspectableView.callOnTapGesture()
-            
-            XCTAssertEqual(sut.loadingManager.loadableState,
-                           currentStateCondition.expected,
-                           "The loading state should be `\(currentStateCondition.expected)` after the user taps the view",
-                           file: file,
-                           line: line)
+        for currentStateCondition in statesCondition {
+            for target in ["card", "backdrop"] {
+                // Given
+                let loadingManager = StubDMLoadingManager(
+                    loadableState: currentStateCondition.given
+                )
+                
+                // When
+                let sut = makeSUT(manager: loadingManager)
+                
+                // Then
+                XCTAssertEqual(sut.loadingManager.loadableState,
+                               currentStateCondition.given,
+                               "The loading state should be `\(currentStateCondition.given)` before the user taps the \(target)",
+                               file: file,
+                               line: line)
+                
+                if target == "card" {
+                    try cardOf(sut).callOnTapGesture()
+                } else {
+                    try backdropOf(sut).callOnTapGesture()
+                }
+                
+                XCTAssertEqual(sut.loadingManager.loadableState,
+                               currentStateCondition.expected,
+                               "The state should be `\(currentStateCondition.expected)` after the user taps the \(target)",
+                               file: file,
+                               line: line)
+            }
         }
     }
 }
@@ -368,7 +390,8 @@ final class DMLoadingViewTests: XCTestCase {
 @MainActor
 private final class HUDViewModelSpy: HUDViewModel {
     enum Call: Equatable {
-        case tapped
+        case cardTapped
+        case backdropTapped
         case closeTapped
     }
     
@@ -379,8 +402,13 @@ private final class HUDViewModelSpy: HUDViewModel {
         self.showsHUD = showsHUD
     }
     
-    func tapped() {
-        calls.append(.tapped)
+    func cardTapped() {
+        calls.append(.cardTapped)
+    }
+    
+    func backdropTapped() -> Bool {
+        calls.append(.backdropTapped)
+        return false
     }
     
     func closeTapped() {
