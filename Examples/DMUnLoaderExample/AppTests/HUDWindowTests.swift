@@ -55,6 +55,43 @@ final class HUDWindowTests: XCTestCase {
         XCTAssertTrue(waitUntil(releasedFirst == nil), "the HUD keeps no replaced manager alive")
     }
 
+    // MARK: - Window level
+
+    func test_defaultSettings_hudWindow_isAtTheNormalLevel() throws {
+        let (scene, sceneDelegate) = try connectedSceneDelegate()
+        sceneDelegate.loadingManager = DMLoadingManagerMain()
+
+        let window = try XCTUnwrap(waitForHUDWindows(in: scene).first, "a HUD window")
+
+        XCTAssertEqual(window.windowLevel, .normal, "the HUD window keeps the level of every release so far")
+    }
+
+    func test_settingsAboveNormal_hudWindow_isAtThatLevel() throws {
+        let (scene, sceneDelegate) = try connectedSceneDelegate()
+        sceneDelegate.loadingManager = DMLoadingManagerMain(
+            state: .none,
+            settings: DMLoadingManagerDefaultSettings(hudWindowLevel: .normal + 1)
+        )
+
+        let window = try XCTUnwrap(waitForHUDWindows(in: scene).first, "a HUD window")
+
+        XCTAssertEqual(window.windowLevel, .normal + 1, "the HUD window takes the level of the manager's settings")
+    }
+
+    func test_replacingTheManager_withAnotherLevel_movesTheReusedWindow() throws {
+        let (scene, sceneDelegate) = try connectedSceneDelegate()
+        sceneDelegate.loadingManager = DMLoadingManagerMain()
+        let window = try XCTUnwrap(waitForHUDWindows(in: scene).first, "a HUD window")
+
+        sceneDelegate.loadingManager = DMLoadingManagerMain(
+            state: .none,
+            settings: DMLoadingManagerDefaultSettings(hudWindowLevel: .normal + 1)
+        )
+
+        XCTAssertTrue(hudWindows(in: scene).first === window, "the new manager reuses the window")
+        XCTAssertEqual(window.windowLevel, .normal + 1, "the reused window moves to the level of the new manager")
+    }
+
     /// A phone gives an app one scene, so this runs where the system supports more, such as
     /// an iPad. The test keeps the second scene's delegate alive, as a host may: the HUD window
     /// must still leave with its scene.
