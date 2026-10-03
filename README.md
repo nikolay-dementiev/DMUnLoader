@@ -330,6 +330,8 @@ The SDK composes retry and fallback behavior with [DMAction](https://github.com/
 ## Contributing
 Contributions are welcome. Open an issue for a bug or feature request, or submit a pull request with a proposed change.
 
+[CONTRIBUTING.md](./CONTRIBUTING.md) says how to build and test the package and the example app. The example's UI tests run one launch mode per process: a scene session that one integration mode leaves saved would otherwise be restored by the next launch, in another mode.
+
 ---
 
 ## Contact
