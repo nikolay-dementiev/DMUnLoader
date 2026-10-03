@@ -184,6 +184,28 @@ final class HUDWindowTests: XCTestCase {
         XCTAssertEqual(manager.loadableState, loading, "the loading HUD stays until its work ends")
     }
 
+    func test_hudUnderReduceTransparency_drawsNoBlur() throws {
+        let (scene, sceneDelegate) = try connectedSceneDelegate()
+        defer { sceneDelegate.loadingManager = DMLoadingManagerMain() }
+        sceneDelegate.loadingManager = DMLoadingManagerMain(
+            state: .loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
+            settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
+        )
+        let window = try XCTUnwrap(waitForHUDWindows(in: scene).first, "a HUD window")
+        let hudController = try XCTUnwrap(
+            window.rootViewController as? UIHostingController<AnyView>,
+            "the HUD window shows a SwiftUI view"
+        )
+        let blurredByDefault = waitUntil(containsBlur(window))
+
+        // SwiftUI reports this settable twin through the system's Reduce Transparency.
+        let rootView = hudController.rootView
+        hudController.rootView = AnyView(rootView.environment(\._accessibilityReduceTransparency, true))
+
+        XCTAssertTrue(blurredByDefault, "the default backdrop blurs the app behind a shown HUD")
+        XCTAssertTrue(waitUntil(!containsBlur(window)), "under Reduce Transparency the HUD draws no blur")
+    }
+
     // MARK: - Root view with an injected manager
 
     func test_injectedRoot_inAWindowOfTheScene_addsOneVisibleHUDWindowToThatScene() throws {
@@ -321,6 +343,11 @@ final class HUDWindowTests: XCTestCase {
     /// The HUD window is the window of the library's own window class in the scene.
     private func hudWindows(in scene: UIWindowScene) -> [UIWindow] {
         scene.windows.filter { NSStringFromClass(type(of: $0)).hasSuffix("DMPassThroughWindow") }
+    }
+
+    /// Whether `view` or a view inside it is the UIKit view of the variable blur.
+    private func containsBlur(_ view: UIView) -> Bool {
+        NSStringFromClass(type(of: view)).hasSuffix("DMVariableBlurUIView") || view.subviews.contains { containsBlur($0) }
     }
 
     /// The scene delegate gets its manager when the root view appears, which can be after

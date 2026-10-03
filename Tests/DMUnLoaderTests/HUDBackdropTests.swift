@@ -80,7 +80,49 @@ final class HUDBackdropTests: XCTestCase {
         )
     }
 
+    // MARK: - Reduce Transparency
+
+    func test_hudScene_reduceTransparency_drawsNoBlur() throws {
+        let sut = makeSUT(backdrop: nil).environment(\.hudReducesTransparency, true)
+        let dim = Color.black.opacity(0)
+
+        XCTAssertThrowsError(
+            try sut.inspect().find(DMVariableBlurView.self),
+            "under Reduce Transparency the default backdrop draws no blur"
+        )
+        XCTAssertNoThrow(
+            try sut.inspect().find(ViewType.Color.self, where: { try $0.value() == dim }),
+            "under Reduce Transparency the default backdrop keeps its dim"
+        )
+    }
+
+    func test_hudScene_reduceTransparency_materialBackdrop_drawsTheDim() throws {
+        let sut = makeSUT(backdrop: .material()).environment(\.hudReducesTransparency, true)
+        let dim = Color.black.opacity(0)
+
+        XCTAssertNoThrow(
+            try sut.inspect().find(ViewType.Color.self, where: { try $0.value() == dim }),
+            "under Reduce Transparency the material backdrop draws the dim of the default backdrop"
+        )
+        XCTAssertThrowsError(
+            try materialFill(in: sut),
+            "under Reduce Transparency the material backdrop draws no material"
+        )
+    }
+
+    func test_hudScene_materialBackdrop_drawsTheMaterial() throws {
+        XCTAssertNoThrow(
+            try materialFill(in: makeSUT(backdrop: .material())),
+            "the material backdrop fills the screen with its material"
+        )
+    }
+
     // MARK: - Helpers
+
+    /// The shape that a material fills.
+    private func materialFill(in view: some View) throws -> InspectableView<ViewType.Shape> {
+        try view.inspect().find(ViewType.Shape.self, where: { (try? $0.fillShapeStyle(Material.self)) != nil })
+    }
 
     /// The HUD scene of a failure, with the backdrop of the settings; `nil` keeps the default.
     private func makeSUT(backdrop: DMHUDBackdrop?) -> DMHudSceneView<DMLoadingManagerMain> {
