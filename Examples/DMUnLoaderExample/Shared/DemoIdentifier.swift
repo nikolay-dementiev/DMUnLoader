@@ -34,4 +34,12 @@ enum DemoText {
     static func coverTaps(_ count: Int) -> String {
         "Cover taps: \(count)"
     }
+
+    /// The texts of the HUD with `--host-texts`, in place of the library's defaults.
+    enum Host {
+        static let title = "Something broke"
+        static let close = "Dismiss"
+        static let retry = "Try again"
+        static let loading = "Hold on"
+    }
 }

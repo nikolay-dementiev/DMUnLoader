@@ -24,10 +24,13 @@
 		74C2EE6C9B006477AA6A7B4C /* SwiftUIExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A29ED3E9CF26B03114E3A862 /* SwiftUIExampleApp.swift */; };
 		816E04951EA9B6498AF767B1 /* HUDWindowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2482A4DC1A35C039F0A97EB /* HUDWindowTests.swift */; };
 		9A2A42F79399DBE43982B96D /* UITestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = C81BEAC41EE68C79B7D64B0A /* UITestSupport.swift */; };
+		9E3BFB15656BE4154A25E6F1 /* LibraryBundleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8848AD66D41950CD17DE081A /* LibraryBundleTests.swift */; };
 		AF8A9A31FA229BAD75C24860 /* HUDControlsUIKitCustomManagerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185C906F02DF8D113AC35EC5 /* HUDControlsUIKitCustomManagerUITests.swift */; };
 		B7D74AE858DBCAB2C0FCB04A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F0F2E466438E4E7C6FBC83 /* main.swift */; };
 		C75C7CD56B9F8FF615D4FFB4 /* CustomManagerExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8726532E8540580DC7456156 /* CustomManagerExampleApp.swift */; };
+		CAB33BBAF16686B4DBCC6D27 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 885EB784DC42C7282B890B8F /* InfoPlist.strings */; };
 		D199BCEF28B89A92761152D7 /* HUDAppearanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A1B87BBCDBE6666F23F34 /* HUDAppearanceUITests.swift */; };
+		D538838F036253A456B9E781 /* HUDLanguageUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA4EF9E96D147B517729718 /* HUDLanguageUITests.swift */; };
 		D93C24BB41B50E126F13CB4B /* HUDControlsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995DF0E1B6C2877B33ECA9CE /* HUDControlsUITests.swift */; };
 		E10233402F3D22D3CFB205F6 /* DemoIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E16D65638614EA3C956C2F8 /* DemoIdentifier.swift */; };
 		E2003A8662AC3B283755D74D /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9B045F96927479CD97C592 /* DemoViewController.swift */; };
@@ -68,6 +71,8 @@
 		711B968FD60CC3CA5C010DD3 /* DMUnLoaderExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DMUnLoaderExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E16D65638614EA3C956C2F8 /* DemoIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoIdentifier.swift; sourceTree = "<group>"; };
 		8726532E8540580DC7456156 /* CustomManagerExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomManagerExampleApp.swift; sourceTree = "<group>"; };
+		8848AD66D41950CD17DE081A /* LibraryBundleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryBundleTests.swift; sourceTree = "<group>"; };
+		885EB784DC42C7282B890B8F /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		995DF0E1B6C2877B33ECA9CE /* HUDControlsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDControlsUITests.swift; sourceTree = "<group>"; };
 		A28C0C39764ECE45B86E77AE /* HUDTouchRoutingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDTouchRoutingUITests.swift; sourceTree = "<group>"; };
 		A29ED3E9CF26B03114E3A862 /* SwiftUIExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIExampleApp.swift; sourceTree = "<group>"; };
@@ -76,6 +81,7 @@
 		C81BEAC41EE68C79B7D64B0A /* UITestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestSupport.swift; sourceTree = "<group>"; };
 		D2482A4DC1A35C039F0A97EB /* HUDWindowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDWindowTests.swift; sourceTree = "<group>"; };
 		D9ADDA919782B10EE7B62649 /* DMUnLoaderExampleTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DMUnLoaderExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAA4EF9E96D147B517729718 /* HUDLanguageUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDLanguageUITests.swift; sourceTree = "<group>"; };
 		EE1803954730B803A412171D /* DMUnLoader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DMUnLoader; path = ../..; sourceTree = SOURCE_ROOT; };
 		EFE8348DB5A3BC5FBD75843D /* CoverWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -104,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				D2482A4DC1A35C039F0A97EB /* HUDWindowTests.swift */,
+				8848AD66D41950CD17DE081A /* LibraryBundleTests.swift */,
 			);
 			path = AppTests;
 			sourceTree = "<group>";
@@ -130,6 +137,7 @@
 				084A1B87BBCDBE6666F23F34 /* HUDAppearanceUITests.swift */,
 				185C906F02DF8D113AC35EC5 /* HUDControlsUIKitCustomManagerUITests.swift */,
 				995DF0E1B6C2877B33ECA9CE /* HUDControlsUITests.swift */,
+				DAA4EF9E96D147B517729718 /* HUDLanguageUITests.swift */,
 				1794EC4D7112736F12563E80 /* HUDTouchRoutingUIKitUITests.swift */,
 				A28C0C39764ECE45B86E77AE /* HUDTouchRoutingUITests.swift */,
 				AA412FDDB36FE973E3F7ABF3 /* InjectedManagerUITests.swift */,
@@ -195,6 +203,7 @@
 		F3A91E2E80C7A58E928011B6 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				885EB784DC42C7282B890B8F /* InfoPlist.strings */,
 				218EE0BE1A164D671904E880 /* LaunchOptions.swift */,
 				10F0F2E466438E4E7C6FBC83 /* main.swift */,
 				4D35432FE46A7442C2D4459A /* Demo */,
@@ -232,6 +241,7 @@
 			buildConfigurationList = F7DBDB08372873417AF44995 /* Build configuration list for PBXNativeTarget "DMUnLoaderExample" */;
 			buildPhases = (
 				BB7217579620D0A15474084B /* Sources */,
+				180A39CC6559245AF06BDB3E /* Resources */,
 				517BC975EC0B970F2755F989 /* Frameworks */,
 			);
 			buildRules = (
@@ -290,6 +300,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
+				de,
 				en,
 			);
 			mainGroup = 8F8644F780EDCE9D71B72492;
@@ -309,6 +320,17 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		180A39CC6559245AF06BDB3E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CAB33BBAF16686B4DBCC6D27 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8678CAC01565E9094BD62DA1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -318,6 +340,7 @@
 				D199BCEF28B89A92761152D7 /* HUDAppearanceUITests.swift in Sources */,
 				AF8A9A31FA229BAD75C24860 /* HUDControlsUIKitCustomManagerUITests.swift in Sources */,
 				D93C24BB41B50E126F13CB4B /* HUDControlsUITests.swift in Sources */,
+				D538838F036253A456B9E781 /* HUDLanguageUITests.swift in Sources */,
 				4B4F80DE5EAF3965C3513C98 /* HUDTouchRoutingUIKitUITests.swift in Sources */,
 				124A89197F6CEF22DB1844C9 /* HUDTouchRoutingUITests.swift in Sources */,
 				3629CD8BC28616866F0048B9 /* InjectedManagerUITests.swift in Sources */,
@@ -330,6 +353,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				816E04951EA9B6498AF767B1 /* HUDWindowTests.swift in Sources */,
+				9E3BFB15656BE4154A25E6F1 /* LibraryBundleTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,7 +11,7 @@ final class DemoModel<LM: DMLoadingManager>: ObservableObject {
     @Published private(set) var retries = 0
 
     private let loadingManager: LM
-    private let provider = DefaultDMLoadingViewProvider()
+    private let provider = DemoProvider.make(hostTexts: LaunchOptions.current.usesHostTexts)
     private let loadingDuration: Duration
     private let retryCountsOnly: Bool
     private var simulatedWork: Task<Void, Never>?
@@ -75,5 +75,25 @@ enum DemoError: LocalizedError {
 
     var errorDescription: String? {
         "The server did not answer."
+    }
+}
+
+/// The view provider of the demo: the library's default texts, or the host's own texts.
+enum DemoProvider {
+    @MainActor
+    static func make(hostTexts: Bool) -> DefaultDMLoadingViewProvider {
+        guard hostTexts else {
+            return DefaultDMLoadingViewProvider()
+        }
+        return DefaultDMLoadingViewProvider(
+            loadingViewSettings: DMProgressViewDefaultSettings(
+                loadingTextProperties: ProgressTextProperties(text: DemoText.Host.loading)
+            ),
+            errorViewSettings: DMErrorDefaultViewSettings(
+                errorText: DemoText.Host.title,
+                actionButtonCloseSettings: ActionButtonSettings(text: DemoText.Host.close),
+                actionButtonRetrySettings: ActionButtonSettings(text: DemoText.Host.retry)
+            )
+        )
     }
 }
