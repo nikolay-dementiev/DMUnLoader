@@ -112,7 +112,7 @@ final class HUDControlsUITests: XCTestCase {
         retry.tap()
 
         XCTAssertTrue(
-            label(of: app.staticTexts[DemoIdentifier.retries], becomes: DemoText.retries(1), within: 5),
+            label(of: app.staticTexts[DemoIdentifier.windowRetries], becomes: DemoText.retries(1), within: 5),
             "Retry runs the retry action"
         )
         XCTAssertFalse(
@@ -203,7 +203,7 @@ final class HUDControlsUITests: XCTestCase {
         app.buttons["Retry"].tap()
 
         XCTAssertTrue(
-            label(of: app.staticTexts[DemoIdentifier.retries], becomes: DemoText.retries(1), within: 5),
+            label(of: app.staticTexts[DemoIdentifier.windowRetries], becomes: DemoText.retries(1), within: 5),
             "Retry of the second presentation runs the retry action"
         )
         assertContentCountedNoTouch(in: app)
@@ -221,7 +221,7 @@ final class HUDControlsUITests: XCTestCase {
         assertContentCountedNoTouch(in: app)
         content.tap()
         XCTAssertTrue(
-            label(of: app.staticTexts[DemoIdentifier.contentTaps], becomes: DemoText.contentTaps(1), within: 5),
+            label(of: app.staticTexts[DemoIdentifier.windowContentTaps], becomes: DemoText.contentTaps(1), within: 5),
             "with the HUD hidden, a touch reaches the content again"
         )
     }

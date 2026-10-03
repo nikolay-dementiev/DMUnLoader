@@ -2,6 +2,9 @@
 enum DemoIdentifier {
     static let contentTaps = "contentTaps"
     static let retries = "retries"
+    /// The counters again, in the window that `--counters-window` shows above the HUD.
+    static let windowContentTaps = "windowContentTaps"
+    static let windowRetries = "windowRetries"
     static let showLoading = "showLoading"
     static let showSuccess = "showSuccess"
     static let showFailure = "showFailure"

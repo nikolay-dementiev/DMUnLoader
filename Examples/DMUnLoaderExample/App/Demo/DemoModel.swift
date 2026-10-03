@@ -24,6 +24,13 @@ final class DemoModel<LM: DMLoadingManager>: ObservableObject {
         self.loadingManager = loadingManager
         self.loadingDuration = loadingDuration
         self.retryCountsOnly = retryCountsOnly
+        if LaunchOptions.current.showsCountersWindow {
+            // On the next turn: the model is made while its scene connects.
+            Task { [weak self] in
+                guard let self else { return }
+                CountersWindow.show(for: self)
+            }
+        }
     }
 
     func contentTapped() {

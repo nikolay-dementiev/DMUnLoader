@@ -19,8 +19,9 @@ enum Launch {
 extension XCTestCase {
     func launchExample(_ arguments: [String]) -> XCUIApplication {
         let app = XCUIApplication()
-        // The simulated work outlasts the test, so the loading HUD cannot end by itself.
-        app.launchArguments = arguments + ["--loading-duration", "600"]
+        // The simulated work outlasts the test, so the loading HUD cannot end by itself. The
+        // counters are read from the window above the HUD, which the HUD leaves reachable.
+        app.launchArguments = arguments + ["--loading-duration", "600", "--counters-window"]
         app.launch()
         return app
     }
@@ -73,7 +74,7 @@ extension XCTestCase {
         contentTouchPoints(in: app, content: content, file: file, line: line).forEach { $0.tap() }
 
         XCTAssertTrue(
-            label(of: app.staticTexts[DemoIdentifier.contentTaps], becomes: DemoText.contentTaps(2), within: 5),
+            label(of: app.staticTexts[DemoIdentifier.windowContentTaps], becomes: DemoText.contentTaps(2), within: 5),
             "with no HUD shown, both touches must reach the content under the overlay window",
             file: file,
             line: line
@@ -96,7 +97,7 @@ extension XCTestCase {
 
         touchPoints.forEach { $0.tap() }
 
-        let counter = app.staticTexts[DemoIdentifier.contentTaps]
+        let counter = app.staticTexts[DemoIdentifier.windowContentTaps]
         XCTAssertFalse(
             label(of: counter, leaves: DemoText.contentTaps(0), within: 2),
             "a touch under the HUD card or on the backdrop must not reach the content",
@@ -132,7 +133,7 @@ extension XCTestCase {
         retry.tap()
 
         XCTAssertTrue(
-            label(of: app.staticTexts[DemoIdentifier.retries], becomes: DemoText.retries(1), within: 5),
+            label(of: app.staticTexts[DemoIdentifier.windowRetries], becomes: DemoText.retries(1), within: 5),
             "Retry runs the retry action",
             file: file,
             line: line
@@ -160,7 +161,7 @@ extension XCTestCase {
 
         XCTAssertTrue(close.waitForNonExistence(timeout: 5), "Close hides the failure HUD", file: file, line: line)
         XCTAssertEqual(
-            app.staticTexts[DemoIdentifier.retries].label,
+            app.staticTexts[DemoIdentifier.windowRetries].label,
             DemoText.retries(0),
             "Close does not run the retry action",
             file: file,
@@ -179,7 +180,7 @@ extension XCTestCase {
     }
 
     func assertContentCountedNoTouch(in app: XCUIApplication, file: StaticString = #filePath, line: UInt = #line) {
-        let counter = app.staticTexts[DemoIdentifier.contentTaps]
+        let counter = app.staticTexts[DemoIdentifier.windowContentTaps]
         XCTAssertFalse(
             label(of: counter, leaves: DemoText.contentTaps(0), within: 1),
             "a touch on the HUD must not also reach the content under it",

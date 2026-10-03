@@ -33,7 +33,7 @@ PACKAGES="$ROOT/.build/example-packages"
 # with or without a custom manager, and with --injected (SwiftUI.AppSceneDelegate), --uikit
 # (DMSceneDelegateTypeUIKit) and --uikit --custom-manager (DMSceneDelegateUIKit).
 TEST_GROUPS=(
-    "swiftui|HUDAppearanceUITests HUDControlsUITests HUDLanguageUITests HUDTouchRoutingUITests InjectedManagerUITests"
+    "swiftui|HUDAccessibilityUITests HUDAppearanceUITests HUDControlsUITests HUDLanguageUITests HUDTouchRoutingUITests InjectedManagerUITests"
     "uikit|HUDTouchRoutingUIKitUITests"
     "uikit-custom-manager|HUDControlsUIKitCustomManagerUITests"
 )

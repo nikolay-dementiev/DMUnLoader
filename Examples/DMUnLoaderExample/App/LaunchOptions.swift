@@ -21,6 +21,9 @@ struct LaunchOptions: Sendable {
     /// `--host-texts` gives the HUD the host's title, button and loading texts
     /// (`DemoText.Host`) in place of the library's defaults.
     let usesHostTexts: Bool
+    /// `--counters-window` shows the counters again in a window above the HUD that takes no
+    /// touch, so they stay readable while the HUD hides the screen from assistive technology.
+    let showsCountersWindow: Bool
     /// `--auto-hide <seconds>` changes how long a success or a failure stays on screen.
     /// Only the SwiftUI launch with `DMLoadingManagerMain` reads it: the UIKit scene delegate
     /// creates its own manager, and `StickyLoadingManager` has no timer.
@@ -50,6 +53,7 @@ struct LaunchOptions: Sendable {
         usesCustomManager = arguments.contains("--custom-manager")
         injectsManager = arguments.contains("--injected")
         usesHostTexts = arguments.contains("--host-texts")
+        showsCountersWindow = arguments.contains("--counters-window")
         autoHideDelay = Self.seconds(after: "--auto-hide", in: arguments)
         loadingDuration = Self.seconds(after: "--loading-duration", in: arguments) ?? .seconds(3)
         startsWithFailure = arguments.contains("--initial-failure")

@@ -124,6 +124,30 @@ final class HUDWindowTests: XCTestCase {
         XCTAssertNotNil(secondDelegate, "the second scene's delegate stays alive until the end of the test")
     }
 
+    // MARK: - Assistive technology
+
+    func test_hudRemovedWhileShown_givesTheAppWindowBackToAssistiveTechnology() throws {
+        let (scene, sceneDelegate) = try connectedSceneDelegate()
+        sceneDelegate.loadingManager = DMLoadingManagerMain(
+            state: .loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
+            settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
+        )
+        let appWindow = try XCTUnwrap(
+            scene.windows.first { !hudWindows(in: scene).contains($0) && $0.windowLevel == .normal },
+            "the app's own window"
+        )
+        let hiddenWhileShown = waitUntil(appWindow.accessibilityElementsHidden)
+
+        sceneDelegate.loadingManager = nil
+
+        XCTAssertTrue(hiddenWhileShown, "while a HUD is shown the app's window is hidden from assistive technology")
+        XCTAssertTrue(
+            waitUntil(!appWindow.accessibilityElementsHidden),
+            "removing the HUD while it is shown gives the app's window back"
+        )
+        sceneDelegate.loadingManager = DMLoadingManagerMain()
+    }
+
     // MARK: - Root view with an injected manager
 
     func test_injectedRoot_inAWindowOfTheScene_addsOneVisibleHUDWindowToThatScene() throws {
