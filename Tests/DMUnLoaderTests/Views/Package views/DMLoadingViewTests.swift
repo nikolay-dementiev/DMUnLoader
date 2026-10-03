@@ -36,20 +36,18 @@ final class DMLoadingViewTests: XCTestCase {
         )
     }
     
-    func testLoadingView_AssignTagFromSettingsToEmptyStateView_WhenLoadingStateIsNone() throws {
+    func test_noState_hasNeitherBackdropNorCard() {
         // Given
         let loadingManager = StubDMLoadingManager(loadableState: .none)
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        let tagToFindTheView = DMLoadingViewOwnSettings.emptyViewTag
-        let emptyView = try sut
-            .inspect()
-            .find(viewWithTag: tagToFindTheView)
-        
+
         // Then
-        XCTAssertNotNil(emptyView,
-                        "The EmptyView should have the correct tag assigned from settings: `\(tagToFindTheView)`")
+        XCTAssertThrowsError(
+            try sut.inspect().find(ViewType.Color.self),
+            "without a state the view draws no backdrop and no card"
+        )
     }
     
     // MARK: - Scenario 2: Verify Loading State (`.loading`)
@@ -74,7 +72,7 @@ final class DMLoadingViewTests: XCTestCase {
         )
     }
     
-    func testLoadingView_AssignTagFromSettingsToEmptyStateView_WhenLoadingStateIsLoading() throws {
+    func test_loading_showsTheLoadingViewOfTheProvider() {
         // Given
         let provider = StubDMLoadingViewProvider()
         let loadingManager = StubDMLoadingManager(
@@ -82,17 +80,15 @@ final class DMLoadingViewTests: XCTestCase {
                 provider: provider.eraseToAnyViewProvider()
             )
         )
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        let tagToFindTheView = DMLoadingViewOwnSettings.loadingViewTag
-        let loadingView = try sut
-            .inspect()
-            .find(viewWithTag: tagToFindTheView)
-        
+
         // Then
-        XCTAssertNotNil(loadingView,
-                        "The LoadingView should have the correct tag assigned from settings: `\(tagToFindTheView)`")
+        XCTAssertNoThrow(
+            try sut.inspect().find(text: "Stub Loading View"),
+            "while loading the view shows the loading view of the provider"
+        )
     }
     
     func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Loading() {
@@ -127,7 +123,7 @@ final class DMLoadingViewTests: XCTestCase {
         )
     }
     
-    func testLoadingView_AssignTagFromSettingsToFailureStateView_WhenLoadingStateIsFailure() throws {
+    func test_failure_showsTheErrorViewOfTheProvider() {
         // Given
         let provider = StubDMLoadingViewProvider()
         let loadingManager = StubDMLoadingManager(
@@ -136,17 +132,15 @@ final class DMLoadingViewTests: XCTestCase {
                 provider: provider.eraseToAnyViewProvider()
             )
         )
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        let tagToFindTheView = DMLoadingViewOwnSettings.failureViewTag
-        let failureView = try sut
-            .inspect()
-            .find(viewWithTag: tagToFindTheView)
-        
+
         // Then
-        XCTAssertNotNil(failureView,
-                        "The FailureView should have the correct tag assigned from settings: `\(tagToFindTheView)`")
+        XCTAssertNoThrow(
+            try sut.inspect().find(text: "Stub Error View"),
+            "a failure shows the error view of the provider"
+        )
     }
     
     func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Failure() {
@@ -183,7 +177,7 @@ final class DMLoadingViewTests: XCTestCase {
         )
     }
     
-    func testLoadingView_AssignTagFromSettingsToSuccessStateView_WhenLoadingStateIsSuccess() throws {
+    func test_success_showsTheSuccessViewOfTheProvider() {
         // Given
         let provider = StubDMLoadingViewProvider()
         let loadingManager = StubDMLoadingManager(
@@ -192,17 +186,15 @@ final class DMLoadingViewTests: XCTestCase {
                 provider: provider.eraseToAnyViewProvider()
             )
         )
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        let tagToFindTheView = DMLoadingViewOwnSettings.successViewTag
-        let actualView = try sut
-            .inspect()
-            .find(viewWithTag: tagToFindTheView)
-        
+
         // Then
-        XCTAssertNotNil(actualView,
-                        "The SuccessView should have the correct tag assigned from settings: `\(tagToFindTheView)`")
+        XCTAssertNoThrow(
+            try sut.inspect().find(text: "Stub Success View"),
+            "a success shows the success view of the provider"
+        )
     }
     
     func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Success() {
@@ -342,8 +334,8 @@ final class DMLoadingViewTests: XCTestCase {
             // When
             let sut = makeSUT(manager: loadingManager)
             
-            let inspectableView = try sut.inspect()
-                .find(viewWithTag: DMLoadingViewOwnSettings.tapGestureViewTag)
+            // The tap gesture sits on the root of the view.
+            let inspectableView = try sut.inspect().zStack()
             
             // Then
             XCTAssertEqual(sut.loadingManager.loadableState,
