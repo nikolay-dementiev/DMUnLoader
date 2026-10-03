@@ -25,13 +25,16 @@ public protocol DMLoadingViewProvider: ObservableObject, Hashable {
 }
 
 extension DMLoadingViewProvider {
+    /// Compares two providers by identity: a provider is equal only to itself, whatever its
+    /// hash.
     public static func == (lhs: Self,
                            rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs === rhs
     }
-    
+
+    /// Hashes the identity of the provider into the provided hasher.
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(String.pointer(self))
+        hasher.combine(ObjectIdentifier(self))
     }
 }
 

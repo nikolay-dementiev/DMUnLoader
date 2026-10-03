@@ -166,19 +166,19 @@ public final class DMLoadingManagerMain: DMLoadingManager {
 
 extension DMLoadingManagerMain: Hashable {
     
-    /// Compares two `DMLoadingManager` instances for equality based on their `id`.
+    /// Compares two managers by identity: a manager is equal only to itself.
     /// - Parameters:
-    ///   - lhs: The left-hand side `DMLoadingManager` instance.
-    ///   - rhs: The right-hand side `DMLoadingManager` instance.
-    /// - Returns: `true` if the `id` values of both instances are equal; otherwise, `false`.
+    ///   - lhs: The left-hand side manager.
+    ///   - rhs: The right-hand side manager.
+    /// - Returns: `true` if both are the same object; otherwise, `false`.
     nonisolated public static func == (lhs: DMLoadingManagerMain,
                                        rhs: DMLoadingManagerMain) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs === rhs
     }
-    
-    /// Hashes the `id` of the `DMLoadingManager` instance into the provided hasher.
-    /// - Parameter hasher: The hasher to use for combining the `id`.
+
+    /// Hashes the identity of the manager into the provided hasher.
+    /// - Parameter hasher: The hasher to use for combining the identity.
     nonisolated public func hash(into hasher: inout Hasher) {
-        hasher.combine(String.pointer(self))
+        hasher.combine(ObjectIdentifier(self))
     }
 }
