@@ -10,7 +10,7 @@ import UIKit
 /// Shows the HUD in a window of its own, above the other windows of one scene.
 @MainActor
 final class OverlayWindowPresenter: HUDOverlayPresenting {
-    private weak var windowScene: UIWindowScene?
+    private weak let windowScene: UIWindowScene?
     private var window: DMPassThroughWindow?
     private var hudController: UIHostingController<AnyView>?
 

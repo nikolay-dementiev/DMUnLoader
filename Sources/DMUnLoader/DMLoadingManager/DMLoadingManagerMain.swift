@@ -134,8 +134,8 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     
     // MARK: Timer Management
     
-    private func handleInactivityTimer(forState state: DMLoadableType? = nil) {
-        if AutoHidePolicy.hidesAfterDelay((state ?? loadableState).phase) {
+    private func handleInactivityTimer(forState state: DMLoadableType) {
+        if AutoHidePolicy.hidesAfterDelay(state.phase) {
             startInactivityTimer()
         } else {
             stopInactivityTimer()
