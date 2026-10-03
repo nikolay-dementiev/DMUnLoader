@@ -35,10 +35,47 @@ final class DMRootLoadingViewTests: XCTestCase {
         )
     }
 
+    func test_releasedInit_managerChange_evaluatesTheContentAgain() {
+        let sceneDelegate = DMSceneDelegateBase<DMLoadingManagerMain>()
+        let evaluations = Managers()
+        trackForMemoryLeaks(sceneDelegate)
+        let sut = DMRootLoadingView { (manager: DMLoadingManagerMain) -> Color in
+            evaluations.values.append(manager)
+            return Color.clear
+        }
+        .environmentObject(sceneDelegate)
+        ViewHosting.host(view: sut)
+        defer { ViewHosting.expel() }
+        let evaluationsBefore = settledCount(of: evaluations)
+
+        evaluations.values.first?.showLoading(provider: DefaultDMLoadingViewProvider())
+
+        XCTAssertTrue(
+            waitUntil { evaluations.values.count > evaluationsBefore },
+            "a change of the manager the view created evaluates the content again"
+        )
+    }
+
     // MARK: - Helpers
 
     private final class Managers {
         var values: [DMLoadingManagerMain] = []
+    }
+
+    /// The count once no evaluation came for a moment: SwiftUI evaluates a view it starts
+    /// to host more than once.
+    private func settledCount(of evaluations: Managers) -> Int {
+        _ = waitUntil { !evaluations.values.isEmpty }
+        let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
+        var count = evaluations.values.count
+        while Date() < deadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.3))
+            guard evaluations.values.count != count else {
+                break
+            }
+            count = evaluations.values.count
+        }
+        return count
     }
 
     /// Turns the run loop until `condition` holds or the callback allowance passed.
