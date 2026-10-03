@@ -150,7 +150,9 @@ jobs:
         run: Scripts/check-api.sh
 
   thread-sanitizer:
-    # Parts of the package run on more than one thread; the sanitizer checks them.
+    # The library runs on the main actor, except the nonisolated == and hash(into:) of the
+    # loading manager, which any thread may call. The sanitizer checks those, and whatever a
+    # later change moves off the main actor.
     name: thread-sanitizer
     runs-on: macos-26
     timeout-minutes: 45
