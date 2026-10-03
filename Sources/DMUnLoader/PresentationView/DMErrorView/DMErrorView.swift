@@ -14,6 +14,8 @@ struct DMErrorView: View {
     let onRetry: (any DMAction)?
     let onClose: any DMAction
 
+    @Environment(\.hudTexts) private var hudTexts
+
     init(settings settingsProvider: any DMErrorViewSettings,
          error: any Error,
          onRetry: (any DMAction)? = nil,
@@ -38,22 +40,24 @@ struct DMErrorView: View {
                 .foregroundStyle(imageSettings.foregroundColor)
             
             if let errorText = settingsProvider.errorText {
-                ErrorText(errorText,
+                ErrorText(HUDDefaultText.failureTitle.displayed(errorText, using: hudTexts),
                           settings: textSettings)
             }
-            
+
             ErrorText(error.localizedDescription,
                       settings: settingsProvider.errorTextSettings)
-            
+
             let closeButtonSettings = settingsProvider.actionButtonCloseSettings
             HStack {
                 ActionButton(settings: closeButtonSettings,
+                             title: HUDDefaultText.failureClose.displayed(closeButtonSettings.text, using: hudTexts),
                              action: onClose)
-                
+
                 if let onRetry = onRetry {
                     let retryButtonSettings = settingsProvider.actionButtonRetrySettings
-                    
+
                     ActionButton(settings: retryButtonSettings,
+                                 title: HUDDefaultText.failureRetry.displayed(retryButtonSettings.text, using: hudTexts),
                                  action: onRetry)
                 }
             }
@@ -67,15 +71,18 @@ extension DMErrorView {
     struct ActionButton: View {
         let action: any DMAction
         let settings: ActionButtonSettings
-        
+        let title: String
+
         init(settings: ActionButtonSettings,
+             title: String,
              action: any DMAction) {
             self.action = action
             self.settings = settings
+            self.title = title
         }
-        
+
         var body: some View {
-            Button(settings.text,
+            Button(title,
                    action: action.simpleAction)
             .buttonStyle(settings.styleFactory())
         }

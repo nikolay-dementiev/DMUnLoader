@@ -11,7 +11,9 @@ import SwiftUI
 /// This view uses a settings provider to configure the appearance of the progress view.
 struct DMProgressView: View {
     let settingsProvider: any DMProgressViewSettings
-    
+
+    @Environment(\.hudTexts) private var hudTexts
+
     init(settings settingsProvider: any DMProgressViewSettings) {
         self.settingsProvider = settingsProvider
     }
@@ -25,7 +27,7 @@ struct DMProgressView: View {
         ZStack(alignment: .center) {
             Color(settingsProvider.loadingContainerBackgroundColor)
             VStack {
-                Text(loadingTextProperties.text)
+                Text(HUDDefaultText.loadingText.displayed(loadingTextProperties.text, using: hudTexts))
                     .multilineTextAlignment(loadingTextProperties.alignment)
                     .foregroundColor(loadingTextProperties.foregroundColor)
                     .font(loadingTextProperties.font)
