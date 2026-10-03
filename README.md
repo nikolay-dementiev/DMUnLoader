@@ -47,7 +47,7 @@
   - [Separate overlay window](#separate-overlay-window)
   - [Dependency-manager test project](#dependency-manager-test-project)
   - [Test-driven development](#test-driven-development)
-  - [Custom blur](#custom-blur)
+  - [Backdrop](#backdrop)
   - [Retry and fallback](#retry-and-fallback)
 - [Contributing](#contributing)
 - [Contact](#contact)
@@ -319,8 +319,17 @@ The [DMUnLoaderPodSPMExample](#-example-project) project can resolve the SDK thr
 ### Test-driven development
 Core views and the loading manager were developed through a test-driven workflow. Test plans and design notes are available in the [`DocumentationAndBluePrints`](./DocumentationAndBluePrints/) folder.
 
-### Custom blur
-The SDK uses [DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView) to apply variable blur effects.
+### Backdrop
+While a HUD is shown, DMUnLoader draws a backdrop behind its card. The default, `.variableBlur`, is the backdrop of every release so far: the variable blur of [DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView) under a black dim. That blur uses a private API of the system; read the README of DMVariableBlurView before you ship it. `.dim()`, `.material()` and `.clear` draw with public API only.
+
+```swift
+let loadingManager = DMLoadingManagerMain(
+    state: .none,
+    settings: DMLoadingManagerDefaultSettings(backdrop: .dim())
+)
+```
+
+Choosing one of them only stops DMUnLoader from creating the variable blur while your app runs. DMUnLoader still depends on DMVariableBlurView, so its code, with the private names a scan of your binary finds, stays in your app. No setting of DMUnLoader 1.1.0 removes it.
 
 ### Retry and fallback
 The SDK composes retry and fallback behavior with [DMAction](https://github.com/nikolay-dementiev/DMAction).
