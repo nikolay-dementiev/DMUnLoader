@@ -18,7 +18,11 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
     private let _loadingViewSettings: () -> any DMProgressViewSettings
     private let _errorViewSettings: () -> any DMErrorViewSettings
     private let _successViewSettings: () -> any DMSuccessViewSettings
-    
+
+    /// The provider this one was made from. Its views keep that provider alive, so the
+    /// identifier cannot belong to another object while this one exists.
+    let wrappedProviderID: ObjectIdentifier
+
     public var loadingManagerSettings: any DMLoadingManagerSettings { _loadingManagerSettings() }
     public var loadingViewSettings: any DMProgressViewSettings { _loadingViewSettings() }
     public var errorViewSettings: any DMErrorViewSettings { _errorViewSettings() }
@@ -32,8 +36,10 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
         loadingManagerSettings: any DMLoadingManagerSettings,
         loadingViewSettings: any DMProgressViewSettings,
         errorViewSettings: any DMErrorViewSettings,
-        successViewSettings: any DMSuccessViewSettings
+        successViewSettings: any DMSuccessViewSettings,
+        wrappedProviderID: ObjectIdentifier
     ) {
+        self.wrappedProviderID = wrappedProviderID
         self._getLoadingView = getLoadingView
         self._getErrorView = getErrorView
         self._getSuccessView = getSuccessView
@@ -95,7 +101,8 @@ public extension DMLoadingViewProvider {
             loadingManagerSettings: self.loadingManagerSettings,
             loadingViewSettings: self.loadingViewSettings,
             errorViewSettings: self.errorViewSettings,
-            successViewSettings: self.successViewSettings
+            successViewSettings: self.successViewSettings,
+            wrappedProviderID: ObjectIdentifier(self)
         )
     }
 }

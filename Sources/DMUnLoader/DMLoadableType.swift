@@ -34,12 +34,61 @@ public enum DMLoadableType: Hashable, RawRepresentable {
         nil
     }
     
+    /// Two states are equal when they are the same case and show the same thing:
+    /// - the same view provider: the provider given to the manager. Erasing one provider
+    ///   twice gives equal states; two provider instances give different states.
+    /// - for a success, a payload of the same type with the same `description`;
+    /// - for a failure, an error of the same type with the same description, and the same
+    ///   retry action: both `nil`, or the same `id`. A failure with a retry action and one
+    ///   without are different states.
     public static func == (lhs: DMLoadableType,
                            rhs: DMLoadableType) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        switch (lhs, rhs) {
+        case (.none, .none):
+            return true
+        case let (.loading(lhsProvider), .loading(rhsProvider)):
+            return lhsProvider.wrappedProviderID == rhsProvider.wrappedProviderID
+        case let (.success(lhsPayload, lhsProvider), .success(rhsPayload, rhsProvider)):
+            return lhsProvider.wrappedProviderID == rhsProvider.wrappedProviderID
+                && DescribedValue(lhsPayload) == DescribedValue(rhsPayload)
+        case let (.failure(lhsError, lhsProvider, lhsRetry), .failure(rhsError, rhsProvider, rhsRetry)):
+            return lhsProvider.wrappedProviderID == rhsProvider.wrappedProviderID
+                && DescribedValue(lhsError) == DescribedValue(rhsError)
+                && lhsRetry?.id == rhsRetry?.id
+        case (.none, _), (.loading, _), (.success, _), (.failure, _):
+            return false
+        }
     }
+
+    /// Hashes what `==` compares.
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(rawValue)
+        switch self {
+        case .none:
+            hasher.combine(0)
+        case let .loading(provider):
+            hasher.combine(1)
+            hasher.combine(provider.wrappedProviderID)
+        case let .success(payload, provider):
+            hasher.combine(2)
+            hasher.combine(provider.wrappedProviderID)
+            hasher.combine(DescribedValue(payload))
+        case let .failure(error, provider, onRetry):
+            hasher.combine(3)
+            hasher.combine(provider.wrappedProviderID)
+            hasher.combine(DescribedValue(error))
+            hasher.combine(onRetry?.id)
+        }
+    }
+}
+
+/// A value with no equality of its own, compared by its dynamic type and its description.
+struct DescribedValue: Hashable {
+    private let type: ObjectIdentifier
+    private let description: String
+
+    init(_ value: Any) {
+        self.type = ObjectIdentifier(Swift.type(of: value))
+        self.description = String(describing: value)
     }
 }
 
