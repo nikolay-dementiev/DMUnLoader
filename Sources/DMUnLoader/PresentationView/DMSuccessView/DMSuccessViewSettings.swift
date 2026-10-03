@@ -53,8 +53,12 @@ public struct DMSuccessDefaultViewSettings: DMSuccessViewSettings {
 }
 
 extension DMSuccessDefaultViewSettings: Hashable {
+    /// Equal when every setting is equal: the image properties, the text properties and the
+    /// spacing between them.
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.successImageProperties == rhs.successImageProperties
+            && lhs.successTextProperties == rhs.successTextProperties
+            && lhs.spacingBetweenElements == rhs.spacingBetweenElements
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -104,10 +108,16 @@ public struct SuccessImageProperties: Identifiable {
 }
 
 extension SuccessImageProperties: Hashable {
+    /// Equal when the `id`, the image, the frame and the foreground color are equal. Two
+    /// values made with the default `id` are different values.
     public static func == (lhs: SuccessImageProperties, rhs: SuccessImageProperties) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.id == rhs.id
+            && lhs.image == rhs.image
+            && lhs.frame == rhs.frame
+            && lhs.foregroundColor == rhs.foregroundColor
     }
-    
+
+    /// Hashes the `id`, the frame and the foreground color. `Image` is not `Hashable`.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(frame)
@@ -149,10 +159,14 @@ public struct SuccessTextProperties {
 }
 
 extension SuccessTextProperties: Hashable {
+    /// Equal when the text, the foreground color and the alignment are equal.
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.text == rhs.text
+            && lhs.foregroundColor == rhs.foregroundColor
+            && lhs.alignment == rhs.alignment
     }
-    
+
+    /// Hashes the text and the foreground color. `Alignment` is not `Hashable`.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(text)
         hasher.combine(foregroundColor)

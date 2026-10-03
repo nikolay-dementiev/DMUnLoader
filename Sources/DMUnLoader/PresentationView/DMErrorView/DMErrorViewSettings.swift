@@ -78,8 +78,14 @@ public struct DMErrorDefaultViewSettings: DMErrorViewSettings {
 }
 
 extension DMErrorDefaultViewSettings: Hashable {
+    /// Equal when every setting is equal: the error text, both button settings, the text
+    /// settings and the image settings, each by its own `==`.
     static public func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.errorText == rhs.errorText
+            && lhs.actionButtonCloseSettings == rhs.actionButtonCloseSettings
+            && lhs.actionButtonRetrySettings == rhs.actionButtonRetrySettings
+            && lhs.errorTextSettings == rhs.errorTextSettings
+            && lhs.errorImageSettings == rhs.errorImageSettings
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -126,12 +132,16 @@ public struct ActionButtonSettings: Identifiable {
 }
 
 extension ActionButtonSettings: Hashable {
+    /// Equal when the `id` and the text are equal. The style factory is a closure and cannot
+    /// be compared: the `id` stands for it, so give settings with another style another `id`.
     static public func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.id == rhs.id && lhs.text == rhs.text
     }
-    
+
+    /// Hashes the `id` and the text.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+        hasher.combine(text)
     }
 }
 
@@ -188,7 +198,10 @@ extension ErrorTextSettings: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(foregroundColor)
         hasher.combine(multilineTextAlignment)
-        hasher.combine(padding)
+        hasher.combine(padding.top)
+        hasher.combine(padding.leading)
+        hasher.combine(padding.bottom)
+        hasher.combine(padding.trailing)
     }
 }
 
@@ -227,12 +240,15 @@ public struct ErrorImageSettings {
 }
 
 extension ErrorImageSettings: Hashable {
+    /// Equal when the image, the foreground color and the frame size are equal.
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.image == rhs.image
+            && lhs.foregroundColor == rhs.foregroundColor
+            && lhs.frameSize == rhs.frameSize
     }
-    
+
+    /// Hashes the foreground color and the frame size. `Image` is not `Hashable`.
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(foregroundColor)
         hasher.combine(foregroundColor)
         hasher.combine(frameSize)
     }

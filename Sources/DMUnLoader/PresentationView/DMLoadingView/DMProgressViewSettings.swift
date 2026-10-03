@@ -68,18 +68,25 @@ public struct DMProgressViewDefaultSettings: DMProgressViewSettings {
 
 extension DMProgressViewDefaultSettings: Hashable {
     
+    /// Equal when every setting is equal: the text, the indicator, the background color and
+    /// the frame geometry size.
     public static func == (
         lhs: DMProgressViewDefaultSettings,
         rhs: DMProgressViewDefaultSettings
     ) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.loadingTextProperties == rhs.loadingTextProperties
+            && lhs.progressIndicatorProperties == rhs.progressIndicatorProperties
+            && lhs.loadingContainerBackgroundColor == rhs.loadingContainerBackgroundColor
+            && lhs.frameGeometrySize == rhs.frameGeometrySize
     }
-    
+
+    /// Hashes every setting; the frame geometry size by its width and height.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(loadingTextProperties)
         hasher.combine(progressIndicatorProperties)
         hasher.combine(loadingContainerBackgroundColor)
-        hasher.combine(frameGeometrySize)
+        hasher.combine(frameGeometrySize.width)
+        hasher.combine(frameGeometrySize.height)
     }
 }
 
@@ -148,7 +155,10 @@ extension ProgressTextProperties: Hashable {
         hasher.combine(foregroundColor)
         hasher.combine(font)
         hasher.combine(lineLimit)
-        hasher.combine(linePadding)
+        hasher.combine(linePadding.top)
+        hasher.combine(linePadding.leading)
+        hasher.combine(linePadding.bottom)
+        hasher.combine(linePadding.trailing)
     }
 }
 
@@ -184,8 +194,10 @@ public struct ProgressIndicatorProperties {
 }
 
 extension ProgressIndicatorProperties: Hashable {
+    /// Equal when the size and the tint color are equal. `style` is the same constant in
+    /// every value, so it is not compared.
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.size == rhs.size && lhs.tintColor == rhs.tintColor
     }
     
     public func hash(into hasher: inout Hasher) {

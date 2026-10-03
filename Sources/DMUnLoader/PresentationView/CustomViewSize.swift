@@ -44,13 +44,16 @@ public struct CustomViewSize {
 
 extension CustomViewSize: Hashable {
     
+    /// Equal when the width, the height and the alignment are equal.
     public static func == (lhs: CustomViewSize, rhs: CustomViewSize) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.width == rhs.width
+            && lhs.height == rhs.height
+            && lhs.alignment == rhs.alignment
     }
-    
+
+    /// Hashes the width and the height. `Alignment` is not `Hashable`.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(width)
         hasher.combine(height)
-        hasher.combine(String(describing: alignment))
     }
 }
