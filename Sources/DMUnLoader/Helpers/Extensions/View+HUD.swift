@@ -14,17 +14,14 @@ extension View {
     ) -> some View {
         overlay(alignment: .center) {
             ZStack {
-                switch loadingManager.loadableState {
-                case .success,
-                        .failure,
-                        .loading:
+                if loadingManager.loadableState.showsHUD {
                     DMVariableBlurView(
                         maxBlurRadius: 4,
                         direction: .blurredCenterClearTopBottom(centerBandProportion: 0.4)
                     )
-                                        
+
                     content()
-                case .none:
+                } else {
                     EmptyView()
                 }
             }
