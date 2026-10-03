@@ -61,3 +61,20 @@ package final class HUDOverlayLifecycle {
         presentedManager = currentManager.id
     }
 }
+
+extension HUDOverlayLifecycle {
+    /// Shows the HUDs of this lifecycle over `scene` from now on, and removes them when the
+    /// scene disconnects. The disconnect is observed for as long as the returned observation
+    /// is kept; `onDisconnect` runs after the HUD is removed.
+    package func connect(
+        to scene: any HUDScene,
+        onDisconnect: @escaping @MainActor () -> Void = {}
+    ) -> AnyObject {
+        let observation = scene.observeDisconnect { [weak self] in
+            self?.sceneDidDisconnect()
+            onDisconnect()
+        }
+        sceneDidConnect(presenter: scene.makeHUDPresenter())
+        return observation
+    }
+}
