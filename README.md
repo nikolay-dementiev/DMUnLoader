@@ -40,6 +40,7 @@
   - [SwiftUI](#swiftui)
   - [SwiftUI with a manager your app owns](#swiftui-with-a-manager-your-app-owns)
   - [UIKit](#uikit)
+  - [Behaviour your app must know](#behaviour-your-app-must-know)
 - [Customization](#customization)
   - [Custom views](#custom-views)
   - [Settings](#settings)
@@ -252,6 +253,10 @@ final class LoadingViewController<LM: DMLoadingManager>: UIViewController {
 
 > API compatibility note: released versions currently expose `makeUIKitRootViewHierarhy`. The example keeps that spelling so it matches the public protocol. A source-compatible migration should add `makeUIKitRootViewHierarchy` and deprecate the old name before the documentation switches to the corrected API.
 
+### Behaviour your app must know
+
+While a HUD is shown, DMUnLoader hides the windows of its scene that are not above the HUD's window from assistive technology, and so from your own UI tests, until the HUD goes.
+
 ---
 
 ## Customization
@@ -354,7 +359,7 @@ The [DMUnLoaderPodSPMExample](#-example-project) project can resolve the SDK thr
 Core views and the loading manager were developed through a test-driven workflow. Test plans and design notes are available in the [`DocumentationAndBluePrints`](./DocumentationAndBluePrints/) folder.
 
 ### Backdrop
-While a HUD is shown, DMUnLoader draws a backdrop behind its card. The default, `.variableBlur`, is the backdrop of every release so far: the variable blur of [DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView) under a black dim. That blur uses a private API of the system; read the README of DMVariableBlurView before you ship it. `.dim()`, `.material()` and `.clear` draw with public API only.
+While a HUD is shown, DMUnLoader draws a backdrop behind its card. The default, `.variableBlur`, is the backdrop of every release so far: the variable blur of [DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView) under a black dim. That blur uses a private API of the system; read the README of DMVariableBlurView before you ship it. `.dim()`, `.material()` and `.clear` draw with public API only. Under the system's Reduce Transparency the HUD draws neither the blur nor a material: `.variableBlur` keeps its dim, and `.material()` gives way to that dim.
 
 ```swift
 let loadingManager = DMLoadingManagerMain(
