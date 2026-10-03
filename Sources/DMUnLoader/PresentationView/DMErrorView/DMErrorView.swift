@@ -6,35 +6,6 @@
 
 import SwiftUI
 
-/// A namespace for constants used in the `DMErrorView`.
-/// These constants define unique tags for views within the error view.
-enum DMErrorViewOwnSettings {
-    
-    /// The tag assigned to the vertical stack view (`VStack`) that holds all content in the error view.
-    static let containerVStackViewTag: Int = 3010
-    
-    /// The tag assigned to the image view displayed in the error view.
-    static let imageViewTag: Int = 3020
-    
-    /// The tag assigned to the error text view displayed in the error view.
-    static let errorTextViewTag: Int = 3031
-    
-    /// The tag assigned to the container view for the error text derived from the exception.
-    static let errorTextFormExeptionContainerViewTag: Int = 3040
-    
-    /// The tag assigned to the horizontal stack view (`HStack`) that organizes the action buttons.
-    static let buttonContainersHStackViewTag: Int = 3050
-    
-    /// The tag assigned to the "Close" action button.
-    static let actionButtonCloseViewTag: Int = 3051
-    
-    /// The tag assigned to the "Retry" action button.
-    static let actionButtonRetryViewTag: Int = 3052
-    
-    /// The tag assigned to the generic button view.
-    static let actionButtonButtoViewTag: Int = 3059
-}
-
 /// A custom SwiftUI view that displays an error state with an image, error text, and optional action buttons.
 /// This view uses a settings provider to configure the appearance of the error view.
 struct DMErrorView: View {
@@ -65,36 +36,29 @@ struct DMErrorView: View {
                        height: imageSettings.frameSize.height,
                        alignment: imageSettings.frameSize.alignment)
                 .foregroundStyle(imageSettings.foregroundColor)
-                .tag(DMErrorViewOwnSettings.imageViewTag)
             
             if let errorText = settingsProvider.errorText {
                 ErrorText(errorText,
                           settings: textSettings)
-                .tag(DMErrorViewOwnSettings.errorTextViewTag)
             }
             
             ErrorText(error.localizedDescription,
                       settings: settingsProvider.errorTextSettings)
-            .tag(DMErrorViewOwnSettings.errorTextFormExeptionContainerViewTag)
             
             let closeButtonSettings = settingsProvider.actionButtonCloseSettings
             HStack {
                 ActionButton(settings: closeButtonSettings,
                              action: onClose)
-                .tag(DMErrorViewOwnSettings.actionButtonCloseViewTag)
                 
                 if let onRetry = onRetry {
                     let retryButtonSettings = settingsProvider.actionButtonRetrySettings
                     
                     ActionButton(settings: retryButtonSettings,
                                  action: onRetry)
-                    .tag(DMErrorViewOwnSettings.actionButtonRetryViewTag)
                 }
             }
             .padding(.top, 5)
-            .tag(DMErrorViewOwnSettings.buttonContainersHStackViewTag)
         }
-        .tag(DMErrorViewOwnSettings.containerVStackViewTag)
     }
 }
 
@@ -114,7 +78,6 @@ extension DMErrorView {
             Button(settings.text,
                    action: action.simpleAction)
             .buttonStyle(settings.styleFactory())
-            .tag(DMErrorViewOwnSettings.actionButtonButtoViewTag)
         }
     }
     
@@ -133,7 +96,6 @@ extension DMErrorView {
                 .foregroundStyle(settings.foregroundColor)
                 .multilineTextAlignment(settings.multilineTextAlignment)
                 .padding(settings.padding)
-                .tag(DMErrorViewOwnSettings.errorTextViewTag)
         }
     }
 }
