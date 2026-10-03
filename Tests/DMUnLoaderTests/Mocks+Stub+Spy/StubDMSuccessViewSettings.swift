@@ -24,10 +24,13 @@ struct StubDMSuccessViewSettings: DMSuccessViewSettings {
 
 extension StubDMSuccessViewSettings: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.spacingBetweenElements == rhs.spacingBetweenElements
+            && lhs.successImageProperties == rhs.successImageProperties
+            && lhs.successTextProperties == rhs.successTextProperties
     }
-    
+
     public func hash(into hasher: inout Hasher) {
+        hasher.combine(spacingBetweenElements)
         hasher.combine(successImageProperties)
         hasher.combine(successTextProperties)
     }
