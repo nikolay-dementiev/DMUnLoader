@@ -21,7 +21,10 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
         Color.clear
             .ignoresSafeArea(.all)
             .hudCenter(loadingManager: loadingManager) {
-                DMLoadingView(loadingManager: loadingManager)
+                DMLoadingView(
+                    loadingManager: loadingManager,
+                    viewModel: DefaultHUDViewModel(loadingManager: loadingManager)
+                )
             }
             .onChange(of: loadingManager.loadableState.showsHUD, initial: true) { _, showsHUD in
                 onShowsHUDChange(showsHUD)

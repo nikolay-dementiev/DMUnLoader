@@ -13,9 +13,11 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
     private let viewModel: any HUDViewModel
     @State private var animateTheAppearance = false
 
-    init(loadingManager: LLM) {
+    /// - Parameter viewModel: Decides what the view shows of the state of `loadingManager`
+    ///   and what a tap and Close do. The view observes `loadingManager` to draw its changes.
+    init(loadingManager: LLM, viewModel: any HUDViewModel) {
         self.loadingManager = loadingManager
-        self.viewModel = DefaultHUDViewModel(loadingManager: loadingManager)
+        self.viewModel = viewModel
     }
     
     @ViewBuilder

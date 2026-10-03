@@ -236,7 +236,10 @@ final class DMLoadingViewTests: XCTestCase {
     
     private func makeSUT<LM: DMLoadingManager>(manager loadingManager: LM) -> DMLoadingView<LM> {
         
-        let sut = DMLoadingView(loadingManager: loadingManager)
+        let sut = DMLoadingView(
+            loadingManager: loadingManager,
+            viewModel: DefaultHUDViewModel(loadingManager: loadingManager)
+        )
         
         trackForMemoryLeaks(loadingManager)
         
