@@ -22,10 +22,6 @@ final class HUDControlsUITests: XCTestCase {
         assertRetryRunsTheRetryActionOnly(launchArguments: Launch.customManager)
     }
 
-    func test_failureHUD_uiKitCustomManager_retry_runsTheRetryActionOnly() {
-        assertRetryRunsTheRetryActionOnly(launchArguments: Launch.uiKitCustomManager)
-    }
-
     // MARK: - Close
 
     func test_failureHUD_swiftUI_close_hidesTheHUDOnly() {
@@ -34,10 +30,6 @@ final class HUDControlsUITests: XCTestCase {
 
     func test_failureHUD_customManager_close_hidesTheHUDOnly() {
         assertCloseHidesTheHUDOnly(launchArguments: Launch.customManager)
-    }
-
-    func test_failureHUD_uiKitCustomManager_close_hidesTheHUDOnly() {
-        assertCloseHidesTheHUDOnly(launchArguments: Launch.uiKitCustomManager)
     }
 
     // MARK: - Backdrop
@@ -104,109 +96,4 @@ final class HUDControlsUITests: XCTestCase {
         )
     }
 
-    // MARK: - Helpers
-
-    private enum Launch {
-        /// A host-owned DMLoadingManagerMain whose success and failure outlast the test.
-        static let swiftUI = ["--auto-hide", "600"]
-        /// A manager written by the host, without a timer.
-        static let customManager = ["--custom-manager"]
-        static let uiKitCustomManager = ["--uikit", "--custom-manager"]
-    }
-
-    private func launchExample(_ arguments: [String]) -> XCUIApplication {
-        let app = XCUIApplication()
-        // The simulated work after Retry outlasts the test, so its loading HUD stays.
-        app.launchArguments = arguments + ["--loading-duration", "600"]
-        app.launch()
-        return app
-    }
-
-    private func assertRetryRunsTheRetryActionOnly(
-        launchArguments: [String],
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) {
-        let app = launchExample(launchArguments)
-        XCTAssertTrue(
-            app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: 30),
-            "the demo screen is shown",
-            file: file,
-            line: line
-        )
-        app.buttons[DemoIdentifier.showFailure].tap()
-        let retry = app.buttons["Retry"]
-        XCTAssertTrue(retry.waitForExistence(timeout: 5), "the failure HUD is shown", file: file, line: line)
-
-        retry.tap()
-
-        XCTAssertTrue(
-            label(of: app.staticTexts[DemoIdentifier.retries], becomes: DemoText.retries(1), within: 5),
-            "Retry runs the retry action",
-            file: file,
-            line: line
-        )
-        assertContentCountedNoTouch(in: app, file: file, line: line)
-    }
-
-    private func assertCloseHidesTheHUDOnly(
-        launchArguments: [String],
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) {
-        let app = launchExample(launchArguments)
-        XCTAssertTrue(
-            app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: 30),
-            "the demo screen is shown",
-            file: file,
-            line: line
-        )
-        app.buttons[DemoIdentifier.showFailure].tap()
-        let close = app.buttons["Close"]
-        XCTAssertTrue(close.waitForExistence(timeout: 5), "the failure HUD is shown", file: file, line: line)
-
-        close.tap()
-
-        XCTAssertTrue(close.waitForNonExistence(timeout: 5), "Close hides the failure HUD", file: file, line: line)
-        XCTAssertEqual(
-            app.staticTexts[DemoIdentifier.retries].label,
-            DemoText.retries(0),
-            "Close does not run the retry action",
-            file: file,
-            line: line
-        )
-        assertContentCountedNoTouch(in: app, file: file, line: line)
-    }
-
-    /// A point inside the content control, below the HUD card: only the backdrop covers it.
-    private func backdropPoint(in app: XCUIApplication) -> XCUICoordinate {
-        let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown")
-        let frame = content.frame
-        return app.coordinate(withNormalizedOffset: .zero)
-            .withOffset(CGVector(dx: frame.midX, dy: frame.maxY - 20))
-    }
-
-    private func assertContentCountedNoTouch(in app: XCUIApplication, file: StaticString = #filePath, line: UInt = #line) {
-        let counter = app.staticTexts[DemoIdentifier.contentTaps]
-        XCTAssertFalse(
-            label(of: counter, leaves: DemoText.contentTaps(0), within: 1),
-            "a touch on the HUD must not also reach the content under it",
-            file: file,
-            line: line
-        )
-    }
-
-    private func label(of element: XCUIElement, becomes expected: String, within timeout: TimeInterval) -> Bool {
-        wait(for: NSPredicate(format: "label == %@", expected), on: element, timeout: timeout)
-    }
-
-    private func label(of element: XCUIElement, leaves initial: String, within timeout: TimeInterval) -> Bool {
-        wait(for: NSPredicate(format: "label != %@", initial), on: element, timeout: timeout)
-    }
-
-    private func wait(for predicate: NSPredicate, on element: XCUIElement, timeout: TimeInterval) -> Bool {
-        let matches = XCTNSPredicateExpectation(predicate: predicate, object: element)
-        return XCTWaiter().wait(for: [matches], timeout: timeout) == .completed
-    }
 }
