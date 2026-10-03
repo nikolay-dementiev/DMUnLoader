@@ -98,13 +98,8 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
         .animation(Animation.spring(duration: 0.2),
                    value: animateTheAppearance)
         .onTapGesture {
-            switch loadingManager.loadableState {
-            case .success,
-                    .failure,
-                    .none:
+            if DismissPolicy.tapDismisses(loadingManager.loadableState.phase) {
                 loadingManager.hide()
-            case .loading:
-                break
             }
         }
 #if DEBUG
