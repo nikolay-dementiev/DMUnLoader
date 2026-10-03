@@ -59,8 +59,4 @@ struct RenderedAlphas {
     var centre: UInt8 {
         values[(height / 2) * width + width / 2]
     }
-
-    var topLeftCorner: UInt8 {
-        values[0]
-    }
 }
