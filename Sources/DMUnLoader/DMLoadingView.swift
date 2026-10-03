@@ -89,3 +89,28 @@ struct HUDCard: View {
             .contentShape(RoundedRectangle(cornerRadius: 10))
     }
 }
+
+// MARK: - Previews
+
+@MainActor
+private func loadingViewPreview(_ state: (AnyDMLoadingViewProvider) -> DMLoadableType) -> some View {
+    let state = state(DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
+    let manager = DMLoadingManagerMain(state: state, settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600)))
+    return DMLoadingView(loadingManager: manager, viewModel: DefaultHUDViewModel(loadingManager: manager))
+}
+
+#Preview("Loading") {
+    loadingViewPreview { .loading(provider: $0) }
+}
+
+#Preview("Success") {
+    loadingViewPreview { .success("Saved", provider: $0) }
+}
+
+#Preview("Failure without Retry") {
+    loadingViewPreview { .failure(error: DMAppError.custom("Failed"), provider: $0) }
+}
+
+#Preview("Failure with Retry") {
+    loadingViewPreview { .failure(error: DMAppError.custom("Failed"), provider: $0, onRetry: DMButtonAction {}) }
+}
