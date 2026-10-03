@@ -43,6 +43,7 @@
 - [Customization](#customization)
   - [Custom views](#custom-views)
   - [Settings](#settings)
+  - [Texts and languages](#texts-and-languages)
 - [Example project](#example-project)
 - [Implementation details](#implementation-details)
   - [Separate overlay window](#separate-overlay-window)
@@ -319,6 +320,9 @@ loadingManager.showSuccess(
     provider: provider
 )
 ```
+
+### Texts and languages
+The default texts of the HUD, the failure title "An error has occurred!", "Close", "Retry" and "Loading...", come from the string catalog of DMUnLoader and follow the language of your app. In 1.1.0 the catalog holds English only, so every language shows these English texts. A text you set in the settings is shown as you wrote it. A text equal to an English default counts as that default, also when you pass it yourself, and follows the catalog.
 
 ---
 
