@@ -63,3 +63,17 @@ public protocol DMLoadingManager: ObservableObject {
     
     init()
 }
+
+extension DMLoadingManager {
+
+    /// Shows a failure without a Retry button: the same as
+    /// `showFailure(error, provider: provider, onRetry: nil)`.
+    ///
+    /// `DMLoadingManagerMain` already accepts this call through the default value of its
+    /// `onRetry` parameter, and keeps using its own method. This method makes the call compile
+    /// for every loading manager: a generic `LM`, `any DMLoadingManager`, or a manager of the
+    /// host's own.
+    public func showFailure<PR: DMLoadingViewProvider>(_ error: any Error, provider: PR) {
+        showFailure(error, provider: provider, onRetry: nil)
+    }
+}

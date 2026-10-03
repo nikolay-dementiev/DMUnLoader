@@ -146,6 +146,9 @@ extension DMUnLoader.DMErrorDefaultViewSettings : Swift.Hashable {
     get
   }
 }
+extension DMUnLoader.DMLoadingManager {
+  @_Concurrency.MainActor public func showFailure<PR>(_ error: any Swift.Error, provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
+}
 extension DMUnLoader.DMLoadingManagerMain : Swift.Hashable {
   nonisolated public static func == (lhs: DMUnLoader.DMLoadingManagerMain, rhs: DMUnLoader.DMLoadingManagerMain) -> Swift.Bool
   nonisolated final public func hash(into hasher: inout Swift.Hasher)
@@ -356,6 +359,10 @@ public struct DMErrorDefaultViewSettings : DMUnLoader.DMErrorViewSettings {
   public let errorTextSettings: DMUnLoader.ErrorTextSettings
   public let errorImageSettings: DMUnLoader.ErrorImageSettings
   public init(errorText: Swift.String? = "An error has occured!", actionButtonCloseSettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Close"), actionButtonRetrySettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Retry"), errorTextSettings: DMUnLoader.ErrorTextSettings = ErrorTextSettings(), errorImageSettings: DMUnLoader.ErrorImageSettings = ErrorImageSettings(image: Image(systemName: "exclamationmark.triangle")))
+}
+public struct DMLoadingManagerDefaultSettings : DMUnLoader.DMLoadingManagerSettings, Swift.Sendable {
+  public let autoHideDelay: Swift.Duration
+  public init(autoHideDelay: Swift.Duration = .seconds(2))
 }
 public struct DMProgressViewDefaultSettings : DMUnLoader.DMProgressViewSettings {
   public let loadingTextProperties: DMUnLoader.ProgressTextProperties

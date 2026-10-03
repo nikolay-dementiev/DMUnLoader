@@ -21,27 +21,23 @@ public protocol DMLoadingManagerSettings {
     var autoHideDelay: Duration { get }
 }
 
-/// A concrete implementation of the `DMLoadingManagerSettings` protocol.
-/// This struct provides default settings for a loading manager, including
-/// an optional `autoHideDelay` parameter during initialization.
-struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings {
-    
-    /// The duration after which the loading state should automatically hide.
-    /// Defaults to 2 seconds if no value is provided during initialization.
-    let autoHideDelay: Duration
-    
-    /// Initializes a new instance of `DMLoadingManagerDefaultSettings`.
-    /// - Parameter autoHideDelay: The duration after which the loading state
-    ///   should automatically hide. Defaults to `.seconds(2)` if not specified.
-    /// - Example:
-    ///   ```swift
-    ///   let defaultSettings = DMLoadingManagerDefaultSettings()
-    ///   print("Default auto-hide delay: \(defaultSettings.autoHideDelay)") // Output: "Default auto-hide delay: 2 seconds"
-    ///
-    ///   let customSettings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(5))
-    ///   print("Custom auto-hide delay: \(customSettings.autoHideDelay)") // Output: "Custom auto-hide delay: 5 seconds"
-    ///   ```
-    init(autoHideDelay: Duration = .seconds(2)) {
+/// The settings of a loading manager whose host chose none: a success or a failure hides 2
+/// seconds after it is shown. `DMLoadingManagerMain()` uses them.
+///
+/// ```swift
+/// let manager = DMLoadingManagerMain(
+///     state: .none,
+///     settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(4))
+/// )
+/// ```
+public struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings, Sendable {
+
+    /// How long a success or a failure stays before it hides by itself.
+    public let autoHideDelay: Duration
+
+    /// - Parameter autoHideDelay: How long a success or a failure stays before it hides by
+    ///   itself. 2 seconds when omitted, as for `DMLoadingManagerMain()`.
+    public init(autoHideDelay: Duration = .seconds(2)) {
         self.autoHideDelay = autoHideDelay
     }
 }
