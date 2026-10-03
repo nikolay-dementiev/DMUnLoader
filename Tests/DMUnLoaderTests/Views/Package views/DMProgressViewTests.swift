@@ -32,8 +32,7 @@ final class DMProgressViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.textTag)
-            .text()
+            .find(ViewType.Text.self)
             .string()
         
         XCTAssertEqual(text,
@@ -52,8 +51,7 @@ final class DMProgressViewTests: XCTestCase {
         
         let progressView = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.progressViewTag)
-            .progressView()
+            .find(ViewType.ProgressView.self)
         XCTAssertNotNil(progressView,
                         "The ProgressView should be rendered")
     }
@@ -71,8 +69,7 @@ final class DMProgressViewTests: XCTestCase {
         
         let progressView = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.progressViewTag)
-            .progressView()
+            .find(ViewType.ProgressView.self)
         
         let progressViewStyle = try? progressView.progressViewStyle() as? CircularProgressViewStyle
         XCTAssertNotNil(progressViewStyle,
@@ -136,8 +133,7 @@ final class DMProgressViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.textTag)
-            .text()
+            .find(ViewType.Text.self)
         
         let loadingTextProperties = settings.loadingTextProperties
         XCTAssertEqual(try text.string(),
@@ -168,9 +164,8 @@ final class DMProgressViewTests: XCTestCase {
         
         let containerBackgroundColor = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.zStackViewTag)
-            .find(viewWithTag: DMProgressViewOwnSettings.containerbackgroundColorViewTag)
-            .color()
+            .find(ViewType.ZStack.self)
+            .find(ViewType.Color.self)
         
         XCTAssertEqual(try? containerBackgroundColor.value().hashValue,
                        settings.loadingContainerBackgroundColor.hashValue,
@@ -193,8 +188,7 @@ final class DMProgressViewTests: XCTestCase {
         
         let zStack = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.zStackViewTag)
-            .zStack()
+            .find(ViewType.ZStack.self)
         let flexFrame = try? zStack.flexFrame()
         
         XCTAssertEqual(flexFrame?.minWidth,
