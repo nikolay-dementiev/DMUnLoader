@@ -31,8 +31,8 @@ final class OverlayWindowPresenter: HUDOverlayPresenting {
         // change after that. The window owns the view, so the view holds it weakly.
         window.interceptsTouches = loadingManager.loadableState.showsHUD
         let rootView = AnyView(
-            DMHudSceneView(loadingManager: loadingManager) { [weak window] showsHUD in
-                window?.interceptsTouches = showsHUD
+            DMHudSceneView(loadingManager: loadingManager) { [weak window] phase in
+                window?.interceptsTouches = phase.showsHUD
             }
         )
         if let hudController {
