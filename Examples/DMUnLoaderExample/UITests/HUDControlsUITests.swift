@@ -140,6 +140,43 @@ final class HUDControlsUITests: XCTestCase {
         assertContentCountedNoTouch(in: app)
     }
 
+    // MARK: - Window level
+
+    /// UIKit does not order windows within one level, so this pins what iOS 17.5, 18.6 and 26.5
+    /// do today: a host window shown later at the normal level covers a HUD at that level.
+    func test_failureHUD_coverShownLater_normalLevel_coverTakesTheTap() {
+        let app = launchExample(Launch.swiftUI + ["--cover-after-hud"])
+        let backdrop = backdropPoint(in: app)
+        app.buttons[DemoIdentifier.showFailure].tap()
+        XCTAssertTrue(app.buttons[DemoIdentifier.cover].waitForExistence(timeout: 5), "the host shows its cover after the HUD")
+
+        backdrop.tap()
+
+        XCTAssertTrue(
+            label(of: app.buttons[DemoIdentifier.cover], becomes: DemoText.coverTaps(1), within: 5),
+            "at the normal level the cover shown later takes the tap"
+        )
+    }
+
+    func test_failureHUD_coverShownLater_aboveNormal_hudTakesTheTap() {
+        let app = launchExample(Launch.swiftUI + ["--cover-after-hud", "--hud-above-normal"])
+        let backdrop = backdropPoint(in: app)
+        app.buttons[DemoIdentifier.showFailure].tap()
+        XCTAssertTrue(app.buttons[DemoIdentifier.cover].waitForExistence(timeout: 5), "the host shows its cover after the HUD")
+
+        backdrop.tap()
+
+        XCTAssertTrue(
+            app.buttons["Close"].waitForNonExistence(timeout: 5),
+            "above the normal level the HUD takes the tap and hides"
+        )
+        XCTAssertEqual(app.buttons[DemoIdentifier.cover].label, DemoText.coverTaps(0), "the cover under the HUD counts no tap")
+    }
+
+    func test_idleOverlay_aboveNormal_letsTouchesReachContent() {
+        assertIdleOverlayLetsTouchesReachContent(launchArguments: Launch.swiftUI + ["--hud-above-normal"])
+    }
+
     // MARK: - Presentation order
 
     func test_failureHUD_swiftUI_secondPresentation_retryStillWorks() {

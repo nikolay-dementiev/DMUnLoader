@@ -64,6 +64,9 @@ final class DemoModel<LM: DMLoadingManager>: ObservableObject {
             }
         }
         loadingManager.showFailure(DemoError.serverDidNotAnswer, provider: provider, onRetry: retry)
+        if LaunchOptions.current.coverAfterHUD {
+            CoverWindow.show(after: .seconds(1))
+        }
     }
 }
 

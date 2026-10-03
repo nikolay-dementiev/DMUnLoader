@@ -30,6 +30,11 @@ struct LaunchOptions: Sendable {
     /// `--failure-with-retry-waits`, with `--auto-hide`, gives a failure with Retry the rule
     /// "never hides by itself, and a tap on its card keeps it".
     let failureWithRetryWaits: Bool
+    /// `--cover-after-hud` shows a window of the host, a cover at the normal level, a second
+    /// after a failure HUD appears.
+    let coverAfterHUD: Bool
+    /// `--hud-above-normal`, with `--auto-hide`, puts the HUD window at `.normal + 1`.
+    let hudAboveNormal: Bool
 
     init(arguments: [String]) {
         integration = arguments.contains("--uikit") ? .uiKit : .swiftUI
@@ -39,6 +44,8 @@ struct LaunchOptions: Sendable {
         startsWithFailure = arguments.contains("--initial-failure")
         retryCountsOnly = arguments.contains("--retry-counts-only")
         failureWithRetryWaits = arguments.contains("--failure-with-retry-waits")
+        coverAfterHUD = arguments.contains("--cover-after-hud")
+        hudAboveNormal = arguments.contains("--hud-above-normal")
     }
 
     private static func seconds(after flag: String, in arguments: [String]) -> Duration? {

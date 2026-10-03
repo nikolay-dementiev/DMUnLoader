@@ -45,7 +45,8 @@ struct HostOwnedManagerRoot: View {
                     autoHideDelay: autoHideDelay,
                     hudDismissal: LaunchOptions.current.failureWithRetryWaits
                         ? DMHUDDismissalRules(failureWithRetry: DMHUDDismissal(autoHide: .never, cardTapHides: false))
-                        : DMHUDDismissalRules()
+                        : DMHUDDismissalRules(),
+                    hudWindowLevel: LaunchOptions.current.hudAboveNormal ? .normal + 1 : .normal
                 )
             )
         )

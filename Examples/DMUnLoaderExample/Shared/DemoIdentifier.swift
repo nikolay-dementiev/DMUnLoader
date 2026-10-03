@@ -6,6 +6,7 @@ enum DemoIdentifier {
     static let showSuccess = "showSuccess"
     static let showFailure = "showFailure"
     static let content = "content"
+    static let cover = "cover"
 }
 
 /// The texts of the demo screen, so a test compares against the text the app builds.
@@ -28,5 +29,9 @@ enum DemoText {
 
     static func retries(_ count: Int) -> String {
         "Retries: \(count)"
+    }
+
+    static func coverTaps(_ count: Int) -> String {
+        "Cover taps: \(count)"
     }
 }
