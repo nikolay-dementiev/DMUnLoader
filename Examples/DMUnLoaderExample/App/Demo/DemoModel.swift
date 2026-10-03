@@ -13,11 +13,17 @@ final class DemoModel<LM: DMLoadingManager>: ObservableObject {
     private let loadingManager: LM
     private let provider = DefaultDMLoadingViewProvider()
     private let loadingDuration: Duration
+    private let retryCountsOnly: Bool
     private var simulatedWork: Task<Void, Never>?
 
-    init(loadingManager: LM, loadingDuration: Duration = LaunchOptions.current.loadingDuration) {
+    init(
+        loadingManager: LM,
+        loadingDuration: Duration = LaunchOptions.current.loadingDuration,
+        retryCountsOnly: Bool = LaunchOptions.current.retryCountsOnly
+    ) {
         self.loadingManager = loadingManager
         self.loadingDuration = loadingDuration
+        self.retryCountsOnly = retryCountsOnly
     }
 
     func contentTapped() {
@@ -46,12 +52,16 @@ final class DemoModel<LM: DMLoadingManager>: ObservableObject {
         loadingManager.showSuccess("Loaded", provider: provider)
     }
 
-    /// Shows the failure HUD. Its Retry button counts the retry and starts the work again.
+    /// Shows the failure HUD. Its Retry button counts the retry and starts the work again,
+    /// or only counts it when the launch asks for that.
     func showFailure() {
         simulatedWork?.cancel()
         let retry = DMButtonAction { [weak self] in
-            self?.retries += 1
-            self?.showLoading()
+            guard let self else { return }
+            retries += 1
+            if !retryCountsOnly {
+                showLoading()
+            }
         }
         loadingManager.showFailure(DemoError.serverDidNotAnswer, provider: provider, onRetry: retry)
     }

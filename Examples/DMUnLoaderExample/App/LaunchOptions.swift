@@ -24,6 +24,9 @@ struct LaunchOptions: Sendable {
     /// `--initial-failure`, with `--auto-hide`, starts with a failure that the manager holds
     /// before the HUD window exists.
     let startsWithFailure: Bool
+    /// `--retry-counts-only` makes Retry count the retry and leave the failure on screen,
+    /// instead of starting the work again, so a test sees what Retry does to the HUD itself.
+    let retryCountsOnly: Bool
 
     init(arguments: [String]) {
         integration = arguments.contains("--uikit") ? .uiKit : .swiftUI
@@ -31,6 +34,7 @@ struct LaunchOptions: Sendable {
         autoHideDelay = Self.seconds(after: "--auto-hide", in: arguments)
         loadingDuration = Self.seconds(after: "--loading-duration", in: arguments) ?? .seconds(3)
         startsWithFailure = arguments.contains("--initial-failure")
+        retryCountsOnly = arguments.contains("--retry-counts-only")
     }
 
     private static func seconds(after flag: String, in arguments: [String]) -> Duration? {

@@ -59,6 +59,57 @@ final class HUDControlsUITests: XCTestCase {
         assertContentCountedNoTouch(in: app)
     }
 
+    // MARK: - Card
+
+    func test_successHUD_swiftUI_cardTap_hidesTheHUDOnly() {
+        let app = launchExample(Launch.swiftUI)
+        XCTAssertTrue(app.buttons[DemoIdentifier.showSuccess].waitForExistence(timeout: 30), "the demo screen is shown")
+        app.buttons[DemoIdentifier.showSuccess].tap()
+        let message = app.staticTexts["Loaded"]
+        XCTAssertTrue(message.waitForExistence(timeout: 5), "the success HUD is shown")
+
+        message.tap()
+
+        XCTAssertTrue(message.waitForNonExistence(timeout: 5), "a tap on the card hides the success HUD")
+        assertContentCountedNoTouch(in: app)
+    }
+
+    func test_failureHUD_swiftUI_cardTap_hidesTheHUDOnly() {
+        let app = launchExample(Launch.swiftUI)
+        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: 30), "the demo screen is shown")
+        app.buttons[DemoIdentifier.showFailure].tap()
+        let message = app.staticTexts["The server did not answer."]
+        XCTAssertTrue(message.waitForExistence(timeout: 5), "the failure HUD is shown")
+
+        message.tap()
+
+        XCTAssertTrue(
+            app.buttons["Close"].waitForNonExistence(timeout: 5),
+            "a tap on the card, off its buttons, hides the failure HUD"
+        )
+        assertContentCountedNoTouch(in: app)
+    }
+
+    func test_failureHUD_swiftUI_retry_keepsTheFailureShown() {
+        let app = launchExample(Launch.swiftUI + ["--retry-counts-only"])
+        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: 30), "the demo screen is shown")
+        app.buttons[DemoIdentifier.showFailure].tap()
+        let retry = app.buttons["Retry"]
+        XCTAssertTrue(retry.waitForExistence(timeout: 5), "the failure HUD is shown")
+
+        retry.tap()
+
+        XCTAssertTrue(
+            label(of: app.staticTexts[DemoIdentifier.retries], becomes: DemoText.retries(1), within: 5),
+            "Retry runs the retry action"
+        )
+        XCTAssertFalse(
+            app.buttons["Close"].waitForNonExistence(timeout: 1),
+            "Retry leaves the failure on screen: a tap on a button of the card is not a tap on the card"
+        )
+        assertContentCountedNoTouch(in: app)
+    }
+
     // MARK: - Presentation order
 
     func test_failureHUD_swiftUI_secondPresentation_retryStillWorks() {
