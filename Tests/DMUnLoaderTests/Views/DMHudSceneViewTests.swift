@@ -57,15 +57,15 @@ final class DMHudSceneViewTests: XCTestCase {
 
         let image = render(DMHudSceneView(loadingManager: manager), until: { _ in false })
 
-        XCTAssertEqual(try maximumAlpha(of: image), 0, "without a state the HUD window shows the app through it")
+        XCTAssertEqual(try RenderedAlphas(of: image).maximum, 0, "without a state the HUD window shows the app through it")
     }
 
     func test_loading_drawsTheHUDOverTheCentre() throws {
         let manager = DMLoadingManagerMain(state: .loading(provider: Self.provider), settings: Self.settings)
 
-        let image = render(DMHudSceneView(loadingManager: manager), until: { (try? self.centreAlpha(of: $0)) ?? 0 > 0 })
+        let image = render(DMHudSceneView(loadingManager: manager), until: { (try? RenderedAlphas(of: $0).centre) ?? 0 > 0 })
 
-        XCTAssertGreaterThan(try centreAlpha(of: image), 0, "the loading HUD is drawn over the centre of the screen")
+        XCTAssertGreaterThan(try RenderedAlphas(of: image).centre, 0, "the loading HUD is drawn over the centre of the screen")
     }
 
     // MARK: - Buttons
@@ -150,53 +150,12 @@ final class DMHudSceneViewTests: XCTestCase {
         window.rootViewController = controller
         window.isHidden = false
         defer { window.isHidden = true }
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = 1
-        let renderer = UIGraphicsImageRenderer(bounds: controller.view.bounds, format: format)
         let deadline = Date().addingTimeInterval(0.5)
         var image = UIImage()
         repeat {
             RunLoop.current.run(until: Date().addingTimeInterval(0.05))
-            image = renderer.image { context in
-                controller.view.layer.render(in: context.cgContext)
-            }
+            image = controller.view.renderedLayers()
         } while !done(image) && Date() < deadline
         return image
-    }
-
-    private struct Alphas {
-        let values: [UInt8]
-        let width: Int
-        let height: Int
-    }
-
-    private func alphas(of image: UIImage) throws -> Alphas {
-        let cgImage = try XCTUnwrap(image.cgImage, "the rendering has a bitmap")
-        let width = cgImage.width
-        let height = cgImage.height
-        var pixels = [UInt8](repeating: 0, count: width * height * 4)
-        let context = try XCTUnwrap(
-            CGContext(
-                data: &pixels,
-                width: width,
-                height: height,
-                bitsPerComponent: 8,
-                bytesPerRow: width * 4,
-                space: CGColorSpaceCreateDeviceRGB(),
-                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-            ),
-            "a bitmap context for the rendering"
-        )
-        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
-        return Alphas(values: stride(from: 3, to: pixels.count, by: 4).map { pixels[$0] }, width: width, height: height)
-    }
-
-    private func maximumAlpha(of image: UIImage) throws -> UInt8 {
-        try alphas(of: image).values.max() ?? 0
-    }
-
-    private func centreAlpha(of image: UIImage) throws -> UInt8 {
-        let alphas = try alphas(of: image)
-        return alphas.values[(alphas.height / 2) * alphas.width + alphas.width / 2]
     }
 }
