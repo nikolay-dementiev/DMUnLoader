@@ -44,13 +44,22 @@ public enum DMLoadableType: Hashable, RawRepresentable {
 }
 
 extension DMLoadableType {
-    /// Whether the state shows a HUD. Every state but `.none` does.
-    package var showsHUD: Bool {
+    /// The phase of the state: what the policies of the HUD decide on.
+    package var phase: HUDPhase {
         switch self {
         case .none:
-            return false
-        case .loading, .failure, .success:
-            return true
+            return .none
+        case .loading:
+            return .loading
+        case .success:
+            return .success
+        case .failure:
+            return .failure
         }
+    }
+
+    /// Whether the state shows a HUD. Every state but `.none` does.
+    package var showsHUD: Bool {
+        phase.showsHUD
     }
 }
