@@ -118,3 +118,34 @@ private struct InjectedManagerRoot<LM: DMLoadingManager, Content: View>: View {
             )
     }
 }
+
+// MARK: - Previews
+
+@MainActor
+private func rootLoadingViewPreview(_ state: (AnyDMLoadingViewProvider) -> DMLoadableType) -> some View {
+    let state = state(DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
+    let manager = DMLoadingManagerMain(state: state, settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600)))
+    return DMRootLoadingView(manager: manager) { _ in
+        Text(verbatim: "The content of the scene")
+    }
+}
+
+#Preview("Idle") {
+    rootLoadingViewPreview { _ in .none }
+}
+
+#Preview("Loading") {
+    rootLoadingViewPreview { .loading(provider: $0) }
+}
+
+#Preview("Success") {
+    rootLoadingViewPreview { .success("Saved", provider: $0) }
+}
+
+#Preview("Failure without Retry") {
+    rootLoadingViewPreview { .failure(error: DMAppError.custom("Failed"), provider: $0) }
+}
+
+#Preview("Failure with Retry") {
+    rootLoadingViewPreview { .failure(error: DMAppError.custom("Failed"), provider: $0, onRetry: DMButtonAction {}) }
+}
