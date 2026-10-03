@@ -33,6 +33,7 @@ enum DMLoadingViewOwnSettings {
 /// This view uses a `provider` to supply views for different states (loading, failure, success).
 struct DMLoadingView<LLM: DMLoadingManager>: View {
     @ObservedObject private(set) var loadingManager: LLM
+    private let viewModel: any HUDViewModel
     @State private var animateTheAppearance = false
     
 #if DEBUG
@@ -41,6 +42,7 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
     
     init(loadingManager: LLM) {
         self.loadingManager = loadingManager
+        self.viewModel = DefaultHUDViewModel(loadingManager: loadingManager)
     }
     
     @ViewBuilder
@@ -57,7 +59,7 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
             provider.getErrorView(
                 error: error,
                 onRetry: onRetry,
-                onClose: DMButtonAction(loadingManager.hide)
+                onClose: DMButtonAction(viewModel.closeTapped)
             )
             .tag(DMLoadingViewOwnSettings.failureViewTag)
         case let .success(object, provider):
@@ -68,14 +70,9 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
     
     var body: some View {
         ZStack {
-            let loadableState = loadingManager.loadableState
-            switch loadableState {
-            case .none:
+            if !viewModel.showsHUD {
                 overlayView
-            case .failure,
-                    .loading,
-                    .success:
-                
+            } else {
                 ZStack {
                     Color.black.opacity(animateTheAppearance ? 0.2 : 0)
                         .ignoresSafeArea()
@@ -98,9 +95,7 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
         .animation(Animation.spring(duration: 0.2),
                    value: animateTheAppearance)
         .onTapGesture {
-            if DismissPolicy.tapDismisses(loadingManager.loadableState.phase) {
-                loadingManager.hide()
-            }
+            viewModel.tapped()
         }
 #if DEBUG
         .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in
