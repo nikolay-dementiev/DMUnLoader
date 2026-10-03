@@ -38,6 +38,7 @@
   - [CocoaPods](#cocoapods)
 - [Usage](#usage)
   - [SwiftUI](#swiftui)
+  - [SwiftUI with a manager your app owns](#swiftui-with-a-manager-your-app-owns)
   - [UIKit](#uikit)
 - [Customization](#customization)
   - [Custom views](#custom-views)
@@ -156,6 +157,35 @@ struct ContentView<
     }
 }
 ```
+
+`DMRootLoadingView { ... }` needs the app delegate: `DMAppDelegateType`, or `DMAppDelegate<YourManager>` for a manager type of your own, puts the scene delegate of DMUnLoader into the environment. Without it SwiftUI stops the app when the view appears.
+
+### SwiftUI with a manager your app owns
+
+`DMRootLoadingView(manager:content:)` needs no app delegate of DMUnLoader. It shows the HUD of the manager you give it over the scene of the window the view is in.
+
+```swift
+@main
+struct ExampleApp: App {
+    @StateObject private var loadingManager = DMLoadingManagerMain(
+        state: .none,
+        settings: DMLoadingManagerDefaultSettings()
+    )
+
+    var body: some Scene {
+        WindowGroup {
+            DMRootLoadingView(manager: loadingManager) { loadingManager in
+                ContentView(
+                    loadingManager: loadingManager,
+                    provider: DefaultDMLoadingViewProvider()
+                )
+            }
+        }
+    }
+}
+```
+
+Keep the manager alive outside the view, as the `@StateObject` above does, and use one such view per scene: the HUD of each view joins the scene of that view. CI does not test multi-window on iPad; a local run on an iPad simulator does, before a release.
 
 ### UIKit
 
