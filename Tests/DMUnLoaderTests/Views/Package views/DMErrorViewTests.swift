@@ -54,7 +54,7 @@ final class DMErrorViewTests: XCTestCase {
         try checkErrorTextCorrespondsToSettings(
             sut: sut,
             expectedTextFromSettings: defaultSettings.errorText,
-            expectedTextString: "An error has occured!"
+            expectedTextString: "An error has occurred!"
         )
     }
     

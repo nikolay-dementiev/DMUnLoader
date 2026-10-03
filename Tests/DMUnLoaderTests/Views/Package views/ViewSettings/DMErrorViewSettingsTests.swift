@@ -172,8 +172,8 @@ final class DMErrorViewSettingsTests: XCTestCase {
         let settings = DMErrorDefaultViewSettings()
         
         XCTAssertEqual(settings.errorText,
-                       "An error has occured!",
-                       "Default error text should be 'An error has occured!'")
+                       "An error has occurred!",
+                       "Default error text should be 'An error has occurred!'")
         XCTAssertEqual(settings.actionButtonCloseSettings.text,
                        "Close",
                        "Default close button text should be 'Close'")
