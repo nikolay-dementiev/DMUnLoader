@@ -10,6 +10,9 @@ enum DemoIdentifier {
     static let showFailure = "showFailure"
     static let content = "content"
     static let cover = "cover"
+    /// The elements of the HUD window that assistive technology reaches, which
+    /// `--accessibility-tree` shows in the counters window.
+    static let hudAccessibilityTree = "hudAccessibilityTree"
 }
 
 /// The texts of the demo screen, so a test compares against the text the app builds.
@@ -38,11 +41,18 @@ enum DemoText {
         "Cover taps: \(count)"
     }
 
+    /// Between two elements of the HUD in the accessibility tree that the counters window shows.
+    static let treeSeparator = " | "
+    /// After the label of an element of that tree that is an image.
+    static let imageMark = " (image)"
+
     /// The texts of the HUD with `--host-texts`, in place of the library's defaults.
     enum Host {
         static let title = "Something broke"
         static let close = "Dismiss"
         static let retry = "Try again"
         static let loading = "Hold on"
+        /// The system symbol of the host's failure image, with `--host-image`.
+        static let image = "wifi.exclamationmark"
     }
 }

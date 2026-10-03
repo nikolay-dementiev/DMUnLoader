@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import SwiftUI
 import DMUnLoader
 
 /// What the demo screen does. Its SwiftUI and its UIKit version share this model.
@@ -11,7 +12,10 @@ final class DemoModel<LM: DMLoadingManager>: ObservableObject {
     @Published private(set) var retries = 0
 
     private let loadingManager: LM
-    private let provider = DemoProvider.make(hostTexts: LaunchOptions.current.usesHostTexts)
+    private let provider = DemoProvider.make(
+        hostTexts: LaunchOptions.current.usesHostTexts,
+        hostImage: LaunchOptions.current.usesHostImage
+    )
     private let loadingDuration: Duration
     private let retryCountsOnly: Bool
     private var simulatedWork: Task<Void, Never>?
@@ -85,10 +89,18 @@ enum DemoError: LocalizedError {
     }
 }
 
-/// The view provider of the demo: the library's default texts, or the host's own texts.
+/// The view provider of the demo: the library's defaults, the host's own texts, or the host's
+/// own failure image.
 enum DemoProvider {
     @MainActor
-    static func make(hostTexts: Bool) -> DefaultDMLoadingViewProvider {
+    static func make(hostTexts: Bool, hostImage: Bool) -> DefaultDMLoadingViewProvider {
+        if hostImage {
+            return DefaultDMLoadingViewProvider(
+                errorViewSettings: DMErrorDefaultViewSettings(
+                    errorImageSettings: ErrorImageSettings(image: Image(systemName: DemoText.Host.image))
+                )
+            )
+        }
         guard hostTexts else {
             return DefaultDMLoadingViewProvider()
         }

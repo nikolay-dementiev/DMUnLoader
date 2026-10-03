@@ -46,7 +46,58 @@ final class HUDAccessibilityUITests: XCTestCase {
         }
     }
 
+    // MARK: - Images
+
+    func test_successHUD_defaultImage_isNotRead() {
+        let elements = accessibilityElementsOfTheHUD(after: DemoIdentifier.showSuccess, showing: "Loaded")
+
+        XCTAssertFalse(
+            elements.contains { $0.hasSuffix(DemoText.imageMark) },
+            "assistive technology does not reach the default checkmark: \(elements)"
+        )
+    }
+
+    func test_failureHUD_defaultImage_isNotRead() {
+        let elements = accessibilityElementsOfTheHUD(after: DemoIdentifier.showFailure, showing: "Retry")
+
+        XCTAssertFalse(
+            elements.contains { $0.hasSuffix(DemoText.imageMark) },
+            "assistive technology does not reach the default warning sign: \(elements)"
+        )
+    }
+
+    func test_failureHUD_hostImage_isReadWithItsOwnLabel() {
+        let elements = accessibilityElementsOfTheHUD(
+            after: DemoIdentifier.showFailure,
+            showing: "Retry",
+            arguments: ["--host-image"]
+        )
+
+        let image = elements.first { $0.hasSuffix(DemoText.imageMark) }
+        XCTAssertNotNil(image, "assistive technology reaches the host's image: \(elements)")
+        XCTAssertNotEqual(image, DemoText.imageMark, "the host's image keeps a label of its own: \(elements)")
+    }
+
     // MARK: - Helpers
+
+    /// The elements that assistive technology reaches in the HUD window, in order, once the HUD
+    /// that `button` shows contains `text`. XCUITest also lists the elements that SwiftUI hides
+    /// from assistive technology, so the app reports the tree itself, in the counters window.
+    private func accessibilityElementsOfTheHUD(
+        after button: String,
+        showing text: String,
+        arguments: [String] = []
+    ) -> [String] {
+        let app = launchExample(Launch.swiftUI + ["--accessibility-tree"] + arguments)
+        XCTAssertTrue(app.buttons[button].waitForExistence(timeout: 30), "the demo screen is shown")
+        app.buttons[button].tap()
+        let tree = app.staticTexts[DemoIdentifier.hudAccessibilityTree]
+        XCTAssertTrue(
+            wait(for: NSPredicate(format: "label CONTAINS %@", text), on: tree, timeout: 5),
+            "the counters window reports the HUD"
+        )
+        return tree.label.components(separatedBy: DemoText.treeSeparator)
+    }
 
     /// Every audit type but two, each failing on the default look of the HUD alone.
     private static let auditTypes = XCUIAccessibilityAuditType.all
@@ -55,11 +106,11 @@ final class HUDAccessibilityUITests: XCTestCase {
         // Text clipped: the default progress card clips "Loading..." at large text sizes; AccessibilitySnapshotTests records it.
         .subtracting(.textClipped)
 
-    /// The demo screen with nothing above the HUD's level, so an audit sees the HUD and what
-    /// the HUD leaves of the app.
-    private func launchWithoutCountersWindow() -> XCUIApplication {
+    /// The demo screen with nothing above the HUD's level, so a query or an audit sees the HUD
+    /// and what the HUD leaves of the app.
+    private func launchWithoutCountersWindow(_ arguments: [String] = []) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments = Launch.swiftUI + ["--loading-duration", "600"]
+        app.launchArguments = Launch.swiftUI + ["--loading-duration", "600"] + arguments
         app.launch()
         XCTAssertTrue(app.buttons[DemoIdentifier.content].waitForExistence(timeout: 30), "the demo screen is shown")
         return app
