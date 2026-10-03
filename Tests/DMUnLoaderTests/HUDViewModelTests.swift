@@ -127,6 +127,7 @@ final class HUDViewModelTests: XCTestCase {
             self == .card ? "card" : "backdrop"
         }
 
+        @MainActor
         func send(to viewModel: DefaultHUDViewModel<DMLoadingManagerMain>) {
             switch self {
             case .card:
@@ -150,6 +151,7 @@ final class HUDViewModelTests: XCTestCase {
             }
         }
 
+        @MainActor
         func send(to manager: DMLoadingManagerMain) {
             let provider = DefaultDMLoadingViewProvider()
             switch self {
