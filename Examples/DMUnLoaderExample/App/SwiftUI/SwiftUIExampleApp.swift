@@ -41,7 +41,12 @@ struct HostOwnedManagerRoot: View {
         _loadingManager = StateObject(
             wrappedValue: DMLoadingManagerMain(
                 state: initialState,
-                settings: ExampleLoadingSettings(autoHideDelay: autoHideDelay)
+                settings: ExampleLoadingSettings(
+                    autoHideDelay: autoHideDelay,
+                    hudDismissal: LaunchOptions.current.failureWithRetryWaits
+                        ? DMHUDDismissalRules(failureWithRetry: DMHUDDismissal(autoHide: .never, cardTapHides: false))
+                        : DMHUDDismissalRules()
+                )
             )
         )
     }

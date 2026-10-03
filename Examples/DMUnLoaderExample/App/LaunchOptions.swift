@@ -27,6 +27,9 @@ struct LaunchOptions: Sendable {
     /// `--retry-counts-only` makes Retry count the retry and leave the failure on screen,
     /// instead of starting the work again, so a test sees what Retry does to the HUD itself.
     let retryCountsOnly: Bool
+    /// `--failure-with-retry-waits`, with `--auto-hide`, gives a failure with Retry the rule
+    /// "never hides by itself, and a tap on its card keeps it".
+    let failureWithRetryWaits: Bool
 
     init(arguments: [String]) {
         integration = arguments.contains("--uikit") ? .uiKit : .swiftUI
@@ -35,6 +38,7 @@ struct LaunchOptions: Sendable {
         loadingDuration = Self.seconds(after: "--loading-duration", in: arguments) ?? .seconds(3)
         startsWithFailure = arguments.contains("--initial-failure")
         retryCountsOnly = arguments.contains("--retry-counts-only")
+        failureWithRetryWaits = arguments.contains("--failure-with-retry-waits")
     }
 
     private static func seconds(after flag: String, in arguments: [String]) -> Duration? {

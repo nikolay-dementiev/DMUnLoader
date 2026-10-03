@@ -110,6 +110,36 @@ final class HUDControlsUITests: XCTestCase {
         assertContentCountedNoTouch(in: app)
     }
 
+    // MARK: - Dismissal rules
+
+    func test_failureHUD_retryRuleCardOff_cardTapKeepsTheHUD() {
+        let app = launchExample(Launch.swiftUI + ["--failure-with-retry-waits"])
+        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: 30), "the demo screen is shown")
+        app.buttons[DemoIdentifier.showFailure].tap()
+        let message = app.staticTexts["The server did not answer."]
+        XCTAssertTrue(message.waitForExistence(timeout: 5), "the failure HUD is shown")
+
+        message.tap()
+
+        XCTAssertFalse(
+            app.buttons["Close"].waitForNonExistence(timeout: 1),
+            "a tap on the card keeps a failure with Retry whose rule says so"
+        )
+        assertContentCountedNoTouch(in: app)
+    }
+
+    func test_failureHUD_retryRuleCardOff_backdropTapHidesTheHUDOnly() {
+        let app = launchExample(Launch.swiftUI + ["--failure-with-retry-waits"])
+        let backdrop = backdropPoint(in: app)
+        app.buttons[DemoIdentifier.showFailure].tap()
+        XCTAssertTrue(app.buttons["Close"].waitForExistence(timeout: 5), "the failure HUD is shown")
+
+        backdrop.tap()
+
+        XCTAssertTrue(app.buttons["Close"].waitForNonExistence(timeout: 5), "a tap outside the card still hides the failure")
+        assertContentCountedNoTouch(in: app)
+    }
+
     // MARK: - Presentation order
 
     func test_failureHUD_swiftUI_secondPresentation_retryStillWorks() {
