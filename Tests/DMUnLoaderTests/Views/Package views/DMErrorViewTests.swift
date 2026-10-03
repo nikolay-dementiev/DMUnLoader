@@ -86,10 +86,7 @@ final class DMErrorViewTests: XCTestCase {
             onClose: DMButtonAction { }
         )
         
-        let button = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.actionButtonCloseViewTag)
-            .button()
+        let button = try closeButton(of: sut)
         
         let textOnButton = try button.labelView().text().string()
         
@@ -113,10 +110,7 @@ final class DMErrorViewTests: XCTestCase {
             onClose: DMButtonAction { },
             
         )
-        let button = try? sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.actionButtonRetryViewTag)
-            .button()
+        let button = try? retryButton(of: sut)
         
         // Then
         XCTAssertNil(button, "The Retry Button should not be present")
@@ -132,10 +126,7 @@ final class DMErrorViewTests: XCTestCase {
             onRetry: DMButtonAction { },
             onClose: DMButtonAction { }
         )
-        let button = try? sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.actionButtonRetryViewTag)
-            .button()
+        let button = try? retryButton(of: sut)
         
         // Then
         XCTAssertNotNil(button, "The Retry Button should be present")
@@ -154,8 +145,7 @@ final class DMErrorViewTests: XCTestCase {
         let sut = makeSUT(settings: customSettings)
         let imageView = try sut
             .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.imageViewTag)
-            .image()
+            .find(ViewType.Image.self)
         
         // Then
         XCTAssertEqual(
@@ -178,8 +168,7 @@ final class DMErrorViewTests: XCTestCase {
         let sut = makeSUT(settings: customSettings)
         let imageView = try sut
             .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.imageViewTag)
-            .image()
+            .find(ViewType.Image.self)
         
         // Then
         XCTAssertEqual(
@@ -201,8 +190,7 @@ final class DMErrorViewTests: XCTestCase {
         let sut = makeSUT(settings: customSettings)
         let imageView = try sut
             .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.imageViewTag)
-            .image()
+            .find(ViewType.Image.self)
         
         // Then
         XCTAssertEqual(
@@ -230,8 +218,7 @@ final class DMErrorViewTests: XCTestCase {
         let sut = makeSUT(settings: customSettings)
         let imageView = try sut
             .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.imageViewTag)
-            .image()
+            .find(ViewType.Image.self)
         
         // Then
         XCTAssertEqual(
@@ -252,8 +239,7 @@ final class DMErrorViewTests: XCTestCase {
         let sut = makeSUT(settings: customSettings)
         let imageView = try sut
             .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.imageViewTag)
-            .image()
+            .find(ViewType.Image.self)
         let resizableParameters = try imageView.actualImage().resizableParameters()
         
         // Then
@@ -277,10 +263,7 @@ final class DMErrorViewTests: XCTestCase {
         
         // When
         let sut = makeSUT(settings: customSettings)
-        let errorTextView = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.errorTextViewTag)
-            .text()
+        let errorTextView = try titleText(of: sut)
         
         // Then
         XCTAssertEqual(
@@ -299,10 +282,7 @@ final class DMErrorViewTests: XCTestCase {
         
         // When
         let sut = makeSUT(settings: customSettings)
-        let errorTextView = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.errorTextViewTag)
-            .text()
+        let errorTextView = try titleText(of: sut)
         
         // Then
         XCTAssertEqual(
@@ -321,10 +301,7 @@ final class DMErrorViewTests: XCTestCase {
         
         // When
         let sut = makeSUT(settings: customSettings)
-        let errorTextView = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.errorTextViewTag)
-            .text()
+        let errorTextView = try titleText(of: sut)
         
         // Then
         XCTAssertEqual(
@@ -343,10 +320,7 @@ final class DMErrorViewTests: XCTestCase {
         
         // When
         let sut = makeSUT(settings: customSettings)
-        let errorTextView = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.errorTextViewTag)
-            .text()
+        let errorTextView = try titleText(of: sut)
         
         // Then
         XCTAssertEqual(
@@ -371,10 +345,7 @@ final class DMErrorViewTests: XCTestCase {
             settings: customSettings,
             error: error
         )
-        let errorTextView = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.errorTextFormExeptionContainerViewTag)
-            .text()
+        let errorTextView = try descriptionText(of: sut)
         
         // Then
         XCTAssertEqual(
@@ -397,10 +368,7 @@ final class DMErrorViewTests: XCTestCase {
             settings: customSettings,
             error: error
         )
-        let errorTitleTextView = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.errorTextViewTag)
-            .text()
+        let errorTitleTextView = try titleText(of: sut)
         
         // Then
         XCTAssertEqual(
@@ -423,10 +391,7 @@ final class DMErrorViewTests: XCTestCase {
             settings: customSettings,
             error: error
         )
-        let errorTextView = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.errorTextFormExeptionContainerViewTag)
-            .text()
+        let errorTextView = try descriptionText(of: sut)
         
         // Then
         XCTAssertEqual(
@@ -449,10 +414,7 @@ final class DMErrorViewTests: XCTestCase {
             settings: customSettings,
             error: error
         )
-        let errorTextView = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.errorTextFormExeptionContainerViewTag)
-            .text()
+        let errorTextView = try descriptionText(of: sut)
         
         // Then
         XCTAssertEqual(
@@ -475,10 +437,7 @@ final class DMErrorViewTests: XCTestCase {
             settings: customSettings,
             error: error
         )
-        let errorTextView = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.errorTextFormExeptionContainerViewTag)
-            .text()
+        let errorTextView = try descriptionText(of: sut)
         
         // Then
         XCTAssertEqual(
@@ -502,10 +461,7 @@ final class DMErrorViewTests: XCTestCase {
             settings: customSettings,
             onClose: DMButtonAction { }
         )
-        let closeButton = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.actionButtonCloseViewTag)
-            .button()
+        let closeButton = try closeButton(of: sut)
         
         // Then
         XCTAssertEqual(
@@ -524,10 +480,7 @@ final class DMErrorViewTests: XCTestCase {
             settings: customSettings,
             onClose: DMButtonAction { }
         )
-        let retryButton = try? sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.actionButtonRetryViewTag)
-            .button()
+        let retryButton = try? retryButton(of: sut)
         
         // Then
         XCTAssertNil(retryButton,
@@ -562,10 +515,7 @@ final class DMErrorViewTests: XCTestCase {
             settings: customSettings,
             onRetry: DMButtonAction { },
         )
-        let retryButton = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.actionButtonRetryViewTag)
-            .button()
+        let retryButton = try retryButton(of: sut)
         
         // Then
         XCTAssertEqual(
@@ -585,28 +535,12 @@ final class DMErrorViewTests: XCTestCase {
             error: DMAppError.custom(nil),
             onRetry: DMButtonAction { },
         )
-        guard let sutInspection = sut.inspection else {
-            XCTFail("Inspection not available on SUT")
-            return
-        }
-        
-        let expInspection = sutInspection.inspect { view in
-            let updatedView = try XCTUnwrap(
-                try view.actualView(),
-                "Failed to extract the actual view from the inspect"
-            )
-            assertImageSnapshot(
-                of: LoadingViewContainer<DMErrorView>(overlayView: { updatedView }),
-                style: .light,
-                named: "ViewWith-RetryButton-iPhone13Pro-light"
-            )
-        }
-        
-        ViewHosting.host(view: sut)
-        defer { ViewHosting.expel() }
-        
         // Then
-        wait(for: [expInspection], timeout: TestTiming.callbackAllowance)
+        assertImageSnapshot(
+            of: LoadingViewContainer<DMErrorView>(overlayView: { sut }),
+            style: .light,
+            named: "ViewWith-RetryButton-iPhone13Pro-light"
+        )
     }
     
     func testThat_TapOnTheCloseButton_Trigger_OnCloseAction() throws {
@@ -622,22 +556,9 @@ final class DMErrorViewTests: XCTestCase {
             }
         )
         
-        guard let sutInspection = sut.inspection else {
-            XCTFail("Inspection not available on SUT")
-            return
-        }
-        
-        let expInspection = sutInspection.inspect { view in
-            try view
-                .find(viewWithTag: DMErrorViewOwnSettings.actionButtonCloseViewTag)
-                .button()
-                .tap()
-        }
-        ViewHosting.host(view: sut)
-        defer { ViewHosting.expel() }
-        
+        try closeButton(of: sut).tap()
+
         // Then
-        wait(for: [expInspection], timeout: TestTiming.callbackAllowance)
         wait(for: [buttonTapExp], timeout: TestTiming.callbackAllowance)
     }
     
@@ -654,22 +575,9 @@ final class DMErrorViewTests: XCTestCase {
             }
         )
         
-        guard let sutInspection = sut.inspection else {
-            XCTFail("Inspection not available on SUT")
-            return
-        }
-        
-        let expInspection = sutInspection.inspect { view in
-            try view
-                .find(viewWithTag: DMErrorViewOwnSettings.actionButtonRetryViewTag)
-                .button()
-                .tap()
-        }
-        ViewHosting.host(view: sut)
-        defer { ViewHosting.expel() }
-        
+        try retryButton(of: sut).tap()
+
         // Then
-        wait(for: [expInspection], timeout: TestTiming.callbackAllowance)
         wait(for: [buttonTapExp], timeout: TestTiming.callbackAllowance)
     }
     
@@ -771,6 +679,40 @@ final class DMErrorViewTests: XCTestCase {
 
     // MARK: - Helpers
     
+    // MARK: - Lookups
+
+    /// Close comes first among the buttons of the view, Retry second when the failure has one.
+    private func closeButton(of sut: DMErrorView) throws -> InspectableView<ViewType.Button> {
+        try button(at: 0, of: sut)
+    }
+
+    private func retryButton(of sut: DMErrorView) throws -> InspectableView<ViewType.Button> {
+        try button(at: 1, of: sut)
+    }
+
+    private func button(at index: Int, of sut: DMErrorView) throws -> InspectableView<ViewType.Button> {
+        let buttons = try sut.inspect().findAll(ViewType.Button.self)
+        guard buttons.indices.contains(index) else {
+            throw InspectionError.viewNotFound(parent: "button \(index) of \(buttons.count)")
+        }
+        return buttons[index]
+    }
+
+    /// The first text of the view: the error text of the settings, or the description of the
+    /// error when the settings have none.
+    private func titleText(of sut: DMErrorView) throws -> InspectableView<ViewType.Text> {
+        try sut.inspect().find(DMErrorView.ErrorText.self).find(ViewType.Text.self)
+    }
+
+    /// The last text of the view: the description of the error.
+    private func descriptionText(of sut: DMErrorView) throws -> InspectableView<ViewType.Text> {
+        let texts = try sut.inspect().findAll(DMErrorView.ErrorText.self)
+        guard let description = texts.last else {
+            throw InspectionError.viewNotFound(parent: "ErrorText")
+        }
+        return try description.find(ViewType.Text.self)
+    }
+
     private func makeSUT(
         settings: DMErrorViewSettings,
         error: Error = NSError(domain: "TestErrorDomain", code: 1, userInfo: nil),
@@ -796,8 +738,7 @@ final class DMErrorViewTests: XCTestCase {
         // When
         let image = try sut
             .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.imageViewTag)
-            .image()
+            .find(ViewType.Image.self)
         
         // Then
         try sutImageNameConfirmToExpectedImage(
@@ -822,10 +763,7 @@ final class DMErrorViewTests: XCTestCase {
         }
         
         // When
-        let text = try sut
-            .inspect()
-            .find(viewWithTag: DMErrorViewOwnSettings.errorTextViewTag)
-            .text()
+        let text = try titleText(of: sut)
         
         // Then
         let textFormSUT = try? text.string()
