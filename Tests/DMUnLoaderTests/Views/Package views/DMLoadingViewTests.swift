@@ -232,6 +232,31 @@ final class DMLoadingViewTests: XCTestCase {
         try checktLoadingView_RespondToTapGestures_ForStates(currentStateConditions)
     }
     
+    func test_tapOnTheView_isReportedToItsViewModel() throws {
+        let viewModel = HUDViewModelSpy(showsHUD: true)
+        let sut = DMLoadingView(
+            loadingManager: StubDMLoadingManager(loadableState: .success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())),
+            viewModel: viewModel
+        )
+        
+        try sut.inspect().zStack().callOnTapGesture()
+        
+        XCTAssertEqual(viewModel.calls, [.tapped], "a tap on the view goes to its view model, not to the manager")
+    }
+    
+    func test_closeOnAFailure_isReportedToItsViewModel() throws {
+        let viewModel = HUDViewModelSpy(showsHUD: true)
+        let failure = DMLoadableType.failure(
+            error: DMAppError.custom("failed"),
+            provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+        )
+        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: failure), viewModel: viewModel)
+        
+        try sut.inspect().find(button: "Close").tap()
+        
+        XCTAssertEqual(viewModel.calls, [.closeTapped], "Close on a failure goes to the view model of the view")
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT<LM: DMLoadingManager>(manager loadingManager: LM) -> DMLoadingView<LM> {
@@ -338,5 +363,29 @@ final class DMLoadingViewTests: XCTestCase {
                            file: file,
                            line: line)
         }
+    }
+}
+
+/// Records what the view reports to its view model.
+@MainActor
+private final class HUDViewModelSpy: HUDViewModel {
+    enum Call: Equatable {
+        case tapped
+        case closeTapped
+    }
+    
+    let showsHUD: Bool
+    private(set) var calls: [Call] = []
+    
+    init(showsHUD: Bool) {
+        self.showsHUD = showsHUD
+    }
+    
+    func tapped() {
+        calls.append(.tapped)
+    }
+    
+    func closeTapped() {
+        calls.append(.closeTapped)
     }
 }
