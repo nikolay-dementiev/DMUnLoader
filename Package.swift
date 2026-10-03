@@ -24,8 +24,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/nalexn/ViewInspector", .upToNextMinor(from: "0.10.5")),
-        .package(url: "https://github.com/nikolay-dementiev/DMAction.git", branch: "main"),
-        .package(url: "https://github.com/nikolay-dementiev/DMVariableBlurView.git", branch: "main"),
+        .package(url: "https://github.com/nikolay-dementiev/DMAction.git", from: "1.1.0"),
+        .package(url: "https://github.com/nikolay-dementiev/DMVariableBlurView.git", from: "1.1.0"),
         .package(
             url: "https://github.com/pointfreeco/swift-snapshot-testing",
             from: "1.12.0"

@@ -33,6 +33,6 @@ The SDK simplifies the integration of common dialog states (Error, Loading, Succ
     s.swift_version = '5.0'
   end
   s.frameworks = 'UIKit', 'SwiftUI'
-  s.dependency 'DMAction', '~> 1.0.5'
-  s.dependency 'DMVariableBlurView', '~> 1.0.0'
+  s.dependency 'DMAction', '~> 1.1'
+  s.dependency 'DMVariableBlurView', '~> 1.1'
 end

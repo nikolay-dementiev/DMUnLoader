@@ -22,11 +22,10 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MODULE="DMUnLoader"
 WORK="$ROOT/.build/check-manifest"
 FAILED=0
-# The sibling packages DMAction and DMVariableBlurView are required by branch until their
-# next releases are tagged. Until then the package cannot be required by version: both
-# checks below print that as a warning instead of failing. Requiring the siblings by
-# version empties this list.
-ALLOWED_BY_BRANCH=(dmaction dmvariableblurview)
+# Dependencies that the checks below accept by branch, with a warning that the package
+# cannot be required by version while one is. Empty: every dependency is required by
+# version.
+ALLOWED_BY_BRANCH=()
 
 mkdir -p "$WORK"
 
