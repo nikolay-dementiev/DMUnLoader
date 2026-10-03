@@ -84,3 +84,11 @@ schemes:
       config: Debug
       commandLineArguments:
         "--custom-manager": true
+  DMUnLoaderExample-Injected:
+    build:
+      targets:
+        DMUnLoaderExample: all
+    run:
+      config: Debug
+      commandLineArguments:
+        "--injected": true

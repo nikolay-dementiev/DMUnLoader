@@ -15,6 +15,9 @@ struct LaunchOptions: Sendable {
     let integration: Integration
     /// `--custom-manager` replaces `DMLoadingManagerMain` with `StickyLoadingManager`.
     let usesCustomManager: Bool
+    /// `--injected` starts the SwiftUI app without the library's app delegate: the app owns
+    /// its `DMLoadingManagerMain` and gives it to `DMRootLoadingView(manager:content:)`.
+    let injectsManager: Bool
     /// `--auto-hide <seconds>` changes how long a success or a failure stays on screen.
     /// Only the SwiftUI launch with `DMLoadingManagerMain` reads it: the UIKit scene delegate
     /// creates its own manager, and `StickyLoadingManager` has no timer.
@@ -42,6 +45,7 @@ struct LaunchOptions: Sendable {
     init(arguments: [String]) {
         integration = arguments.contains("--uikit") ? .uiKit : .swiftUI
         usesCustomManager = arguments.contains("--custom-manager")
+        injectsManager = arguments.contains("--injected")
         autoHideDelay = Self.seconds(after: "--auto-hide", in: arguments)
         loadingDuration = Self.seconds(after: "--loading-duration", in: arguments) ?? .seconds(3)
         startsWithFailure = arguments.contains("--initial-failure")

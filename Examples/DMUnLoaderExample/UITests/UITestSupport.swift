@@ -6,6 +6,9 @@ import XCTest
 enum Launch {
     /// A host-owned DMLoadingManagerMain whose success and failure outlast the test.
     static let swiftUI = ["--auto-hide", "600"]
+    /// The same, with no app delegate of the library: the app gives its manager to
+    /// `DMRootLoadingView(manager:content:)`.
+    static let injected = ["--injected", "--auto-hide", "600"]
     /// A manager written by the host, without a timer.
     static let customManager = ["--custom-manager"]
     static let uiKitCustomManager = ["--uikit", "--custom-manager"]

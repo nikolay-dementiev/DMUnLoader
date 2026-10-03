@@ -30,10 +30,10 @@ DERIVED="$ROOT/.build/example"
 PACKAGES="$ROOT/.build/example-packages"
 
 # One group per scene-delegate class that a saved session would restore: the SwiftUI path
-# with or without a custom manager (SwiftUI.AppSceneDelegate), --uikit
+# with or without a custom manager, and with --injected (SwiftUI.AppSceneDelegate), --uikit
 # (DMSceneDelegateTypeUIKit) and --uikit --custom-manager (DMSceneDelegateUIKit).
 TEST_GROUPS=(
-    "swiftui|HUDAppearanceUITests HUDControlsUITests HUDTouchRoutingUITests"
+    "swiftui|HUDAppearanceUITests HUDControlsUITests HUDTouchRoutingUITests InjectedManagerUITests"
     "uikit|HUDTouchRoutingUIKitUITests"
     "uikit-custom-manager|HUDControlsUIKitCustomManagerUITests"
 )
