@@ -54,16 +54,28 @@ final class DMHudSceneViewTests: XCTestCase {
 
     func test_noState_drawsNothing() throws {
         let manager = DMLoadingManagerMain(state: .none, settings: Self.settings)
+        let reports = Reports()
 
-        let image = render(DMHudSceneView(loadingManager: manager), until: { _ in false })
+        // The view reports when it has appeared, so an empty rendering is the view's own, not
+        // a view that was never drawn.
+        let image = render(
+            DMHudSceneView(loadingManager: manager) { reports.values.append($0) },
+            for: TestTiming.callbackAllowance,
+            until: { _ in !reports.values.isEmpty }
+        )
 
+        XCTAssertEqual(reports.values, [false], "the view appeared, and reported that no HUD is shown")
         XCTAssertEqual(try RenderedAlphas(of: image).maximum, 0, "without a state the HUD window shows the app through it")
     }
 
     func test_loading_drawsTheHUDOverTheCentre() throws {
         let manager = DMLoadingManagerMain(state: .loading(provider: Self.provider), settings: Self.settings)
 
-        let image = render(DMHudSceneView(loadingManager: manager), until: { (try? RenderedAlphas(of: $0).centre) ?? 0 > 0 })
+        let image = render(
+            DMHudSceneView(loadingManager: manager),
+            for: TestTiming.callbackAllowance,
+            until: { (try? RenderedAlphas(of: $0).centre) ?? 0 > 0 }
+        )
 
         XCTAssertGreaterThan(try RenderedAlphas(of: image).centre, 0, "the loading HUD is drawn over the centre of the screen")
     }
@@ -142,15 +154,16 @@ final class DMHudSceneViewTests: XCTestCase {
     }
 
     /// Renders `view` in a window with a clear background, the way the HUD window shows it,
-    /// once `done` holds for a rendering or after half a second.
-    private func render(_ view: some View, until done: (UIImage) -> Bool) -> UIImage {
+    /// once `done` holds for a rendering or after `seconds`, so a test returns as soon as
+    /// what it waits for has happened.
+    private func render(_ view: some View, for seconds: Double, until done: (UIImage) -> Bool) -> UIImage {
         let controller = UIHostingController(rootView: view)
         controller.view.backgroundColor = .clear
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 200, height: 300))
         window.rootViewController = controller
         window.isHidden = false
         defer { window.isHidden = true }
-        let deadline = Date().addingTimeInterval(0.5)
+        let deadline = Date().addingTimeInterval(seconds)
         var image = UIImage()
         repeat {
             RunLoop.current.run(until: Date().addingTimeInterval(0.05))
