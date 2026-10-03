@@ -13,10 +13,6 @@ import ViewInspector
 @MainActor
 final class DMLoadingViewTests: XCTestCase {
 
-    /// How long a check waits after the auto-hide delay before it reads the state. The
-    /// timer and the check both run on the main thread, and a busy machine delays both.
-    private static let timerMargin: Double = 0.5
-
     override func invokeTest() {
         withSnapshotTesting(diffTool: .ksdiff) {
             super.invokeTest()
@@ -283,31 +279,6 @@ final class DMLoadingViewTests: XCTestCase {
         try checktLoadingView_RespondToTapGestures_ForStates(currentStateConditions)
     }
     
-    // MARK: - Scenario 6: Verify Auto-Hide Behavior
-    
-    func testAutoHideBehavior_For_Success_Failure_None_States() throws {
-        // Given
-        let secondsAutoHideDelay: Double = 0.05
-        let provider = StubDMLoadingViewProvider()
-            .eraseToAnyViewProvider()
-        let statesToCheck: [DMLoadableType] = [
-            .success(
-                "Test Success",
-                provider: provider
-            ),
-            .failure(
-                error: DMUnLoader.DMAppError.custom("Test Error"),
-                provider: provider.eraseToAnyViewProvider(),
-                onRetry: DMButtonAction {}
-            ),
-            .none
-        ]
-        
-        // When & Then
-        try checkAutoHideBehavior_For_States(statesToCheck,
-                                             secondsAutoHideDelay: secondsAutoHideDelay)
-    }
-
     // MARK: - Scenario 6: Verify a Second Appearance
 
     func test_loadingView_appearingASecondTime_staysFadedIn() throws {
@@ -429,45 +400,4 @@ final class DMLoadingViewTests: XCTestCase {
                            line: line)
         }
     }
-    
-    func checkAutoHideBehavior_For_States(_ states: [DMLoadableType],
-                                          secondsAutoHideDelay: Double,
-                                          file: StaticString = #filePath,
-                                          line: UInt = #line) throws {
-        // Given
-        try states.forEach { state in
-            let settings = StubDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
-            let loadingManager = DMLoadingManagerMain(
-                state: state,
-                settings: settings
-            )
-            
-            // When
-            let sut = makeSUT(manager: loadingManager)
-            
-            let inspection = try XCTUnwrap(
-                sut.inspection,
-                "Inspection should be available in debug mode"
-            )
-            
-            // Then
-            let exp = inspection.inspect(after: secondsAutoHideDelay + Self.timerMargin) { view in
-                let actualView = try view.actualView()
-                
-                XCTAssertEqual(actualView
-                    .loadingManager
-                    .loadableState,
-                               .none,
-                               "Loading state should be `.none` after the auto-hide delay for given state: `\(state.rawValue)`",
-                               file: file,
-                               line: line)
-            }
-            
-            ViewHosting.host(view: sut)
-            defer { ViewHosting.expel() }
-            
-            wait(for: [exp], timeout: secondsAutoHideDelay + Self.timerMargin + TestTiming.callbackAllowance)
-        }
-    }
-    
 }

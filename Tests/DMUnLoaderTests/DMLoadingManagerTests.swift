@@ -44,17 +44,42 @@ final class DMLoadingManagerTests: XCTestCase {
             "After calling `showLoading(provider:)`, `loadableState` should be `.loading` with the correct provider"
         )
     }
-    
+
+    /// The public initializer runs the auto-hide on the real run loop. Time is bounded from
+    /// one side only, so a slow machine cannot fail the test.
+    @MainActor
+    func test_publicInit_withASuccessOrAFailure_hidesByItselfOnceTheDelayHasPassed() {
+        let provider = TestDMLoadingViewProvider().eraseToAnyViewProvider()
+        let states: [DMLoadableType] = [
+            .success("done", provider: provider),
+            .failure(error: DMAppError.custom("failed"), provider: provider, onRetry: nil)
+        ]
+
+        for state in states {
+            let sut = makeSUT(state: state, settings: LoadingManagerDefaultSettingsTDD(autoHideDelay: .milliseconds(50)))
+            let hidden = expectation(description: "the initial \(state.rawValue) hides by itself")
+            let subscription = sut.$loadableState.sink { newState in
+                if newState == .none {
+                    hidden.fulfill()
+                }
+            }
+
+            wait(for: [hidden], timeout: 0.05 + TestTiming.callbackAllowance)
+            subscription.cancel()
+        }
+    }
+
     // MARK: Helpers
-    
+
     @MainActor
     private func makeSUT<S>(
+        state: DMLoadableType = .none,
         settings: S,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> DMLoadingManagerMain where S: DMLoadingManagerSettings {
         let loadingManager = DMLoadingManagerMain(
-            state: .none,
+            state: state,
             settings: settings
         )
         
