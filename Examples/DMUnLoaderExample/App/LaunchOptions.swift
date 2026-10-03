@@ -35,6 +35,9 @@ struct LaunchOptions: Sendable {
     let coverAfterHUD: Bool
     /// `--hud-above-normal`, with `--auto-hide`, puts the HUD window at `.normal + 1`.
     let hudAboveNormal: Bool
+    /// `--backdrop dim|dim-clear|material|clear`, with `--auto-hide`, chooses the backdrop of the
+    /// HUD, `dim-clear` being a dim of a clear colour; without it the HUD keeps the variable blur.
+    let backdrop: String?
 
     init(arguments: [String]) {
         integration = arguments.contains("--uikit") ? .uiKit : .swiftUI
@@ -46,6 +49,9 @@ struct LaunchOptions: Sendable {
         failureWithRetryWaits = arguments.contains("--failure-with-retry-waits")
         coverAfterHUD = arguments.contains("--cover-after-hud")
         hudAboveNormal = arguments.contains("--hud-above-normal")
+        backdrop = arguments.firstIndex(of: "--backdrop").flatMap { index in
+            arguments.indices.contains(index + 1) ? arguments[index + 1] : nil
+        }
     }
 
     private static func seconds(after flag: String, in arguments: [String]) -> Duration? {

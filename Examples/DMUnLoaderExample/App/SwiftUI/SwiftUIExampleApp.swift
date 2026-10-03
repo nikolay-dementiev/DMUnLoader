@@ -46,10 +46,21 @@ struct HostOwnedManagerRoot: View {
                     hudDismissal: LaunchOptions.current.failureWithRetryWaits
                         ? DMHUDDismissalRules(failureWithRetry: DMHUDDismissal(autoHide: .never, cardTapHides: false))
                         : DMHUDDismissalRules(),
-                    hudWindowLevel: LaunchOptions.current.hudAboveNormal ? .normal + 1 : .normal
+                    hudWindowLevel: LaunchOptions.current.hudAboveNormal ? .normal + 1 : .normal,
+                    backdrop: Self.backdrop(named: LaunchOptions.current.backdrop)
                 )
             )
         )
+    }
+
+    private static func backdrop(named name: String?) -> DMHUDBackdrop {
+        switch name {
+        case "dim": .dim()
+        case "dim-clear": .dim(.clear)
+        case "material": .material()
+        case "clear": .clear
+        default: .variableBlur
+        }
     }
 
     var body: some View {

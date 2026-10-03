@@ -59,6 +59,18 @@ final class HUDControlsUITests: XCTestCase {
         assertContentCountedNoTouch(in: app)
     }
 
+    func test_loadingHUD_backdropClear_keepsTouchesFromContent() {
+        assertLoadingHUDKeepsTouchesFromContent(launchArguments: Launch.swiftUI + ["--backdrop", "clear"])
+    }
+
+    func test_failureHUD_backdropClear_backdropTap_hidesTheHUDOnly() {
+        assertBackdropTapHidesTheFailureOnly(backdropName: "clear")
+    }
+
+    func test_failureHUD_backdropDimOfClearColour_backdropTap_hidesTheHUDOnly() {
+        assertBackdropTapHidesTheFailureOnly(backdropName: "dim-clear")
+    }
+
     // MARK: - Card
 
     func test_successHUD_swiftUI_cardTap_hidesTheHUDOnly() {
@@ -214,4 +226,28 @@ final class HUDControlsUITests: XCTestCase {
         )
     }
 
+    // MARK: - Helpers
+
+    /// With nothing drawn outside the card, a tap there still hides the failure and reaches
+    /// nothing under the HUD.
+    private func assertBackdropTapHidesTheFailureOnly(
+        backdropName: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let app = launchExample(Launch.swiftUI + ["--backdrop", backdropName])
+        let backdrop = backdropPoint(in: app)
+        app.buttons[DemoIdentifier.showFailure].tap()
+        XCTAssertTrue(app.buttons["Close"].waitForExistence(timeout: 5), "the failure HUD is shown", file: file, line: line)
+
+        backdrop.tap()
+
+        XCTAssertTrue(
+            app.buttons["Close"].waitForNonExistence(timeout: 5),
+            "a tap outside the card hides the HUD with nothing drawn there",
+            file: file,
+            line: line
+        )
+        assertContentCountedNoTouch(in: app, file: file, line: line)
+    }
 }

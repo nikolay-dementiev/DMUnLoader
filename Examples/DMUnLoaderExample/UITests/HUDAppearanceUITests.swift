@@ -11,7 +11,7 @@ final class HUDAppearanceUITests: XCTestCase {
     }
 
     func test_failureHUD_shownOverContent_dimsAndBlursIt() throws {
-        let app = launchExample()
+        let app = launchForPicture()
         let content = app.buttons[DemoIdentifier.content]
         XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown")
         // The status bar shows the time, so only the area of the content is compared.
@@ -24,12 +24,37 @@ final class HUDAppearanceUITests: XCTestCase {
         try ScreenshotReference.assertMatches(picture.image, named: "FailureHUD-\(picture.screen)")
     }
 
+    func test_failureHUD_backdropDim_matchesReference() throws {
+        try assertFailureHUDMatchesReference(named: "FailureHUD-dim", backdrop: "dim")
+    }
+
+    func test_failureHUD_backdropMaterial_matchesReference() throws {
+        try assertFailureHUDMatchesReference(named: "FailureHUD-material", backdrop: "material")
+    }
+
+    func test_failureHUD_backdropClear_matchesReference() throws {
+        try assertFailureHUDMatchesReference(named: "FailureHUD-clear", backdrop: "clear")
+    }
+
     // MARK: - Helpers
+
+    private func assertFailureHUDMatchesReference(named name: String, backdrop: String) throws {
+        let app = launchForPicture(["--backdrop", backdrop])
+        let content = app.buttons[DemoIdentifier.content]
+        XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown")
+        let contentFrame = content.frame
+
+        app.buttons[DemoIdentifier.showFailure].tap()
+        XCTAssertTrue(app.buttons["Retry"].waitForExistence(timeout: 5), "the failure HUD is shown")
+
+        let picture = try settledScreenshot(croppedTo: contentFrame)
+        try ScreenshotReference.assertMatches(picture.image, named: "\(name)-\(picture.screen)")
+    }
 
     /// Launches the example as its references were recorded: light appearance, the default
     /// text size, English, and a failure that outlasts the test, so it cannot hide while the
     /// picture is taken. The appearance of the simulator is restored afterwards.
-    private func launchExample() -> XCUIApplication {
+    private func launchForPicture(_ extraArguments: [String] = []) -> XCUIApplication {
         let device = XCUIDevice.shared
         let appearance = device.appearance
         device.appearance = .light
@@ -42,7 +67,7 @@ final class HUDAppearanceUITests: XCTestCase {
             "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryL",
             "-AppleLanguages", "(en)",
             "-AppleLocale", "en_US"
-        ]
+        ] + extraArguments
         app.launch()
         return app
     }

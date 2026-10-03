@@ -7,4 +7,5 @@ struct ExampleLoadingSettings: DMLoadingManagerSettings {
     let autoHideDelay: Duration
     var hudDismissal = DMHUDDismissalRules()
     var hudWindowLevel: UIWindow.Level = .normal
+    var backdrop: DMHUDBackdrop = .variableBlur
 }
