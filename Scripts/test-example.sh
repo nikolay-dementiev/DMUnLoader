@@ -39,9 +39,17 @@ TEST_GROUPS=(
 )
 
 # A UI test class that no group names would run outside this order, and a grouped class
-# that does not exist would run no test at all.
-DECLARED="$(grep -hoE '^(final )?class [A-Za-z0-9_]+: XCTestCase' "$UI_TESTS"/*.swift \
-    | sed -E 's/.*class ([A-Za-z0-9_]+):.*/\1/' | sort -u)"
+# that does not exist would run no test at all. A declaration may follow an attribute on the
+# same line. A test class with a base class of its own would escape this check, so it is
+# refused.
+CLASSES="$(grep -hoE '(^|[^A-Za-z0-9_])class +[A-Za-z0-9_]+ *: *[A-Za-z0-9_.]+' "$UI_TESTS"/*.swift \
+    | sed -E 's/.*class +([A-Za-z0-9_]+) *: *([A-Za-z0-9_.]+).*/\1 \2/')"
+DERIVED="$(awk '$1 ~ /Tests$/ && $2 != "XCTestCase" { print $1 }' <<< "$CLASSES" | sort -u | tr '\n' ' ')"
+if [ -n "${DERIVED// /}" ]; then
+    echo "test-example: UI test classes that do not derive from XCTestCase directly: ${DERIVED}- the groups cannot see them." >&2
+    exit 2
+fi
+DECLARED="$(awk '$2 == "XCTestCase" { print $1 }' <<< "$CLASSES" | sort -u)"
 GROUPED="$(for group in "${TEST_GROUPS[@]}"; do tr ' ' '\n' <<< "${group#*|}"; done | sort -u)"
 STRAYS="$(comm -23 <(echo "$DECLARED") <(echo "$GROUPED") | tr '\n' ' ')"
 MISSING="$(comm -13 <(echo "$DECLARED") <(echo "$GROUPED") | tr '\n' ' ')"
