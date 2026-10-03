@@ -35,8 +35,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let image = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.imageTag)
-            .image()
+            .find(ViewType.Image.self)
 
         try sutImageNameConfirmToExpectedImage(
             sutImage: image,
@@ -51,8 +50,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.textTag)
-            .text()
+            .find(ViewType.Text.self)
         
         XCTAssertNotNil(text,
                         "The TextView should be rendered")
@@ -80,8 +78,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let image = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.imageTag)
-            .image()
+            .find(ViewType.Image.self)
         
         try sutImageNameConfirmToExpectedImage(
             sutImage: image,
@@ -200,8 +197,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.textTag)
-            .text()
+            .find(ViewType.Text.self)
         
         XCTAssertEqual(
             try text.string(),
@@ -225,8 +221,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.textTag)
-            .text()
+            .find(ViewType.Text.self)
         
         XCTAssertEqual(
             try text.string(),
@@ -242,8 +237,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let image = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.imageTag)
-            .image()
+            .find(ViewType.Image.self)
         
         XCTAssertEqual(
             try image.fixedAlignment(),
@@ -257,8 +251,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.textTag)
-            .text()
+            .find(ViewType.Text.self)
         
         XCTAssertEqual(
             try text.fixedAlignment(),
@@ -273,8 +266,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let imageView = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.imageTag)
-            .image()
+            .find(ViewType.Image.self)
         
         let fixedImageFrame = try? imageView.fixedFrame()
         let successImageProperties = settings.successImageProperties
@@ -299,8 +291,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let containerView = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.containerViewTag)
-            .vStack()
+            .find(ViewType.VStack.self)
         
         XCTAssertEqual(
             try containerView.spacing(),
