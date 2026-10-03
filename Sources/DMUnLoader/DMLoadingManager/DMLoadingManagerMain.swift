@@ -135,12 +135,9 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     // MARK: Timer Management
     
     private func handleInactivityTimer(forState state: DMLoadableType? = nil) {
-        switch state ?? loadableState {
-        case .success,
-                .failure:
+        if AutoHidePolicy.hidesAfterDelay((state ?? loadableState).phase) {
             startInactivityTimer()
-        case .none,
-                .loading:
+        } else {
             stopInactivityTimer()
         }
     }
