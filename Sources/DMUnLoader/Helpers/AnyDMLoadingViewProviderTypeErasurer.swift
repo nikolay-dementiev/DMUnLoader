@@ -25,21 +25,6 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
     public var successViewSettings: DMSuccessViewSettings { _successViewSettings() }
     
     @MainActor
-    init<P>(provider: P)
-    where P: DMLoadingViewProvider,
-    P.LoadingViewType == LoadingViewType,
-    P.ErrorViewType == ErrorViewType,
-    P.SuccessViewType == SuccessViewType {
-        self._getLoadingView = provider.getLoadingView
-        self._getErrorView = provider.getErrorView(error:onRetry:onClose:)
-        self._getSuccessView = provider.getSuccessView(object:)
-        self._loadingManagerSettings = { provider.loadingManagerSettings }
-        self._loadingViewSettings = { provider.loadingViewSettings }
-        self._errorViewSettings = { provider.errorViewSettings }
-        self._successViewSettings = { provider.successViewSettings }
-    }
-    
-    @MainActor
     init(
         getLoadingView: @escaping () -> LoadingViewType,
         getErrorView: @escaping (Error, DMAction?, DMAction) -> ErrorViewType,
