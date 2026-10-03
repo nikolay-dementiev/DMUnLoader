@@ -24,9 +24,28 @@ struct DMHudButtonStyle: ButtonStyle {
                         lineWidth: 2
                     )
             )
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
-            .animation(.easeOut(duration: 0.05), value: configuration.isPressed)
+            .modifier(HUDPressScale(isPressed: configuration.isPressed))
 //            .colorInvert()
+    }
+}
+
+/// Shrinks a pressed HUD button a little, unless Reduce Motion is on.
+///
+/// A modifier, not a property of the style: `AnyButtonStyle` calls the style's `makeBody`
+/// itself, so SwiftUI would set no environment property of the style.
+package struct HUDPressScale: ViewModifier {
+    @Environment(\.hudReducesMotion) private var reducesMotion
+    /// Whether the button is pressed.
+    package let isPressed: Bool
+
+    package init(isPressed: Bool) {
+        self.isPressed = isPressed
+    }
+
+    package func body(content: Content) -> some View {
+        content
+            .scaleEffect(isPressed && !reducesMotion ? 0.98 : 1)
+            .animation(.easeOut(duration: 0.05), value: isPressed)
     }
 }
 

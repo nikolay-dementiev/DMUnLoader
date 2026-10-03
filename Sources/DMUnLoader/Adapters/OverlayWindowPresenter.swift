@@ -43,6 +43,7 @@ final class OverlayWindowPresenter: HUDOverlayPresenting {
                 window?.interceptsTouches = phase.showsHUD
                 accessibility?.phaseDidChange(to: phase)
             }
+            .modifier(SystemAccessibilitySettings())
         )
         if let hudController {
             hudController.rootView = rootView

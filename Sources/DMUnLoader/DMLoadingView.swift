@@ -12,6 +12,8 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
     @ObservedObject private(set) var loadingManager: LLM
     private let viewModel: any HUDViewModel
     @State private var animateTheAppearance = false
+    @Environment(\.hudReducesMotion) private var reducesMotion
+    @Environment(\.hudReducesTransparency) private var reducesTransparency
 
     /// - Parameter viewModel: Decides what the view shows of the state of `loadingManager`
     ///   and what a tap and Close do. The view observes `loadingManager` to draw its changes.
@@ -39,13 +41,15 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
         }
     }
     
-    /// The dim of the backdrop, faded in with the card.
+    /// The dim of the backdrop, faded in with the card. Under Reduce Transparency a material
+    /// gives way to the dim of the default backdrop.
     @ViewBuilder
     private var dim: some View {
         switch loadingManager.settings.backdrop.kind {
         case .variableBlur:
-            Color.black.opacity(animateTheAppearance ? 0.2 : 0)
-                .ignoresSafeArea()
+            defaultDim
+        case .material where reducesTransparency:
+            defaultDim
         case let .dim(color):
             color
                 .ignoresSafeArea()
@@ -54,7 +58,13 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
             EmptyView()
         }
     }
-    
+
+    /// The black dim of the default backdrop.
+    private var defaultDim: some View {
+        Color.black.opacity(animateTheAppearance ? 0.2 : 0)
+            .ignoresSafeArea()
+    }
+
     var body: some View {
         ZStack {
             if !viewModel.showsHUD {
@@ -75,7 +85,8 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
                         .onTapGesture {
                             viewModel.cardTapped()
                         }
-                        .scaleEffect(animateTheAppearance ? 1 : 0.9)
+                        // Under Reduce Motion the card only fades in.
+                        .scaleEffect(animateTheAppearance || reducesMotion ? 1 : 0.9)
                         .padding(15)
                 }
                 .transition(.opacity)
@@ -116,6 +127,11 @@ private func loadingViewPreview(_ state: (AnyDMLoadingViewProvider) -> DMLoadabl
 
 #Preview("Loading") {
     loadingViewPreview { .loading(provider: $0) }
+}
+
+#Preview("Loading under Reduce Motion") {
+    loadingViewPreview { .loading(provider: $0) }
+        .environment(\.hudReducesMotion, true)
 }
 
 #Preview("Success") {

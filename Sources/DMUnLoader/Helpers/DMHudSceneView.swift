@@ -81,6 +81,29 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
         state: .none,
         settings: DMLoadingManagerDefaultSettings()
     )
-    
+
     DMHudSceneView(loadingManager: loadingManager)
+}
+
+#Preview("Loading under Reduce Transparency") {
+    reduceTransparencyPreview(backdrop: .variableBlur)
+}
+
+#Preview("Material under Reduce Transparency") {
+    reduceTransparencyPreview(backdrop: .material())
+}
+
+/// A loading HUD over text, so the missing blur or material shows.
+@MainActor
+private func reduceTransparencyPreview(backdrop: DMHUDBackdrop) -> some View {
+    let loadingManager = DMLoadingManagerMain(
+        state: .loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
+        settings: DMLoadingManagerDefaultSettings(backdrop: backdrop)
+    )
+    return ZStack {
+        Text(String(repeating: "The app under the HUD. ", count: 60))
+        DMHudSceneView(loadingManager: loadingManager)
+            .environment(\.hudReducesTransparency, true)
+    }
+    .ignoresSafeArea()
 }

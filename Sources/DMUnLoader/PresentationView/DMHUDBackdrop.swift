@@ -12,6 +12,10 @@ import SwiftUI
 /// touch while a HUD is shown, so the app under it receives none, and a tap outside the card
 /// does what it does with the default backdrop.
 ///
+/// Under the system's Reduce Transparency the HUD draws no blur and no material: ``variableBlur``
+/// keeps its dim, and ``material(_:)`` gives way to that dim. ``dim(_:)`` and ``clear`` stay
+/// as they are.
+///
 /// A backdrop other than ``variableBlur`` stops DMUnLoader from creating the variable blur while
 /// the app runs. It does not remove DMVariableBlurView, and the private API that it uses, from
 /// the app: see the README.
