@@ -51,9 +51,6 @@ final class DMSuccessViewTests: XCTestCase {
         let text = try sut
             .inspect()
             .find(ViewType.Text.self)
-        
-        XCTAssertNotNil(text,
-                        "The TextView should be rendered")
 
         let textFormSUT = try? text.string()
         XCTAssertEqual(textFormSUT,

@@ -57,6 +57,7 @@ final class DMLoadingManagerTests: XCTestCase {
 
         for state in states {
             let sut = makeSUT(state: state, settings: LoadingManagerDefaultSettingsTDD(autoHideDelay: .milliseconds(50)))
+            XCTAssertEqual(sut.loadableState, state, "the initial \(state.rawValue) shows until the delay has passed")
             let hidden = expectation(description: "the initial \(state.rawValue) hides by itself")
             let subscription = sut.$loadableState.sink { newState in
                 if newState == .none {

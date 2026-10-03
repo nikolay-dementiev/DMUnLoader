@@ -49,11 +49,10 @@ final class DMProgressViewTests: XCTestCase {
         let settings = DMProgressViewDefaultSettings()
         let sut = makeSUT(settings: settings)
         
-        let progressView = try sut
-            .inspect()
-            .find(ViewType.ProgressView.self)
-        XCTAssertNotNil(progressView,
-                        "The ProgressView should be rendered")
+        XCTAssertNoThrow(
+            try sut.inspect().find(ViewType.ProgressView.self),
+            "The ProgressView should be rendered"
+        )
     }
     
     // MARK: Scenario 2: Verify Progress Indicator Behavior
