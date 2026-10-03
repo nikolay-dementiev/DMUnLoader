@@ -234,10 +234,8 @@ final class DMLoadingViewTests: XCTestCase {
     
     func test_tapOnTheView_isReportedToItsViewModel() throws {
         let viewModel = HUDViewModelSpy(showsHUD: true)
-        let sut = DMLoadingView(
-            loadingManager: StubDMLoadingManager(loadableState: .success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())),
-            viewModel: viewModel
-        )
+        let success = DMLoadableType.success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
+        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: success), viewModel: viewModel)
         
         try sut.inspect().zStack().callOnTapGesture()
         
