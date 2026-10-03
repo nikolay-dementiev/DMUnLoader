@@ -5,6 +5,9 @@
 
 import PackageDescription
 
+// Every target compiles with these. Scripts/check-api.sh repeats them in SWIFT_FLAGS.
+let swiftSettings: [SwiftSetting] = [.enableUpcomingFeature("ExistentialAny")]
+
 let package = Package(
     name: "DMUnLoader",
     platforms: [
@@ -38,7 +41,8 @@ let package = Package(
                 "DMVariableBlurView"
             ],
             path: "Sources",
-            sources: ["DMUnLoader"]
+            sources: ["DMUnLoader"],
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "DMUnLoaderTests",
@@ -49,7 +53,9 @@ let package = Package(
                 "DMVariableBlurView",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
-            path: "Tests"
+            path: "Tests",
+            swiftSettings: swiftSettings
         ),
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )

@@ -14,14 +14,14 @@ public protocol DMLoadingViewProvider: ObservableObject, Hashable {
     @MainActor
     func getLoadingView() -> LoadingViewType
     @MainActor
-    func getErrorView(error: Error, onRetry: DMAction?, onClose: DMAction) -> ErrorViewType
+    func getErrorView(error: any Error, onRetry: (any DMAction)?, onClose: any DMAction) -> ErrorViewType
     @MainActor
-    func getSuccessView(object: DMLoadableTypeSuccess) -> SuccessViewType
+    func getSuccessView(object: any DMLoadableTypeSuccess) -> SuccessViewType
 
-    var loadingManagerSettings: DMLoadingManagerSettings { get }
-    var loadingViewSettings: DMProgressViewSettings { get }
-    var errorViewSettings: DMErrorViewSettings { get }
-    var successViewSettings: DMSuccessViewSettings { get }
+    var loadingManagerSettings: any DMLoadingManagerSettings { get }
+    var loadingViewSettings: any DMProgressViewSettings { get }
+    var errorViewSettings: any DMErrorViewSettings { get }
+    var successViewSettings: any DMSuccessViewSettings { get }
 }
 
 extension DMLoadingViewProvider {
@@ -46,9 +46,9 @@ public extension DMLoadingViewProvider {
     }
     
     @MainActor
-    func getErrorView(error: Error,
-                      onRetry: DMAction?,
-                      onClose: DMAction) -> some View {
+    func getErrorView(error: any Error,
+                      onRetry: (any DMAction)?,
+                      onClose: any DMAction) -> some View {
         DMErrorView(settings: errorViewSettings,
                     error: error,
                     onRetry: onRetry,
@@ -56,41 +56,41 @@ public extension DMLoadingViewProvider {
     }
     
     @MainActor
-    func getSuccessView(object: DMLoadableTypeSuccess) -> some View {
+    func getSuccessView(object: any DMLoadableTypeSuccess) -> some View {
         DMSuccessView(settings: successViewSettings,
                       assosiatedObject: object)
     }
     
     // MARK: - Default Settings
     
-    var loadingManagerSettings: DMLoadingManagerSettings {
+    var loadingManagerSettings: any DMLoadingManagerSettings {
         DMLoadingManagerDefaultSettings()
     }
     
-    var loadingViewSettings: DMProgressViewSettings {
+    var loadingViewSettings: any DMProgressViewSettings {
         DMProgressViewDefaultSettings()
     }
     
-    var errorViewSettings: DMErrorViewSettings {
+    var errorViewSettings: any DMErrorViewSettings {
         DMErrorDefaultViewSettings()
     }
     
-    var successViewSettings: DMSuccessViewSettings {
+    var successViewSettings: any DMSuccessViewSettings {
         DMSuccessDefaultViewSettings()
     }
 }
 
 public class DefaultDMLoadingViewProvider: @MainActor DMLoadingViewProvider {
-    public let loadingManagerSettings: DMLoadingManagerSettings
-    public let loadingViewSettings: DMProgressViewSettings
-    public let errorViewSettings: DMErrorViewSettings
-    public let successViewSettings: DMSuccessViewSettings
+    public let loadingManagerSettings: any DMLoadingManagerSettings
+    public let loadingViewSettings: any DMProgressViewSettings
+    public let errorViewSettings: any DMErrorViewSettings
+    public let successViewSettings: any DMSuccessViewSettings
     
     public init(
-        loadingManagerSettings: DMLoadingManagerSettings? = nil,
-        loadingViewSettings: DMProgressViewSettings? = nil,
-        errorViewSettings: DMErrorViewSettings? = nil,
-        successViewSettings: DMSuccessViewSettings? = nil
+        loadingManagerSettings: (any DMLoadingManagerSettings)? = nil,
+        loadingViewSettings: (any DMProgressViewSettings)? = nil,
+        errorViewSettings: (any DMErrorViewSettings)? = nil,
+        successViewSettings: (any DMSuccessViewSettings)? = nil
     ) {
         self.loadingManagerSettings = loadingManagerSettings ?? DMLoadingManagerDefaultSettings()
         self.loadingViewSettings = loadingViewSettings ?? DMProgressViewDefaultSettings()

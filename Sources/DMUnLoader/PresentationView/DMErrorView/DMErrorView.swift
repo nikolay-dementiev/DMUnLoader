@@ -9,15 +9,15 @@ import SwiftUI
 /// A custom SwiftUI view that displays an error state with an image, error text, and optional action buttons.
 /// This view uses a settings provider to configure the appearance of the error view.
 struct DMErrorView: View {
-    let settingsProvider: DMErrorViewSettings
-    let error: Error
-    let onRetry: DMAction?
-    let onClose: DMAction
+    let settingsProvider: any DMErrorViewSettings
+    let error: any Error
+    let onRetry: (any DMAction)?
+    let onClose: any DMAction
 
-    init(settings settingsProvider: DMErrorViewSettings,
-         error: Error,
-         onRetry: DMAction? = nil,
-         onClose: DMAction) {
+    init(settings settingsProvider: any DMErrorViewSettings,
+         error: any Error,
+         onRetry: (any DMAction)? = nil,
+         onClose: any DMAction) {
         
         self.settingsProvider = settingsProvider
         self.error = error
@@ -65,11 +65,11 @@ struct DMErrorView: View {
 extension DMErrorView {
     
     struct ActionButton: View {
-        let action: DMAction
+        let action: any DMAction
         let settings: ActionButtonSettings
         
         init(settings: ActionButtonSettings,
-             action: DMAction) {
+             action: any DMAction) {
             self.action = action
             self.settings = settings
         }

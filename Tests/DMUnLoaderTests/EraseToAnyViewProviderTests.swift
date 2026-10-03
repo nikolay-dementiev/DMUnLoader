@@ -89,10 +89,10 @@ final class EraseToAnyViewProviderTests: XCTestCase {
 /// is asked for.
 @MainActor
 private final class MutableProvider: @MainActor DMLoadingViewProvider {
-    var loadingManagerSettings: DMLoadingManagerSettings = StubDMLoadingManagerSettings(autoHideDelay: .seconds(1))
-    var loadingViewSettings: DMProgressViewSettings = DMProgressViewDefaultSettings()
-    var errorViewSettings: DMErrorViewSettings = DMErrorDefaultViewSettings()
-    var successViewSettings: DMSuccessViewSettings = DMSuccessDefaultViewSettings()
+    var loadingManagerSettings: any DMLoadingManagerSettings = StubDMLoadingManagerSettings(autoHideDelay: .seconds(1))
+    var loadingViewSettings: any DMProgressViewSettings = DMProgressViewDefaultSettings()
+    var errorViewSettings: any DMErrorViewSettings = DMErrorDefaultViewSettings()
+    var successViewSettings: any DMSuccessViewSettings = DMSuccessDefaultViewSettings()
     private(set) var viewRequests: [String] = []
 
     func getLoadingView() -> some View {
@@ -100,12 +100,12 @@ private final class MutableProvider: @MainActor DMLoadingViewProvider {
         return EmptyView()
     }
 
-    func getErrorView(error: Error, onRetry: DMAction?, onClose: DMAction) -> some View {
+    func getErrorView(error: any Error, onRetry: (any DMAction)?, onClose: any DMAction) -> some View {
         viewRequests.append("error")
         return EmptyView()
     }
 
-    func getSuccessView(object: DMLoadableTypeSuccess) -> some View {
+    func getSuccessView(object: any DMLoadableTypeSuccess) -> some View {
         viewRequests.append("success")
         return EmptyView()
     }

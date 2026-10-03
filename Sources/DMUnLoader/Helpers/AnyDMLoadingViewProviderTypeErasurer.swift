@@ -12,27 +12,27 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
     SuccessViewType: View
 >: DMLoadingViewProvider {
     private let _getLoadingView: () -> LoadingViewType
-    private let _getErrorView: (Error, DMAction?, DMAction) -> ErrorViewType
-    private let _getSuccessView: (DMLoadableTypeSuccess) -> SuccessViewType
-    private let _loadingManagerSettings: () -> DMLoadingManagerSettings
-    private let _loadingViewSettings: () -> DMProgressViewSettings
-    private let _errorViewSettings: () -> DMErrorViewSettings
-    private let _successViewSettings: () -> DMSuccessViewSettings
+    private let _getErrorView: (any Error, (any DMAction)?, any DMAction) -> ErrorViewType
+    private let _getSuccessView: (any DMLoadableTypeSuccess) -> SuccessViewType
+    private let _loadingManagerSettings: () -> any DMLoadingManagerSettings
+    private let _loadingViewSettings: () -> any DMProgressViewSettings
+    private let _errorViewSettings: () -> any DMErrorViewSettings
+    private let _successViewSettings: () -> any DMSuccessViewSettings
     
-    public var loadingManagerSettings: DMLoadingManagerSettings { _loadingManagerSettings() }
-    public var loadingViewSettings: DMProgressViewSettings { _loadingViewSettings() }
-    public var errorViewSettings: DMErrorViewSettings { _errorViewSettings() }
-    public var successViewSettings: DMSuccessViewSettings { _successViewSettings() }
+    public var loadingManagerSettings: any DMLoadingManagerSettings { _loadingManagerSettings() }
+    public var loadingViewSettings: any DMProgressViewSettings { _loadingViewSettings() }
+    public var errorViewSettings: any DMErrorViewSettings { _errorViewSettings() }
+    public var successViewSettings: any DMSuccessViewSettings { _successViewSettings() }
     
     @MainActor
     init(
         getLoadingView: @escaping () -> LoadingViewType,
-        getErrorView: @escaping (Error, DMAction?, DMAction) -> ErrorViewType,
-        getSuccessView: @escaping (DMLoadableTypeSuccess) -> SuccessViewType,
-        loadingManagerSettings: DMLoadingManagerSettings,
-        loadingViewSettings: DMProgressViewSettings,
-        errorViewSettings: DMErrorViewSettings,
-        successViewSettings: DMSuccessViewSettings
+        getErrorView: @escaping (any Error, (any DMAction)?, any DMAction) -> ErrorViewType,
+        getSuccessView: @escaping (any DMLoadableTypeSuccess) -> SuccessViewType,
+        loadingManagerSettings: any DMLoadingManagerSettings,
+        loadingViewSettings: any DMProgressViewSettings,
+        errorViewSettings: any DMErrorViewSettings,
+        successViewSettings: any DMSuccessViewSettings
     ) {
         self._getLoadingView = getLoadingView
         self._getErrorView = getErrorView
@@ -49,9 +49,9 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
     }
     
     @MainActor
-    public func getErrorView(error: Error,
-                             onRetry: DMAction?,
-                             onClose: DMAction) -> ErrorViewType {
+    public func getErrorView(error: any Error,
+                             onRetry: (any DMAction)?,
+                             onClose: any DMAction) -> ErrorViewType {
         _getErrorView(
             error,
             onRetry,
@@ -60,7 +60,7 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
     }
     
     @MainActor
-    public func getSuccessView(object: DMLoadableTypeSuccess) -> SuccessViewType {
+    public func getSuccessView(object: any DMLoadableTypeSuccess) -> SuccessViewType {
         _getSuccessView(object)
     }
 }

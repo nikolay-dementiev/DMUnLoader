@@ -249,14 +249,14 @@ final class DMProgressViewTests: XCTestCase {
     
     @MainActor
     private func makeSUT(
-        settings: DMProgressViewSettings = StubDMProgressViewSettings()
+        settings: any DMProgressViewSettings = StubDMProgressViewSettings()
     ) -> DMProgressView {
         DMProgressView(settings: settings)
     }
     
     @MainActor
     private func makeSUTWithContainer(
-        settings: DMProgressViewSettings = StubDMProgressViewSettings()
+        settings: any DMProgressViewSettings = StubDMProgressViewSettings()
     ) -> LoadingViewContainer<DMProgressView> {
         LoadingViewContainer {
             DMProgressView(settings: settings)

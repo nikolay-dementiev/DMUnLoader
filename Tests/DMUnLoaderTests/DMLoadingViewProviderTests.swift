@@ -174,14 +174,14 @@ final class DMLoadingViewProviderTests: XCTestCase {
             }
             
             @MainActor
-            func getErrorView(error: Error,
-                              onRetry: DMAction?,
-                              onClose: DMAction) -> some View {
+            func getErrorView(error: any Error,
+                              onRetry: (any DMAction)?,
+                              onClose: any DMAction) -> some View {
                 MockDMErrorViewTest()
             }
             
             @MainActor
-            func getSuccessView(object: DMLoadableTypeSuccess) -> some View {
+            func getSuccessView(object: any DMLoadableTypeSuccess) -> some View {
                 MockDMSuccessViewTest()
             }
         }

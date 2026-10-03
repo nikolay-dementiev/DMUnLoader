@@ -11,8 +11,8 @@ public enum DMLoadableType: Hashable, RawRepresentable {
     public typealias RawValue = String
     
     case loading(provider: AnyDMLoadingViewProvider)
-    case failure(error: Error, provider: AnyDMLoadingViewProvider, onRetry: DMAction? = nil)
-    case success(DMLoadableTypeSuccess, provider: AnyDMLoadingViewProvider)
+    case failure(error: any Error, provider: AnyDMLoadingViewProvider, onRetry: (any DMAction)? = nil)
+    case success(any DMLoadableTypeSuccess, provider: AnyDMLoadingViewProvider)
     case none
     
     public var rawValue: RawValue {

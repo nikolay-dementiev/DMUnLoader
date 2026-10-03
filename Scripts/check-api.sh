@@ -28,7 +28,7 @@ MODULE="DMUnLoader"
 # The directory the manifest compiles for that module, relative to the repository root.
 SOURCE_DIR="Sources/DMUnLoader"
 # The language mode and the upcoming features the manifest sets for the module.
-SWIFT_FLAGS=(-swift-version 6 -parse-as-library)
+SWIFT_FLAGS=(-swift-version 6 -parse-as-library -enable-upcoming-feature ExistentialAny)
 # "yes" to emit the interface with library evolution, "no" without it. The package is not
 # built for library evolution, and with it the compiler rejects the sources: "'Observable
 # Object' aliases 'Combine.ObservableObject' and cannot be used in a public conformance

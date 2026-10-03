@@ -10,9 +10,9 @@ import SwiftUI
 /// A custom SwiftUI view that displays a progress indicator with optional text.
 /// This view uses a settings provider to configure the appearance of the progress view.
 struct DMProgressView: View {
-    let settingsProvider: DMProgressViewSettings
+    let settingsProvider: any DMProgressViewSettings
     
-    init(settings settingsProvider: DMProgressViewSettings) {
+    init(settings settingsProvider: any DMProgressViewSettings) {
         self.settingsProvider = settingsProvider
     }
     

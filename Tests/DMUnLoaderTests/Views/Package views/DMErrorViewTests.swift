@@ -714,10 +714,10 @@ final class DMErrorViewTests: XCTestCase {
     }
 
     private func makeSUT(
-        settings: DMErrorViewSettings,
-        error: Error = NSError(domain: "TestErrorDomain", code: 1, userInfo: nil),
-        onRetry: DMAction? = nil,
-        onClose: DMAction = DMButtonAction { }
+        settings: any DMErrorViewSettings,
+        error: any Error = NSError(domain: "TestErrorDomain", code: 1, userInfo: nil),
+        onRetry: (any DMAction)? = nil,
+        onClose: any DMAction = DMButtonAction { }
     ) -> DMErrorView {
         let sut = DMErrorView(
             settings: settings,

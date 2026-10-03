@@ -10,11 +10,11 @@ import SwiftUI
 /// This view uses a settings provider to configure the appearance of the success view.
 struct DMSuccessView: View {
     
-    let settingsProvider: DMSuccessViewSettings
-    let assosiatedObject: DMLoadableTypeSuccess?
+    let settingsProvider: any DMSuccessViewSettings
+    let assosiatedObject: (any DMLoadableTypeSuccess)?
     
-    init(settings settingsProvider: DMSuccessViewSettings,
-         assosiatedObject: DMLoadableTypeSuccess? = nil) {
+    init(settings settingsProvider: any DMSuccessViewSettings,
+         assosiatedObject: (any DMLoadableTypeSuccess)? = nil) {
         self.settingsProvider = settingsProvider
         self.assosiatedObject = assosiatedObject
     }

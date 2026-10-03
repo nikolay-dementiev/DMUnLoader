@@ -24,7 +24,7 @@ public protocol DMLoadingManager: ObservableObject {
     ///   ```swift
     ///   let settings = DMLoadingManagerSettings(autoHideDelay: 10)
     ///   ```
-    var settings: DMLoadingManagerSettings { get }
+    var settings: any DMLoadingManagerSettings { get }
     
     /// Shows the loading state, typically indicating that an operation is in progress.
     /// - Example:
@@ -39,7 +39,7 @@ public protocol DMLoadingManager: ObservableObject {
     ///   ```swift
     ///   loadingManager.showSuccess("Data loaded successfully")
     ///   ```
-    func showSuccess<PR: DMLoadingViewProvider>(_ message: DMLoadableTypeSuccess, provider: PR)
+    func showSuccess<PR: DMLoadingViewProvider>(_ message: any DMLoadableTypeSuccess, provider: PR)
     
     /// Shows the failure state with an error and an optional retry action.
     /// - Parameters:
@@ -52,7 +52,7 @@ public protocol DMLoadingManager: ObservableObject {
     ///   }
     ///   loadingManager.showFailure(NSError(domain: "Example", code: 404), onRetry: retryAction)
     ///   ```
-    func showFailure<PR: DMLoadingViewProvider>(_ error: Error, provider: PR, onRetry: DMAction?)
+    func showFailure<PR: DMLoadingViewProvider>(_ error: any Error, provider: PR, onRetry: (any DMAction)?)
     
     /// Hides the loading state, resetting it to `.none`.
     /// - Example:

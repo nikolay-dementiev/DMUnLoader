@@ -14,7 +14,7 @@ import Combine
 public final class DMLoadingManagerMain: DMLoadingManager {
     
     /// The settings used by the loading manager to configure its behavior, such as auto-hide delay.
-    public let settings: DMLoadingManagerSettings
+    public let settings: any DMLoadingManagerSettings
     
     /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
     /// - Note: This property is thread-safe and emits changes via `loadableStateSubject`.
@@ -45,7 +45,7 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     ///   let loadingManager = DMLoadingManager(state: .none, settings: settings)
     ///   ```
     public init(state loadableState: DMLoadableType,
-                settings: DMLoadingManagerSettings) {
+                settings: any DMLoadingManagerSettings) {
         self.loadableState = loadableState
         self.settings = settings
         self.autoHideScheduler = RunLoopAutoHideScheduler()
@@ -90,7 +90,7 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     ///   loadingManager.showSuccess("Data loaded successfully")
     ///   ```
     public func showSuccess<PR: DMLoadingViewProvider>(
-        _ message: DMLoadableTypeSuccess,
+        _ message: any DMLoadableTypeSuccess,
         provider: PR
     ) {
         loadableState = .success(
@@ -111,9 +111,9 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     ///   loadingManager.showFailure(NSError(domain: "Example", code: 404), onRetry: retryAction)
     ///   ```
     public func showFailure<PR: DMLoadingViewProvider>(
-        _ error: Error,
+        _ error: any Error,
         provider: PR,
-        onRetry: DMAction? = nil
+        onRetry: (any DMAction)? = nil
     ) {
         loadableState = .failure(
             error: error,

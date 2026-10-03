@@ -354,8 +354,8 @@ final class DMSuccessViewTests: XCTestCase {
     // MARK: - Helpers
     
     private func makeSUT(
-        settings: DMSuccessViewSettings,
-        assosiatedObject: DMLoadableTypeSuccess? = nil
+        settings: any DMSuccessViewSettings,
+        assosiatedObject: (any DMLoadableTypeSuccess)? = nil
     ) -> DMSuccessView {
         let sut = DMSuccessView(
             settings: settings,
@@ -366,8 +366,8 @@ final class DMSuccessViewTests: XCTestCase {
     }
     
     private func makeSUTWithContainer(
-        settings: DMSuccessViewSettings,
-        assosiatedObject: DMLoadableTypeSuccess? = nil
+        settings: any DMSuccessViewSettings,
+        assosiatedObject: (any DMLoadableTypeSuccess)? = nil
     ) -> LoadingViewContainer<DMSuccessView> {
         LoadingViewContainer {
             DMSuccessView(

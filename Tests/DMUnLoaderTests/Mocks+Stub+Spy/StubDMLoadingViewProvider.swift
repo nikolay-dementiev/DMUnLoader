@@ -22,32 +22,32 @@ final class StubDMLoadingViewProvider: @MainActor DMLoadingViewProvider {
     }
     
     @MainActor
-    func getErrorView(error: Error, onRetry: DMAction?, onClose: DMAction) -> ErrorViewType {
+    func getErrorView(error: any Error, onRetry: (any DMAction)?, onClose: any DMAction) -> ErrorViewType {
         StubDMLoadingViewResult {
             Text("Stub Error View")
         }
     }
     
     @MainActor
-    func getSuccessView(object: DMLoadableTypeSuccess) -> SuccessViewType {
+    func getSuccessView(object: any DMLoadableTypeSuccess) -> SuccessViewType {
         StubDMLoadingViewResult {
             Text("Stub Success View")
         }
     }
     
-    var loadingManagerSettings: DMLoadingManagerSettings {
+    var loadingManagerSettings: any DMLoadingManagerSettings {
         StubDMLoadingManagerSettings(autoHideDelay: .seconds(2))
     }
     
-    var loadingViewSettings: DMProgressViewSettings {
+    var loadingViewSettings: any DMProgressViewSettings {
         StubDMProgressViewSettings()
     }
     
-    var errorViewSettings: DMErrorViewSettings {
+    var errorViewSettings: any DMErrorViewSettings {
         StubDMErrorViewSettings()
     }
     
-    var successViewSettings: DMSuccessViewSettings {
+    var successViewSettings: any DMSuccessViewSettings {
         StubDMSuccessViewSettings()
     }
     
