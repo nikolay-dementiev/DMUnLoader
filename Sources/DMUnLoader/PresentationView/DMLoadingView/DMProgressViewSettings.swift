@@ -96,7 +96,9 @@ public struct ProgressTextProperties {
     /// The text to display in the loading view.
     public var text: String
     
-    /// The alignment of the text within the loading view.
+    /// How the lines of the text line up when it takes more than one line: `.leading`,
+    /// `.center` or `.trailing`. A single line is centered in the loading view whatever this
+    /// value is.
     public var alignment: TextAlignment
     
     /// The foreground color of the text.
@@ -114,7 +116,7 @@ public struct ProgressTextProperties {
     /// Initializes a new instance of `LoadingTextProperties` with optional customizations.
     /// - Parameters:
     ///   - text: The text to display. Defaults to `"Loading..."`.
-    ///   - alignment: The alignment of the text. Defaults to `.center`.
+    ///   - alignment: How the lines of a text of more than one line line up. Defaults to `.center`.
     ///   - foregroundColor: The foreground color of the text. Defaults to `.white`.
     ///   - font: The font used for the text. Defaults to `.body`.
     ///   - lineLimit: The maximum number of lines the text can occupy. Defaults to `3`.
@@ -170,7 +172,10 @@ public struct ProgressIndicatorProperties {
     
     /// The tint color of the progress indicator.
     public let tintColor: Color?
-    
+
+    /// The style of the progress indicator. It is always `CircularProgressViewStyle()` and
+    /// cannot be changed; for another indicator, return your own view from
+    /// `DMLoadingViewProvider.getLoadingView()`.
     public let style = CircularProgressViewStyle()
     
     /// Initializes a new instance of `ProgressIndicatorProperties` with optional customizations.

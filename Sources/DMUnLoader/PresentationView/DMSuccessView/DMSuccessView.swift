@@ -33,6 +33,7 @@ struct DMSuccessView: View {
             let successTextProperties = settingsProvider.successTextProperties
             if let successText = assosiatedObject?.description ?? successTextProperties.text {
                 Text(successText)
+                    .multilineTextAlignment(successTextProperties.lineAlignment)
                     .foregroundColor(successTextProperties.foregroundColor)
                     .frame(alignment: successTextProperties.alignment)
             }

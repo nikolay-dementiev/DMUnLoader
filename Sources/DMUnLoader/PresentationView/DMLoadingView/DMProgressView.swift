@@ -26,6 +26,7 @@ struct DMProgressView: View {
             Color(settingsProvider.loadingContainerBackgroundColor)
             VStack {
                 Text(loadingTextProperties.text)
+                    .multilineTextAlignment(loadingTextProperties.alignment)
                     .foregroundColor(loadingTextProperties.foregroundColor)
                     .font(loadingTextProperties.font)
                     .lineLimit(loadingTextProperties.lineLimit)

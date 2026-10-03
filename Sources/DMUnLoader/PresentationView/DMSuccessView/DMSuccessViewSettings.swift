@@ -128,24 +128,29 @@ extension SuccessImageProperties: Hashable {
 /// A struct defining properties for the success text displayed in a success view.
 public struct SuccessTextProperties {
     
-    /// The text to display as the success message.
+    /// The text of a success view that has no message. A success shown through a loading
+    /// manager always has one, the message passed to `showSuccess(_:provider:)`, and the
+    /// success view shows its `description` instead. A custom success view may read this text.
     public let text: String?
-    
+
     /// The foreground color of the text.
     public let foregroundColor: Color?
-    
+
+    /// How the lines of the text line up when it takes more than one line. The horizontal
+    /// part decides: `.leading` and `.trailing` line them up at that edge, any other
+    /// horizontal alignment centers them. The vertical part has no effect. A single line is
+    /// centered in the success view whatever this value is.
     public let alignment: Alignment
-    
-    /// Initializes a new instance of `SuccessTextProperties` with optional customizations.
+
+    /// Creates the properties of the success text.
     /// - Parameters:
-    ///   - text: The text to display. Defaults to `"Success!"`.
-    ///   - foregroundColor: The foreground color of the text. Defaults to `.white`.
+    ///   - text: The text shown when the success has no message. Defaults to `"Success!"`.
+    ///   - foregroundColor: The color of the text. Defaults to `.white`.
+    ///   - alignment: How the lines of a text of more than one line line up; see `alignment`.
+    ///     Defaults to `.center`.
     /// - Example:
     ///   ```swift
-    ///   let customTextProperties = SuccessTextProperties(
-    ///       text: "Operation Completed!",
-    ///       foregroundColor: .black
-    ///   )
+    ///   let success = SuccessTextProperties(text: "Saved", alignment: .leading)
     ///   ```
     public init(
         text: String? = "Success!",
@@ -170,5 +175,19 @@ extension SuccessTextProperties: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(text)
         hasher.combine(foregroundColor)
+    }
+}
+
+extension SuccessTextProperties {
+    /// How the lines of the text line up: the horizontal part of `alignment`.
+    var lineAlignment: TextAlignment {
+        switch alignment.horizontal {
+        case .leading:
+            .leading
+        case .trailing:
+            .trailing
+        default:
+            .center
+        }
     }
 }
