@@ -5,6 +5,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # The release workflow runs this workflow on a version tag.
+  workflow_call:
   schedule:
     # Mondays, 05:17 UTC. An early warning when a new runner image or OS breaks the package.
     - cron: "17 5 * * 1"
