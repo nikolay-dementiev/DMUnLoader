@@ -25,6 +25,10 @@ final class HUDTouchRoutingUIKitUITests: XCTestCase {
             "the demo screen is shown"
         )
         app.buttons[DemoIdentifier.showLoading].tap()
+        XCTAssertTrue(
+            app.staticTexts["Loading..."].waitForExistence(timeout: Wait.screenChange),
+            "the loading HUD shows its text before the HUD windows are counted"
+        )
 
         let windowCount = app.staticTexts[DemoIdentifier.hudWindowCount]
         XCTAssertTrue(

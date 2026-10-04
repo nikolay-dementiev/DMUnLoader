@@ -7,15 +7,11 @@ import UIKit
 enum CoverWindow {
     private static var window: UIWindow?
 
-    /// Shows the cover once `delay` has passed, made key and visible like a host's own window.
-    static func show(after delay: Duration) {
-        Task {
-            do {
-                try await Task.sleep(for: delay)
-            } catch {
-                // Cancelled with the app: there is nothing to cover.
-                return
-            }
+    /// Shows the cover, made key and visible like a host's own window, on the next turn of the
+    /// main actor. The caller requests the failure HUD first, so the cover comes after it; no
+    /// fixed delay is involved.
+    static func show() {
+        Task { @MainActor in
             present()
         }
     }

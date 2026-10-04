@@ -187,6 +187,10 @@ final class HUDControlsUITests: XCTestCase {
         let backdrop = backdropPoint(in: app)
         app.buttons[DemoIdentifier.showFailure].tap()
         XCTAssertTrue(
+            app.buttons["Close"].waitForExistence(timeout: Wait.screenChange),
+            "the failure HUD is shown before the test acts"
+        )
+        XCTAssertTrue(
             app.buttons[DemoIdentifier.cover].waitForExistence(timeout: Wait.screenChange),
             "the host shows its cover after the HUD"
         )
@@ -203,6 +207,10 @@ final class HUDControlsUITests: XCTestCase {
         let app = launchExample(Launch.swiftUI + ["--cover-after-hud", "--hud-above-normal"])
         let backdrop = backdropPoint(in: app)
         app.buttons[DemoIdentifier.showFailure].tap()
+        XCTAssertTrue(
+            app.buttons["Close"].waitForExistence(timeout: Wait.screenChange),
+            "the failure HUD is shown before the test acts"
+        )
         XCTAssertTrue(
             app.buttons[DemoIdentifier.cover].waitForExistence(timeout: Wait.screenChange),
             "the host shows its cover after the HUD"

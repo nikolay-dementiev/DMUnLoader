@@ -45,8 +45,8 @@ struct LaunchOptions: Sendable {
     /// `--failure-with-retry-waits`, with `--auto-hide`, gives a failure with Retry the rule
     /// "never hides by itself, and a tap on its card keeps it".
     let failureWithRetryWaits: Bool
-    /// `--cover-after-hud` shows a window of the host, a cover at the normal level, a second
-    /// after a failure HUD appears.
+    /// `--cover-after-hud` shows a window of the host, a cover at the normal level, on the turn
+    /// after a failure HUD is requested.
     let coverAfterHUD: Bool
     /// `--hud-above-normal`, with `--auto-hide`, puts the HUD window at `.normal + 1`.
     let hudAboveNormal: Bool
