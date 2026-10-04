@@ -1,3 +1,4 @@
+import os
 import SwiftUI
 import UIKit
 
@@ -5,6 +6,7 @@ import UIKit
 /// control at the normal level that counts the taps it receives.
 @MainActor
 enum CoverWindow {
+    private static let logger = Logger(subsystem: "DMUnLoaderExample", category: "cover")
     private static var window: UIWindow?
 
     /// Shows the cover, made key and visible like a host's own window, once the HUD has hidden the
@@ -19,8 +21,11 @@ enum CoverWindow {
                     polls += 1
                     try await Task.sleep(for: .milliseconds(10))
                 }
+                if !hidesContentUnderneath() {
+                    logger.error("The HUD hid no window within two seconds, so the cover is shown anyway.")
+                }
             } catch {
-                // Cancelled with the app: there is nothing to cover.
+                // Nothing cancels this task today; a cancelled wait leaves nothing to cover.
                 return
             }
             present()
