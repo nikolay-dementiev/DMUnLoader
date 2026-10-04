@@ -101,7 +101,7 @@ final class TextAlignmentTests: XCTestCase {
         window.rootViewController = controller
         window.isHidden = false
         defer { window.isHidden = true }
-        RunLoop.current.run(until: Date().addingTimeInterval(0.3))
+        controller.view.waitForSettledRendering()
         let alphas = try RenderedAlphas(of: controller.view.renderedLayers())
 
         var lines: [TextLine] = []
