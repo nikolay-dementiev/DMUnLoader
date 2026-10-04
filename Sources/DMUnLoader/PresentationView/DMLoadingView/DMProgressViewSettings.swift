@@ -46,7 +46,8 @@ public struct DMProgressViewDefaultSettings: DMProgressViewSettings {
     ///   - loadingTextProperties: The properties for the loading text. Defaults to `ProgressTextProperties()`.
     ///   - progressIndicatorProperties: The properties for the progress indicator. Defaults to `ProgressIndicatorProperties()`.
     ///   - loadingContainerBackgroundColor: The background color of the loading container. Defaults to `Color.clear`.
-    ///   - frameGeometrySize: The reference size of the loading view: at most half of its width and height. Defaults to `CGSize(width: 300, height: 300)`.
+    ///   - frameGeometrySize: The reference size of the loading view: at most half of its width and
+///     height. Defaults to `CGSize(width: 300, height: 300)`.
     /// - Example:
     ///   ```swift
     ///   let customSettings = DMProgressViewDefaultSettings(

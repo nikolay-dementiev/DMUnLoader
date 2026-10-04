@@ -124,7 +124,11 @@ final class AccessibilityAdaptersTests: XCTestCase {
         while posted.isEmpty, Date() < deadline {
             await Task.yield()
         }
-        XCTAssertEqual(posted.notifications, [.screenChanged], "the screen change is posted once, as a screen-changed notification")
+        XCTAssertEqual(
+            posted.notifications,
+            [.screenChanged],
+            "the screen change is posted once, as a screen-changed notification"
+        )
         XCTAssertTrue(posted.argument === element, "the notification carries the element to focus")
     }
 

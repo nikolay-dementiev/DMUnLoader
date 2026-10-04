@@ -54,8 +54,16 @@ final class DMLoadingManagerAutoHideTests: XCTestCase {
             autoHideDelay: .seconds(7)
         )
 
-        XCTAssertEqual(success.scheduler.scheduled.map(\.delay), [.seconds(7)], "an initial success is hidden after the delay of the settings")
-        XCTAssertEqual(failure.scheduler.scheduled.map(\.delay), [.seconds(7)], "an initial failure is hidden after the delay of the settings")
+        XCTAssertEqual(
+            success.scheduler.scheduled.map(\.delay),
+            [.seconds(7)],
+            "an initial success is hidden after the delay of the settings"
+        )
+        XCTAssertEqual(
+            failure.scheduler.scheduled.map(\.delay),
+            [.seconds(7)],
+            "an initial failure is hidden after the delay of the settings"
+        )
         success.scheduler.scheduled[0].runHide()
         failure.scheduler.scheduled[0].runHide()
         XCTAssertEqual(success.sut.loadableState.rawValue, "None", "the initial success is hidden")
