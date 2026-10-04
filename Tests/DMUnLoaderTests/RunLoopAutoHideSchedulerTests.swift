@@ -43,6 +43,32 @@ final class RunLoopAutoHideSchedulerTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(elapsed, 0.19, "the hide never runs before its delay, to within 10 milliseconds")
     }
 
+    func test_schedule_zeroDelay_runsHideAtOnce() {
+        let sut = makeSUT()
+        let hidden = expectation(description: "hide runs as soon as the run loop turns")
+        hidden.assertForOverFulfill = true
+
+        let subscription = sut.schedule(after: .zero) {
+            hidden.fulfill()
+        }
+
+        wait(for: [hidden], timeout: TestTiming.callbackAllowance)
+        subscription.cancel()
+    }
+
+    func test_schedule_negativeDelay_runsHideAtOnce() {
+        let sut = makeSUT()
+        let hidden = expectation(description: "hide runs as soon as the run loop turns")
+        hidden.assertForOverFulfill = true
+
+        let subscription = sut.schedule(after: .seconds(-1)) {
+            hidden.fulfill()
+        }
+
+        wait(for: [hidden], timeout: TestTiming.callbackAllowance)
+        subscription.cancel()
+    }
+
     func test_schedule_cancelledBeforeTheDelay_neverRunsHide() {
         let sut = makeSUT()
         let hidden = expectation(description: "a cancelled hide never runs")
