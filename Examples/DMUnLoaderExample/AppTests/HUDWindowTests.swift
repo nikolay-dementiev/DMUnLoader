@@ -325,7 +325,13 @@ final class HUDWindowTests: XCTestCase {
         )
         let (firstScene, _) = try connectedSceneDelegate()
         let secondScene = try openScene(besides: firstScene)
-        defer { UIApplication.shared.requestSceneSessionDestruction(secondScene.session, options: nil) }
+        defer {
+            UIApplication.shared.requestSceneSessionDestruction(secondScene.session, options: nil)
+            XCTAssertTrue(
+                waitUntil(UIApplication.shared.connectedScenes.count == 1),
+                "the second scene is gone before the next test, which takes the first connected scene"
+            )
+        }
         let firstBefore = waitForHUDWindows(in: firstScene).count
         let secondBefore = waitForHUDWindows(in: secondScene).count
 
