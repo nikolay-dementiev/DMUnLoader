@@ -2,8 +2,6 @@
 //
 // A package that uses DMUnLoader the way an app does: only the public interface, no test
 // hooks. It is compiled in Swift 6 and in Swift 5 language mode.
-// `UIKitUsage.swift` is part of the Swift 5 target only: the documented UIKit integration
-// does not compile in Swift 6 language mode yet.
 
 import PackageDescription
 

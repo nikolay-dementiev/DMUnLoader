@@ -16,8 +16,9 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     /// The settings used by the loading manager to configure its behavior, such as auto-hide delay.
     public let settings: any DMLoadingManagerSettings
     
-    /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
-    /// - Note: This property is thread-safe and emits changes via `loadableStateSubject`.
+    /// The state the HUD shows: `.none`, `.loading`, `.success` or `.failure`. The `show`
+    /// methods, `hide()` and the auto-hide change it on the main actor, and each change is
+    /// published through `objectWillChange`.
     @Published public internal(set) var loadableState: DMLoadableType {
         willSet {
             handleInactivityTimer(forState: newValue)
@@ -76,9 +77,10 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     }
     
     /// Shows the loading state, typically indicating that an operation is in progress.
+    /// - Parameter provider: The provider of the loading view.
     /// - Example:
     ///   ```swift
-    ///   loadingManager.showLoading()
+    ///   loadingManager.showLoading(provider: DefaultDMLoadingViewProvider())
     ///   ```
     public func showLoading<PR: DMLoadingViewProvider>(
         provider: PR
@@ -89,10 +91,12 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     }
     
     /// Shows the success state with a success message.
-    /// - Parameter message: A value conforming to `DMLoadableTypeSuccess`, representing the success message.
+    /// - Parameters:
+    ///   - message: A value conforming to `DMLoadableTypeSuccess`, representing the success message.
+    ///   - provider: The provider of the success view.
     /// - Example:
     ///   ```swift
-    ///   loadingManager.showSuccess("Data loaded successfully")
+    ///   loadingManager.showSuccess("Data loaded successfully", provider: DefaultDMLoadingViewProvider())
     ///   ```
     public func showSuccess<PR: DMLoadingViewProvider>(
         _ message: any DMLoadableTypeSuccess,
@@ -107,13 +111,19 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     /// Shows the failure state with an error and an optional retry action.
     /// - Parameters:
     ///   - error: The error that occurred during the operation.
-    ///   - onRetry: An optional action (`DMAction`) to retry the operation.
+    ///   - provider: The provider of the error view.
+    ///   - onRetry: An optional action (`DMAction`) to retry the operation. The default error
+    ///     view shows a Retry button for it.
     /// - Example:
     ///   ```swift
-    ///   let retryAction = DMButtonAction({ _ in }) {
+    ///   let retryAction = DMButtonAction {
     ///       // Retry logic here
     ///   }
-    ///   loadingManager.showFailure(NSError(domain: "Example", code: 404), onRetry: retryAction)
+    ///   loadingManager.showFailure(
+    ///       NSError(domain: "Example", code: 404),
+    ///       provider: DefaultDMLoadingViewProvider(),
+    ///       onRetry: retryAction
+    ///   )
     ///   ```
     public func showFailure<PR: DMLoadingViewProvider>(
         _ error: any Error,

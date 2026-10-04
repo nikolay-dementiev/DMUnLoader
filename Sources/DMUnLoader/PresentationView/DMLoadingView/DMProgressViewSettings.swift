@@ -23,7 +23,7 @@ public protocol DMProgressViewSettings {
     var frameGeometrySize: CGSize { get }
 }
 
-/// A concrete implementation of the `DMLoadingViewSettings` protocol.
+/// A concrete implementation of the `DMProgressViewSettings` protocol.
 /// This struct provides default settings for a loading view, with customizable properties.
 public struct DMProgressViewDefaultSettings: DMProgressViewSettings {
     
@@ -33,24 +33,24 @@ public struct DMProgressViewDefaultSettings: DMProgressViewSettings {
     /// Properties related to the progress indicator displayed in the loading view.
     public let progressIndicatorProperties: ProgressIndicatorProperties
     
-    /// The foreground color of the loading container.
+    /// The background color of the loading container.
     public let loadingContainerBackgroundColor: Color
     
     /// The size of the frame geometry for the loading view.
     public let frameGeometrySize: CGSize
     
-    /// Initializes a new instance of `DMLoadingDefaultViewSettings` with optional customizations.
+    /// Initializes a new instance of `DMProgressViewDefaultSettings` with optional customizations.
     /// - Parameters:
-    ///   - loadingTextProperties: The properties for the loading text. Defaults to `LoadingTextProperties()`.
+    ///   - loadingTextProperties: The properties for the loading text. Defaults to `ProgressTextProperties()`.
     ///   - progressIndicatorProperties: The properties for the progress indicator. Defaults to `ProgressIndicatorProperties()`.
-    ///   - loadingContainerForegroundColor: The foreground color of the loading container. Defaults to `Color.primary`.
+    ///   - loadingContainerBackgroundColor: The background color of the loading container. Defaults to `Color.clear`.
     ///   - frameGeometrySize: The size of the frame geometry. Defaults to `CGSize(width: 300, height: 300)`.
     /// - Example:
     ///   ```swift
-    ///   let customSettings = DMLoadingDefaultViewSettings(
-    ///       loadingTextProperties: LoadingTextProperties(text: "Please wait..."),
+    ///   let customSettings = DMProgressViewDefaultSettings(
+    ///       loadingTextProperties: ProgressTextProperties(text: "Please wait..."),
     ///       progressIndicatorProperties: ProgressIndicatorProperties(size: .small),
-    ///       loadingContainerForegroundColor: .blue,
+    ///       loadingContainerBackgroundColor: .blue,
     ///       frameGeometrySize: CGSize(width: 400, height: 400)
     ///   )
     ///   ```
@@ -113,7 +113,7 @@ public struct ProgressTextProperties {
     /// The padding applied around each line of text.
     public var linePadding: EdgeInsets
     
-    /// Initializes a new instance of `LoadingTextProperties` with optional customizations.
+    /// Initializes a new instance of `ProgressTextProperties` with optional customizations.
     /// - Parameters:
     ///   - text: The text to display. Defaults to `"Loading..."`.
     ///   - alignment: How the lines of a text of more than one line line up. Defaults to `.center`.
@@ -124,7 +124,7 @@ public struct ProgressTextProperties {
     ///   Defaults to `EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)`.
     /// - Example:
     ///   ```swift
-    ///   let customTextProperties = LoadingTextProperties(
+    ///   let customTextProperties = ProgressTextProperties(
     ///       text: "Processing...",
     ///       alignment: .leading,
     ///       foregroundColor: .black,

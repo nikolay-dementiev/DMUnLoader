@@ -36,6 +36,8 @@ public struct DMSuccessDefaultViewSettings: DMSuccessViewSettings {
     /// - Parameters:
     ///   - successImageProperties: The properties for the success image. Defaults to `SuccessImageProperties()`.
     ///   - successTextProperties: The properties for the success text. Defaults to `SuccessTextProperties()`.
+    ///   - spacingBetweenElements: The space between the image and the text. Defaults to `nil`,
+    ///     the default spacing of a stack.
     /// - Example:
     ///   ```swift
     ///   let customSuccessSettings = DMSuccessDefaultViewSettings(
@@ -91,14 +93,15 @@ public struct SuccessImageProperties: Identifiable {
     
     /// Initializes a new instance of `SuccessImageProperties` with optional customizations.
     /// - Parameters:
+    ///   - id: Identifies the properties. Defaults to a new `UUID`.
     ///   - image: The image to display. Defaults to a checkmark circle icon (`"checkmark.circle.fill"`).
-    ///   - frame: The size of the image frame. Defaults to `CustomSizeView(width: 50, height: 50)`.
+    ///   - frame: The size of the image frame. Defaults to `CustomViewSize(width: 50, height: 50)`.
     ///   - foregroundColor: The foreground color of the image. Defaults to `.green`.
     /// - Example:
     ///   ```swift
     ///   let customImageProperties = SuccessImageProperties(
     ///       image: Image(systemName: "star.fill"),
-    ///       frame: CustomSizeView(width: 60, height: 60),
+    ///       frame: CustomViewSize(width: 60, height: 60),
     ///       foregroundColor: .yellow
     ///   )
     ///   ```

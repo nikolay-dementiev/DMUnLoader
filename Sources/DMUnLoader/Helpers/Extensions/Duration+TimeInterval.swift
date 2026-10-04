@@ -15,7 +15,7 @@ extension Duration {
     ///   to calculate the precise time interval.
     /// - Example:
     ///   ```swift
-    ///   let duration = Duration.seconds(2) + Duration.attoseconds(500_000_000_000_000_000)
+    ///   let duration = Duration.seconds(2) + Duration.milliseconds(500)
     ///   let timeInterval = duration.timeInterval
     ///   print(timeInterval) // Output: 2.5
     ///   ```

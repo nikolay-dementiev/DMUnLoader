@@ -29,9 +29,7 @@ public struct CustomViewSize {
     ///   - alignment: The alignment of the view. Defaults to `.center`.
     /// - Example:
     ///   ```swift
-    ///   let customSize = CustomSizeView(width: 100, height: 200, alignment: .topLeading)
-    ///   print("Width: \(customSize.width ?? 0), Height: \(customSize.height ?? 0), Alignment: \(customSize.alignment)")
-    ///   // Output: Width: 100, Height: 200, Alignment: topLeading
+    ///   let customSize = CustomViewSize(width: 100, height: 200, alignment: .topLeading)
     ///   ```
     public init(width: CGFloat? = nil,
                 height: CGFloat? = nil,

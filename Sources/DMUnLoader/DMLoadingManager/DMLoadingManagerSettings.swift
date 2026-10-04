@@ -15,7 +15,7 @@ public protocol DMLoadingManagerSettings {
     /// - Example:
     ///   ```swift
     ///   let settings: any DMLoadingManagerSettings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(3))
-    ///   print("Auto-hide delay: \(settings.autoHideDelay)") // Output: "Auto-hide delay: 3 seconds"
+    ///   print("Auto-hide delay: \(settings.autoHideDelay)") // Output: "Auto-hide delay: 3.0 seconds"
     ///   ```
     var autoHideDelay: Duration { get }
 

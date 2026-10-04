@@ -18,7 +18,7 @@ public protocol DMLoadableTypeSuccess: CustomStringConvertible { }
 ///
 /// Example:
 /// ```swift
-/// let successMessage: DMLoadableTypeSuccess = "Operation completed successfully"
+/// let successMessage: any DMLoadableTypeSuccess = "Operation completed successfully"
 /// print(successMessage.description) // Output: "Operation completed successfully"
 /// ```
 extension String: DMLoadableTypeSuccess { }

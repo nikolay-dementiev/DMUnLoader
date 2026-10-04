@@ -245,15 +245,16 @@ public struct ErrorImageSettings {
     
     /// Initializes a new instance of `ErrorImageSettings` with optional customizations.
     /// - Parameters:
-    ///   - image: The image to display. Defaults to an exclamation mark triangle icon.
+    ///   - image: The image to display. `DMErrorDefaultViewSettings` passes the
+    ///     `exclamationmark.triangle` symbol.
     ///   - foregroundColor: The foreground color of the image. Defaults to `.red`.
-    ///   - frameSize: The size of the image frame. Defaults to `CustomSizeView(width: 50, height: 50)`.
+    ///   - frameSize: The size of the image frame. Defaults to `CustomViewSize(width: 50, height: 50)`.
     /// - Example:
     ///   ```swift
     ///   let errorImageSettings = ErrorImageSettings(
     ///       image: Image(systemName: "xmark.octagon"),
     ///       foregroundColor: .orange,
-    ///       frameSize: CustomSizeView(width: 60, height: 60)
+    ///       frameSize: CustomViewSize(width: 60, height: 60)
     ///   )
     ///   ```
     public init(image: Image,
