@@ -311,50 +311,94 @@ final class DownloadModel {
 The provider of a state decides its views: `DefaultDMLoadingViewProvider` draws the library's
 views, and [Custom views](#custom-views) shows a provider of your own.
 
-### Behaviour your app must know
+## Configuration
 
-While a HUD is shown, DMUnLoader hides the windows of its scene that are not above the HUD's window from assistive technology, and so from your own UI tests, until the HUD goes.
+### The loading manager's settings
 
-## Customization
-### Custom views
-Conform a class to `DMLoadingViewProvider` to replace the default loading, error, and success views:
+`DMLoadingManagerDefaultSettings` holds the settings of a `DMLoadingManagerMain`. Each one
+defaults to the behaviour of every release before 1.1.0:
+
+- `autoHideDelay`: how long a success or a failure stays. 2 seconds.
+- `hudDismissal`: how each kind leaves the screen, by itself or by a tap on its card or outside
+  it, for a success, a failure without Retry and a failure with Retry. By default each hides
+  after `autoHideDelay` and on any tap. The loading HUD stays until the next state, and taps do
+  nothing.
+- `hudWindowLevel`: the level of the HUD window. `.normal`.
+- `backdrop`: what the HUD draws behind its card. `.variableBlur`; see [Backdrop](#backdrop).
 
 ```swift
-import SwiftUI
 import DMUnLoader
 
-final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
+@MainActor
+func makeLoadingManager() -> DMLoadingManagerMain {
+    DMLoadingManagerMain(
+        state: .none,
+        settings: DMLoadingManagerDefaultSettings(
+            autoHideDelay: .seconds(4),
+            hudDismissal: DMHUDDismissalRules(
+                failureWithRetry: DMHUDDismissal(autoHide: .never, cardTapHides: false)
+            ),
+            backdrop: .dim()
+        )
+    )
+}
+```
+
+Here a failure with Retry waits for the user: it leaves through Close, a tap outside its card,
+or another state. Give such a manager to `DMRootLoadingView(manager:content:)`. The settings of
+a view provider do not change the manager: its `loadingManagerSettings` is not read. The README of
+1.0.x set the delay there, which never had an effect.
+
+### Backdrop
+
+While a HUD is shown, DMUnLoader draws a backdrop behind its card. The default, `.variableBlur`,
+is the backdrop of every release so far: the variable blur of
+[DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView) under a black dim.
+That blur uses a private API of the system; read the README of DMVariableBlurView before you ship
+it. `.dim()`, `.material()` and `.clear` draw with public API only. Under the system's Reduce
+Transparency the HUD draws neither the blur nor a material: `.variableBlur` keeps its dim, and
+`.material()` gives way to that dim.
+
+Choosing another backdrop only stops DMUnLoader from creating the variable blur while your app
+runs. DMUnLoader still depends on DMVariableBlurView, so its code, with the private names a scan
+of your binary finds, stays in your app. No setting of DMUnLoader 1.1.0 removes it.
+
+### Custom views
+
+Conform a class to `DMLoadingViewProvider` to replace the views of the states. Every requirement
+has a default, the library's view, so implement only what you change:
+
+```swift
+import DMUnLoader
+import SwiftUI
+
+final class BrandedViewProvider: DMLoadingViewProvider {
     @MainActor
     func getLoadingView() -> some View {
-        Text("Custom Loading View")
+        ProgressView("Please wait")
             .padding()
-            .background(Color.blue)
+            .background(Color.white)
     }
 
     @MainActor
-    func getErrorView(
-        error: Error,
-        onRetry: DMAction?,
-        onClose: DMAction
-    ) -> some View {
+    func getErrorView(error: any Error, onRetry: (any DMAction)?, onClose: any DMAction) -> some View {
         VStack {
-            Text("Custom Error View")
-            if let onRetry = onRetry {
-                Button("Retry", action: onRetry.simpleAction)
+            Text(error.localizedDescription)
+            if let onRetry {
+                Button("Try again", action: onRetry.simpleAction)
             }
             Button("Close", action: onClose.simpleAction)
         }
-    }
-
-    @MainActor
-    func getSuccessView(object: DMLoadableTypeSuccess) -> some View {
-        Text("Custom Success View")
+        .padding()
+        .background(Color.white)
     }
 }
 ```
 
-### Settings
-Override only the view settings you need; `DMLoadingViewProvider` supplies defaults for the rest. This provider changes the color of the success image:
+### View settings
+
+A provider can keep the library's views and change their settings: texts, colours, images and
+layout. This one only changes the colour of the success image:
 
 ```swift
 import DMUnLoader
@@ -369,96 +413,116 @@ final class MintSuccessProvider: DMLoadingViewProvider {
 }
 ```
 
-The auto-hide delay belongs to the loading manager: a success or a failure hides after its `settings.autoHideDelay`, 2 seconds for the manager that `DMRootLoadingView` and `DMSceneDelegateTypeUIKit` create. A provider's `loadingManagerSettings` is not read; earlier versions of this README set the delay there, which never had an effect. To choose the delay, create the manager yourself and give it to `DMRootLoadingView(manager:content:)`, as in [SwiftUI with a manager your app owns](#swiftui-with-a-manager-your-app-owns):
-
-```swift
-import DMUnLoader
-
-@MainActor
-func makeLoadingManager() -> DMLoadingManagerMain {
-    DMLoadingManagerMain(
-        state: .none,
-        settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(4))
-    )
-}
-```
+`loadingViewSettings`, `errorViewSettings` and `successViewSettings` take
+`DMProgressViewDefaultSettings`, `DMErrorDefaultViewSettings` and `DMSuccessDefaultViewSettings`,
+or a type of your own that conforms to their protocol.
 
 ### Texts and languages
-The default texts of the HUD, the failure title "An error has occurred!", "Close", "Retry" and "Loading...", come from the string catalog of DMUnLoader and follow the language of your app. In 1.1.0 the catalog holds English only, so every language shows these English texts. A text you set in the settings is shown as you wrote it. A text equal to an English default counts as that default, also when you pass it yourself, and follows the catalog.
 
----
+The default texts of the HUD, the failure title "An error has occurred!", "Close", "Retry" and
+"Loading...", come from the string catalog of DMUnLoader and follow the language of your app. In
+1.1.0 the catalog holds English only, so every language shows these English texts. A text you set
+in the settings is shown as you wrote it. A text equal to an English default counts as that
+default, also when you pass it yourself, and follows the catalog.
 
-## Example project
-The [DMUnLoaderPodSPMExample](./Examples/DMUnLoaderPodSPMExample/) project demonstrates the SDK in SwiftUI and UIKit. It includes two schemes:
+## Behaviour your app must know
 
-- **`Debug-SwiftUI`:** SwiftUI integration.
-- **`Debug-UIKit`:** UIKit integration.
+### Touches
 
-To run the example project:
+While a HUD is shown, its window takes every touch that reaches it: the windows of your app under
+it receive none, whatever the backdrop. A tap on the card or outside it hides a success or a
+failure as the dismissal rules say. Close hides a failure, and Retry runs your action. With no HUD
+shown, every touch reaches your app.
 
-1. Clone the repository.
-2. Run `pod install`. CocoaPods is the default dependency manager. To select one explicitly, run either `DEPENDENCY_MANAGER=POD pod install` or `DEPENDENCY_MANAGER=SPM pod install`.
-3. Open `DMUnLoaderPodSPMExample.xcworkspace` in Xcode.
-4. Select the desired scheme and run the app.
+### Threads and lifetime
 
----
+The loading managers, the view providers and the root view work on the main actor: call them
+there. Keep the manager alive: in a `@StateObject` of your app, or the one that the scene delegate
+creates. The HUD keeps no replaced manager alive. Use one integration per scene: a scene whose
+scene delegate of DMUnLoader holds a manager and that also shows
+`DMRootLoadingView(manager:content:)` gets two HUD windows.
 
-## Implementation details
-### Separate overlay window
-DMUnLoader presents loading, error, and success views in a dedicated overlay window above the app's main interface. The approach was inspired by [Custom HUDs in SwiftUI](https://www.fivestars.blog/articles/swiftui-hud/) and [How to layer multiple windows in SwiftUI](https://www.fivestars.blog/articles/swiftui-windows/).
+### Failures
 
-### Dependency-manager test project
-The [DMUnLoaderPodSPMExample](#-example-project) project can resolve the SDK through either Swift Package Manager or CocoaPods. See [Using Swift Package Manager and CocoaPods with the same SDK](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14) for the setup.
+`DMRootLoadingView(content:)` without the app delegate of DMUnLoader stops the app when the view
+appears. `DMRootLoadingView(manager:content:onAttachmentFailure:)` needs no app delegate: until
+the view is in a window of a scene, the manager waits, and a reason that the HUD cannot be shown
+would reach `onAttachmentFailure`. Version 1.1.0 knows no such reason.
 
-> This dual dependency-manager setup exists only in the example project. An application target should integrate DMUnLoader through either SPM or CocoaPods, not both.
+### Accessibility
 
-### Test-driven development
-Core views and the loading manager were developed through a test-driven workflow. Test plans and design notes are available in the [`DocumentationAndBluePrints`](./DocumentationAndBluePrints/) folder.
+While a HUD is shown, DMUnLoader hides the windows of its scene that are not above the HUD's
+window from assistive technology, and so from your own UI tests, until the HUD goes. VoiceOver
+moves into the HUD, hears a change of its content, and returns to the element it was on. The
+escape gesture hides a success or a failure as a tap outside the card does. Reduce Motion keeps
+the card and a pressed button still. VoiceOver does not read the default images; an image you
+supply keeps the accessibility you give it.
 
-### Backdrop
-While a HUD is shown, DMUnLoader draws a backdrop behind its card. The default, `.variableBlur`, is the backdrop of every release so far: the variable blur of [DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView) under a black dim. That blur uses a private API of the system; read the README of DMVariableBlurView before you ship it. `.dim()`, `.material()` and `.clear` draw with public API only. Under the system's Reduce Transparency the HUD draws neither the blur nor a material: `.variableBlur` keeps its dim, and `.material()` gives way to that dim.
+## Example app and tests
 
-```swift
-import DMUnLoader
+`Examples/DMUnLoaderExample` is an app that shows each state. Open
+`DMUnLoaderExample.xcodeproj` and run one of its schemes: `DMUnLoaderExample` (SwiftUI with the
+app delegate), `DMUnLoaderExample-Injected` (SwiftUI with a manager the app owns),
+`DMUnLoaderExample-UIKit`, or `DMUnLoaderExample-CustomManager` (a loading manager written by the
+host). The example of 1.0.x, which resolves the package through both CocoaPods and Swift Package
+Manager as described in
+[Using Swift Package Manager and CocoaPods with the same SDK](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14),
+remains at the tag `1.0.3`.
 
-@MainActor
-func makeDimmedLoadingManager() -> DMLoadingManagerMain {
-    DMLoadingManagerMain(
-        state: .none,
-        settings: DMLoadingManagerDefaultSettings(backdrop: .dim())
-    )
-}
-```
+How the package is tested:
 
-Choosing one of them only stops DMUnLoader from creating the variable blur while your app runs. DMUnLoader still depends on DMVariableBlurView, so its code, with the private names a scan of your binary finds, stays in your app. No setting of DMUnLoader 1.1.0 removes it.
+- Package tests: the state and the policies of the HUD, the managers and their timers, the
+  adapters with hand-written spies, the views through their public API, and snapshots of the
+  views.
+- Tests hosted in the example app: the HUD windows of real scenes, two scenes on an iPad
+  included, the touches they take and let through, and what the HUD draws under Reduce
+  Transparency.
+- UI tests: Retry, Close and taps on and outside the card, the touches that reach the app with
+  and without a HUD in the four integrations, the texts in other languages and right to left,
+  the failure HUD over content compared with reference pictures, and accessibility audits of the
+  HUD.
+- CI also lints, compares the public interface with a committed baseline, builds a consumer
+  package and every Swift block of this README and of the documentation catalog, builds the
+  documentation, lints the podspec, runs the tests under the Thread Sanitizer, and fails below a
+  coverage floor.
 
-### Retry and fallback
-The SDK composes retry and fallback behavior with [DMAction](https://github.com/nikolay-dementiev/DMAction).
+## Versions and migration
 
----
+DMUnLoader follows semantic versioning. [CHANGELOG.md](CHANGELOG.md) records every release.
+
+Coming from 1.0.x: no declaration was removed, and the new settings default to the released
+behaviour. Building needs Xcode 26, the Swift 6.2 compiler that the sources already needed. Some
+behaviour changed, and the changelog lists each change. The ones most likely to matter:
+
+- Retry, Close and a tap outside the card work on iOS 18 and 26, where the buttons of the failure
+  HUD did nothing;
+- settings and states compare what they show, and a provider and a manager are equal only to
+  themselves;
+- a loading text or a success message of more than one line is centred by default;
+- the default failure title reads "An error has occurred!";
+- the HUD hides the content under it from assistive technology, as described above.
 
 ## Known issues
-The default card of the HUD, white text on gray at opacity 0.8, does not reach the contrast of 4.5:1; an app that needs it sets its own colours through the settings types, or supplies its own views through `DMLoadingViewProvider`.
 
----
+The default card of the HUD, white text on gray at opacity 0.8, does not reach the contrast of
+4.5:1; an app that needs it sets its own colours through the settings types, or supplies its own
+views through `DMLoadingViewProvider`.
 
-## Contributing
-Contributions are welcome. Open an issue for a bug or feature request, or submit a pull request with a proposed change.
+## The family
 
-[CONTRIBUTING.md](./CONTRIBUTING.md) says how to build and test the package and the example app. The example's UI tests run one launch mode per process: a scene session that one integration mode leaves saved would otherwise be restored by the next launch, in another mode.
+DMUnLoader is one of three packages that share their conventions:
 
----
+- [DMAction](https://github.com/nikolay-dementiev/DMAction): composes completion-based actions
+  with retries and fallbacks. The Retry button of DMUnLoader runs one.
+- [DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView): a blur whose
+  radius changes from row to row. DMUnLoader draws it behind its HUD.
 
-## Contact
-For questions or feedback, contact me at [nikolas.dementiev@gmail.com](mailto:nikolas.dementiev@gmail.com).
+## Contributing, security, licence
 
----
+- [CONTRIBUTING.md](CONTRIBUTING.md): how to build, test and propose a change.
+- [SECURITY.md](SECURITY.md): how to report a vulnerability. Not in a public issue.
+- DMUnLoader is available under the MIT License. See [LICENSE](LICENSE).
+- The HUD window was inspired by [Custom HUDs in SwiftUI](https://www.fivestars.blog/articles/swiftui-hud/)
+  and [How to layer multiple windows in SwiftUI](https://www.fivestars.blog/articles/swiftui-windows/).
 
-## References
-1. The separate-window approach was inspired by [Custom HUDs in SwiftUI](https://www.fivestars.blog/articles/swiftui-hud/) and [How to layer multiple windows in SwiftUI](https://www.fivestars.blog/articles/swiftui-windows/).
-2. The example project's SPM/CocoaPods configuration is described in [Using Swift Package Manager and CocoaPods with the same SDK](https://medium.com/@mykola.dementiev/how-to-seamlessly-use-swift-package-manager-spm-and-cocoapods-pod-together-with-the-same-sdk-1b80a2051c14).
-
----
-
-## License
-DMUnLoader is available under the MIT License. See [LICENSE](LICENSE) for details.
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader?ref=badge_large)
