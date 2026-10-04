@@ -17,4 +17,27 @@ final class HUDTouchRoutingUIKitUITests: XCTestCase {
     func test_loadingHUD_uiKit_keepsTouchesFromContent() {
         assertLoadingHUDKeepsTouchesFromContent(launchArguments: ["--uikit"])
     }
+
+    func test_loadingHUD_uiKit_isShownInOneHUDWindow() {
+        let app = launchExample(["--uikit", "--accessibility-tree"])
+        XCTAssertTrue(
+            app.buttons[DemoIdentifier.content].waitForExistence(timeout: Wait.launch),
+            "the demo screen is shown"
+        )
+        app.buttons[DemoIdentifier.showLoading].tap()
+
+        let windowCount = app.staticTexts[DemoIdentifier.hudWindowCount]
+        XCTAssertTrue(
+            windowCount.waitForExistence(timeout: Wait.launch),
+            "the counters window reports the HUD windows"
+        )
+        XCTAssertTrue(
+            wait(
+                for: NSPredicate(format: "label == %@", DemoText.hudWindows(1)),
+                on: windowCount,
+                timeout: Wait.screenChange
+            ),
+            "the UIKit route shows the loading HUD in one HUD window"
+        )
+    }
 }

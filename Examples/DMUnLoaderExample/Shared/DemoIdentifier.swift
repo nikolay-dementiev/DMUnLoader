@@ -13,6 +13,8 @@ enum DemoIdentifier {
     /// The elements of the HUD window that assistive technology reaches, which
     /// `--accessibility-tree` shows in the counters window.
     static let hudAccessibilityTree = "hudAccessibilityTree"
+    /// The number of HUD windows in the scene, which `--accessibility-tree` shows in the counters window.
+    static let hudWindowCount = "hudWindowCount"
 }
 
 /// The texts of the demo screen, so a test compares against the text the app builds.
@@ -39,6 +41,10 @@ enum DemoText {
 
     static func coverTaps(_ count: Int) -> String {
         "Cover taps: \(count)"
+    }
+
+    static func hudWindows(_ count: Int) -> String {
+        "HUD windows: \(count)"
     }
 
     /// Between two elements of the HUD in the accessibility tree that the counters window shows.
