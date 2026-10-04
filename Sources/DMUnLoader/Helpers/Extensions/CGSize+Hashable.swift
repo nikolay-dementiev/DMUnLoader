@@ -8,6 +8,7 @@ import SwiftUI
 
 @available(iOS, obsoleted: 18.0, message: "CGSize conforms to Hashable in iOS 18 and later")
 extension CGSize: @retroactive Hashable {
+    /// Hashes the width and the height, which `==` compares.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(width)
         hasher.combine(height)

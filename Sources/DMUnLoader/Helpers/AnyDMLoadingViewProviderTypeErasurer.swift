@@ -6,6 +6,11 @@
 
 import SwiftUI
 
+/// A provider that wraps another one behind fixed view types, so that a loading state can hold
+/// any provider. `eraseToAnyViewProvider()` makes it.
+///
+/// It keeps the settings of the wrapped provider as they were when it was made, and asks the
+/// wrapped provider for each view when one is needed. It is equal only to itself.
 public final class AnyDMLoadingViewProviderTypeErasurer<
     LoadingViewType: View,
     ErrorViewType: View,
@@ -26,8 +31,11 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
     /// The `loadingManagerSettings` of the erased provider at the moment it was erased. Not
     /// read by the library.
     public var loadingManagerSettings: any DMLoadingManagerSettings { _loadingManagerSettings() }
+    /// The `loadingViewSettings` of the erased provider at the moment it was erased.
     public var loadingViewSettings: any DMProgressViewSettings { _loadingViewSettings() }
+    /// The `errorViewSettings` of the erased provider at the moment it was erased.
     public var errorViewSettings: any DMErrorViewSettings { _errorViewSettings() }
+    /// The `successViewSettings` of the erased provider at the moment it was erased.
     public var successViewSettings: any DMSuccessViewSettings { _successViewSettings() }
     
     @MainActor
@@ -51,11 +59,13 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
         self._successViewSettings = { successViewSettings }
     }
     
+    /// The loading view of the erased provider, asked for now.
     @MainActor
     public func getLoadingView() -> LoadingViewType {
         _getLoadingView()
     }
     
+    /// The error view of the erased provider for these arguments, asked for now.
     @MainActor
     public func getErrorView(error: any Error,
                              onRetry: (any DMAction)?,
@@ -67,6 +77,7 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
         )
     }
     
+    /// The success view of the erased provider for `object`, asked for now.
     @MainActor
     public func getSuccessView(object: any DMLoadableTypeSuccess) -> SuccessViewType {
         _getSuccessView(object)
@@ -112,4 +123,5 @@ public extension DMLoadingViewProvider {
     }
 }
 
+/// The erased provider that a loading state holds: each of its views is an `AnyView`.
 public typealias AnyDMLoadingViewProvider = AnyDMLoadingViewProviderTypeErasurer<AnyView, AnyView, AnyView>

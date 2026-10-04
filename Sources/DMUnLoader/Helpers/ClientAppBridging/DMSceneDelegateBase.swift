@@ -1,5 +1,7 @@
 import SwiftUI
 
+/// The scene delegate of the UIKit integration, for `DMLoadingManagerMain` and the root view
+/// controller of `Helper`.
 public typealias DMSceneDelegateTypeUIKit<Helper: DMSceneDelegateHelper> = DMSceneDelegateUIKit<DMLoadingManagerMain, Helper>
 
 /// The scene delegate of the UIKit integration. When its scene connects it creates a
@@ -26,6 +28,9 @@ public final class DMSceneDelegateUIKit<
     
     var keyWindow: UIWindow?
     
+    /// Creates the loading manager of the scene, shows the main window with the root view
+    /// controller of `Helper`, and then shows the HUD of the manager above it. A scene that is
+    /// not a window scene gets nothing.
     public func scene(
         _ scene: UIScene,
         willConnectTo session: UISceneSession,
@@ -81,6 +86,8 @@ public final class DMSceneDelegateBase<
     private var disconnectObservation: AnyObject?
     weak var windowScene: UIWindowScene?
 
+    /// Shows the HUD of `loadingManager` over the scene, also when the manager was set before
+    /// the scene connected. A scene that is not a window scene gets no HUD.
     public func scene(
         _ scene: UIScene,
         willConnectTo session: UISceneSession,
