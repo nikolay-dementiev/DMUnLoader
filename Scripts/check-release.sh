@@ -63,6 +63,11 @@ if [ "$PODSPEC_VERSION" != "$VERSION" ]; then
     PROBLEMS+=("the podspec names version '$PODSPEC_VERSION', not $VERSION")
 fi
 
+if ! command -v python3 > /dev/null; then
+    echo "check-release: python3 is needed to read the release date, and it is not on the PATH" >&2
+    exit 2
+fi
+
 NEWEST="$(grep -m 1 -E '^## \[' "$CHANGELOG" || true)"
 if [[ "$NEWEST" =~ ^##\ \[([^]]+)\]\ -\ (.*)$ ]]; then
     HEADING_VERSION="${BASH_REMATCH[1]}"
