@@ -39,7 +39,7 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     /// default once `settings.autoHideDelay` has passed. A view provider's
     /// `loadingManagerSettings` is not read.
     /// - Parameters:
-    ///   - state: The state the manager starts in.
+    ///   - loadableState: The state the manager starts in.
     ///   - settings: The settings of the manager.
     /// - Example:
     ///   ```swift
