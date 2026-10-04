@@ -14,6 +14,21 @@ enum Launch {
     static let uiKitCustomManager = ["--uikit", "--custom-manager"]
 }
 
+/// How long the UI tests wait for the app.
+enum Wait {
+    /// The launched app shows its demo screen.
+    static let launch: TimeInterval = 30
+    /// The screen changes after a tap: a HUD appears or goes, a counter changes. A wait returns
+    /// as soon as its condition holds, so the budget costs a passing run nothing. It is not 5 s:
+    /// on a hosted runner one launch took 12.7 s to set up its automation session and one
+    /// existence check took 3.3 s, and a wait of 5 s ran out while the app was still answering.
+    static let screenChange: TimeInterval = 15
+    /// A touch has no effect. Such a wait has to run out, so its length is what the check costs.
+    static let noEffect: TimeInterval = 1
+    /// Two touches have no effect.
+    static let noEffectOfTwoTouches: TimeInterval = 2
+}
+
 /// Launching the example, and the touches and checks the UI test classes share.
 @MainActor
 extension XCTestCase {
@@ -69,12 +84,16 @@ extension XCTestCase {
     ) {
         let app = launchExample(launchArguments)
         let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown", file: file, line: line)
+        XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown", file: file, line: line)
 
         contentTouchPoints(in: app, content: content, file: file, line: line).forEach { $0.tap() }
 
         XCTAssertTrue(
-            label(of: app.staticTexts[DemoIdentifier.windowContentTaps], becomes: DemoText.contentTaps(2), within: 5),
+            label(
+                of: app.staticTexts[DemoIdentifier.windowContentTaps],
+                becomes: DemoText.contentTaps(2),
+                within: Wait.screenChange
+            ),
             "with no HUD shown, both touches must reach the content under the overlay window",
             file: file,
             line: line
@@ -88,18 +107,23 @@ extension XCTestCase {
     ) {
         let app = launchExample(launchArguments)
         let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown", file: file, line: line)
+        XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown", file: file, line: line)
         let touchPoints = contentTouchPoints(in: app, content: content, file: file, line: line)
 
         app.buttons[DemoIdentifier.showLoading].tap()
         let loadingText = app.staticTexts["Loading..."]
-        XCTAssertTrue(loadingText.waitForExistence(timeout: 5), "the loading HUD is shown", file: file, line: line)
+        XCTAssertTrue(
+            loadingText.waitForExistence(timeout: Wait.screenChange),
+            "the loading HUD is shown",
+            file: file,
+            line: line
+        )
 
         touchPoints.forEach { $0.tap() }
 
         let counter = app.staticTexts[DemoIdentifier.windowContentTaps]
         XCTAssertFalse(
-            label(of: counter, leaves: DemoText.contentTaps(0), within: 2),
+            label(of: counter, leaves: DemoText.contentTaps(0), within: Wait.noEffectOfTwoTouches),
             "a touch under the HUD card or on the backdrop must not reach the content",
             file: file,
             line: line
@@ -121,19 +145,19 @@ extension XCTestCase {
     ) {
         let app = launchExample(launchArguments)
         XCTAssertTrue(
-            app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: 30),
+            app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: Wait.launch),
             "the demo screen is shown",
             file: file,
             line: line
         )
         app.buttons[DemoIdentifier.showFailure].tap()
         let retry = app.buttons["Retry"]
-        XCTAssertTrue(retry.waitForExistence(timeout: 5), "the failure HUD is shown", file: file, line: line)
+        XCTAssertTrue(retry.waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown", file: file, line: line)
 
         retry.tap()
 
         XCTAssertTrue(
-            label(of: app.staticTexts[DemoIdentifier.windowRetries], becomes: DemoText.retries(1), within: 5),
+            label(of: app.staticTexts[DemoIdentifier.windowRetries], becomes: DemoText.retries(1), within: Wait.screenChange),
             "Retry runs the retry action",
             file: file,
             line: line
@@ -148,18 +172,23 @@ extension XCTestCase {
     ) {
         let app = launchExample(launchArguments)
         XCTAssertTrue(
-            app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: 30),
+            app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: Wait.launch),
             "the demo screen is shown",
             file: file,
             line: line
         )
         app.buttons[DemoIdentifier.showFailure].tap()
         let close = app.buttons["Close"]
-        XCTAssertTrue(close.waitForExistence(timeout: 5), "the failure HUD is shown", file: file, line: line)
+        XCTAssertTrue(close.waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown", file: file, line: line)
 
         close.tap()
 
-        XCTAssertTrue(close.waitForNonExistence(timeout: 5), "Close hides the failure HUD", file: file, line: line)
+        XCTAssertTrue(
+            close.waitForNonExistence(timeout: Wait.screenChange),
+            "Close hides the failure HUD",
+            file: file,
+            line: line
+        )
         XCTAssertEqual(
             app.staticTexts[DemoIdentifier.windowRetries].label,
             DemoText.retries(0),
@@ -173,7 +202,7 @@ extension XCTestCase {
     /// A point inside the content control, below the HUD card: only the backdrop covers it.
     func backdropPoint(in app: XCUIApplication) -> XCUICoordinate {
         let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown")
+        XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown")
         let frame = content.frame
         return app.coordinate(withNormalizedOffset: .zero)
             .withOffset(CGVector(dx: frame.midX, dy: frame.maxY - 20))
@@ -182,7 +211,7 @@ extension XCTestCase {
     func assertContentCountedNoTouch(in app: XCUIApplication, file: StaticString = #filePath, line: UInt = #line) {
         let counter = app.staticTexts[DemoIdentifier.windowContentTaps]
         XCTAssertFalse(
-            label(of: counter, leaves: DemoText.contentTaps(0), within: 1),
+            label(of: counter, leaves: DemoText.contentTaps(0), within: Wait.noEffect),
             "a touch on the HUD must not also reach the content under it",
             file: file,
             line: line

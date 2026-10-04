@@ -12,9 +12,9 @@ final class HUDAccessibilityUITests: XCTestCase {
     func test_hud_whileShown_hidesUnderlyingElements() {
         let app = launchExample(Launch.swiftUI)
         let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown")
+        XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown")
         app.buttons[DemoIdentifier.showFailure].tap()
-        XCTAssertTrue(app.buttons["Close"].waitForExistence(timeout: 5), "the failure HUD is shown")
+        XCTAssertTrue(app.buttons["Close"].waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
 
         let contentReachable = content.exists
         let counterReachable = app.staticTexts[DemoIdentifier.contentTaps].exists
@@ -22,7 +22,7 @@ final class HUDAccessibilityUITests: XCTestCase {
 
         XCTAssertFalse(contentReachable, "the control under the HUD is out of reach while the HUD is shown")
         XCTAssertFalse(counterReachable, "the counters under the HUD are out of reach while the HUD is shown")
-        XCTAssertTrue(content.waitForExistence(timeout: 5), "after Close the control is back")
+        XCTAssertTrue(content.waitForExistence(timeout: Wait.screenChange), "after Close the control is back")
     }
 
     // MARK: - Audits
@@ -30,7 +30,7 @@ final class HUDAccessibilityUITests: XCTestCase {
     func test_failureHUD_accessibilityAudit_hasNoIssues() throws {
         let app = launchWithoutCountersWindow()
         app.buttons[DemoIdentifier.showFailure].tap()
-        XCTAssertTrue(app.buttons["Retry"].waitForExistence(timeout: 5), "the failure HUD is shown")
+        XCTAssertTrue(app.buttons["Retry"].waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
 
         try app.performAccessibilityAudit(for: Self.auditTypes)
     }
@@ -38,7 +38,7 @@ final class HUDAccessibilityUITests: XCTestCase {
     func test_loadingHUD_accessibilityAudit_hasNoIssuesButTheLoadingText() throws {
         let app = launchWithoutCountersWindow()
         app.buttons[DemoIdentifier.showLoading].tap()
-        XCTAssertTrue(app.staticTexts["Loading..."].waitForExistence(timeout: 5), "the loading HUD is shown")
+        XCTAssertTrue(app.staticTexts["Loading..."].waitForExistence(timeout: Wait.screenChange), "the loading HUD is shown")
 
         // Text clipped: the default progress card clips "Loading..." at large text sizes; AccessibilitySnapshotTests records it.
         try app.performAccessibilityAudit(for: Self.auditTypes.subtracting(.textClipped)) { issue in
@@ -90,11 +90,14 @@ final class HUDAccessibilityUITests: XCTestCase {
         arguments: [String] = []
     ) -> [String] {
         let app = launchExample(Launch.swiftUI + ["--accessibility-tree"] + arguments)
-        XCTAssertTrue(app.buttons[button].waitForExistence(timeout: 30), "the demo screen is shown")
+        XCTAssertTrue(app.buttons[button].waitForExistence(timeout: Wait.launch), "the demo screen is shown")
         app.buttons[button].tap()
+        // Two waits, so that a failure names the fact that was missing.
+        let shown = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", text)).firstMatch
+        XCTAssertTrue(shown.waitForExistence(timeout: Wait.screenChange), "the HUD is shown")
         let tree = app.staticTexts[DemoIdentifier.hudAccessibilityTree]
         XCTAssertTrue(
-            wait(for: NSPredicate(format: "label CONTAINS %@", text), on: tree, timeout: 5),
+            wait(for: NSPredicate(format: "label CONTAINS %@", text), on: tree, timeout: Wait.screenChange),
             "the counters window reports the HUD"
         )
         return tree.label.components(separatedBy: DemoText.treeSeparator)
@@ -111,7 +114,7 @@ final class HUDAccessibilityUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = Launch.swiftUI + ["--loading-duration", "600"] + arguments
         app.launch()
-        XCTAssertTrue(app.buttons[DemoIdentifier.content].waitForExistence(timeout: 30), "the demo screen is shown")
+        XCTAssertTrue(app.buttons[DemoIdentifier.content].waitForExistence(timeout: Wait.launch), "the demo screen is shown")
         return app
     }
 }

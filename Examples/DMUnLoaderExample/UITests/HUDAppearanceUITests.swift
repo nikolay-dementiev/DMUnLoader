@@ -13,12 +13,12 @@ final class HUDAppearanceUITests: XCTestCase {
     func test_failureHUD_shownOverContent_dimsAndBlursIt() throws {
         let app = launchForPicture()
         let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown")
+        XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown")
         // The status bar shows the time, so only the area of the content is compared.
         let contentFrame = content.frame
 
         app.buttons[DemoIdentifier.showFailure].tap()
-        XCTAssertTrue(app.buttons["Retry"].waitForExistence(timeout: 5), "the failure HUD is shown")
+        XCTAssertTrue(app.buttons["Retry"].waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
 
         let picture = try settledScreenshot(croppedTo: contentFrame)
         try ScreenshotReference.assertMatches(picture.image, named: "FailureHUD-\(picture.screen)")
@@ -41,11 +41,11 @@ final class HUDAppearanceUITests: XCTestCase {
     private func assertFailureHUDMatchesReference(named name: String, backdrop: String) throws {
         let app = launchForPicture(["--backdrop", backdrop])
         let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(content.waitForExistence(timeout: 30), "the demo screen is shown")
+        XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown")
         let contentFrame = content.frame
 
         app.buttons[DemoIdentifier.showFailure].tap()
-        XCTAssertTrue(app.buttons["Retry"].waitForExistence(timeout: 5), "the failure HUD is shown")
+        XCTAssertTrue(app.buttons["Retry"].waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
 
         let picture = try settledScreenshot(croppedTo: contentFrame)
         try ScreenshotReference.assertMatches(picture.image, named: "\(name)-\(picture.screen)")
