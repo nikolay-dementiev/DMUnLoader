@@ -41,7 +41,8 @@ public struct DMHUDDismissal: Hashable, Sendable {
     /// the card.
     public var cardTapHides: Bool
 
-    /// Whether a tap outside the card hides the HUD.
+    /// Whether a tap outside the card hides the HUD. The escape gesture of VoiceOver does what
+    /// this tap does.
     public var backdropTapHides: Bool
 
     /// The defaults are what a success and a failure did before 1.1.0: hide after
@@ -70,7 +71,8 @@ public struct DMHUDDismissal: Hashable, Sendable {
 /// )
 /// ```
 public struct DMHUDDismissalRules: Hashable, Sendable {
-    /// A success.
+    /// A success. Its card has no button, so keep a way out, a hide by itself or a tap that
+    /// hides it, or hide it from your code.
     public var success: DMHUDDismissal
 
     /// A failure shown without a retry action.

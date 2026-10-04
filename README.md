@@ -52,6 +52,7 @@
   - [Test-driven development](#test-driven-development)
   - [Backdrop](#backdrop)
   - [Retry and fallback](#retry-and-fallback)
+- [Known issues](#known-issues)
 - [Contributing](#contributing)
 - [Contact](#contact)
 - [References](#references)
@@ -374,6 +375,11 @@ Choosing one of them only stops DMUnLoader from creating the variable blur while
 
 ### Retry and fallback
 The SDK composes retry and fallback behavior with [DMAction](https://github.com/nikolay-dementiev/DMAction).
+
+---
+
+## Known issues
+The default card of the HUD, white text on gray at opacity 0.8, does not reach the contrast of 4.5:1; an app that needs it sets its own colours through the settings types, or supplies its own views through `DMLoadingViewProvider`.
 
 ---
 

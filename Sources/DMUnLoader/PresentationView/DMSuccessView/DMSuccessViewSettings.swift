@@ -71,8 +71,8 @@ extension DMSuccessDefaultViewSettings: Hashable {
 /// A struct defining properties for the success image displayed in a success view.
 ///
 /// The default image, the filled checkmark circle, is hidden from assistive technology: the
-/// text of the success view names the success. Any other image keeps the accessibility it was
-/// given.
+/// text of the success view names the success. An image equal to it counts as that default;
+/// any other image keeps the accessibility it was given.
 public struct SuccessImageProperties: Identifiable {
     public var id: UUID
     

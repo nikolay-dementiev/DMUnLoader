@@ -212,8 +212,8 @@ extension ErrorTextSettings: Hashable {
 /// A struct defining settings for the error image displayed in an error view.
 ///
 /// The image of the default error settings, the exclamation mark triangle, is hidden from
-/// assistive technology: the texts of the error view name the failure. Any other image keeps
-/// the accessibility it was given.
+/// assistive technology: the texts of the error view name the failure. An image equal to it
+/// counts as that default; any other image keeps the accessibility it was given.
 public struct ErrorImageSettings {
     
     /// The image to display as the error icon.
