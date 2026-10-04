@@ -13,13 +13,16 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
     private let viewModel: any HUDViewModel
     @State private var animateTheAppearance = false
     @Environment(\.hudReducesMotion) private var reducesMotion
-    @Environment(\.hudReducesTransparency) private var reducesTransparency
+    private let dim: HUDBackdropDrawing.Dim
 
-    /// - Parameter viewModel: Decides what the view shows of the state of `loadingManager`
-    ///   and what a tap and Close do. The view observes `loadingManager` to draw its changes.
-    init(loadingManager: LLM, viewModel: any HUDViewModel) {
+    /// - Parameters:
+    ///   - viewModel: Decides what the view shows of the state of `loadingManager` and what a
+    ///     tap and Close do. The view observes `loadingManager` to draw its changes.
+    ///   - dim: The dim of the backdrop, faded in with the card.
+    init(loadingManager: LLM, viewModel: any HUDViewModel, dim: HUDBackdropDrawing.Dim = .standard) {
         self.loadingManager = loadingManager
         self.viewModel = viewModel
+        self.dim = dim
     }
     
     @ViewBuilder
@@ -41,20 +44,17 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
         }
     }
     
-    /// The dim of the backdrop, faded in with the card. Under Reduce Transparency a material
-    /// gives way to the dim of the default backdrop.
+    /// The dim of the backdrop, faded in with the card.
     @ViewBuilder
-    private var dim: some View {
-        switch loadingManager.settings.backdrop.kind {
-        case .variableBlur:
+    private var dimView: some View {
+        switch dim {
+        case .standard:
             defaultDim
-        case .material where reducesTransparency:
-            defaultDim
-        case let .dim(color):
+        case let .color(color):
             color
                 .ignoresSafeArea()
                 .opacity(animateTheAppearance ? 1 : 0)
-        case .material, .clear:
+        case .none:
             EmptyView()
         }
     }
@@ -71,7 +71,7 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
                 overlayView
             } else {
                 ZStack {
-                    dim
+                    dimView
                     
                     // Takes every tap outside the card, whatever the backdrop draws.
                     Color.clear

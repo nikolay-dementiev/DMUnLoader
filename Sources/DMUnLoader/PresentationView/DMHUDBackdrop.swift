@@ -67,3 +67,45 @@ public struct DMHUDBackdrop: Sendable {
     /// what it does with the other backdrops.
     public static let clear = DMHUDBackdrop(kind: .clear)
 }
+
+/// What the HUD draws for its backdrop: the layer behind the card, and the dim that fades in
+/// with the card.
+package struct HUDBackdropDrawing {
+    /// What lies behind the card, under the dim.
+    package enum Layer {
+        case none
+        case variableBlur
+        case material(Material)
+    }
+
+    /// The dim, faded in with the card.
+    package enum Dim: Equatable {
+        case none
+        /// The black dim of the default backdrop: black at opacity 0.2.
+        case standard
+        case color(Color)
+    }
+
+    package let layer: Layer
+    package let dim: Dim
+}
+
+extension DMHUDBackdrop {
+    /// What the HUD draws for this backdrop. Under Reduce Transparency it draws no blur and no
+    /// material: the variable blur keeps its dim, a material gives way to the dim of the default
+    /// backdrop, and a dim and the clear backdrop stay as they are.
+    package func drawing(reducesTransparency: Bool) -> HUDBackdropDrawing {
+        switch kind {
+        case .variableBlur:
+            return HUDBackdropDrawing(layer: reducesTransparency ? .none : .variableBlur, dim: .standard)
+        case let .material(material):
+            return reducesTransparency
+                ? HUDBackdropDrawing(layer: .none, dim: .standard)
+                : HUDBackdropDrawing(layer: .material(material), dim: .none)
+        case let .dim(color):
+            return HUDBackdropDrawing(layer: .none, dim: .color(color))
+        case .clear:
+            return HUDBackdropDrawing(layer: .none, dim: .none)
+        }
+    }
+}

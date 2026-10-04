@@ -8,6 +8,7 @@ import SwiftUI
 
 package struct DMHudSceneView<LM: DMLoadingManager>: View {
     @ObservedObject var loadingManager: LM
+    @Environment(\.hudReducesTransparency) private var reducesTransparency
     private let onStateChange: @MainActor (DMLoadableType) -> Void
 
     /// - Parameter onStateChange: Called with the state of `loadingManager` when the view
@@ -18,12 +19,15 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
     }
 
     package var body: some View {
+        // Read once per render: the views below draw what this decides.
+        let backdrop = loadingManager.settings.backdrop.drawing(reducesTransparency: reducesTransparency)
         Color.clear
             .ignoresSafeArea(.all)
-            .hudCenter(loadingManager: loadingManager) {
+            .hudCenter(loadingManager: loadingManager, backdropLayer: backdrop.layer) {
                 DMLoadingView(
                     loadingManager: loadingManager,
-                    viewModel: DefaultHUDViewModel(loadingManager: loadingManager)
+                    viewModel: DefaultHUDViewModel(loadingManager: loadingManager),
+                    dim: backdrop.dim
                 )
             }
             .onChange(of: loadingManager.loadableState, initial: true) { _, state in
