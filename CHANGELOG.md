@@ -8,7 +8,9 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
 ### Added
 
 - `DMRootLoadingView(manager:content:)` shows the HUD of a loading manager that the app owns over
-  the scene of the view, with no app delegate of the library.
+  the scene of the view, with no app delegate of the library. The released `DMRootLoadingView(content:)`
+  stops the app when its view appears unless the app has `DMAppDelegate`, or a scene configuration
+  that names the library's scene delegate; this initializer needs neither.
 - `DMLoadingManagerDefaultSettings` is public and `Sendable`, with one initializer whose
   arguments default to the released values.
 - Three settings of a loading manager, each defaulting to the released behaviour, so a settings
@@ -64,6 +66,8 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
 - The pod no longer makes the apps that use it link XCTest.
 - The README and the doc comments say that the auto-hide delay belongs to the loading manager's
   settings. The README of 1.0.x set it in the view provider, which never had an effect.
+- A tap while a HUD fades in reaches the clear layer that takes the taps outside the card, as a tap
+  after the fade does: the layer is there from the moment the HUD is shown.
 
 ### Changed
 
@@ -94,7 +98,7 @@ Behaviour changes. None of them removes a declaration; each one is pinned by a t
   remains at the tag 1.0.3, where its CocoaPods install helper deletes the whole DerivedData
   folder of Xcode, the build data of every project on the machine. `Examples/DMUnLoaderExample`
   is the example now.
-- The Bitrise and Codemagic configurations. GitHub Actions runs every check.
+- The Bitrise and Codemagic configurations. GitHub Actions is the only CI service.
 
 ### Known issues
 
