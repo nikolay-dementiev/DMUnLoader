@@ -12,8 +12,8 @@ simulator:
 xcodebuild test -scheme DMUnLoader -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' -skipPackagePluginValidation -enableCodeCoverage YES
 ```
 
-CI runs them on iOS 26.5 and 26.2. Before a release they also run locally on iOS 17.5 and
-18.6.
+CI runs them on iOS 26.5 and 26.2. The oldest supported version is iOS 17.0, and iOS 17.5 is the
+oldest runtime that is run locally. Before a release they also run locally on iOS 17.5 and 18.6.
 
 ## The checks
 
@@ -24,7 +24,7 @@ The checks are scripts in `Scripts/`, and CI runs them as you do, except
 |---|---|
 | `Scripts/lint.sh` | SwiftLint, at the version pinned in `.swiftlint.yml` |
 | `Scripts/check-api.sh` | the public interface against `Fixtures/API/public-interface.txt`; `--self-test` runs the cases of its normalisation |
-| `Scripts/check-manifest.sh` | the manifest, installation by version, the consumer fixture, and every Swift block of `README.md` and of the documentation catalog, each on its own, in Swift 6 and Swift 5 mode: a manifest block is evaluated, every other block compiled. A warning in a block fails it too |
+| `Scripts/check-manifest.sh` | the manifest, installation by version, the consumer fixture, and every Swift block of `README.md` and of the documentation catalog, each on its own, in Swift 6 and Swift 5 mode: a manifest block is evaluated, every other block compiled. A warning in a compiled block fails it too; a manifest block is only evaluated, so a warning in it is not checked |
 | `Scripts/coverage-gate.sh <result bundle>` | the line coverage of the library against its floor |
 | `Scripts/check-podspec.sh` | `pod lib lint` in every Swift version of the podspec, that the pod makes its consumer link no test framework, and that the consumer app carries the pod's resource bundle with every key of the string catalog |
 | `Scripts/check-release.sh <version>` | that the podspec and the newest heading of the changelog agree on a version; `--notes` prints its notes |
@@ -109,10 +109,15 @@ merge first, then tag. Before the tag is pushed:
    each of those simulators.
 3. The example's tests pass on an iPad simulator, where two scenes run side by side:
    `Scripts/test-example.sh` with the udid of an iPad simulator. CI runs no iPad.
+4. The manual VoiceOver pass: the loading, success and failure HUDs of the example app, Retry,
+   Close and the escape gesture, and the focus that returns to the app when a HUD goes.
+5. The sibling pods are on the CocoaPods trunk before the podspec is pushed: DMAction and
+   DMVariableBlurView, which the podspec requires with `~> 1.1`.
 
 On the tag, the release workflow runs the check, makes sure the tagged commit is on `main`, runs the
 whole CI workflow, makes sure the tag still points at the commit CI tested, and drafts a GitHub
-release from the changelog section. Publishing the release, and the pod, stays a manual step.
+release from the changelog section. Publishing the release, and the pod, stays a manual step:
+publish the draft, then `pod trunk push DMUnLoader.podspec`.
 
 ## Security
 

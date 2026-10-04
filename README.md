@@ -61,9 +61,11 @@ What each version is verified with:
 |---|---|
 | iOS 26.5 and 26.2 (Xcode 26.6) | the tests of the package run on simulators in CI |
 | iOS 26.5 (Xcode 26.6) and 18.6 (Xcode 26.3) | the tests of the example app, hosted and UI tests, run on simulators in CI |
-| iOS 17.5, 18.6 and 26.5 (Xcode 26.6) | the tests of the package and of the example app ran on simulators for 1.1.0; iOS 17.5 runs before each release |
+| iOS 17.5, 18.6 and 26.5 (Xcode 26.6) | the tests of the package and of the example app ran on simulators for 1.1.0; before each release the package suite runs locally on iOS 17.5 and 18.6, and the example app on iOS 17.5 |
 | iPadOS 26.2 (Xcode 26.6) | the tests of the example app, two scenes included, run on an iPad simulator before each release |
 | Swift 6.2 (Xcode 26.0.1) | CI compiles the library with that compiler; no test runs with it |
+
+Several windows on an iPad, beyond the two scenes that the tests of the example app use, are not tested.
 
 ## Installation
 
@@ -103,9 +105,9 @@ libraries that only its tests use are not fetched for your app.
 pod 'DMUnLoader', '1.1.0'
 ```
 
-Version 1.1.0 is the last release published to the CocoaPods trunk, which becomes read-only on
-2 December 2026. Later releases come through Swift Package Manager only. The podspec stays in the
-repository, and CI lints it.
+Version 1.1.0 is the last release planned for the CocoaPods trunk: the CocoaPods post of 30 November
+2024 announces that the trunk stops accepting new podspecs on 2 December 2026. Later releases come
+through Swift Package Manager only. The podspec stays in the repository, and CI lints it.
 
 ## Quick start
 
@@ -162,7 +164,8 @@ A tap shows the spinner, then the success, which hides by itself after 2 seconds
 give it over the scene of the window the view is in. It needs no app delegate of DMUnLoader.
 Keep the manager alive outside the view, as the `@StateObject` does, and use one such view per
 scene: the HUD of each view joins the scene of that view. Another manager given in a later update
-takes over the HUD.
+takes over the HUD. When the view moves to another window, its HUD moves with it; a window that the
+host moves to another scene is not followed.
 
 ### SwiftUI with the app delegate of DMUnLoader
 
@@ -359,8 +362,9 @@ a view provider do not change the manager: its `loadingManagerSettings` is not r
 While a HUD is shown, DMUnLoader draws a backdrop behind its card. The default, `.variableBlur`,
 is the backdrop of every release so far: the variable blur of
 [DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView) under a black dim.
-That blur uses a private API of the system; read the README of DMVariableBlurView before you ship
-it. Where the system does not offer that API, DMVariableBlurView draws the plain blur of the system
+That blur runs a private filter of the system, `variableBlur` of the `CAFilter` class, which the
+README of DMVariableBlurView names; read that README before you ship it. Where the system does not
+offer that filter, DMVariableBlurView draws the plain blur of the system
 over the whole screen instead and logs the reason under its own subsystem. `.dim()`, `.material()`
 and `.clear` draw with public API only. Under the system's Reduce
 Transparency the HUD draws neither the blur nor a material: `.variableBlur` keeps its dim,
