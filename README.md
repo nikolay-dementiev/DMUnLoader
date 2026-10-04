@@ -213,9 +213,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
+@MainActor
 struct AppDelegateHelper {}
 
-extension AppDelegateHelper: DMSceneDelegateHelper {
+extension AppDelegateHelper: @MainActor DMSceneDelegateHelper {
     static func makeUIKitRootViewHierarhy<LM: DMLoadingManager>(
         loadingManager: LM
     ) -> UIViewController {
@@ -251,7 +252,7 @@ final class LoadingViewController<LM: DMLoadingManager>: UIViewController {
 }
 ```
 
-> API compatibility note: released versions currently expose `makeUIKitRootViewHierarhy`. The example keeps that spelling so it matches the public protocol. A source-compatible migration should add `makeUIKitRootViewHierarchy` and deprecate the old name before the documentation switches to the corrected API.
+> API compatibility note: the requirement keeps its released name, `makeUIKitRootViewHierarhy`, until 2.0.0. DMUnLoader calls it on the main actor, so make the helper a `@MainActor` type that conforms with `@MainActor DMSceneDelegateHelper`, as above: in Swift 6 mode a plain conformance stops with "sending 'loadingManager' risks causing data races". Such a conformance needs the Swift 6.2 compiler (Xcode 26), which DMUnLoader requires.
 
 ### Behaviour your app must know
 

@@ -16,9 +16,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
+@MainActor
 struct AppDelegateHelper {}
 
-extension AppDelegateHelper: DMSceneDelegateHelper {
+extension AppDelegateHelper: @MainActor DMSceneDelegateHelper {
     static func makeUIKitRootViewHierarhy<LM: DMLoadingManager>(
         loadingManager: LM
     ) -> UIViewController {
