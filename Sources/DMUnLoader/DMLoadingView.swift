@@ -104,15 +104,21 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
 /// The card of a shown HUD: the view of the state on a rounded background. A tap anywhere on
 /// the card is a tap on the card, between the lines of its text too.
 struct HUDCard: View {
+    @Environment(\.hudReducesTransparency) private var reducesTransparency
     let isShown: Bool
     let content: AnyView
     
     var body: some View {
         content
             .padding(15)
-            .background(Color.gray.opacity(isShown ? 0.8 : 0.1))
+            .background(Color.gray.opacity(backgroundOpacity))
             .cornerRadius(10)
             .contentShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    /// Opaque under Reduce Transparency, so nothing behind the card shows through it.
+    private var backgroundOpacity: Double {
+        reducesTransparency ? 1 : (isShown ? 0.8 : 0.1)
     }
 }
 

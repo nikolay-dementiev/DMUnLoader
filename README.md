@@ -363,8 +363,8 @@ That blur uses a private API of the system; read the README of DMVariableBlurVie
 it. Where the system does not offer that API, DMVariableBlurView draws the plain blur of the system
 over the whole screen instead and logs the reason under its own subsystem. `.dim()`, `.material()`
 and `.clear` draw with public API only. Under the system's Reduce
-Transparency the HUD draws neither the blur nor a material: `.variableBlur` keeps its dim, and
-`.material()` gives way to that dim.
+Transparency the HUD draws neither the blur nor a material: `.variableBlur` keeps its dim,
+`.material()` gives way to that dim, and the card of the HUD is opaque.
 
 Choosing another backdrop only stops DMUnLoader from creating the variable blur while your app
 runs. DMUnLoader still depends on DMVariableBlurView, so its code, with the private names a scan

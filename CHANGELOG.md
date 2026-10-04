@@ -23,7 +23,8 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   shows another state, VoiceOver is told that the screen changed; when it goes, VoiceOver returns
   to the element it was on, if that element is still on the screen. The escape gesture hides a
   success or a failure as a tap outside the card does. Reduce Motion keeps the card and a pressed
-  button still; Reduce Transparency draws the dim without a blur or a material.
+  button still; Reduce Transparency draws the dim without a blur or a material, and an opaque
+  card.
 - The default texts come from a string catalog, English only in this version, and follow the
   language of the app. A text the app sets is shown as written, unless it equals an English
   default: then it counts as that default and follows the catalog.
