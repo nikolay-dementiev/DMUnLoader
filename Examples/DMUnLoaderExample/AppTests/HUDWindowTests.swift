@@ -148,6 +148,35 @@ final class HUDWindowTests: XCTestCase {
         sceneDelegate.loadingManager = DMLoadingManagerMain()
     }
 
+    func test_idleManagerReplacesAShownOne_givesTheAppWindowBackAndLetsTouchesThrough() throws {
+        let (scene, sceneDelegate) = try connectedSceneDelegate()
+        sceneDelegate.loadingManager = DMLoadingManagerMain(
+            state: .loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
+            settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
+        )
+        let hudWindow = try XCTUnwrap(waitForHUDWindows(in: scene).first, "a HUD window")
+        let appWindow = try XCTUnwrap(
+            scene.windows.first { !hudWindows(in: scene).contains($0) && $0.windowLevel == .normal },
+            "the app's own window"
+        )
+        let centre = CGPoint(x: hudWindow.bounds.midX, y: hudWindow.bounds.midY)
+        let hiddenWhileShown = waitUntil(appWindow.accessibilityElementsHidden)
+        let touchesTakenWhileShown = hudWindow.hitTest(centre, with: nil) != nil
+
+        sceneDelegate.loadingManager = DMLoadingManagerMain()
+
+        XCTAssertTrue(hiddenWhileShown, "while a HUD is shown the app's window is hidden from assistive technology")
+        XCTAssertTrue(touchesTakenWhileShown, "while a HUD is shown its window takes the touches")
+        XCTAssertTrue(
+            waitUntil(!appWindow.accessibilityElementsHidden),
+            "an idle manager in place of the shown one gives the app's window back"
+        )
+        XCTAssertTrue(
+            waitUntil(hudWindow.hitTest(centre, with: nil) == nil),
+            "an idle manager in place of the shown one lets the touches through again"
+        )
+    }
+
     func test_overlay_escapeOnAFailure_hidesTheHUD() throws {
         let (scene, sceneDelegate) = try connectedSceneDelegate()
         defer { sceneDelegate.loadingManager = DMLoadingManagerMain() }
@@ -236,6 +265,35 @@ final class HUDWindowTests: XCTestCase {
         )
     }
 
+    func test_injectedRoot_anotherManager_takesOverItsHUD() throws {
+        let scene = try XCTUnwrap(windowScene(), "the example app has a connected window scene")
+        let before = waitForHUDWindows(in: scene).count
+        let holder = ManagerHolder(manager: DMLoadingManagerMain())
+        let window = UIWindow(windowScene: scene)
+        window.rootViewController = UIHostingController(rootView: SwappingRoot(holder: holder))
+        window.isHidden = false
+        defer { remove(window) }
+        let appWindow = try XCTUnwrap(
+            scene.windows.first { !hudWindows(in: scene).contains($0) && $0 !== window && $0.windowLevel == .normal },
+            "the app's own window"
+        )
+        // The swap must reach a view that SwiftUI has drawn, with the HUD of its first manager.
+        let shownWithTheIdleManager = waitUntil(hudWindows(in: scene).count == before + 1)
+        let reachableWithTheIdleManager = !appWindow.accessibilityElementsHidden
+
+        holder.manager = DMLoadingManagerMain(
+            state: .loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
+            settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
+        )
+
+        XCTAssertTrue(shownWithTheIdleManager, "the root view shows the HUD window of its first manager")
+        XCTAssertTrue(reachableWithTheIdleManager, "with the idle manager nothing hides the app's window")
+        XCTAssertTrue(
+            waitUntil(appWindow.accessibilityElementsHidden),
+            "the HUD of the new manager is shown: it hides the app's window from assistive technology"
+        )
+    }
+
     /// SwiftUI evaluates a root view in a window that belongs to no scene, but never puts it
     /// into that window (measured on iOS 17.5 and 26.5), so the view cannot learn a scene.
     func test_injectedRoot_inAWindowWithoutScene_addsNoHUDWindow() throws {
@@ -292,6 +350,26 @@ final class HUDWindowTests: XCTestCase {
 
     private final class Appearance {
         var didAppear = false
+    }
+
+    /// Holds the manager that a root view shows, so a test can give the view another one.
+    @MainActor
+    private final class ManagerHolder: ObservableObject {
+        @Published var manager: DMLoadingManagerMain
+
+        init(manager: DMLoadingManagerMain) {
+            self.manager = manager
+        }
+    }
+
+    /// A root view that SwiftUI updates with the manager of `holder`, as it does when an app
+    /// passes another manager.
+    private struct SwappingRoot: View {
+        @ObservedObject var holder: ManagerHolder
+
+        var body: some View {
+            DMRootLoadingView(manager: holder.manager) { _ in Color.clear }
+        }
     }
 
     /// A window of `scene` whose root view is a `DMRootLoadingView` with a manager of its own.

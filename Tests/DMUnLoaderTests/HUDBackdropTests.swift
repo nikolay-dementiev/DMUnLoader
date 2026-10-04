@@ -117,6 +117,27 @@ final class HUDBackdropTests: XCTestCase {
         )
     }
 
+    func test_hudScene_reduceTransparency_dimBackdrop_keepsItsColour() throws {
+        let colour = Color.red.opacity(0.3)
+        let sut = makeSUT(backdrop: .dim(colour)).environment(\.hudReducesTransparency, true)
+
+        XCTAssertNoThrow(
+            try sut.inspect().find(ViewType.Color.self, where: { try $0.value() == colour }),
+            "under Reduce Transparency the dim backdrop keeps its colour"
+        )
+    }
+
+    func test_hudScene_reduceTransparency_clearBackdrop_staysClear() throws {
+        let sut = makeSUT(backdrop: .clear).environment(\.hudReducesTransparency, true)
+        let dim = Color.black.opacity(0)
+
+        XCTAssertNoThrow(try sut.inspect().find(text: "failed"), "the HUD of the clear backdrop is drawn")
+        XCTAssertThrowsError(
+            try sut.inspect().find(ViewType.Color.self, where: { try $0.value() == dim }),
+            "under Reduce Transparency the clear backdrop still draws no dim"
+        )
+    }
+
     // MARK: - Helpers
 
     /// The shape that a material fills.

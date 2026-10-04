@@ -40,7 +40,8 @@ final class HUDAccessibilityUITests: XCTestCase {
         app.buttons[DemoIdentifier.showLoading].tap()
         XCTAssertTrue(app.staticTexts["Loading..."].waitForExistence(timeout: 5), "the loading HUD is shown")
 
-        try app.performAccessibilityAudit(for: Self.auditTypes) { issue in
+        // Text clipped: the default progress card clips "Loading..." at large text sizes; AccessibilitySnapshotTests records it.
+        try app.performAccessibilityAudit(for: Self.auditTypes.subtracting(.textClipped)) { issue in
             // "Label not human-readable" on the default "Loading...": no documented criteria; VoiceOver reads it as shown.
             issue.compactDescription == "Label not human-readable" && issue.element?.label == "Loading..."
         }
@@ -99,12 +100,10 @@ final class HUDAccessibilityUITests: XCTestCase {
         return tree.label.components(separatedBy: DemoText.treeSeparator)
     }
 
-    /// Every audit type but two, each failing on the default look of the HUD alone.
+    /// Every audit type but contrast, which fails on the default look of the HUD alone.
     private static let auditTypes = XCUIAccessibilityAuditType.all
-        // Contrast: white text on the default gray card at opacity 0.8 fails it; 1.1.0 keeps the released colours.
+        // Contrast: white text on the default gray card at opacity 0.8 is below 4.5:1, a known issue in the README.
         .subtracting(.contrast)
-        // Text clipped: the default progress card clips "Loading..." at large text sizes; AccessibilitySnapshotTests records it.
-        .subtracting(.textClipped)
 
     /// The demo screen with nothing above the HUD's level, so a query or an audit sees the HUD
     /// and what the HUD leaves of the app.

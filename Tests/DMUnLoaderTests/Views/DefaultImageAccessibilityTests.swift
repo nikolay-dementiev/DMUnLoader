@@ -31,10 +31,9 @@ final class DefaultImageAccessibilityTests: XCTestCase {
             )
         )
 
-        XCTAssertThrowsError(
-            try failureView(with: provider).inspect().find(ViewType.Image.self).accessibilityHidden(),
-            "the host's image is left as the host made it"
-        )
+        let image = try failureView(with: provider).inspect().find(ViewType.Image.self)
+
+        XCTAssertThrowsError(try image.accessibilityHidden(), "the host's image is left as the host made it")
     }
 
     func test_successView_defaultImage_isHiddenFromAccessibility() throws {
@@ -53,10 +52,9 @@ final class DefaultImageAccessibilityTests: XCTestCase {
             )
         )
 
-        XCTAssertThrowsError(
-            try provider.getSuccessView(object: "Saved").inspect().find(ViewType.Image.self).accessibilityHidden(),
-            "the host's image is left as the host made it"
-        )
+        let image = try provider.getSuccessView(object: "Saved").inspect().find(ViewType.Image.self)
+
+        XCTAssertThrowsError(try image.accessibilityHidden(), "the host's image is left as the host made it")
     }
 
     // MARK: - Helpers
