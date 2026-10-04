@@ -7,13 +7,33 @@ import UIKit
 enum CoverWindow {
     private static var window: UIWindow?
 
-    /// Shows the cover, made key and visible like a host's own window, on the next turn of the
-    /// main actor. The caller requests the failure HUD first, so the cover comes after it; no
-    /// fixed delay is involved.
+    /// Shows the cover, made key and visible like a host's own window, once the HUD has hidden the
+    /// windows under it from assistive technology. SwiftUI draws the state of the HUD after the
+    /// request, and a cover shown before then is hidden with the windows under it. Polls every
+    /// 10 milliseconds, and gives up after two seconds.
     static func show() {
         Task { @MainActor in
+            do {
+                var polls = 0
+                while !hidesContentUnderneath(), polls < 200 {
+                    polls += 1
+                    try await Task.sleep(for: .milliseconds(10))
+                }
+            } catch {
+                // Cancelled with the app: there is nothing to cover.
+                return
+            }
             present()
         }
+    }
+
+    /// Whether a window of a connected scene is hidden from assistive technology. The HUD hides
+    /// the windows under it while it shows.
+    private static func hidesContentUnderneath() -> Bool {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .contains { $0.accessibilityElementsHidden }
     }
 
     private static func present() {
