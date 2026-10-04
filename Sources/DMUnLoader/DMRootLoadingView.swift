@@ -18,7 +18,7 @@ public struct DMRootLoadingView<
     /// The scene delegate `DMSceneDelegateBase<LM>`, for this `LM`, must be in the environment.
     /// `DMAppDelegate<LM>`, used with `@UIApplicationDelegateAdaptor`, puts it there. Without it
     /// SwiftUI stops the app when the view appears. In an app without `DMAppDelegate`, use
-    /// `init(manager:content:onAttachmentFailure:)`.
+    /// `init(manager:content:)`.
     public init(@ViewBuilder content: @escaping (LM) -> Content) {
         self.managerSource = .createdForTheSceneDelegate
         self.content = content
@@ -30,7 +30,7 @@ public struct DMRootLoadingView<
     /// The scene delegate `DMSceneDelegateBase<DMLoadingManagerMain>` must be in the
     /// environment. `DMAppDelegateType`, used with `@UIApplicationDelegateAdaptor`, puts it
     /// there. Without it SwiftUI stops the app when the view appears. In an app without
-    /// `DMAppDelegateType`, use `init(manager:content:onAttachmentFailure:)`.
+    /// `DMAppDelegateType`, use `init(manager:content:)`.
     public init(@ViewBuilder content: @escaping (DMLoadingManagerMain) -> Content)
         where LM == DMLoadingManagerMain {
         self.managerSource = .createdForTheSceneDelegate
@@ -60,15 +60,10 @@ public struct DMRootLoadingView<
     /// - Parameters:
     ///   - manager: The loading manager whose HUD is shown. The view holds it strongly.
     ///   - content: The content of the scene. It receives `manager`.
-    ///   - onAttachmentFailure: Called on the main actor when the HUD cannot be shown over the
-    ///     scene of this view. This version knows no such case and never calls it; see
-    ///     ``DMHUDAttachmentFailure``. `nil`, the default, reports nothing.
     public init(
         manager: LM,
-        @ViewBuilder content: @escaping (LM) -> Content,
-        onAttachmentFailure: (@MainActor (DMHUDAttachmentFailure) -> Void)? = nil
+        @ViewBuilder content: @escaping (LM) -> Content
     ) {
-        // Not kept: this version knows no failure to report.
         self.managerSource = .injected(manager)
         self.content = content
     }

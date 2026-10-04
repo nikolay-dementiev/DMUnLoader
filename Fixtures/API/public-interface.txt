@@ -7,7 +7,7 @@
 @_Concurrency.MainActor @preconcurrency public struct DMRootLoadingView<LM, Content> : SwiftUICore.View where LM : DMUnLoader.DMLoadingManager, Content : SwiftUICore.View {
   @_Concurrency.MainActor @preconcurrency public init(@SwiftUICore.ViewBuilder content: @escaping (LM) -> Content)
   @_Concurrency.MainActor @preconcurrency public init(@SwiftUICore.ViewBuilder content: @escaping (DMUnLoader.DMLoadingManagerMain) -> Content) where LM == DMUnLoader.DMLoadingManagerMain
-  @_Concurrency.MainActor @preconcurrency public init(manager: LM, @SwiftUICore.ViewBuilder content: @escaping (LM) -> Content, onAttachmentFailure: (@_Concurrency.MainActor @Sendable (DMUnLoader.DMHUDAttachmentFailure) -> Swift.Void)? = nil)
+  @_Concurrency.MainActor @preconcurrency public init(manager: LM, @SwiftUICore.ViewBuilder content: @escaping (LM) -> Content)
   @_Concurrency.MainActor @preconcurrency public var body: some SwiftUICore.View {
     get
   }
@@ -374,16 +374,6 @@ public struct DMErrorDefaultViewSettings : DMUnLoader.DMErrorViewSettings {
   public let errorTextSettings: DMUnLoader.ErrorTextSettings
   public let errorImageSettings: DMUnLoader.ErrorImageSettings
   public init(errorText: Swift.String? = "An error has occurred!", actionButtonCloseSettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Close"), actionButtonRetrySettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Retry"), errorTextSettings: DMUnLoader.ErrorTextSettings = ErrorTextSettings(), errorImageSettings: DMUnLoader.ErrorImageSettings = ErrorImageSettings(image: Image(systemName: "exclamationmark.triangle")))
-}
-public struct DMHUDAttachmentFailure : Swift.Error, Swift.Hashable, Swift.Sendable, Swift.CustomStringConvertible {
-  public var description: Swift.String {
-    get
-  }
-  @_implements(Swift.Equatable, ==(_:_:)) public static func __derived_struct_equals(_ a: DMUnLoader.DMHUDAttachmentFailure, _ b: DMUnLoader.DMHUDAttachmentFailure) -> Swift.Bool
-  public func hash(into hasher: inout Swift.Hasher)
-  public var hashValue: Swift.Int {
-    get
-  }
 }
 public struct DMHUDAutoHide : Swift.Hashable, Swift.Sendable {
   @_hasInitialValue public static let afterAutoHideDelay: DMUnLoader.DMHUDAutoHide

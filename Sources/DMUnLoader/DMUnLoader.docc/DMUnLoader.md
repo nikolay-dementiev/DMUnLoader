@@ -51,7 +51,6 @@ The loading HUD stays until the next state; the success hides by itself after 2 
 - ``DMLoadingManager``
 - ``DMLoadingManagerMain``
 - ``DMLoadableType``
-- ``DMHUDAttachmentFailure``
 
 ### The App and Scene Delegates
 
