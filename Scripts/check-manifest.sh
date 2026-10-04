@@ -13,8 +13,10 @@
 #    throw-away tagged copy of the tracked files: a consumer that depends on the checkout
 #    by path cannot show that failure.
 # 3. Fixtures/Consumer builds in Swift 6 and in Swift 5 language mode, and its own sources
-#    compile without a warning. It uses the released API and the README samples, so if it
-#    stops building, a consumer's code stops building.
+#    compile without a warning. It uses the released API, so if it stops building, a
+#    consumer's code stops building.
+# 4. Every Swift block of README.md and of the documentation catalog compiles as it is
+#    written, in Swift 6 and in Swift 5 language mode.
 
 set -euo pipefail
 
@@ -149,5 +151,136 @@ for scheme in ConsumerSwift6 ConsumerSwift5; do
         echo "check-manifest: $scheme builds against this checkout without a warning."
     fi
 done
+
+# 4. The Swift blocks of README.md and of the documentation catalog, each compiled in a
+#    context of its own, so that a block cannot use a name another block declares and one
+#    broken block cannot hide another. A block must compile as it is written, its imports
+#    included. A block that contains `Package(` is a complete package manifest, and SwiftPM
+#    evaluates it. Every other block is a target of its own, twice: in Swift 6 and in Swift 5
+#    language mode, in a generated package for iOS that depends on this checkout by path, the
+#    way Fixtures/Consumer does. The build goes on after an error, so that one run names every
+#    broken block. A warning in a block fails the check too.
+SNIPPETS="$WORK/snippets"
+rm -rf "$SNIPPETS"
+mkdir -p "$SNIPPETS/blocks"
+SNIPPETS_DERIVED="$(mktemp -d "$WORK/DerivedData.snippets.XXXXXX")"
+SNIPPETS_FAILED=0
+DOCUMENTS=("$ROOT/README.md")
+while IFS= read -r DOCUMENT; do
+    DOCUMENTS+=("$DOCUMENT")
+done < <(find "$ROOT/Sources/$MODULE/$MODULE.docc" -name '*.md' | LC_ALL=C sort)
+if ! python3 - "$ROOT" "$SNIPPETS" "${DOCUMENTS[@]}" > "$WORK/snippet-blocks.txt" <<'PY'
+import os
+import re
+import sys
+
+root, work, documents = sys.argv[1], sys.argv[2], sys.argv[3:]
+number = 0
+for document in documents:
+    name_in_repo = os.path.relpath(document, root)
+    lines = open(document, encoding="utf-8").read().split("\n")
+    block, start = None, 0
+    for index, line in enumerate(lines, start=1):
+        if block is None:
+            if line.strip() == "```swift":
+                block, start = [], index + 1
+            elif re.match(r"^\s*(```|~~~)", line) and "swift" in line.lower():
+                sys.exit(f"{name_in_repo}:{index}: write the fence of a Swift block as ```swift, so that it is compiled")
+        elif line.strip() == "```":
+            number += 1
+            text = "\n".join(block) + "\n"
+            kind = "manifest" if "Package(" in text else "ios"
+            name = f"Snippet{number:02d}"
+            with open(os.path.join(work, "blocks", f"{name}.swift"), "w", encoding="utf-8") as out:
+                out.write(text)
+            print(kind, name, f"{name_in_repo}:{start}")
+            block = None
+        else:
+            block.append(line)
+    if block is not None:
+        sys.exit(f"{name_in_repo}: the Swift block that starts on line {start} is not closed")
+PY
+then
+    SNIPPETS_FAILED=1
+elif ! grep -q " README.md:" "$WORK/snippet-blocks.txt"; then
+    echo "check-manifest: README.md has no Swift block." >&2
+    SNIPPETS_FAILED=1
+else
+    IOS_TARGETS=()
+    while read -r KIND NAME PLACE; do
+        if [ "$KIND" = "manifest" ]; then
+            mkdir -p "$SNIPPETS/$NAME"
+            cp "$SNIPPETS/blocks/$NAME.swift" "$SNIPPETS/$NAME/Package.swift"
+            if ! swift package dump-package --package-path "$SNIPPETS/$NAME" > "$WORK/snippet-$NAME.log" 2>&1; then
+                echo "check-manifest: the manifest at $PLACE does not evaluate:" >&2
+                grep -E "error:" "$WORK/snippet-$NAME.log" | head -10 >&2 || true
+                SNIPPETS_FAILED=1
+            fi
+        else
+            for TARGET in "$NAME" "${NAME}Swift5"; do
+                mkdir -p "$SNIPPETS/ios/Sources/$TARGET"
+                cp "$SNIPPETS/blocks/$NAME.swift" "$SNIPPETS/ios/Sources/$TARGET/$TARGET.swift"
+                IOS_TARGETS+=("$TARGET")
+            done
+        fi
+    done < "$WORK/snippet-blocks.txt"
+
+    if [ "${#IOS_TARGETS[@]}" -gt 0 ]; then
+        {
+            echo "// swift-tools-version: 6.0"
+            echo "import PackageDescription"
+            echo "let package = Package("
+            echo "    name: \"Snippets\","
+            echo "    platforms: [.iOS(.v17)],"
+            echo "    products: [.library(name: \"Snippets\", targets: [$(printf '"%s", ' "${IOS_TARGETS[@]}")])],"
+            echo "    dependencies: [.package(name: \"$MODULE\", path: \"$ROOT\")],"
+            echo "    targets: ["
+            for TARGET in "${IOS_TARGETS[@]}"; do
+                SETTINGS=""
+                case "$TARGET" in
+                    *Swift5) SETTINGS=", swiftSettings: [.swiftLanguageMode(.v5)]" ;;
+                esac
+                echo "        .target(name: \"$TARGET\", dependencies: [.product(name: \"$MODULE\", package: \"$MODULE\")]$SETTINGS),"
+            done
+            echo "    ]"
+            echo ")"
+        } > "$SNIPPETS/ios/Package.swift"
+        if (cd "$SNIPPETS/ios" && xcodebuild build \
+                -scheme Snippets \
+                -sdk iphonesimulator \
+                -destination 'generic/platform=iOS Simulator' \
+                -derivedDataPath "$SNIPPETS_DERIVED" \
+                -clonedSourcePackagesDirPath "$WORK/SourcePackages" \
+                -skipPackagePluginValidation \
+                -IDEBuildingContinueBuildingAfterErrors=YES \
+                ARCHS=arm64 ONLY_ACTIVE_ARCH=NO) > "$WORK/snippets-build.log" 2>&1; then
+            # A block counts only when the log shows it compiled in this run.
+            for TARGET in "${IOS_TARGETS[@]}"; do
+                if ! grep -qE "^SwiftCompile .*/Sources/$TARGET/$TARGET\.swift" "$WORK/snippets-build.log"; then
+                    echo "check-manifest: the block at $(grep " ${TARGET%Swift5} " "$WORK/snippet-blocks.txt" | cut -d ' ' -f 3) was not compiled as $TARGET" >&2
+                    SNIPPETS_FAILED=1
+                fi
+            done
+            WARNINGS="$(grep -E "/Sources/Snippet[0-9]+(Swift5)?/[^:]+:[0-9]+:[0-9]+: warning:" "$WORK/snippets-build.log" | sort -u || true)"
+            if [ -n "$WARNINGS" ]; then
+                echo "check-manifest: a Swift block of the documentation compiles with warnings:" >&2
+                echo "$WARNINGS" | sed "s|$SNIPPETS/ios/||" | head -20 >&2
+                echo "  The block numbers map to their documents in ${WORK#"$ROOT"/}/snippet-blocks.txt" >&2
+                SNIPPETS_FAILED=1
+            fi
+        else
+            echo "check-manifest: a Swift block of the documentation does not compile:" >&2
+            grep -E "error:" "$WORK/snippets-build.log" | sed "s|$SNIPPETS/ios/||" | sort -u | head -20 >&2 || true
+            echo "  The block numbers map to their documents in ${WORK#"$ROOT"/}/snippet-blocks.txt" >&2
+            SNIPPETS_FAILED=1
+        fi
+    fi
+    if [ "$SNIPPETS_FAILED" -eq 0 ]; then
+        echo "check-manifest: the $(wc -l < "$WORK/snippet-blocks.txt" | tr -d ' ') Swift blocks of README.md and the documentation catalog compile in Swift 6 and Swift 5 mode."
+    fi
+fi
+if [ "$SNIPPETS_FAILED" -ne 0 ]; then
+    FAILED=1
+fi
 
 exit "$FAILED"
