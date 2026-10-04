@@ -38,6 +38,8 @@ private struct CountersView<LM: DMLoadingManager>: View {
                     .accessibilityIdentifier(DemoIdentifier.windowContentTaps)
                 Text(DemoText.retries(model.retries))
                     .accessibilityIdentifier(DemoIdentifier.windowRetries)
+                Text(DemoText.delegateHoldsTheManager(ConstructionWitness.delegateHoldsTheManager))
+                    .accessibilityIdentifier(DemoIdentifier.constructionWitness)
             }
             if LaunchOptions.current.showsAccessibilityTree {
                 // Read again twice a second: nothing tells the app when the HUD's tree changes.
@@ -96,5 +98,34 @@ private enum HUDAccessibilityTree {
             return (0..<count).compactMap { object.accessibilityElement(at: $0) }
         }
         return (object as? UIView)?.subviews ?? []
+    }
+}
+
+/// Whether the scene delegate of the UIKit integration holds its loading manager while the root
+/// view controller of the scene is built. The library sets the manager before it builds the main
+/// window, so a root view controller that reads the manager through the delegate finds it. The
+/// UI tests read the answer through the counters.
+@MainActor
+enum ConstructionWitness {
+    private(set) static var delegateHoldsTheManager = false
+
+    static func record<LM: DMLoadingManager>(loadingManager: LM) {
+        let argument = loadingManager as AnyObject
+        let held = UIApplication.shared.connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.delegate }
+            .lazy
+            .compactMap { heldManager(of: $0) }
+            .first
+        delegateHoldsTheManager = held === argument
+    }
+
+    private static func heldManager(of delegate: AnyObject) -> AnyObject? {
+        if let delegate = delegate as? DMSceneDelegateUIKit<DMLoadingManagerMain, UIKitSceneHelper> {
+            return delegate.loadingManager
+        }
+        if let delegate = delegate as? DMSceneDelegateUIKit<StickyLoadingManager, UIKitSceneHelper> {
+            return delegate.loadingManager
+        }
+        return nil
     }
 }

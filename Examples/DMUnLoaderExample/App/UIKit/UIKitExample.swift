@@ -39,6 +39,7 @@ final class UIKitAppDelegate: UIResponder, UIApplicationDelegate {
 @MainActor
 enum UIKitSceneHelper: @MainActor DMSceneDelegateHelper {
     static func makeUIKitRootViewHierarhy<LM: DMLoadingManager>(loadingManager: LM) -> UIViewController {
-        DemoViewController(model: DemoModel(loadingManager: loadingManager))
+        ConstructionWitness.record(loadingManager: loadingManager)
+        return DemoViewController(model: DemoModel(loadingManager: loadingManager))
     }
 }

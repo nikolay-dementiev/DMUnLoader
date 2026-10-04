@@ -15,6 +15,7 @@ enum DemoIdentifier {
     static let hudAccessibilityTree = "hudAccessibilityTree"
     /// The number of HUD windows in the connected scenes, which `--accessibility-tree` shows in the counters window.
     static let hudWindowCount = "hudWindowCount"
+    static let constructionWitness = "constructionWitness"
 }
 
 /// The texts of the demo screen, so a test compares against the text the app builds.
@@ -45,6 +46,10 @@ enum DemoText {
 
     static func hudWindows(_ count: Int) -> String {
         "HUD windows: \(count)"
+    }
+
+    static func delegateHoldsTheManager(_ held: Bool) -> String {
+        "Delegate holds the manager: \(held ? "yes" : "no")"
     }
 
     /// Between two elements of the HUD in the accessibility tree that the counters window shows.

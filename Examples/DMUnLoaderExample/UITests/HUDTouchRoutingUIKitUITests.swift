@@ -44,4 +44,24 @@ final class HUDTouchRoutingUIKitUITests: XCTestCase {
             "the UIKit route shows the loading HUD in one HUD window"
         )
     }
+
+    /// The scene delegate sets its loading manager before it builds the root view controller, so a
+    /// root view controller that reads the manager through the delegate finds it there.
+    func test_uiKitRootView_whileItIsBuilt_theDelegateHoldsTheManager() {
+        let app = launchExample(["--uikit"])
+        let witness = app.staticTexts[DemoIdentifier.constructionWitness]
+        XCTAssertTrue(
+            witness.waitForExistence(timeout: Wait.launch),
+            "the counters window reports what the delegate held while the root view was built"
+        )
+
+        XCTAssertTrue(
+            wait(
+                for: NSPredicate(format: "label == %@", DemoText.delegateHoldsTheManager(true)),
+                on: witness,
+                timeout: Wait.screenChange
+            ),
+            "the scene delegate holds its loading manager while the root view controller is built"
+        )
+    }
 }
