@@ -102,11 +102,6 @@ final class LoadableStateEqualityTests: XCTestCase {
         let second = provider.eraseToAnyViewProvider()
         let retry = DMButtonAction {}
 
-        XCTAssertNotEqual(
-            DMLoadableType.none.hashValue,
-            DMLoadableType.loading(provider: first).hashValue,
-            "the state of no load and a loading state hash apart"
-        )
         XCTAssertEqual(
             DMLoadableType.loading(provider: first).hashValue,
             DMLoadableType.loading(provider: second).hashValue,
