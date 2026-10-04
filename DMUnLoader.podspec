@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DMUnLoader'
-  s.version          = '1.0.3'
+  s.version          = '1.1.0'
   s.summary          = 'A HUD for the loading, success and failure states of an iOS app, for SwiftUI and UIKit.'
   s.description      = <<-DESC
     DMUnLoader shows one HUD at a time over a scene of an app: a spinner while work runs, then
