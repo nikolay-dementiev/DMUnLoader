@@ -13,14 +13,31 @@
 # scenes"), so a UIKit launch after a SwiftUI one can show no screen at all. Uninstalling the
 # app removes the saved session. Each group launches the modes of one scene-delegate class.
 #
-# Exit codes: 0 every run passed, 1 a build or a test run failed, 2 the runs could not be
-# set up (a UI test class outside the groups, a grouped class that does not exist, an
-# unknown simulator, an uninstall that fails).
+# Exit codes: 0 every run passed, 1 a build or a test run failed, or a run left no readable
+# result with a test in it, 2 the runs could not be set up (an unknown simulator, a UI test
+# class outside the groups, a grouped class that does not exist, an uninstall that fails).
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 UDID="${1:?give the udid of a simulator}"
+
+# The state of the simulator with the udid, or nothing when no simulator has it.
+simulator_state() {
+    xcrun simctl list devices -j | python3 -c '
+import json, sys
+for devices in json.load(sys.stdin)["devices"].values():
+    for device in devices:
+        if device["udid"] == sys.argv[1]:
+            print(device["state"])
+' "$UDID"
+}
+
+# The simulator is checked before anything is built, installed or uninstalled.
+if [ -z "$(simulator_state)" ]; then
+    echo "test-example: no simulator with the udid $UDID" >&2
+    exit 2
+fi
 RESULTS="${2:-$ROOT/.build/results/example}"
 PROJECT="$ROOT/Examples/DMUnLoaderExample/DMUnLoaderExample.xcodeproj"
 SCHEME="DMUnLoaderExample"
@@ -42,7 +59,7 @@ TEST_GROUPS=(
 # that does not exist would run no test at all. A declaration may follow an attribute on the
 # same line. A test class with a base class of its own would escape this check, so it is
 # refused.
-CLASSES="$(grep -hoE '(^|[^A-Za-z0-9_])class +[A-Za-z0-9_]+ *: *[A-Za-z0-9_.]+' "$UI_TESTS"/*.swift \
+CLASSES="$(find "$UI_TESTS" -name '*.swift' -exec grep -hoE '(^|[^A-Za-z0-9_])class +[A-Za-z0-9_]+ *: *[A-Za-z0-9_.]+' {} + \
     | sed -E 's/.*class +([A-Za-z0-9_]+) *: *([A-Za-z0-9_.]+).*/\1 \2/')"
 INDIRECT="$(awk '$1 ~ /Tests$/ && $2 != "XCTestCase" { print $1 }' <<< "$CLASSES" | sort -u | tr '\n' ' ')"
 if [ -n "${INDIRECT// /}" ]; then
@@ -66,12 +83,15 @@ fi
 mkdir -p "$RESULTS"
 FAILED=0
 
+# The summary line of a result bundle. It fails when the bundle cannot be read or holds no test.
 summary() {
     xcrun xcresulttool get test-results summary --path "$1" 2> /dev/null | python3 -c '
 import json, sys
 d = json.load(sys.stdin)
+if d["totalTestCount"] == 0:
+    sys.exit(1)
 print("{} tests, {} passed, {} failed, {} skipped".format(d["totalTestCount"], d["passedTests"], d["failedTests"], d["skippedTests"]))
-' 2> /dev/null || echo "no test results"
+' 2> /dev/null
 }
 
 # Runs the built tests that the -only-testing arguments name into <results>/<name>.xcresult.
@@ -91,29 +111,33 @@ run_tests() {
         "$@" \
         -resultBundlePath "$bundle" \
         > "$RESULTS/$name.log" 2>&1 || status=$?
-    if [ "$status" -eq 0 ]; then
-        echo "test-example: $name: passed, $(summary "$bundle")"
+    local counts
+    if [ "$status" -ne 0 ]; then
+        echo "test-example: $name: FAILED (xcodebuild exit $status), $(summary "$bundle" || echo "no readable test results"). See ${RESULTS#"$ROOT"/}/$name.log" >&2
+        FAILED=1
+    elif counts="$(summary "$bundle")"; then
+        echo "test-example: $name: passed, $counts"
     else
-        echo "test-example: $name: FAILED (xcodebuild exit $status), $(summary "$bundle"). See ${RESULTS#"$ROOT"/}/$name.log" >&2
+        echo "test-example: $name: FAILED, the result bundle is unreadable or holds no test. See ${RESULTS#"$ROOT"/}/$name.log" >&2
         FAILED=1
     fi
 }
 
-# simctl uninstalls only from a running device.
+# Boots the simulator when it is not running: simctl uninstalls only from a running device.
 boot() {
-    local state
-    state="$(xcrun simctl list devices -j | python3 -c '
-import json, sys
-for devices in json.load(sys.stdin)["devices"].values():
-    for device in devices:
-        if device["udid"] == sys.argv[1]:
-            print(device["state"])
-' "$UDID")"
-    case "$state" in
-        Booted) ;;
-        "") echo "test-example: no simulator with the udid $UDID" >&2; exit 2 ;;
-        *) xcrun simctl bootstatus "$UDID" -b > /dev/null ;;
-    esac
+    if [ "$(simulator_state)" != "Booted" ]; then
+        xcrun simctl bootstatus "$UDID" -b > /dev/null
+    fi
+}
+
+# Removes the example app, and with it the scene session that an earlier run may have saved.
+# The argument names the run in the message.
+uninstall_example() {
+    boot
+    if ! xcrun simctl uninstall "$UDID" "$APP_ID"; then
+        echo "test-example: the example app could not be uninstalled before $1." >&2
+        exit 2
+    fi
 }
 
 if ! xcodebuild build-for-testing \
@@ -131,16 +155,12 @@ if ! xcodebuild build-for-testing \
 fi
 echo "test-example: built for testing."
 
+uninstall_example "the app-hosted tests"
 run_tests app-hosted -only-testing:DMUnLoaderExampleTests
 
 for group in "${TEST_GROUPS[@]}"; do
     name="${group%%|*}"
-    boot
-    # Removes the scene session that the previous run may have left saved.
-    if ! xcrun simctl uninstall "$UDID" "$APP_ID"; then
-        echo "test-example: the example app could not be uninstalled before the group $name." >&2
-        exit 2
-    fi
+    uninstall_example "the group $name"
     arguments=()
     for class in ${group#*|}; do
         arguments+=("-only-testing:DMUnLoaderExampleUITests/$class")
