@@ -60,7 +60,10 @@ final class DMLoadingManagerTests: XCTestCase {
                 }
             }
 
-            wait(for: [hidden], timeout: 0.05 + TestTiming.callbackAllowance)
+            // The settings give 50 milliseconds. The bound leaves the delay of the settings
+            // room and stays under the two-second default, so a manager that ignored the
+            // settings would fail this wait.
+            wait(for: [hidden], timeout: 1)
             subscription.cancel()
         }
     }

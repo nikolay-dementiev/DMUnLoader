@@ -45,11 +45,17 @@ final class DMLoadingManagerAutoHideTests: XCTestCase {
     }
 
     func test_init_withSuccessOrFailure_schedulesTheHideAtOnce() {
-        let success = makeSUT(state: .success("Saved", provider: provider.eraseToAnyViewProvider()))
-        let failure = makeSUT(state: .failure(error: DMAppError.custom("Lost"), provider: provider.eraseToAnyViewProvider()))
+        let success = makeSUT(
+            state: .success("Saved", provider: provider.eraseToAnyViewProvider()),
+            autoHideDelay: .seconds(7)
+        )
+        let failure = makeSUT(
+            state: .failure(error: DMAppError.custom("Lost"), provider: provider.eraseToAnyViewProvider()),
+            autoHideDelay: .seconds(7)
+        )
 
-        XCTAssertEqual(success.scheduler.scheduled.count, 1, "an initial success is hidden after the delay")
-        XCTAssertEqual(failure.scheduler.scheduled.count, 1, "an initial failure is hidden after the delay")
+        XCTAssertEqual(success.scheduler.scheduled.map(\.delay), [.seconds(7)], "an initial success is hidden after the delay of the settings")
+        XCTAssertEqual(failure.scheduler.scheduled.map(\.delay), [.seconds(7)], "an initial failure is hidden after the delay of the settings")
         success.scheduler.scheduled[0].runHide()
         failure.scheduler.scheduled[0].runHide()
         XCTAssertEqual(success.sut.loadableState.rawValue, "None", "the initial success is hidden")
