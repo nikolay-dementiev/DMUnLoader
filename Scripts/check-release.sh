@@ -63,8 +63,12 @@ if [ "$PODSPEC_VERSION" != "$VERSION" ]; then
     PROBLEMS+=("the podspec names version '$PODSPEC_VERSION', not $VERSION")
 fi
 
-if ! command -v python3 > /dev/null; then
-    echo "check-release: python3 is needed to read the release date, and it is not on the PATH" >&2
+if ! python3 -c 'import datetime' > /dev/null 2>&1; then
+    if [ "${#PROBLEMS[@]}" -gt 0 ]; then
+        echo "check-release: $VERSION is not ready to release:" >&2
+        printf '  - %s\n' "${PROBLEMS[@]}" >&2
+    fi
+    echo "check-release: python3 is needed to read the release date, and it does not run on this machine" >&2
     exit 2
 fi
 
@@ -76,8 +80,13 @@ if [[ "$NEWEST" =~ ^##\ \[([^]]+)\]\ -\ (.*)$ ]]; then
         PROBLEMS+=("the newest changelog heading is for $HEADING_VERSION, not $VERSION")
     elif ! [[ "$HEADING_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
         PROBLEMS+=("the changelog heading of $VERSION has '$HEADING_DATE' where the release date belongs")
-    elif ! python3 -c 'import datetime, sys; datetime.date.fromisoformat(sys.argv[1])' "$HEADING_DATE" 2> /dev/null; then
-        PROBLEMS+=("the changelog heading of $VERSION has '$HEADING_DATE', which is not a day of the calendar")
+    elif ! DATE_CHECK="$(python3 -c 'import datetime, sys; datetime.date.fromisoformat(sys.argv[1])' "$HEADING_DATE" 2>&1)"; then
+        if [[ "$DATE_CHECK" == *ValueError* ]]; then
+            PROBLEMS+=("the changelog heading of $VERSION has '$HEADING_DATE', which is not a day of the calendar")
+        else
+            echo "check-release: python3 could not check the release date: $DATE_CHECK" >&2
+            exit 2
+        fi
     fi
 else
     PROBLEMS+=("CHANGELOG.md has no heading of the form '## [version] - date'")
