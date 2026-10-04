@@ -24,16 +24,24 @@ enum SnapshotSettings {
     static let perceptualPrecision: Float = 0.98
 
     /// A missing reference is recorded on a developer's machine, and the test fails once.
-    /// With `CI` set nothing is ever written: a missing reference is a failure. With
-    /// `SNAPSHOT_TESTING_RECORD` set, the library's own record mode applies, so references
-    /// can be re-recorded on purpose. A test runner in the simulator sees a variable that
-    /// `xcodebuild` passes as `TEST_RUNNER_<name>`.
+    /// With `CI` set nothing is ever written, whatever `SNAPSHOT_TESTING_RECORD` says: a
+    /// missing reference is a failure. Without `CI`, `SNAPSHOT_TESTING_RECORD` set leaves the
+    /// record mode to the library, so references can be re-recorded on purpose. A test runner
+    /// in the simulator sees a variable that `xcodebuild` passes as `TEST_RUNNER_<name>`.
     static var record: SnapshotTestingConfiguration.Record? {
-        let environment = ProcessInfo.processInfo.environment
+        record(in: ProcessInfo.processInfo.environment)
+    }
+
+    /// The record mode for `environment`. `nil` leaves the mode to the library, which reads
+    /// `SNAPSHOT_TESTING_RECORD` itself when it is given `nil`.
+    static func record(in environment: [String: String]) -> SnapshotTestingConfiguration.Record? {
+        if environment["CI"] != nil {
+            return .never
+        }
         if environment["SNAPSHOT_TESTING_RECORD"] != nil {
             return nil
         }
-        return environment["CI"] == nil ? .missing : .never
+        return .missing
     }
 
     /// Rendering differs between OS versions, so every version has its own references.
