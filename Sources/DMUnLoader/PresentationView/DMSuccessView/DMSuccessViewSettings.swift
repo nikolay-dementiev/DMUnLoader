@@ -10,6 +10,7 @@ import SwiftUI
 /// Conforming types must provide properties for the success image and text.
 public protocol DMSuccessViewSettings {
     
+    /// The space between the image and the text, or `nil` for the default spacing of a stack.
     var spacingBetweenElements: CGFloat? { get }
     
     /// Properties related to the success image displayed in the success view.
@@ -35,6 +36,8 @@ public struct DMSuccessDefaultViewSettings: DMSuccessViewSettings {
     /// - Parameters:
     ///   - successImageProperties: The properties for the success image. Defaults to `SuccessImageProperties()`.
     ///   - successTextProperties: The properties for the success text. Defaults to `SuccessTextProperties()`.
+    ///   - spacingBetweenElements: The space between the image and the text. Defaults to `nil`,
+    ///     the default spacing of a stack.
     /// - Example:
     ///   ```swift
     ///   let customSuccessSettings = DMSuccessDefaultViewSettings(
@@ -53,10 +56,15 @@ public struct DMSuccessDefaultViewSettings: DMSuccessViewSettings {
 }
 
 extension DMSuccessDefaultViewSettings: Hashable {
+    /// Equal when every setting is equal: the image properties, the text properties and the
+    /// spacing between them.
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.successImageProperties == rhs.successImageProperties
+            && lhs.successTextProperties == rhs.successTextProperties
+            && lhs.spacingBetweenElements == rhs.spacingBetweenElements
     }
     
+    /// Hashes the settings that `==` compares.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(successImageProperties)
         hasher.combine(successTextProperties)
@@ -65,7 +73,13 @@ extension DMSuccessDefaultViewSettings: Hashable {
 }
 
 /// A struct defining properties for the success image displayed in a success view.
+///
+/// The default image, the filled checkmark circle, is hidden from assistive technology: the
+/// text of the success view names the success. An image equal to it counts as that default;
+/// any other image keeps the accessibility it was given.
 public struct SuccessImageProperties: Identifiable {
+    /// Identifies the properties. Two values are equal only when their `id` is equal, so two
+    /// values made with the default `id` are different.
     public var id: UUID
     
     /// The image to display as the success icon.
@@ -79,14 +93,15 @@ public struct SuccessImageProperties: Identifiable {
     
     /// Initializes a new instance of `SuccessImageProperties` with optional customizations.
     /// - Parameters:
+    ///   - id: Identifies the properties. Defaults to a new `UUID`.
     ///   - image: The image to display. Defaults to a checkmark circle icon (`"checkmark.circle.fill"`).
-    ///   - frame: The size of the image frame. Defaults to `CustomSizeView(width: 50, height: 50)`.
+    ///   - frame: The size of the image frame. Defaults to `CustomViewSize(width: 50, height: 50)`.
     ///   - foregroundColor: The foreground color of the image. Defaults to `.green`.
     /// - Example:
     ///   ```swift
     ///   let customImageProperties = SuccessImageProperties(
     ///       image: Image(systemName: "star.fill"),
-    ///       frame: CustomSizeView(width: 60, height: 60),
+    ///       frame: CustomViewSize(width: 60, height: 60),
     ///       foregroundColor: .yellow
     ///   )
     ///   ```
@@ -104,10 +119,16 @@ public struct SuccessImageProperties: Identifiable {
 }
 
 extension SuccessImageProperties: Hashable {
+    /// Equal when the `id`, the image, the frame and the foreground color are equal. Two
+    /// values made with the default `id` are different values.
     public static func == (lhs: SuccessImageProperties, rhs: SuccessImageProperties) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.id == rhs.id
+            && lhs.image == rhs.image
+            && lhs.frame == rhs.frame
+            && lhs.foregroundColor == rhs.foregroundColor
     }
-    
+
+    /// Hashes the `id`, the frame and the foreground color. `Image` is not `Hashable`.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(frame)
@@ -115,27 +136,39 @@ extension SuccessImageProperties: Hashable {
     }
 }
 
+extension SuccessImageProperties {
+    /// Whether the image is the default checkmark, which only decorates.
+    var showsTheDefaultImage: Bool {
+        image == Image(systemName: "checkmark.circle.fill")
+    }
+}
+
 /// A struct defining properties for the success text displayed in a success view.
 public struct SuccessTextProperties {
     
-    /// The text to display as the success message.
+    /// The text of a success view that has no message. A success shown through a loading
+    /// manager always has one, the message passed to `showSuccess(_:provider:)`, and the
+    /// success view shows its `description` instead. A custom success view may read this text.
     public let text: String?
-    
+
     /// The foreground color of the text.
     public let foregroundColor: Color?
-    
+
+    /// How the lines of the text line up when it takes more than one line. The horizontal
+    /// part decides: `.leading` and `.trailing` line them up at that edge, any other
+    /// horizontal alignment centers them. The vertical part has no effect. A single line is
+    /// centered in the success view whatever this value is.
     public let alignment: Alignment
-    
-    /// Initializes a new instance of `SuccessTextProperties` with optional customizations.
+
+    /// Creates the properties of the success text.
     /// - Parameters:
-    ///   - text: The text to display. Defaults to `"Success!"`.
-    ///   - foregroundColor: The foreground color of the text. Defaults to `.white`.
+    ///   - text: The text shown when the success has no message. Defaults to `"Success!"`.
+    ///   - foregroundColor: The color of the text. Defaults to `.white`.
+    ///   - alignment: How the lines of a text of more than one line line up; see `alignment`.
+    ///     Defaults to `.center`.
     /// - Example:
     ///   ```swift
-    ///   let customTextProperties = SuccessTextProperties(
-    ///       text: "Operation Completed!",
-    ///       foregroundColor: .black
-    ///   )
+    ///   let success = SuccessTextProperties(text: "Saved", alignment: .leading)
     ///   ```
     public init(
         text: String? = "Success!",
@@ -149,12 +182,30 @@ public struct SuccessTextProperties {
 }
 
 extension SuccessTextProperties: Hashable {
+    /// Equal when the text, the foreground color and the alignment are equal.
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.text == rhs.text
+            && lhs.foregroundColor == rhs.foregroundColor
+            && lhs.alignment == rhs.alignment
     }
-    
+
+    /// Hashes the text and the foreground color. `Alignment` is not `Hashable`.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(text)
         hasher.combine(foregroundColor)
+    }
+}
+
+extension SuccessTextProperties {
+    /// How the lines of the text line up: the horizontal part of `alignment`.
+    var lineAlignment: TextAlignment {
+        switch alignment.horizontal {
+        case .leading:
+            .leading
+        case .trailing:
+            .trailing
+        default:
+            .center
+        }
     }
 }

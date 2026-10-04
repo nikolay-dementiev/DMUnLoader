@@ -28,11 +28,15 @@ struct StubDMErrorViewSettings: DMErrorViewSettings {
 }
 
 extension StubDMErrorViewSettings: Hashable {
-    static public func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.errorText == rhs.errorText
+            && lhs.actionButtonCloseSettings == rhs.actionButtonCloseSettings
+            && lhs.actionButtonRetrySettings == rhs.actionButtonRetrySettings
+            && lhs.errorTextSettings == rhs.errorTextSettings
+            && lhs.errorImageSettings == rhs.errorImageSettings
     }
     
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(errorText)
         hasher.combine(actionButtonCloseSettings)
         hasher.combine(actionButtonRetrySettings)

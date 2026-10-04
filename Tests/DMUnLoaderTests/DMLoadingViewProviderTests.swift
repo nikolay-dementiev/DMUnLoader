@@ -20,7 +20,7 @@ final class DMLoadingViewProviderTests: XCTestCase {
         )
         XCTAssertTrue(
             sut.loadingViewSettings is DMProgressViewDefaultSettings,
-            "Default loadingViewSettings should be of type DMLoadingDefaultViewSettings."
+            "Default loadingViewSettings should be of type DMProgressViewDefaultSettings."
         )
         XCTAssertTrue(
             sut.errorViewSettings is DMErrorDefaultViewSettings,
@@ -67,7 +67,7 @@ final class DMLoadingViewProviderTests: XCTestCase {
         let settings = loadingView?.settingsProvider as? DMProgressViewDefaultSettings
         XCTAssertNotNil(
             settings,
-            "Loading view settings should be of type DMLoadingDefaultViewSettings.",
+            "Loading view settings should be of type DMProgressViewDefaultSettings.",
             file: file,
             line: line
         )
@@ -167,63 +167,46 @@ final class DMLoadingViewProviderTests: XCTestCase {
     func testCustomImplementation() throws {
         final class CustomProvider: DMLoadingViewProvider {
             let id = UUID()
+            private(set) var loadingViewRequests = 0
+            private(set) var errorViewRequests = 0
+            private(set) var successViewRequests = 0
             
             @MainActor
             func getLoadingView() -> some View {
-                MockDMSuccessViewTest()
+                loadingViewRequests += 1
+                return MockDMSuccessViewTest()
             }
             
             @MainActor
-            func getErrorView(error: Error,
-                              onRetry: DMAction?,
-                              onClose: DMAction) -> some View {
-                MockDMErrorViewTest()
+            func getErrorView(error: any Error,
+                              onRetry: (any DMAction)?,
+                              onClose: any DMAction) -> some View {
+                errorViewRequests += 1
+                return MockDMErrorViewTest()
             }
             
             @MainActor
-            func getSuccessView(object: DMLoadableTypeSuccess) -> some View {
-                MockDMSuccessViewTest()
+            func getSuccessView(object: any DMLoadableTypeSuccess) -> some View {
+                successViewRequests += 1
+                return MockDMSuccessViewTest()
             }
         }
         
-        let provider = CustomProvider()
+        let custom = CustomProvider()
+        // A loading state holds the erased provider, so every request must reach the custom one.
+        let provider = custom.eraseToAnyViewProvider()
         
-        let loadingView: MockDMSuccessViewTest = try castView(provider
-            .getLoadingView()
-        )
-        let errorView: MockDMErrorViewTest = try castView(provider
-            .getErrorView(error: NSError(domain: "TestError",
-                                         code: 1,
-                                         userInfo: nil),
-                          onRetry: nil,
-                          onClose: DMButtonAction({}))
-        )
+        _ = provider.getLoadingView()
+        _ = provider.getErrorView(error: NSError(domain: "TestError", code: 1, userInfo: nil),
+                                  onRetry: nil,
+                                  onClose: DMButtonAction({}))
+        _ = provider.getSuccessView(object: StubDMLoadableTypeSuccess())
         
-        let successView: MockDMSuccessViewTest = try castView(provider
-            .getSuccessView(object: StubDMLoadableTypeSuccess())
-        )
-        
-        XCTAssertTrue((loadingView as Any) is MockDMSuccessViewTest,
-                      "Custom loading view should be an instance of Text")
-        XCTAssertTrue((errorView as Any) is MockDMErrorViewTest,
-                      "Custom error view should be an instance of Image")
-        XCTAssertTrue((successView as Any) is MockDMSuccessViewTest,
-                      "Custom success view should be an instance of Text")
+        XCTAssertEqual(custom.loadingViewRequests, 1, "the erased provider asks the custom provider for the loading view")
+        XCTAssertEqual(custom.errorViewRequests, 1, "the erased provider asks the custom provider for the error view")
+        XCTAssertEqual(custom.successViewRequests, 1, "the erased provider asks the custom provider for the success view")
     }
     
     // MARK: - Helpers
     
-    func castView<T: View>(_ viewToCast: some View) throws -> T {
-        
-        guard let viewToCast = viewToCast as? T else {
-            let requestedView = try viewToCast
-                .inspect()
-                .view(T.self)
-                .actualView()
-            
-            return requestedView
-        }
-        
-        return viewToCast
-    }
 }

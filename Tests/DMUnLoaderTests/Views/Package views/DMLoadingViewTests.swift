@@ -12,12 +12,9 @@ import ViewInspector
 
 @MainActor
 final class DMLoadingViewTests: XCTestCase {
-    
+
     override func invokeTest() {
-        withSnapshotTesting(
-            record: .missing,
-            diffTool: .ksdiff
-        ) {
+        withSnapshotTesting(diffTool: .ksdiff) {
             super.invokeTest()
         }
     }
@@ -32,36 +29,30 @@ final class DMLoadingViewTests: XCTestCase {
         let sut = makeSUT(manager: loadingManager)
         
         // Then
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .light)
-            ),
-            named: "View-EmptyState-No-Overlay-or-Background-iPhone13Pro-light",
-            record: false
+            style: .light,
+            named: "View-EmptyState-No-Overlay-or-Background-iPhone13Pro-light"
         )
     }
     
-    func testLoadingView_AssignTagFromSettingsToEmptyStateView_WhenLoadingStateIsNone() throws {
+    func test_noState_hasNeitherBackdropNorCard() {
         // Given
         let loadingManager = StubDMLoadingManager(loadableState: .none)
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        let tagToFindTheView = DMLoadingViewOwnSettings.emptyViewTag
-        let emptyView = try sut
-            .inspect()
-            .find(viewWithTag: tagToFindTheView)
-        
+
         // Then
-        XCTAssertNotNil(emptyView,
-                        "The EmptyView should have the correct tag assigned from settings: `\(tagToFindTheView)`")
+        XCTAssertThrowsError(
+            try sut.inspect().find(ViewType.Color.self),
+            "without a state the view draws no backdrop and no card"
+        )
     }
     
     // MARK: - Scenario 2: Verify Loading State (`.loading`)
     
-    func testLoadingView_ShowsLoadingView_WhenLoadingStateIsLoading() throws {
+    func testLoadingView_ShowsLoadingView_WhenLoadingStateIsLoading() {
         // Given
         let provider = StubDMLoadingViewProvider()
         let loadingManager = StubDMLoadingManager(
@@ -69,35 +60,19 @@ final class DMLoadingViewTests: XCTestCase {
                 provider: provider.eraseToAnyViewProvider()
             )
         )
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        
-        let inspection = try XCTUnwrap(
-            sut.inspection,
-            "Inspection should be available in debug mode"
-        )
-        
+
         // Then
-        let exp = inspection.inspect { view in
-            let actualView = try view.actualView()
-            
-            assertSnapshot(
-                of: actualView,
-                as: .image(
-                    layout: .device(config: .iPhone13Pro),
-                    traits: .init(userInterfaceStyle: .light)
-                ),
-                named: "View-LoadingState-iPhone13Pro-light"
-            )
-        }
-        
-        ViewHosting.host(view: sut)
-        defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.3)
+        assertImageSnapshot(
+            of: fadedIn(sut),
+            style: .light,
+            named: "View-LoadingState-iPhone13Pro-light"
+        )
     }
     
-    func testLoadingView_AssignTagFromSettingsToEmptyStateView_WhenLoadingStateIsLoading() throws {
+    func test_loading_showsTheLoadingViewOfTheProvider() {
         // Given
         let provider = StubDMLoadingViewProvider()
         let loadingManager = StubDMLoadingManager(
@@ -105,21 +80,19 @@ final class DMLoadingViewTests: XCTestCase {
                 provider: provider.eraseToAnyViewProvider()
             )
         )
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        let tagToFindTheView = DMLoadingViewOwnSettings.loadingViewTag
-        let loadingView = try sut
-            .inspect()
-            .find(viewWithTag: tagToFindTheView)
-        
+
         // Then
-        XCTAssertNotNil(loadingView,
-                        "The LoadingView should have the correct tag assigned from settings: `\(tagToFindTheView)`")
+        XCTAssertNoThrow(
+            try sut.inspect().find(text: "Stub Loading View"),
+            "while loading the view shows the loading view of the provider"
+        )
     }
     
-    func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Loading() throws {
-        try testLoadingView_TheOverlayAnimatesSmoothly_IntoView(state:
+    func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Loading() {
+        testLoadingView_TheOverlayAnimatesSmoothly_IntoView(state:
                 .loading(
                     provider: StubDMLoadingViewProvider()
                         .eraseToAnyViewProvider()
@@ -128,7 +101,7 @@ final class DMLoadingViewTests: XCTestCase {
     
     // MARK: - Scenario 3: Verify Failure State (`.failure`)
     
-    func testLoadingView_ShowsFailureView_WhenLoadingStateIsFailure() throws {
+    func testLoadingView_ShowsFailureView_WhenLoadingStateIsFailure() {
         // Given
         let provider = StubDMLoadingViewProvider()
         let loadingManager = StubDMLoadingManager(
@@ -138,35 +111,19 @@ final class DMLoadingViewTests: XCTestCase {
                 onRetry: DMButtonAction {}
             )
         )
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        
-        let inspection = try XCTUnwrap(
-            sut.inspection,
-            "Inspection should be available in debug mode"
-        )
-        
+
         // Then
-        let exp = inspection.inspect { view in
-            let actualView = try view.actualView()
-            
-            assertSnapshot(
-                of: actualView,
-                as: .image(
-                    layout: .device(config: .iPhone13Pro),
-                    traits: .init(userInterfaceStyle: .light)
-                ),
-                named: "View-FailureState-iPhone13Pro-light"
-            )
-        }
-        
-        ViewHosting.host(view: sut)
-        defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.3)
+        assertImageSnapshot(
+            of: fadedIn(sut),
+            style: .light,
+            named: "View-FailureState-iPhone13Pro-light"
+        )
     }
     
-    func testLoadingView_AssignTagFromSettingsToFailureStateView_WhenLoadingStateIsFailure() throws {
+    func test_failure_showsTheErrorViewOfTheProvider() {
         // Given
         let provider = StubDMLoadingViewProvider()
         let loadingManager = StubDMLoadingManager(
@@ -175,22 +132,20 @@ final class DMLoadingViewTests: XCTestCase {
                 provider: provider.eraseToAnyViewProvider()
             )
         )
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        let tagToFindTheView = DMLoadingViewOwnSettings.failureViewTag
-        let failureView = try sut
-            .inspect()
-            .find(viewWithTag: tagToFindTheView)
-        
+
         // Then
-        XCTAssertNotNil(failureView,
-                        "The FailureView should have the correct tag assigned from settings: `\(tagToFindTheView)`")
+        XCTAssertNoThrow(
+            try sut.inspect().find(text: "Stub Error View"),
+            "a failure shows the error view of the provider"
+        )
     }
     
-    func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Failure() throws {
+    func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Failure() {
         let provider = StubDMLoadingViewProvider()
-        try testLoadingView_TheOverlayAnimatesSmoothly_IntoView(
+        testLoadingView_TheOverlayAnimatesSmoothly_IntoView(
             state:
                     .failure(
                         error: DMUnLoader.DMAppError.custom("Test Error"),
@@ -201,7 +156,7 @@ final class DMLoadingViewTests: XCTestCase {
     
     // MARK: - Scenario 4: Verify Success State (`.success`)
     
-    func testLoadingView_ShowsSuccessView_WhenLoadingStateIsSuccess() throws {
+    func testLoadingView_ShowsSuccessView_WhenLoadingStateIsSuccess() {
         // Given
         let provider = StubDMLoadingViewProvider()
         let loadingManager = StubDMLoadingManager(
@@ -210,35 +165,19 @@ final class DMLoadingViewTests: XCTestCase {
                 provider: provider.eraseToAnyViewProvider()
             )
         )
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        
-        let inspection = try XCTUnwrap(
-            sut.inspection,
-            "Inspection should be available in debug mode"
-        )
-        
+
         // Then
-        let exp = inspection.inspect { view in
-            let actualView = try view.actualView()
-            
-            assertSnapshot(
-                of: actualView,
-                as: .image(
-                    layout: .device(config: .iPhone13Pro),
-                    traits: .init(userInterfaceStyle: .light)
-                ),
-                named: "View-SuccessState-iPhone13Pro-light"
-            )
-        }
-        
-        ViewHosting.host(view: sut)
-        defer { ViewHosting.expel() }
-        wait(for: [exp], timeout: 0.3)
+        assertImageSnapshot(
+            of: fadedIn(sut),
+            style: .light,
+            named: "View-SuccessState-iPhone13Pro-light"
+        )
     }
     
-    func testLoadingView_AssignTagFromSettingsToSuccessStateView_WhenLoadingStateIsSuccess() throws {
+    func test_success_showsTheSuccessViewOfTheProvider() {
         // Given
         let provider = StubDMLoadingViewProvider()
         let loadingManager = StubDMLoadingManager(
@@ -247,22 +186,20 @@ final class DMLoadingViewTests: XCTestCase {
                 provider: provider.eraseToAnyViewProvider()
             )
         )
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        let tagToFindTheView = DMLoadingViewOwnSettings.successViewTag
-        let actualView = try sut
-            .inspect()
-            .find(viewWithTag: tagToFindTheView)
-        
+
         // Then
-        XCTAssertNotNil(actualView,
-                        "The SuccessView should have the correct tag assigned from settings: `\(tagToFindTheView)`")
+        XCTAssertNoThrow(
+            try sut.inspect().find(text: "Stub Success View"),
+            "a success shows the success view of the provider"
+        )
     }
     
-    func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Success() throws {
+    func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Success() {
         let provider = StubDMLoadingViewProvider()
-        try testLoadingView_TheOverlayAnimatesSmoothly_IntoView(
+        testLoadingView_TheOverlayAnimatesSmoothly_IntoView(
             state:
                     .success(
                         "Test Success",
@@ -287,105 +224,118 @@ final class DMLoadingViewTests: XCTestCase {
                 error: DMUnLoader.DMAppError.custom("Test Error"),
                 provider: provider.eraseToAnyViewProvider(),
                 onRetry: DMButtonAction {}
-            ), .none),
-            (.none, .none)
+            ), .none)
         ]
         
         // Then
         try checktLoadingView_RespondToTapGestures_ForStates(currentStateConditions)
     }
     
-    // MARK: - Scenario 6: Verify Auto-Hide Behavior
-    
-    func testAutoHideBehavior_For_Success_Failure_None_States() throws {
-        // Given
-        let secondsAutoHideDelay: Double = 0.05
-        let provider = StubDMLoadingViewProvider()
-            .eraseToAnyViewProvider()
-        let statesToCheck: [DMLoadableType] = [
-            .success(
-                "Test Success",
-                provider: provider
-            ),
-            .failure(
-                error: DMUnLoader.DMAppError.custom("Test Error"),
-                provider: provider.eraseToAnyViewProvider(),
-                onRetry: DMButtonAction {}
-            ),
-            .none
-        ]
+    func test_tapOnTheCard_isReportedToItsViewModel() throws {
+        let viewModel = HUDViewModelSpy(showsHUD: true)
+        let success = DMLoadableType.success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
+        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: success), viewModel: viewModel)
         
-        // When & Then
-        try checkAutoHideBehavior_For_States(statesToCheck,
-                                             secondsAutoHideDelay: secondsAutoHideDelay)
+        try cardOf(sut).callOnTapGesture()
+        
+        XCTAssertEqual(viewModel.calls, [.cardTapped], "a tap on the card goes to the view model as a tap on the card")
+    }
+    
+    func test_tapOutsideTheCard_isReportedToItsViewModel() throws {
+        let viewModel = HUDViewModelSpy(showsHUD: true)
+        let success = DMLoadableType.success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
+        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: success), viewModel: viewModel)
+        
+        try backdropOf(sut).callOnTapGesture()
+        
+        XCTAssertEqual(viewModel.calls, [.backdropTapped], "a tap outside the card goes to the view model as a backdrop tap")
+    }
+    
+    func test_closeOnAFailure_isReportedToItsViewModel() throws {
+        let viewModel = HUDViewModelSpy(showsHUD: true)
+        let failure = DMLoadableType.failure(
+            error: DMAppError.custom("failed"),
+            provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+        )
+        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: failure), viewModel: viewModel)
+        
+        try sut.inspect().find(button: "Close").tap()
+        
+        XCTAssertEqual(viewModel.calls, [.closeTapped], "Close on a failure goes to the view model of the view")
     }
     
     // MARK: - Helpers
     
     private func makeSUT<LM: DMLoadingManager>(manager loadingManager: LM) -> DMLoadingView<LM> {
         
-        let sut = DMLoadingView(loadingManager: loadingManager)
+        let sut = DMLoadingView(
+            loadingManager: loadingManager,
+            viewModel: DefaultHUDViewModel(loadingManager: loadingManager)
+        )
         
         trackForMemoryLeaks(loadingManager)
         
         return sut
     }
     
+    /// How long a view is hosted before its fade-in can have ended. The fade is a spring of
+    /// 0.2 seconds.
+    private static let fadeInTime: Double = 0.6
+
+    /// The view hosted in a window of the snapshot device's size until its fade-in has ended, then taken
+    /// out of the window, so a snapshot shows the HUD as a person sees it once it has appeared. The fade-in
+    /// has ended when the view has run for the fade's duration and its rendering has stopped changing; on a
+    /// busy machine the spring can still be moving after `fadeInTime`, so the stability is required too.
+    private func fadedIn(_ view: some View) -> UIViewController {
+        let controller = UIHostingController(rootView: view)
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 844))
+        window.rootViewController = controller
+        window.isHidden = false
+        let settled = controller.view.waitForSettledRendering(after: Self.fadeInTime)
+        XCTAssertTrue(settled, "the HUD settles within the callback allowance, so the snapshot shows it faded in")
+        window.isHidden = true
+        window.rootViewController = nil
+        return controller
+    }
+
     private func testLoadingView_TheOverlayAnimatesSmoothly_IntoView(
         state: DMLoadableType,
-        record recording: Bool? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws {
+    ) {
         // Given
         let loadingManager = StubDMLoadingManager(
             loadableState: state
         )
-        let animationDuration: Double = 0.2
-        
+
         // When
         let sut = makeSUT(manager: loadingManager)
-        
-        let inspection = try XCTUnwrap(
-            sut.inspection,
-            "Inspection should be available in debug mode",
-            file: file,
-            line: line
-        )
-        
+
         // Then
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .light)
-            ),
+            style: .light,
             named: "BeforeAnimation-\(state.rawValue)-iPhone13Pro-light",
-            record: recording,
             file: file,
             line: line
         )
-        
-        let exp = inspection.inspect(after: animationDuration + 0.01) { view in
-            let actualView = try view.actualView()
-            
-            assertSnapshot(
-                of: actualView,
-                as: .image(
-                    layout: .device(config: .iPhone13Pro),
-                    traits: .init(userInterfaceStyle: .light)
-                ),
-                named: "AfterAnimation-\(state.rawValue)-iPhone13Pro-light",
-                record: recording,
-                file: file,
-                line: line
-            )
-        }
-        
-        ViewHosting.host(view: sut)
-        defer { ViewHosting.expel() }
-        
-        wait(for: [exp], timeout: animationDuration + 0.05)
+        assertImageSnapshot(
+            of: fadedIn(sut),
+            style: .light,
+            named: "AfterAnimation-\(state.rawValue)-iPhone13Pro-light",
+            file: file,
+            line: line
+        )
+    }
+    
+    /// The card of the shown HUD: the one `HUDCard` of the view, which carries the card's tap.
+    private func cardOf<LM: DMLoadingManager>(_ sut: DMLoadingView<LM>) throws -> InspectableView<ViewType.View<HUDCard>> {
+        try sut.inspect().find(HUDCard.self)
+    }
+    
+    /// The layer outside the card that takes the backdrop's tap: the one clear colour of the view.
+    private func backdropOf<LM: DMLoadingManager>(_ sut: DMLoadingView<LM>) throws -> InspectableView<ViewType.Color> {
+        try sut.inspect().find(ViewType.Color.self, where: { try $0.value() == Color.clear })
     }
     
     func checktLoadingView_RespondToTapGestures_ForStates(
@@ -393,73 +343,65 @@ final class DMLoadingViewTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
-        try statesCondition.forEach { currentStateCondition in
-            // Given
-            let loadingManager = StubDMLoadingManager(
-                loadableState: currentStateCondition.given
-            )
-            
-            // When
-            let sut = makeSUT(manager: loadingManager)
-            
-            let inspectableView = try sut.inspect()
-                .find(viewWithTag: DMLoadingViewOwnSettings.tapGestureViewTag)
-            
-            // Then
-            XCTAssertEqual(sut.loadingManager.loadableState,
-                           currentStateCondition.given,
-                           "The loading state should be `\(currentStateCondition.given)` before the user taps the view",
-                           file: file,
-                           line: line)
-            
-            try inspectableView.callOnTapGesture()
-            
-            XCTAssertEqual(sut.loadingManager.loadableState,
-                           currentStateCondition.expected,
-                           "The loading state should be `\(currentStateCondition.expected)` after the user taps the view",
-                           file: file,
-                           line: line)
-        }
-    }
-    
-    func checkAutoHideBehavior_For_States(_ states: [DMLoadableType],
-                                          secondsAutoHideDelay: Double,
-                                          file: StaticString = #filePath,
-                                          line: UInt = #line) throws {
-        // Given
-        try states.forEach { state in
-            let settings = StubDMLoadingManagerSettings(autoHideDelay: .seconds(secondsAutoHideDelay))
-            let loadingManager = DMLoadingManagerMain(
-                state: state,
-                settings: settings
-            )
-            
-            // When
-            let sut = makeSUT(manager: loadingManager)
-            
-            let inspection = try XCTUnwrap(
-                sut.inspection,
-                "Inspection should be available in debug mode"
-            )
-            
-            // Then
-            let exp = inspection.inspect(after: secondsAutoHideDelay + 0.01) { view in
-                let actualView = try view.actualView()
+        for currentStateCondition in statesCondition {
+            for target in ["card", "backdrop"] {
+                // Given
+                let loadingManager = StubDMLoadingManager(
+                    loadableState: currentStateCondition.given
+                )
                 
-                XCTAssertEqual(actualView
-                    .loadingManager
-                    .loadableState,
-                               .none,
-                               "Loading state should be `.none` after the auto-hide delay for given state: `\(state.rawValue)`",
+                // When
+                let sut = makeSUT(manager: loadingManager)
+                
+                // Then
+                XCTAssertEqual(sut.loadingManager.loadableState,
+                               currentStateCondition.given,
+                               "The loading state should be `\(currentStateCondition.given)` before the user taps the \(target)",
+                               file: file,
+                               line: line)
+                
+                if target == "card" {
+                    try cardOf(sut).callOnTapGesture()
+                } else {
+                    try backdropOf(sut).callOnTapGesture()
+                }
+                
+                XCTAssertEqual(sut.loadingManager.loadableState,
+                               currentStateCondition.expected,
+                               "The state should be `\(currentStateCondition.expected)` after the user taps the \(target)",
                                file: file,
                                line: line)
             }
-            
-            ViewHosting.host(view: sut)
-            defer { ViewHosting.expel() }
-            
-            wait(for: [exp], timeout: secondsAutoHideDelay + 0.02)
         }
     }
+}
+
+/// Records what the view reports to its view model.
+@MainActor
+private final class HUDViewModelSpy: HUDViewModel {
+    enum Call: Equatable {
+        case cardTapped
+        case backdropTapped
+        case closeTapped
+    }
     
+    let showsHUD: Bool
+    private(set) var calls: [Call] = []
+    
+    init(showsHUD: Bool) {
+        self.showsHUD = showsHUD
+    }
+    
+    func cardTapped() {
+        calls.append(.cardTapped)
+    }
+    
+    func backdropTapped() -> Bool {
+        calls.append(.backdropTapped)
+        return false
+    }
+    
+    func closeTapped() {
+        calls.append(.closeTapped)
+    }
 }

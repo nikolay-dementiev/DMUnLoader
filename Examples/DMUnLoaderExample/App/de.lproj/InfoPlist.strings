@@ -1,0 +1,3 @@
+/* The example declares German, so the library could show German texts if its catalog had
+   them; HUDLanguageUITests checks that a German app still shows the English texts of 1.1.0. */
+"CFBundleDisplayName" = "DMUnLoader";

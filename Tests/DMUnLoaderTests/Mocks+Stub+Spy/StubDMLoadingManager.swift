@@ -9,7 +9,7 @@ import Combine
 
 @MainActor
 final class StubDMLoadingManager: DMLoadingManager {
-    public let settings: DMLoadingManagerSettings
+    let settings: any DMLoadingManagerSettings
     
     @Published var loadableState: DMLoadableType = .none
     
@@ -19,7 +19,7 @@ final class StubDMLoadingManager: DMLoadingManager {
     }
     
     init(loadableState: DMLoadableType = .none,
-         settings: DMLoadingManagerSettings = StubDMLoadingManagerSettings(autoHideDelay: .seconds(0.2))) {
+         settings: any DMLoadingManagerSettings = StubDMLoadingManagerSettings(autoHideDelay: .seconds(0.2))) {
         self.settings = settings
         self.loadableState = loadableState
     }
@@ -31,7 +31,7 @@ final class StubDMLoadingManager: DMLoadingManager {
     }
     
     func showSuccess<PR: DMLoadingViewProvider>(
-        _ message: DMLoadableTypeSuccess,
+        _ message: any DMLoadableTypeSuccess,
         provider: PR
     ) {
         loadableState = .success(
@@ -41,9 +41,9 @@ final class StubDMLoadingManager: DMLoadingManager {
     }
     
     func showFailure<PR: DMLoadingViewProvider>(
-        _ error: Error,
+        _ error: any Error,
         provider: PR,
-        onRetry: DMAction?
+        onRetry: (any DMAction)?
     ) {
         loadableState = .failure(
             error: error,
@@ -52,7 +52,7 @@ final class StubDMLoadingManager: DMLoadingManager {
         )
     }
     
-    public func hide() {
+    func hide() {
         loadableState = .none
     }
 }

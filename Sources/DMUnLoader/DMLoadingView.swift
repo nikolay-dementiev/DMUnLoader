@@ -6,41 +6,23 @@
 
 import SwiftUI
 
-/// A namespace for constants used in the `DMLoadingView`.
-/// These constants define unique tags for views within the loading view.
-enum DMLoadingViewOwnSettings {
-    
-    /// The tag assigned to an empty view when no loading state is active.
-    static let emptyViewTag: Int = 0001
-    
-    /// The tag assigned to the default container view that holds all loading states.
-    static let defaultViewTag: Int = 0102
-    
-    /// The tag assigned to the loading view displayed during the `.loading` state.
-    static let loadingViewTag: Int = 0203
-    
-    /// The tag assigned to the failure view displayed during the `.failure` state.
-    static let failureViewTag: Int = 0304
-    
-    /// The tag assigned to the success view displayed during the `.success` state.
-    static let successViewTag: Int = 0405
-    
-    /// The tag assigned to the tap gesture view used to dismiss certain states.
-    static let tapGestureViewTag: Int = 0515
-}
-
 /// A custom SwiftUI view that displays a loading state based on the `loadableState` of a `loadingManager`.
 /// This view uses a `provider` to supply views for different states (loading, failure, success).
 struct DMLoadingView<LLM: DMLoadingManager>: View {
     @ObservedObject private(set) var loadingManager: LLM
+    private let viewModel: any HUDViewModel
     @State private var animateTheAppearance = false
-    
-#if DEBUG
-    let inspection: Inspection<Self>? = getInspectionIfAvailable()
-#endif
-    
-    init(loadingManager: LLM) {
+    @Environment(\.hudReducesMotion) private var reducesMotion
+    private let dim: HUDBackdropDrawing.Dim
+
+    /// - Parameters:
+    ///   - viewModel: Decides what the view shows of the state of `loadingManager` and what a
+    ///     tap and Close do. The view observes `loadingManager` to draw its changes.
+    ///   - dim: The dim of the backdrop, faded in with the card.
+    init(loadingManager: LLM, viewModel: any HUDViewModel, dim: HUDBackdropDrawing.Dim = .standard) {
         self.loadingManager = loadingManager
+        self.viewModel = viewModel
+        self.dim = dim
     }
     
     @ViewBuilder
@@ -49,69 +31,128 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
         switch loadableState {
         case .none:
             EmptyView()
-                .tag(DMLoadingViewOwnSettings.emptyViewTag)
         case let .loading(provider):
             provider.getLoadingView()
-                .tag(DMLoadingViewOwnSettings.loadingViewTag)
         case let .failure(error, provider, onRetry):
             provider.getErrorView(
                 error: error,
                 onRetry: onRetry,
-                onClose: DMButtonAction(loadingManager.hide)
+                onClose: DMButtonAction(viewModel.closeTapped)
             )
-            .tag(DMLoadingViewOwnSettings.failureViewTag)
         case let .success(object, provider):
             provider.getSuccessView(object: object)
-                .tag(DMLoadingViewOwnSettings.successViewTag)
         }
     }
     
+    /// The dim of the backdrop, faded in with the card.
+    @ViewBuilder
+    private var dimView: some View {
+        switch dim {
+        case .standard:
+            defaultDim
+        case let .color(color):
+            color
+                .ignoresSafeArea()
+                .opacity(animateTheAppearance ? 1 : 0)
+        case .none:
+            EmptyView()
+        }
+    }
+
+    /// The black dim of the default backdrop.
+    private var defaultDim: some View {
+        Color.black.opacity(animateTheAppearance ? 0.2 : 0)
+            .ignoresSafeArea()
+    }
+
     var body: some View {
         ZStack {
-            let loadableState = loadingManager.loadableState
-            switch loadableState {
-            case .none:
+            if !viewModel.showsHUD {
                 overlayView
-            case .failure,
-                    .loading,
-                    .success:
-                
+            } else {
                 ZStack {
-                    Color.black.opacity(animateTheAppearance ? 0.2 : 0)
-                        .ignoresSafeArea()
+                    dimView
                     
-                    overlayView
-                        .padding(15)
-                        .background(Color.gray.opacity(animateTheAppearance ? 0.8 : 0.1))
-                        .cornerRadius(10)
-                        .scaleEffect(animateTheAppearance ? 1 : 0.9)
+                    // Takes every tap outside the card, whatever the backdrop draws.
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            _ = viewModel.backdropTapped()
+                        }
+                    
+                    HUDCard(isShown: animateTheAppearance, content: AnyView(overlayView))
+                        .onTapGesture {
+                            viewModel.cardTapped()
+                        }
+                        // Under Reduce Motion the card only fades in.
+                        .scaleEffect(animateTheAppearance || reducesMotion ? 1 : 0.9)
                         .padding(15)
                 }
                 .transition(.opacity)
                 .animation(.easeInOut, value: loadingManager.loadableState)
-                .tag(DMLoadingViewOwnSettings.defaultViewTag)
             }
         }
         .onAppear {
-            animateTheAppearance.toggle()
+            animateTheAppearance = true
         }
         .animation(Animation.spring(duration: 0.2),
                    value: animateTheAppearance)
-        .onTapGesture {
-            switch loadingManager.loadableState {
-            case .success,
-                    .failure,
-                    .none:
-                loadingManager.hide()
-            case .loading:
-                break
-            }
-        }
-#if DEBUG
-        .onReceive(inspection?.notice ?? EmptyPublisher().notice) { [weak inspection] in
-            inspection?.visit(self, $0)
-        }
-#endif
-        .tag(DMLoadingViewOwnSettings.tapGestureViewTag)
     }
+}
+
+/// The card of a shown HUD: the view of the state on a rounded background. A tap anywhere on
+/// the card is a tap on the card, between the lines of its text too.
+struct HUDCard: View {
+    @Environment(\.hudReducesTransparency) private var reducesTransparency
+    let isShown: Bool
+    let content: AnyView
+    
+    var body: some View {
+        content
+            .padding(15)
+            .background(Color.gray.opacity(backgroundOpacity))
+            .cornerRadius(10)
+            .contentShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    /// The gray of the card, decided by `HUDCardStyle`.
+    private var backgroundOpacity: Double {
+        HUDCardStyle.backgroundOpacity(isShown: isShown, reducesTransparency: reducesTransparency)
+    }
+}
+
+// MARK: - Previews
+
+@MainActor
+private func loadingViewPreview(_ state: (AnyDMLoadingViewProvider) -> DMLoadableType) -> some View {
+    let state = state(DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
+    let manager = DMLoadingManagerMain(state: state, settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600)))
+    return DMLoadingView(loadingManager: manager, viewModel: DefaultHUDViewModel(loadingManager: manager))
+}
+
+#Preview("Loading") {
+    loadingViewPreview { .loading(provider: $0) }
+}
+
+#Preview("Loading under Reduce Motion") {
+    loadingViewPreview { .loading(provider: $0) }
+        .environment(\.hudReducesMotion, true)
+}
+
+#Preview("Loading under Reduce Transparency") {
+    loadingViewPreview { .loading(provider: $0) }
+        .environment(\.hudReducesTransparency, true)
+}
+
+#Preview("Success") {
+    loadingViewPreview { .success("Saved", provider: $0) }
+}
+
+#Preview("Failure without Retry") {
+    loadingViewPreview { .failure(error: DMAppError.custom("Failed"), provider: $0) }
+}
+
+#Preview("Failure with Retry") {
+    loadingViewPreview { .failure(error: DMAppError.custom("Failed"), provider: $0, onRetry: DMButtonAction {}) }
 }

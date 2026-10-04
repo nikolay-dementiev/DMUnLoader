@@ -14,10 +14,11 @@ import Combine
 public final class DMLoadingManagerMain: DMLoadingManager {
     
     /// The settings used by the loading manager to configure its behavior, such as auto-hide delay.
-    public let settings: DMLoadingManagerSettings
+    public let settings: any DMLoadingManagerSettings
     
-    /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
-    /// - Note: This property is thread-safe and emits changes via `loadableStateSubject`.
+    /// The state the HUD shows: `.none`, `.loading`, `.success` or `.failure`. The `show`
+    /// methods, `hide()` and the auto-hide change it on the main actor, and each change is
+    /// published through `objectWillChange`.
     @Published public internal(set) var loadableState: DMLoadableType {
         willSet {
             handleInactivityTimer(forState: newValue)
@@ -27,33 +28,59 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     /// A cancellable subscription used to manage the inactivity timer.
     private var inactivityTimerCancellable: AnyCancellable?
     
-    /// Initializes a new instance of `DMLoadingManager`.
+    /// Runs the auto-hide once the delay of `settings` has passed.
+    private let autoHideScheduler: any AutoHideScheduler
+    
+    /// Changes whenever a pending auto-hide is stopped, so a hide the scheduler delivers
+    /// after that cannot hide a newer state.
+    private var autoHideGeneration = 0
+    
+    /// Creates a manager in `state` that hides a success or a failure as its `settings` say, by
+    /// default once `settings.autoHideDelay` has passed. A view provider's
+    /// `loadingManagerSettings` is not read.
     /// - Parameters:
-    ///   - id: A unique identifier for the loading manager. Defaults to a new `UUID`.
-    ///   - state: The initial loadable state of the manager.
-    ///   - settings: The settings used by the loading manager.
+    ///   - loadableState: The state the manager starts in.
+    ///   - settings: The settings of the manager.
     /// - Example:
     ///   ```swift
-    ///   let settings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(3))
-    ///   let loadingManager = DMLoadingManager(state: .none, settings: settings)
+    ///   let loadingManager = DMLoadingManagerMain(
+    ///       state: .none,
+    ///       settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(3))
+    ///   )
     ///   ```
     public init(state loadableState: DMLoadableType,
-                settings: DMLoadingManagerSettings) {
+                settings: any DMLoadingManagerSettings) {
         self.loadableState = loadableState
         self.settings = settings
+        self.autoHideScheduler = RunLoopAutoHideScheduler()
         
         handleInactivityTimer(forState: loadableState)
     }
     
+    /// Creates a manager whose auto-hide runs on `autoHideScheduler`, so a test decides when
+    /// the delay has passed.
+    package init(state loadableState: DMLoadableType,
+                 settings: any DMLoadingManagerSettings,
+                 autoHideScheduler: any AutoHideScheduler) {
+        self.loadableState = loadableState
+        self.settings = settings
+        self.autoHideScheduler = autoHideScheduler
+        
+        handleInactivityTimer(forState: loadableState)
+    }
+    
+    /// Creates a manager with no state shown and `DMLoadingManagerDefaultSettings()`: a success
+    /// or a failure hides after 2 seconds.
     public convenience init() {
         self.init(state: .none,
                   settings: DMLoadingManagerDefaultSettings())
     }
     
     /// Shows the loading state, typically indicating that an operation is in progress.
+    /// - Parameter provider: The provider of the loading view.
     /// - Example:
     ///   ```swift
-    ///   loadingManager.showLoading()
+    ///   loadingManager.showLoading(provider: DefaultDMLoadingViewProvider())
     ///   ```
     public func showLoading<PR: DMLoadingViewProvider>(
         provider: PR
@@ -64,13 +91,15 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     }
     
     /// Shows the success state with a success message.
-    /// - Parameter message: A value conforming to `DMLoadableTypeSuccess`, representing the success message.
+    /// - Parameters:
+    ///   - message: A value conforming to `DMLoadableTypeSuccess`, representing the success message.
+    ///   - provider: The provider of the success view.
     /// - Example:
     ///   ```swift
-    ///   loadingManager.showSuccess("Data loaded successfully")
+    ///   loadingManager.showSuccess("Data loaded successfully", provider: DefaultDMLoadingViewProvider())
     ///   ```
     public func showSuccess<PR: DMLoadingViewProvider>(
-        _ message: DMLoadableTypeSuccess,
+        _ message: any DMLoadableTypeSuccess,
         provider: PR
     ) {
         loadableState = .success(
@@ -82,18 +111,24 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     /// Shows the failure state with an error and an optional retry action.
     /// - Parameters:
     ///   - error: The error that occurred during the operation.
-    ///   - onRetry: An optional action (`DMAction`) to retry the operation.
+    ///   - provider: The provider of the error view.
+    ///   - onRetry: An optional action (`DMAction`) to retry the operation. The default error
+    ///     view shows a Retry button for it.
     /// - Example:
     ///   ```swift
-    ///   let retryAction = DMButtonAction({ _ in }) {
+    ///   let retryAction = DMButtonAction {
     ///       // Retry logic here
     ///   }
-    ///   loadingManager.showFailure(NSError(domain: "Example", code: 404), onRetry: retryAction)
+    ///   loadingManager.showFailure(
+    ///       NSError(domain: "Example", code: 404),
+    ///       provider: DefaultDMLoadingViewProvider(),
+    ///       onRetry: retryAction
+    ///   )
     ///   ```
     public func showFailure<PR: DMLoadingViewProvider>(
-        _ error: Error,
+        _ error: any Error,
         provider: PR,
-        onRetry: DMAction? = nil
+        onRetry: (any DMAction)? = nil
     ) {
         loadableState = .failure(
             error: error,
@@ -114,36 +149,36 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     
     // MARK: Timer Management
     
-    private func handleInactivityTimer(forState state: DMLoadableType? = nil) {
-        switch state ?? loadableState {
-        case .success,
-                .failure:
-            startInactivityTimer()
-        case .none,
-                .loading:
+    private func handleInactivityTimer(forState state: DMLoadableType) {
+        let delay = AutoHidePolicy.delay(
+            for: state.phase,
+            rules: settings.hudDismissal,
+            autoHideDelay: settings.autoHideDelay
+        )
+        if let delay {
+            startInactivityTimer(after: delay)
+        } else {
             stopInactivityTimer()
         }
     }
     
-    /// Starts the inactivity timer, which automatically hides the loading state after the specified delay.
-    private func startInactivityTimer() {
+    /// Starts the inactivity timer, which automatically hides the loading state after `delay`.
+    private func startInactivityTimer(after delay: Duration) {
         stopInactivityTimer()
-        inactivityTimerCancellable = Deferred {
-            Future<Void, Never> { promise in
-                promise(.success(()))
+        let generation = autoHideGeneration
+        inactivityTimerCancellable = autoHideScheduler.schedule(after: delay) { [weak self] in
+            guard let self, self.autoHideGeneration == generation else {
+                return
             }
+            self.hide()
         }
-        .delay(for: .seconds(settings.autoHideDelay.timeInterval),
-               scheduler: RunLoop.main)
-        .sink(receiveValue: { [weak self] _ in
-            self?.hide()
-        })
     }
     
     /// Stops the inactivity timer, canceling any pending auto-hide operations.
     private func stopInactivityTimer() {
         inactivityTimerCancellable?.cancel()
         inactivityTimerCancellable = nil
+        autoHideGeneration &+= 1
     }
 }
 
@@ -151,19 +186,19 @@ public final class DMLoadingManagerMain: DMLoadingManager {
 
 extension DMLoadingManagerMain: Hashable {
     
-    /// Compares two `DMLoadingManager` instances for equality based on their `id`.
+    /// Compares two managers by identity: a manager is equal only to itself.
     /// - Parameters:
-    ///   - lhs: The left-hand side `DMLoadingManager` instance.
-    ///   - rhs: The right-hand side `DMLoadingManager` instance.
-    /// - Returns: `true` if the `id` values of both instances are equal; otherwise, `false`.
+    ///   - lhs: The left-hand side manager.
+    ///   - rhs: The right-hand side manager.
+    /// - Returns: `true` if both are the same object; otherwise, `false`.
     nonisolated public static func == (lhs: DMLoadingManagerMain,
                                        rhs: DMLoadingManagerMain) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs === rhs
     }
-    
-    /// Hashes the `id` of the `DMLoadingManager` instance into the provided hasher.
-    /// - Parameter hasher: The hasher to use for combining the `id`.
+
+    /// Hashes the identity of the manager into the provided hasher.
+    /// - Parameter hasher: The hasher to use for combining the identity.
     nonisolated public func hash(into hasher: inout Hasher) {
-        hasher.combine(String.pointer(self))
+        hasher.combine(ObjectIdentifier(self))
     }
 }

@@ -29,9 +29,7 @@ public struct CustomViewSize {
     ///   - alignment: The alignment of the view. Defaults to `.center`.
     /// - Example:
     ///   ```swift
-    ///   let customSize = CustomSizeView(width: 100, height: 200, alignment: .topLeading)
-    ///   print("Width: \(customSize.width ?? 0), Height: \(customSize.height ?? 0), Alignment: \(customSize.alignment)")
-    ///   // Output: Width: 100, Height: 200, Alignment: topLeading
+    ///   let customSize = CustomViewSize(width: 100, height: 200, alignment: .topLeading)
     ///   ```
     public init(width: CGFloat? = nil,
                 height: CGFloat? = nil,
@@ -44,13 +42,16 @@ public struct CustomViewSize {
 
 extension CustomViewSize: Hashable {
     
+    /// Equal when the width, the height and the alignment are equal.
     public static func == (lhs: CustomViewSize, rhs: CustomViewSize) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.width == rhs.width
+            && lhs.height == rhs.height
+            && lhs.alignment == rhs.alignment
     }
-    
+
+    /// Hashes the width and the height. `Alignment` is not `Hashable`.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(width)
         hasher.combine(height)
-        hasher.combine(String(describing: alignment))
     }
 }

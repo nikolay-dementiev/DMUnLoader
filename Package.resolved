@@ -1,13 +1,13 @@
 {
-  "originHash" : "6d53f1d518f761b4dd70398aacddde9a36b33bdc138cbc5ad4848b3d22696312",
+  "originHash" : "278c3bd58688c6a358950a89075a2601285fa7f2fadc04a94ef61618786407ca",
   "pins" : [
     {
       "identity" : "dmaction",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nikolay-dementiev/DMAction.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "c7540062a8e1e03b903cb5315250c468148eab63"
+        "revision" : "76194dc9edc8fa349b8effcc03aa11d37dfe1a28",
+        "version" : "1.1.0"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nikolay-dementiev/DMVariableBlurView.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "196724164c898d03a977370157a2c4996e30b091"
+        "revision" : "fa4ec5a433fd24f41ad516bcd650c6141e5895be",
+        "version" : "1.1.0"
       }
     },
     {
@@ -47,21 +47,12 @@
       }
     },
     {
-      "identity" : "swiftlintplugin",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/GayleDunham/SwiftLintPlugin.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "5c864493d1231a79f48cd4212f4410acad959306"
-      }
-    },
-    {
       "identity" : "viewinspector",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nikolay-dementiev/ViewInspector.git",
+      "location" : "https://github.com/nalexn/ViewInspector",
       "state" : {
-        "branch" : "0.10.4",
-        "revision" : "bf2bc60b7742a67b66da5d2e17a6259299c2e155"
+        "revision" : "2dacb6e514be19379c605a5a11564d0f3fea89d9",
+        "version" : "0.10.5"
       }
     },
     {

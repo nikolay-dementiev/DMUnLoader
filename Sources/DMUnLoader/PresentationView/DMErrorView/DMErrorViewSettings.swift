@@ -45,24 +45,28 @@ public struct DMErrorDefaultViewSettings: DMErrorViewSettings {
     /// Settings for the error image displayed in the error view.
     public let errorImageSettings: ErrorImageSettings
     
-    /// Initializes a new instance of `DMErrorDefaultViewSettings` with optional customizations.
+    /// Creates settings for the error view.
     /// - Parameters:
-    ///   - errorText: The error message to display. Defaults to `"An error has occurred!"`.
-    ///   - actionButtonCloseSettings: Settings for the "Close" button. Defaults to `ActionButtonSettings(text: "Close")`.
-    ///   - actionButtonRetrySettings: Settings for the "Retry" button. Defaults to `ActionButtonSettings(text: "Retry")`.
-    ///   - errorTextSettings: Settings for the error text. Defaults to `ErrorTextSettings()`.
-    ///   - errorImageSettings: Settings for the error image. Defaults to an exclamation mark triangle icon.
+    ///   - errorText: The title shown above the description of the error. Defaults to
+    ///     `"An error has occurred!"`. `nil` shows the description only.
+    ///   - actionButtonCloseSettings: Settings for the Close button. Defaults to
+    ///     `ActionButtonSettings(text: "Close")`.
+    ///   - actionButtonRetrySettings: Settings for the Retry button, shown when the failure
+    ///     has a retry action. Defaults to `ActionButtonSettings(text: "Retry")`.
+    ///   - errorTextSettings: Settings for both texts. Defaults to `ErrorTextSettings()`.
+    ///   - errorImageSettings: Settings for the image. Defaults to the
+    ///     `exclamationmark.triangle` symbol.
     /// - Example:
     ///   ```swift
     ///   let customErrorSettings = DMErrorDefaultViewSettings(
     ///       errorText: "Oops! Something went wrong.",
-    ///       actionButtonCloseSettings: ActionButtonSettings(text: "Dismiss", backgroundColor: .red),
-    ///       actionButtonRetrySettings: ActionButtonSettings(text: "Try Again", backgroundColor: .blue),
+    ///       actionButtonCloseSettings: ActionButtonSettings(text: "Dismiss"),
+    ///       actionButtonRetrySettings: ActionButtonSettings(text: "Try Again"),
     ///       errorTextSettings: ErrorTextSettings(foregroundColor: .black, multilineTextAlignment: .leading),
     ///       errorImageSettings: ErrorImageSettings(image: Image(systemName: "xmark.octagon"), foregroundColor: .orange)
     ///   )
     ///   ```
-    public init(errorText: String? = "An error has occured!",
+    public init(errorText: String? = "An error has occurred!",
                 actionButtonCloseSettings: ActionButtonSettings = ActionButtonSettings(text: "Close"),
                 actionButtonRetrySettings: ActionButtonSettings = ActionButtonSettings(text: "Retry"),
                 errorTextSettings: ErrorTextSettings = ErrorTextSettings(),
@@ -78,10 +82,17 @@ public struct DMErrorDefaultViewSettings: DMErrorViewSettings {
 }
 
 extension DMErrorDefaultViewSettings: Hashable {
+    /// Equal when every setting is equal: the error text, both button settings, the text
+    /// settings and the image settings, each by its own `==`.
     static public func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.errorText == rhs.errorText
+            && lhs.actionButtonCloseSettings == rhs.actionButtonCloseSettings
+            && lhs.actionButtonRetrySettings == rhs.actionButtonRetrySettings
+            && lhs.errorTextSettings == rhs.errorTextSettings
+            && lhs.errorImageSettings == rhs.errorImageSettings
     }
     
+    /// Hashes the settings that `==` compares.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(errorText)
         hasher.combine(actionButtonCloseSettings)
@@ -94,13 +105,21 @@ extension DMErrorDefaultViewSettings: Hashable {
 /// A struct defining settings for an action button in an error view.
 public struct ActionButtonSettings: Identifiable {
     
+    /// Identifies the settings. Two settings are equal when their `id` and text are equal, so
+    /// give settings with another style another `id`.
     public let id: UUID
     
     /// The text displayed on the button.
     public let text: String
     
+    /// Makes the style of the button. Called on the main actor each time the button is drawn.
     public let styleFactory: @MainActor () -> AnyButtonStyle
 
+    /// Creates the settings of a button with a style of your own.
+    /// - Parameters:
+    ///   - id: Identifies the settings. Defaults to a new `UUID`.
+    ///   - text: The text of the button.
+    ///   - styleFactory: Makes the style of the button, on the main actor.
     public init(
         id: UUID = UUID(),
         text: String,
@@ -111,6 +130,12 @@ public struct ActionButtonSettings: Identifiable {
         self.styleFactory = styleFactory
     }
     
+    /// Creates the settings of a button with the style of the HUD: white text in the white outline
+    /// of a capsule, which takes a tap anywhere inside it and in the HUD shrinks a little while
+    /// pressed, unless Reduce Motion is on.
+    /// - Parameters:
+    ///   - id: Identifies the settings. Defaults to a new `UUID`.
+    ///   - text: The text of the button.
     public init(
         id: UUID = UUID(),
         text: String
@@ -126,24 +151,31 @@ public struct ActionButtonSettings: Identifiable {
 }
 
 extension ActionButtonSettings: Hashable {
+    /// Equal when the `id` and the text are equal. The style factory is a closure and cannot
+    /// be compared: the `id` stands for it, so give settings with another style another `id`.
     static public func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.id == rhs.id && lhs.text == rhs.text
     }
-    
+
+    /// Hashes the `id` and the text.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+        hasher.combine(text)
     }
 }
 
+/// A button style that wraps another one, so that button settings can hold any style.
 public struct AnyButtonStyle: ButtonStyle {
     private let _makeBody: (Configuration) -> AnyView
 
+    /// Wraps `style`.
     public init<S: ButtonStyle>(_ style: S) {
         self._makeBody = { configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
 
+    /// The body that the wrapped style makes for `configuration`.
     public func makeBody(configuration: Configuration) -> some View {
         _makeBody(configuration)
     }
@@ -185,14 +217,22 @@ public struct ErrorTextSettings {
 }
 
 extension ErrorTextSettings: Hashable {
+    /// Hashes the settings that `==` compares: the colour, the alignment and the padding.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(foregroundColor)
         hasher.combine(multilineTextAlignment)
-        hasher.combine(padding)
+        hasher.combine(padding.top)
+        hasher.combine(padding.leading)
+        hasher.combine(padding.bottom)
+        hasher.combine(padding.trailing)
     }
 }
 
 /// A struct defining settings for the error image displayed in an error view.
+///
+/// The image of the default error settings, the exclamation mark triangle, is hidden from
+/// assistive technology: the texts of the error view name the failure. An image equal to it
+/// counts as that default; any other image keeps the accessibility it was given.
 public struct ErrorImageSettings {
     
     /// The image to display as the error icon.
@@ -206,15 +246,16 @@ public struct ErrorImageSettings {
     
     /// Initializes a new instance of `ErrorImageSettings` with optional customizations.
     /// - Parameters:
-    ///   - image: The image to display. Defaults to an exclamation mark triangle icon.
+    ///   - image: The image to display. `DMErrorDefaultViewSettings` passes the
+    ///     `exclamationmark.triangle` symbol.
     ///   - foregroundColor: The foreground color of the image. Defaults to `.red`.
-    ///   - frameSize: The size of the image frame. Defaults to `CustomSizeView(width: 50, height: 50)`.
+    ///   - frameSize: The size of the image frame. Defaults to `CustomViewSize(width: 50, height: 50)`.
     /// - Example:
     ///   ```swift
     ///   let errorImageSettings = ErrorImageSettings(
     ///       image: Image(systemName: "xmark.octagon"),
     ///       foregroundColor: .orange,
-    ///       frameSize: CustomSizeView(width: 60, height: 60)
+    ///       frameSize: CustomViewSize(width: 60, height: 60)
     ///   )
     ///   ```
     public init(image: Image,
@@ -227,13 +268,23 @@ public struct ErrorImageSettings {
 }
 
 extension ErrorImageSettings: Hashable {
+    /// Equal when the image, the foreground color and the frame size are equal.
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.image == rhs.image
+            && lhs.foregroundColor == rhs.foregroundColor
+            && lhs.frameSize == rhs.frameSize
     }
-    
+
+    /// Hashes the foreground color and the frame size. `Image` is not `Hashable`.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(foregroundColor)
-        hasher.combine(foregroundColor)
         hasher.combine(frameSize)
+    }
+}
+
+extension ErrorImageSettings {
+    /// Whether the image is the one of the default error settings, which only decorates.
+    var showsTheDefaultImage: Bool {
+        image == Image(systemName: "exclamationmark.triangle")
     }
 }

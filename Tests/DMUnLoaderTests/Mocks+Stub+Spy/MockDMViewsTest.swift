@@ -12,12 +12,6 @@ struct MockDMSuccessViewTest: View {
     }
 }
 
-struct MockDMLoadingViewTest: View {
-    var body: some View {
-        Text("Loading View Test")
-    }
-}
-
 struct MockDMErrorViewTest: View {
     var body: some View {
         Text("Error View Test")

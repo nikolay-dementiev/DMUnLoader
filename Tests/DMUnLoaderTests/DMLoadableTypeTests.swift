@@ -78,24 +78,25 @@ final class DMLoadableTypeTests: XCTestCase {
                              userInfo: nil)
         
         let provider = StubDMLoadingViewProvider().eraseToAnyViewProvider()
-        
+        let retry = DMButtonAction({})
+
         let loading1 = DMLoadableType.loading(provider: provider)
         let loading2 = DMLoadableType.loading(provider: provider)
-        
+
         let failure1 = DMLoadableType.failure(
             error: error1,
             provider: provider,
-            onRetry: DMButtonAction({})
+            onRetry: retry
         )
         let failure2 = DMLoadableType.failure(
             error: error1,
             provider: provider,
-            onRetry: DMButtonAction({})
+            onRetry: retry
         )
         let failure3 = DMLoadableType.failure(
             error: error2,
             provider: provider,
-            onRetry: DMButtonAction({})
+            onRetry: retry
         )
         
         let success1 = DMLoadableType.success(
@@ -119,7 +120,7 @@ final class DMLoadableTypeTests: XCTestCase {
                        "Two .loading instances should be equal")
         XCTAssertEqual(failure1,
                        failure2,
-                       "Two .failure instances with the same error should be equal")
+                       "Two .failure instances with the same error and retry action should be equal")
         XCTAssertNotEqual(failure1,
                           failure3,
                           "Two .failure instances with different errors should not be equal")
@@ -132,54 +133,5 @@ final class DMLoadableTypeTests: XCTestCase {
         XCTAssertEqual(none1,
                        none2,
                        "Two .none instances should be equal")
-    }
-    
-    @MainActor
-    func testHashableConformance() {
-        let error = NSError(domain: "TestError",
-                            code: 1,
-                            userInfo: nil)
-        let successObject = StubDMLoadableTypeSuccess(description: "Mock Success")
-        
-        let provider = StubDMLoadingViewProvider().eraseToAnyViewProvider()
-        
-        let loading = DMLoadableType.loading(provider: provider)
-        let failure = DMLoadableType.failure(error: error,
-                                             provider: provider,
-                                             onRetry: DMButtonAction({}))
-        let success = DMLoadableType.success(
-            successObject,
-            provider: provider
-        )
-        let none = DMLoadableType.none
-        
-        var hasher = Hasher()
-        loading.hash(into: &hasher)
-        let loadingHash = hasher.finalize()
-        
-        hasher = Hasher()
-        failure.hash(into: &hasher)
-        let failureHash = hasher.finalize()
-        
-        hasher = Hasher()
-        success.hash(into: &hasher)
-        let successHash = hasher.finalize()
-        
-        hasher = Hasher()
-        none.hash(into: &hasher)
-        let noneHash = hasher.finalize()
-        
-        XCTAssertEqual(loadingHash,
-                       loading.rawValue.hashValue,
-                       "Hash value for .loading should match its raw value's hash")
-        XCTAssertEqual(failureHash,
-                       failure.rawValue.hashValue,
-                       "Hash value for .failure should match its raw value's hash")
-        XCTAssertEqual(successHash,
-                       success.rawValue.hashValue,
-                       "Hash value for .success should match its raw value's hash")
-        XCTAssertEqual(noneHash,
-                       none.rawValue.hashValue,
-                       "Hash value for .none should match its raw value's hash")
     }
 }

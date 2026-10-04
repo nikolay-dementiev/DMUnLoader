@@ -12,21 +12,12 @@ import SnapshotTesting
 final class DMProgressViewTests: XCTestCase {
     
     override func invokeTest() {
-        withSnapshotTesting(
-            record: .missing,
-            diffTool: .ksdiff
-        ) {
+        withSnapshotTesting(diffTool: .ksdiff) {
             super.invokeTest()
         }
     }
     
     // MARK: Scenario 1: Verify Default Initialization
-    
-    @MainActor
-    func testThatViewConfirmToViewProtocol() {
-        let sut = makeSUT()
-        XCTAssertTrue((sut as Any) is (any View), "DMProgressView should conform to View protocol")
-    }
     
     @MainActor
     func testThatTextIsDisplayed() throws {
@@ -35,8 +26,7 @@ final class DMProgressViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.textTag)
-            .text()
+            .find(ViewType.Text.self)
             .string()
         
         XCTAssertEqual(text,
@@ -53,12 +43,10 @@ final class DMProgressViewTests: XCTestCase {
         let settings = DMProgressViewDefaultSettings()
         let sut = makeSUT(settings: settings)
         
-        let progressView = try sut
-            .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.progressViewTag)
-            .progressView()
-        XCTAssertNotNil(progressView,
-                        "The ProgressView should be rendered")
+        XCTAssertNoThrow(
+            try sut.inspect().find(ViewType.ProgressView.self),
+            "The ProgressView should be rendered"
+        )
     }
     
     // MARK: Scenario 2: Verify Progress Indicator Behavior
@@ -74,8 +62,7 @@ final class DMProgressViewTests: XCTestCase {
         
         let progressView = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.progressViewTag)
-            .progressView()
+            .find(ViewType.ProgressView.self)
         
         let progressViewStyle = try? progressView.progressViewStyle() as? CircularProgressViewStyle
         XCTAssertNotNil(progressViewStyle,
@@ -105,21 +92,16 @@ final class DMProgressViewTests: XCTestCase {
         )
         let sut = makeSUT(settings: settings)
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: LoadingViewContainer<DMProgressView>(overlayView: { sut }),
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            style: .dark,
             named: "iPhone13Pro-dark"
         )
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .sizeThatFits,
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            layout: .sizeThatFits,
+            style: .dark,
             named: "size-that-fits-dark"
         )
     }
@@ -144,8 +126,7 @@ final class DMProgressViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.textTag)
-            .text()
+            .find(ViewType.Text.self)
         
         let loadingTextProperties = settings.loadingTextProperties
         XCTAssertEqual(try text.string(),
@@ -176,9 +157,8 @@ final class DMProgressViewTests: XCTestCase {
         
         let containerBackgroundColor = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.zStackViewTag)
-            .find(viewWithTag: DMProgressViewOwnSettings.containerbackgroundColorViewTag)
-            .color()
+            .find(ViewType.ZStack.self)
+            .find(ViewType.Color.self)
         
         XCTAssertEqual(try? containerBackgroundColor.value().hashValue,
                        settings.loadingContainerBackgroundColor.hashValue,
@@ -201,8 +181,7 @@ final class DMProgressViewTests: XCTestCase {
         
         let zStack = try sut
             .inspect()
-            .find(viewWithTag: DMProgressViewOwnSettings.zStackViewTag)
-            .zStack()
+            .find(ViewType.ZStack.self)
         let flexFrame = try? zStack.flexFrame()
         
         XCTAssertEqual(flexFrame?.minWidth,
@@ -226,12 +205,9 @@ final class DMProgressViewTests: XCTestCase {
         let settings = DMProgressViewDefaultSettings()
         let sut = makeSUTWithContainer(settings: settings)
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            style: .dark,
             named: "iPhone13Pro-dark"
         )
     }
@@ -255,12 +231,9 @@ final class DMProgressViewTests: XCTestCase {
         )
         let sut = makeSUTWithContainer(settings: settings)
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            style: .dark,
             named: "iPhone13Pro-dark"
         )
     }
@@ -269,14 +242,14 @@ final class DMProgressViewTests: XCTestCase {
     
     @MainActor
     private func makeSUT(
-        settings: DMProgressViewSettings = StubDMProgressViewSettings()
+        settings: any DMProgressViewSettings = StubDMProgressViewSettings()
     ) -> DMProgressView {
         DMProgressView(settings: settings)
     }
     
     @MainActor
     private func makeSUTWithContainer(
-        settings: DMProgressViewSettings = StubDMProgressViewSettings()
+        settings: any DMProgressViewSettings = StubDMProgressViewSettings()
     ) -> LoadingViewContainer<DMProgressView> {
         LoadingViewContainer {
             DMProgressView(settings: settings)

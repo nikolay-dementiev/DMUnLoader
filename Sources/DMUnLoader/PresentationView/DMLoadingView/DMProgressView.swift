@@ -7,35 +7,14 @@
 
 import SwiftUI
 
-/// A namespace for constants used in the `DMProgressView`.
-/// These constants define unique tags for views within the progress view.
-enum DMProgressViewOwnSettings {
-    
-    /// The tag assigned to the container view that holds all content in the progress view.
-    static let containerViewTag: Int = 2102
-    
-    /// The tag assigned to the progress indicator view displayed in the progress view.
-    static let progressViewTag: Int = 2203
-    
-    /// The tag assigned to the text view displayed in the progress view.
-    static let textTag: Int = 2204
-    
-    /// The tag assigned to the vertical stack view (`VStack`) that organizes the content.
-    static let vStackViewTag: Int = 2205
-    
-    /// The tag assigned to the ztack view (`ZStack`) that organizes the content.
-    static let zStackViewTag: Int = 2206
-    
-    /// The tag assigned to the container color
-    static let containerbackgroundColorViewTag: Int = 2107
-}
-
 /// A custom SwiftUI view that displays a progress indicator with optional text.
 /// This view uses a settings provider to configure the appearance of the progress view.
 struct DMProgressView: View {
-    let settingsProvider: DMProgressViewSettings
-    
-    init(settings settingsProvider: DMProgressViewSettings) {
+    let settingsProvider: any DMProgressViewSettings
+
+    @Environment(\.hudTexts) private var hudTexts
+
+    init(settings settingsProvider: any DMProgressViewSettings) {
         self.settingsProvider = settingsProvider
     }
     
@@ -47,21 +26,19 @@ struct DMProgressView: View {
         let minSize: CGFloat = 30
         ZStack(alignment: .center) {
             Color(settingsProvider.loadingContainerBackgroundColor)
-                .tag(DMProgressViewOwnSettings.containerbackgroundColorViewTag)
             VStack {
-                Text(loadingTextProperties.text)
+                Text(HUDDefaultText.loadingText.displayed(loadingTextProperties.text, using: hudTexts))
+                    .multilineTextAlignment(loadingTextProperties.alignment)
                     .foregroundColor(loadingTextProperties.foregroundColor)
                     .font(loadingTextProperties.font)
                     .lineLimit(loadingTextProperties.lineLimit)
                     .padding(loadingTextProperties.linePadding)
-                    .tag(DMProgressViewOwnSettings.textTag)
                 
                 ProgressView()
                     .controlSize(progressIndicatorProperties.size)
                     .progressViewStyle(progressIndicatorProperties.style)
                     .tint(progressIndicatorProperties.tintColor)
                     .layoutPriority(1)
-                    .tag(DMProgressViewOwnSettings.progressViewTag)
             }
         }
         .frame(minWidth: minSize,
@@ -69,7 +46,6 @@ struct DMProgressView: View {
                minHeight: minSize,
                maxHeight: geometry.height / 2)
         .fixedSize()
-        .tag(DMProgressViewOwnSettings.zStackViewTag)
     }
 }
 

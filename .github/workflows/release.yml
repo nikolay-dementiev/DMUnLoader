@@ -1,0 +1,95 @@
+name: Release
+
+# A version tag, such as 1.1.0, starts it. It checks the tag against the podspec and the
+# changelog, runs the whole CI workflow on the tag, and then drafts a GitHub release from the
+# changelog. It never creates or moves a tag and never publishes: the draft waits for a person.
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    # Named explicitly, so a failing command in front of a pipe fails the step.
+    shell: bash
+
+jobs:
+  check:
+    runs-on: macos-26
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      # A version tag on a branch that was never merged would release unreviewed code. This
+      # runs first, before any script of the tagged commit.
+      - name: Check that the tagged commit is on main
+        run: |
+          status=0
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || status=$?
+          if [ "$status" -eq 1 ]; then
+            echo "The tag $GITHUB_REF_NAME is on a commit that main does not contain." >&2
+            exit 1
+          fi
+          if [ "$status" -ne 0 ]; then
+            echo "git could not compare the tagged commit with origin/main (exit $status)." >&2
+            exit "$status"
+          fi
+      - name: Check that the tag, the podspec and the changelog agree
+        run: Scripts/check-release.sh "$GITHUB_REF_NAME"
+
+  ci:
+    needs: check
+    uses: ./.github/workflows/ci.yml
+
+  draft:
+    needs: ci
+    runs-on: macos-26
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # The tested commit is written into the draft, so the person who publishes it can compare
+      # it with the commit the tag names at that moment.
+      - name: Write the release notes from the changelog
+        run: |
+          Scripts/check-release.sh --notes "$GITHUB_REF_NAME" > "$RUNNER_TEMP/notes.md"
+          printf '\nTested commit: %s\n' "$(git rev-parse "$GITHUB_SHA^{commit}")" >> "$RUNNER_TEMP/notes.md"
+      # The tag could have been moved while CI ran. The draft must name the commit CI tested.
+      - name: Check that the tag still points at the tested commit
+        run: |
+          TESTED="$(git rev-parse "$GITHUB_SHA^{commit}")"
+          LISTED="$(git ls-remote origin "refs/tags/$GITHUB_REF_NAME" "refs/tags/$GITHUB_REF_NAME^{}")" || {
+            echo "git ls-remote could not read the tags of origin." >&2
+            exit 1
+          }
+          # The peeled line, the commit an annotated tag points at, wins over the tag object's line.
+          PEELED="$(awk -F'\t' '$2 ~ /\^\{\}$/ { print $1 }' <<< "$LISTED")"
+          PLAIN="$(awk -F'\t' '$2 !~ /\^\{\}$/ { print $1 }' <<< "$LISTED")"
+          NOW="${PEELED:-$PLAIN}"
+          if [ -z "$NOW" ]; then
+            echo "The tag $GITHUB_REF_NAME is not on origin now." >&2
+            exit 1
+          fi
+          if [ "$NOW" != "$TESTED" ]; then
+            echo "The tag $GITHUB_REF_NAME points at $NOW now, not at the tested commit $TESTED." >&2
+            exit 1
+          fi
+      # Only this step holds the token that can write.
+      - name: Draft the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --draft \
+            --verify-tag \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file "$RUNNER_TEMP/notes.md"

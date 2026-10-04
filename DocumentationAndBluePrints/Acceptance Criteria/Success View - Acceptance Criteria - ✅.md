@@ -1,3 +1,5 @@
+> Records the design of DMUnLoader 1.0. The code is the reference: where this document and the code differ, the code is right.
+
 # Acceptance Criteria: "Success View (`DMSuccessView`)"
 
 ## 1. General Information

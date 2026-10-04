@@ -6,18 +6,32 @@
 
 import SwiftUI
 
-struct DMHudSceneView<LM: DMLoadingManager>: View {
+package struct DMHudSceneView<LM: DMLoadingManager>: View {
     @ObservedObject var loadingManager: LM
+    @Environment(\.hudReducesTransparency) private var reducesTransparency
+    private let onStateChange: @MainActor (DMLoadableType) -> Void
 
-    init(loadingManager: LM) {
+    /// - Parameter onStateChange: Called with the state of `loadingManager` when the view
+    ///   appears and whenever the state changes, also inside one phase.
+    package init(loadingManager: LM, onStateChange: @escaping @MainActor (DMLoadableType) -> Void = { _ in }) {
         self.loadingManager = loadingManager
+        self.onStateChange = onStateChange
     }
-    
-    var body: some View {
+
+    package var body: some View {
+        // Read once per render: the views below draw what this decides.
+        let backdrop = loadingManager.settings.backdrop.drawing(reducesTransparency: reducesTransparency)
         Color.clear
             .ignoresSafeArea(.all)
-            .hudCenter(loadingManager: loadingManager) {
-                DMLoadingView(loadingManager: loadingManager)
+            .hudCenter(loadingManager: loadingManager, backdropLayer: backdrop.layer) {
+                DMLoadingView(
+                    loadingManager: loadingManager,
+                    viewModel: DefaultHUDViewModel(loadingManager: loadingManager),
+                    dim: backdrop.dim
+                )
+            }
+            .onChange(of: loadingManager.loadableState, initial: true) { _, state in
+                onStateChange(state)
             }
     }
 }
@@ -71,6 +85,41 @@ struct DMHudSceneView<LM: DMLoadingManager>: View {
         state: .none,
         settings: DMLoadingManagerDefaultSettings()
     )
-    
+
     DMHudSceneView(loadingManager: loadingManager)
+}
+
+#Preview("Dim backdrop") {
+    backdropPreview(.dim())
+}
+
+#Preview("Material backdrop") {
+    backdropPreview(.material())
+}
+
+#Preview("Clear backdrop") {
+    backdropPreview(.clear)
+}
+
+#Preview("Loading under Reduce Transparency") {
+    backdropPreview(.variableBlur, reducesTransparency: true)
+}
+
+#Preview("Material under Reduce Transparency") {
+    backdropPreview(.material(), reducesTransparency: true)
+}
+
+/// A loading HUD with `backdrop` over text, so what the backdrop draws shows.
+@MainActor
+private func backdropPreview(_ backdrop: DMHUDBackdrop, reducesTransparency: Bool = false) -> some View {
+    let loadingManager = DMLoadingManagerMain(
+        state: .loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
+        settings: DMLoadingManagerDefaultSettings(backdrop: backdrop)
+    )
+    return ZStack {
+        Text(String(repeating: "The app under the HUD. ", count: 60))
+        DMHudSceneView(loadingManager: loadingManager)
+            .environment(\.hudReducesTransparency, reducesTransparency)
+    }
+    .ignoresSafeArea()
 }

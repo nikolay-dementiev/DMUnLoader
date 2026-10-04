@@ -14,10 +14,7 @@ import SnapshotTesting
 final class DMSuccessViewTests: XCTestCase {
     
     override func invokeTest() {
-        withSnapshotTesting(
-            record: .missing,
-            diffTool: .ksdiff
-        ) {
+        withSnapshotTesting(diffTool: .ksdiff) {
             super.invokeTest()
         }
     }
@@ -38,8 +35,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let image = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.imageTag)
-            .image()
+            .find(ViewType.Image.self)
 
         try sutImageNameConfirmToExpectedImage(
             sutImage: image,
@@ -54,11 +50,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.textTag)
-            .text()
-        
-        XCTAssertNotNil(text,
-                        "The TextView should be rendered")
+            .find(ViewType.Text.self)
 
         let textFormSUT = try? text.string()
         XCTAssertEqual(textFormSUT,
@@ -83,8 +75,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let image = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.imageTag)
-            .image()
+            .find(ViewType.Image.self)
         
         try sutImageNameConfirmToExpectedImage(
             sutImage: image,
@@ -203,8 +194,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.textTag)
-            .text()
+            .find(ViewType.Text.self)
         
         XCTAssertEqual(
             try text.string(),
@@ -228,8 +218,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.textTag)
-            .text()
+            .find(ViewType.Text.self)
         
         XCTAssertEqual(
             try text.string(),
@@ -245,8 +234,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let image = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.imageTag)
-            .image()
+            .find(ViewType.Image.self)
         
         XCTAssertEqual(
             try image.fixedAlignment(),
@@ -260,8 +248,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let text = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.textTag)
-            .text()
+            .find(ViewType.Text.self)
         
         XCTAssertEqual(
             try text.fixedAlignment(),
@@ -276,8 +263,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let imageView = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.imageTag)
-            .image()
+            .find(ViewType.Image.self)
         
         let fixedImageFrame = try? imageView.fixedFrame()
         let successImageProperties = settings.successImageProperties
@@ -302,8 +288,7 @@ final class DMSuccessViewTests: XCTestCase {
         
         let containerView = try sut
             .inspect()
-            .find(viewWithTag: DMSuccessViewOwnSettings.containerViewTag)
-            .vStack()
+            .find(ViewType.VStack.self)
         
         XCTAssertEqual(
             try containerView.spacing(),
@@ -318,21 +303,15 @@ final class DMSuccessViewTests: XCTestCase {
         let settings = DMSuccessDefaultViewSettings()
         let sut = makeSUTWithContainer(settings: settings)
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            style: .dark,
             named: "iPhone13Pro-dark"
         )
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .light)
-            ),
+            style: .light,
             named: "iPhone13Pro-light"
         )
     }
@@ -356,21 +335,15 @@ final class DMSuccessViewTests: XCTestCase {
             assosiatedObject: StubDMLoadableTypeSuccess(description: "All tasks finished successfully.")
         )
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .dark)
-            ),
+            style: .dark,
             named: "iPhone13Pro-dark"
         )
         
-        assertSnapshot(
+        assertImageSnapshot(
             of: sut,
-            as: .image(
-                layout: .device(config: .iPhone13Pro),
-                traits: .init(userInterfaceStyle: .light)
-            ),
+            style: .light,
             named: "iPhone13Pro-light"
         )
     }
@@ -378,8 +351,8 @@ final class DMSuccessViewTests: XCTestCase {
     // MARK: - Helpers
     
     private func makeSUT(
-        settings: DMSuccessViewSettings,
-        assosiatedObject: DMLoadableTypeSuccess? = nil
+        settings: any DMSuccessViewSettings,
+        assosiatedObject: (any DMLoadableTypeSuccess)? = nil
     ) -> DMSuccessView {
         let sut = DMSuccessView(
             settings: settings,
@@ -390,8 +363,8 @@ final class DMSuccessViewTests: XCTestCase {
     }
     
     private func makeSUTWithContainer(
-        settings: DMSuccessViewSettings,
-        assosiatedObject: DMLoadableTypeSuccess? = nil
+        settings: any DMSuccessViewSettings,
+        assosiatedObject: (any DMLoadableTypeSuccess)? = nil
     ) -> LoadingViewContainer<DMSuccessView> {
         LoadingViewContainer {
             DMSuccessView(

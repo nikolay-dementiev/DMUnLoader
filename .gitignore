@@ -4,6 +4,7 @@
 
 ## User settings
 xcuserdata/
+.DS_Store
 
 ## Obj-C/Swift specific
 *.hmap
@@ -31,13 +32,23 @@ playground.xcworkspace
 
 .build/
 
+# Written by Scripts/analyze_recurrent_file_changes*.py, which are run by hand.
+Artifacts/
+
+# The consumer fixture resolves against the checkout; its resolution output is not source.
+Fixtures/Consumer/Package.resolved
+Fixtures/Consumer/.swiftpm/xcode/package.xcworkspace/xcshareddata/
+
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However
 # you should judge for yourself, the pros and cons are mentioned at:
 # https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
 #
-# Pods/
+# The repository has no CocoaPods project of its own; an installation made in a copy stays
+# out of the history, with the build folder of an Xcode project.
+Pods/
+build/
 #
 # Add this line if you want to avoid checking in source code from the Xcode workspace
 # *.xcworkspace
@@ -60,5 +71,3 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
-Examples/DMUnLoaderPodSPMExample/Pods
-Examples/DMUnLoaderPodSPMExample/build

@@ -1,0 +1,282 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # The release workflow runs this workflow on a version tag.
+  workflow_call:
+  schedule:
+    # Mondays, 05:17 UTC. An early warning when a new runner image or OS breaks the package.
+    - cron: "17 5 * * 1"
+
+permissions:
+  contents: read
+
+# A newer commit of a pull request replaces the run of the older one. Every other run has
+# a group of its own: GitHub keeps one pending run per group and drops the others, so a
+# shared group would lose runs of main and the weekly run even without cancelling.
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    # Named explicitly, so a failing xcodebuild in front of a pipe fails the step.
+    shell: bash
+
+jobs:
+  lint:
+    name: lint
+    runs-on: macos-26
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Lint
+        run: Scripts/lint.sh
+
+  test:
+    # The newest hosted Xcode with the newest runtime, and with the oldest runtime it offers.
+    # The sources need Swift 6.2, so only an Xcode 26 can build them.
+    name: test (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: iOS 26.5
+            runner: macos-26
+            xcode: /Applications/Xcode_26.6.app
+            destination: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5
+          # Not iOS 18.6 as in the example job: Xcode 26.3 on macos-15 finds no supported
+          # platform for the package scheme, while the example project builds there. The
+          # package suite on iOS 17.5 and 18.6 is a recorded local step.
+          - name: iOS 26.2
+            runner: macos-26
+            xcode: /Applications/Xcode_26.6.app
+            destination: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2
+    env:
+      DEVELOPER_DIR: ${{ matrix.xcode }}/Contents/Developer
+      DESTINATION: ${{ matrix.destination }}
+      # Seen by the tests as CI: a missing snapshot reference fails and is never written.
+      TEST_RUNNER_CI: "true"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build and test
+        run: |
+          mkdir -p .build/results/ci
+          xcodebuild clean build test \
+            -scheme DMUnLoader \
+            -sdk iphonesimulator \
+            -destination "$DESTINATION" \
+            -enableCodeCoverage YES \
+            -resultBundlePath .build/results/ci/package.xcresult \
+            -skipPackagePluginValidation \
+            2>&1 | tee .build/results/ci/package.log
+      - name: No warning from this repository
+        run: Scripts/check-warnings.sh .build/results/ci/package.log
+      - name: Coverage floor
+        run: Scripts/coverage-gate.sh .build/results/ci/package.xcresult
+      - name: Upload the result bundle
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: package-${{ matrix.name }}-xcresult
+          path: .build/results/ci/package.xcresult
+
+  consumer:
+    name: consumer
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the library in Release
+        # Tests run in Debug. Code inside "#if DEBUG" must not hide a broken release build.
+        run: |
+          xcodebuild build \
+            -scheme DMUnLoader \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -skipPackagePluginValidation
+      - name: Check what a consumer gets
+        run: Scripts/check-manifest.sh
+
+  floor:
+    # The manifest declares Swift tools 6.2: the oldest hosted Xcode with that compiler has
+    # to build the library.
+    name: floor
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.0.1.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the library with Xcode 26.0.1
+        # xcodebuild accepts no iOS destination with this Xcode on the image ("iOS 26.0 is
+        # not installed"), so SwiftPM builds against its simulator SDK directly.
+        run: |
+          swift build \
+            --triple arm64-apple-ios17.0-simulator \
+            --sdk "$(xcrun --sdk iphonesimulator --show-sdk-path)" \
+            --product DMUnLoader
+
+  api:
+    # The interface text depends on the compiler, so this job runs on one pinned Xcode.
+    name: api
+    runs-on: macos-26
+    timeout-minutes: 15
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check the normalisation of the interface text
+        run: Scripts/check-api.sh --self-test
+      - name: Compare the public interface with the baseline
+        run: Scripts/check-api.sh
+
+  thread-sanitizer:
+    # The library runs on the main actor, except the nonisolated == and hash(into:) of the
+    # loading manager, which any thread may call. The sanitizer checks those, and whatever a
+    # later change moves off the main actor.
+    name: thread-sanitizer
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      TEST_RUNNER_CI: "true"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Test with the Thread Sanitizer
+        # The snapshot test classes compare images, which says nothing about data races and
+        # is slow under the sanitizer, so this job skips them. The test job runs them on each
+        # of its matrix cells.
+        run: |
+          mkdir -p .build/results/ci
+          xcodebuild test \
+            -scheme DMUnLoader \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' \
+            -enableThreadSanitizer YES \
+            -skip-testing:DMUnLoaderTests/DMErrorViewTests \
+            -skip-testing:DMUnLoaderTests/DMLoadingViewTests \
+            -skip-testing:DMUnLoaderTests/DMProgressViewTests \
+            -skip-testing:DMUnLoaderTests/DMSuccessViewTests \
+            -skip-testing:DMUnLoaderTests/AccessibilitySnapshotTests \
+            -skip-testing:DMUnLoaderTests/RightToLeftSnapshotTests \
+            -resultBundlePath .build/results/ci/thread-sanitizer.xcresult \
+            -skipPackagePluginValidation
+      - name: Upload the result bundle
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: thread-sanitizer-xcresult
+          path: .build/results/ci/thread-sanitizer.xcresult
+
+  podspec:
+    # CocoaPods stays a channel until its trunk is frozen, so the spec has to pass its lint.
+    name: podspec
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Lint the podspec and check what a consumer gets
+        run: Scripts/check-podspec.sh
+
+  docs:
+    name: docs
+    runs-on: macos-26
+    timeout-minutes: 20
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # A broken symbol link or a parameter documented under the wrong name is a warning to
+      # DocC and an error here.
+      - name: Build the documentation
+        run: |
+          xcodebuild docbuild \
+            -scheme DMUnLoader \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            -skipPackagePluginValidation \
+            OTHER_DOCC_FLAGS="--warnings-as-errors"
+
+  example:
+    name: example (${{ matrix.name }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: iOS 26.5
+            runner: macos-26
+            xcode: /Applications/Xcode_26.6.app
+            device: iPhone 17 Pro
+            runtime: iOS-26-5
+          # Not iOS 26.2 as in the test job: iOS 18.6, the system the touch fix was made
+          # for, runs with Xcode 26.3 on macos-15, where the example project builds and the
+          # package scheme finds no supported platform. The example on iOS 17.5 is a
+          # recorded local step.
+          - name: iOS 18.6
+            runner: macos-15
+            xcode: /Applications/Xcode_26.3.app
+            device: iPhone 16 Pro
+            runtime: iOS-18-6
+    env:
+      DEVELOPER_DIR: ${{ matrix.xcode }}/Contents/Developer
+      DEVICE: ${{ matrix.device }}
+      RUNTIME: ${{ matrix.runtime }}
+      # Seen by the tests as CI: a missing snapshot reference fails and is never written.
+      TEST_RUNNER_CI: "true"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Find the simulator
+        run: |
+          udid="$(xcrun simctl list devices available -j | python3 -c '
+          import json, os, sys
+          devices = json.load(sys.stdin)["devices"]
+          runtime = "com.apple.CoreSimulator.SimRuntime." + os.environ["RUNTIME"]
+          print(next((d["udid"] for d in devices.get(runtime, []) if d["name"] == os.environ["DEVICE"]), ""))
+          ')"
+          if [ -z "$udid" ]; then
+            echo "No available $DEVICE simulator with the runtime $RUNTIME:" >&2
+            xcrun simctl list devices available >&2
+            exit 1
+          fi
+          echo "UDID=$udid" >> "$GITHUB_ENV"
+      - name: Build the example and run its tests, one launch mode at a time
+        run: Scripts/test-example.sh "$UDID" .build/results/ci/example
+      - name: No warning from this repository
+        run: Scripts/check-warnings.sh .build/results/ci/example/build-for-testing.log
+      - name: Upload the result bundles
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: example-${{ matrix.name }}-results
+          path: .build/results/ci/example

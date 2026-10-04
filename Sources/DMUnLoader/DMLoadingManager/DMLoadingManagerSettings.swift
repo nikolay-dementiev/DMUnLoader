@@ -4,44 +4,109 @@
 //  Created by Mykola Dementiev
 //
 
-/// A protocol defining the settings for a loading manager.
-/// Conforming types must provide an `autoHideDelay` property, which specifies
-/// the duration after which the loading state should automatically hide.
-///
-/// This protocol allows customization of the behavior of a loading manager,
-/// such as how long success or failure states remain visible before being hidden.
+import UIKit
+
+/// The settings of a loading manager. Pass them to `DMLoadingManagerMain(state:settings:)`; a
+/// view provider's `loadingManagerSettings` is not read.
 public protocol DMLoadingManagerSettings {
     
-    /// The duration after which the loading state should automatically hide.
+    /// How long a success or a failure stays before it hides by itself, for every kind whose
+    /// rule in `hudDismissal` is `.afterAutoHideDelay`, as all are by default.
     /// - Example:
     ///   ```swift
-    ///   let settings: DMLoadingManagerSettings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(3))
-    ///   print("Auto-hide delay: \(settings.autoHideDelay)") // Output: "Auto-hide delay: 3 seconds"
+    ///   let settings: any DMLoadingManagerSettings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(3))
+    ///   print("Auto-hide delay: \(settings.autoHideDelay)") // Output: "Auto-hide delay: 3.0 seconds"
     ///   ```
+    ///
+    /// Read when a state is shown: the hide of that state is scheduled from it.
     var autoHideDelay: Duration { get }
+
+    /// How a success and a failure leave the screen.
+    ///
+    /// `DMLoadingManagerMain` schedules its auto-hide from these rules. The HUD applies the tap
+    /// rules whatever the manager; a manager of the host's own decides its auto-hide itself. A
+    /// conforming type that does not implement this property gets `DMHUDDismissalRules()`.
+    ///
+    /// Read when a state is shown, to schedule its hide, and at each tap, to decide whether the
+    /// tap hides the HUD.
+    var hudDismissal: DMHUDDismissalRules { get }
+
+    /// The level of the window that shows the HUD over its scene.
+    ///
+    /// UIKit does not order windows within one level, so at `.normal`, the default, a window the
+    /// app shows later can cover the HUD. `.normal + 1` keeps the HUD above every window of the
+    /// app at `.normal`, and below the `.statusBar` and `.alert` levels.
+    ///
+    /// Read each time the HUD window starts showing this manager, before the window becomes
+    /// visible. A conforming type that does not implement this property gets `.normal`.
+    var hudWindowLevel: UIWindow.Level { get }
+
+    /// What the HUD of the loading manager draws behind its card. The default implementation
+    /// returns ``DMHUDBackdrop/variableBlur``, the backdrop of every release so far.
+    ///
+    /// Read at each render of the HUD.
+    var backdrop: DMHUDBackdrop { get }
 }
 
-/// A concrete implementation of the `DMLoadingManagerSettings` protocol.
-/// This struct provides default settings for a loading manager, including
-/// an optional `autoHideDelay` parameter during initialization.
-struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings {
-    
-    /// The duration after which the loading state should automatically hide.
-    /// Defaults to 2 seconds if no value is provided during initialization.
-    let autoHideDelay: Duration
-    
-    /// Initializes a new instance of `DMLoadingManagerDefaultSettings`.
-    /// - Parameter autoHideDelay: The duration after which the loading state
-    ///   should automatically hide. Defaults to `.seconds(2)` if not specified.
-    /// - Example:
-    ///   ```swift
-    ///   let defaultSettings = DMLoadingManagerDefaultSettings()
-    ///   print("Default auto-hide delay: \(defaultSettings.autoHideDelay)") // Output: "Default auto-hide delay: 2 seconds"
-    ///
-    ///   let customSettings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(5))
-    ///   print("Custom auto-hide delay: \(customSettings.autoHideDelay)") // Output: "Custom auto-hide delay: 5 seconds"
-    ///   ```
-    init(autoHideDelay: Duration = .seconds(2)) {
+extension DMLoadingManagerSettings {
+    /// `DMHUDDismissalRules()`: each kind hides after `autoHideDelay` and on any tap, as before
+    /// 1.1.0.
+    public var hudDismissal: DMHUDDismissalRules {
+        DMHUDDismissalRules()
+    }
+
+    /// `.normal`: the level of the HUD window before 1.1.0.
+    public var hudWindowLevel: UIWindow.Level {
+        .normal
+    }
+
+    /// ``DMHUDBackdrop/variableBlur``: the variable blur under a black dim of opacity 0.2.
+    public var backdrop: DMHUDBackdrop {
+        .variableBlur
+    }
+}
+
+/// The settings of a loading manager whose host chose none: a success or a failure hides 2
+/// seconds after it is shown. `DMLoadingManagerMain()` uses them.
+///
+/// ```swift
+/// let manager = DMLoadingManagerMain(
+///     state: .none,
+///     settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(4))
+/// )
+/// ```
+public struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings, Sendable {
+
+    /// How long a success or a failure stays before it hides by itself.
+    public let autoHideDelay: Duration
+
+    /// How a success and a failure leave the screen.
+    public let hudDismissal: DMHUDDismissalRules
+
+    /// The level of the window that shows the HUD.
+    public let hudWindowLevel: UIWindow.Level
+
+    /// What the HUD draws behind its card.
+    public let backdrop: DMHUDBackdrop
+
+    /// - Parameters:
+    ///   - autoHideDelay: How long a success or a failure stays before it hides by itself.
+    ///     2 seconds when omitted, as for `DMLoadingManagerMain()`.
+    ///   - hudDismissal: How a success and a failure leave the screen.
+    ///     `DMHUDDismissalRules()` when omitted: the behaviour before 1.1.0.
+    ///   - hudWindowLevel: The level of the window that shows the HUD. `.normal` when omitted:
+    ///     the level before 1.1.0.
+    ///   - backdrop: What the HUD draws behind its card. `.variableBlur` when omitted: the
+    ///     backdrop before 1.1.0.
+    public init(
+        autoHideDelay: Duration = .seconds(2),
+        hudDismissal: DMHUDDismissalRules = DMHUDDismissalRules(),
+        hudWindowLevel: UIWindow.Level = .normal,
+        backdrop: DMHUDBackdrop = .variableBlur
+    ) {
         self.autoHideDelay = autoHideDelay
+        self.hudDismissal = hudDismissal
+        self.hudWindowLevel = hudWindowLevel
+        self.backdrop = backdrop
     }
 }

@@ -1,12 +1,16 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 //
 // good 3rd party Activity indicators: https://github.com/MojtabaHs/ActivityIndicator-SwiftUI
 
 import PackageDescription
 
+// Every target compiles with these. Scripts/check-api.sh repeats them in SWIFT_FLAGS.
+let swiftSettings: [SwiftSetting] = [.enableUpcomingFeature("ExistentialAny")]
+
 let package = Package(
     name: "DMUnLoader",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v17),
 //        .watchOS(.v7),
@@ -20,12 +24,9 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/GayleDunham/SwiftLintPlugin.git", branch: "main"),
-//        .package(url: "https://github.com/nalexn/ViewInspector", from: "0.10.1"),
-//        .package(path: "../ViewInspector"),
-        .package(url: "https://github.com/nikolay-dementiev/ViewInspector.git", branch: "0.10.4"),
-        .package(url: "https://github.com/nikolay-dementiev/DMAction.git", branch: "main"),
-        .package(url: "https://github.com/nikolay-dementiev/DMVariableBlurView.git", branch: "main"),
+        .package(url: "https://github.com/nalexn/ViewInspector", .upToNextMinor(from: "0.10.5")),
+        .package(url: "https://github.com/nikolay-dementiev/DMAction.git", from: "1.1.0"),
+        .package(url: "https://github.com/nikolay-dementiev/DMVariableBlurView.git", from: "1.1.0"),
         .package(
             url: "https://github.com/pointfreeco/swift-snapshot-testing",
             from: "1.12.0"
@@ -40,9 +41,8 @@ let package = Package(
                 "DMAction",
                 "DMVariableBlurView"
             ],
-            path: "Sources",
-            sources: ["DMUnLoader"],
-            plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
+            resources: [.process("Resources")],
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "DMUnLoaderTests",
@@ -54,7 +54,8 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             path: "Tests",
-            plugins: [ .plugin(name: "SwiftLintBuildTool", package: "SwiftLintPlugin") ]
+            swiftSettings: swiftSettings
         ),
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )

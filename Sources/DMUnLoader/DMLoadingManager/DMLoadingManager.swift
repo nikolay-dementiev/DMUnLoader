@@ -15,44 +15,53 @@ import Combine
 @MainActor
 public protocol DMLoadingManager: ObservableObject {
     
-    /// The current loadable state of the manager (e.g., `.none`, `.loading`, `.success`, `.failure`).
-    /// - Note: This property is mutable and allows the manager to update its state dynamically.
+    /// The state the HUD shows: `.none`, `.loading`, `.success` or `.failure`.
+    ///
+    /// The HUD observes the manager as an `ObservableObject`, so a manager of your own sends
+    /// `objectWillChange` before each change of this state, as a `@Published` property does.
     var loadableState: DMLoadableType { get }
     
-    /// The settings used by the loading manager to configure its behavior.
-    /// - Example:
-    ///   ```swift
-    ///   let settings = DMLoadingManagerSettings(autoHideDelay: 10)
-    ///   ```
-    var settings: DMLoadingManagerSettings { get }
+    /// The settings of the manager. `DMLoadingManagerMain` hides a success or a failure as these
+    /// settings say, by default once `settings.autoHideDelay` has passed; the settings of a view
+    /// provider do not change it.
+    var settings: any DMLoadingManagerSettings { get }
     
     /// Shows the loading state, typically indicating that an operation is in progress.
+    /// - Parameter provider: The provider of the loading view.
     /// - Example:
     ///   ```swift
-    ///   loadingManager.showLoading()
+    ///   loadingManager.showLoading(provider: DefaultDMLoadingViewProvider())
     ///   ```
     func showLoading<PR: DMLoadingViewProvider>(provider: PR)
     
     /// Shows the success state with a success message.
-    /// - Parameter message: A value conforming to `DMLoadableTypeSuccess`, representing the success message.
+    /// - Parameters:
+    ///   - message: A value conforming to `DMLoadableTypeSuccess`, representing the success message.
+    ///   - provider: The provider of the success view.
     /// - Example:
     ///   ```swift
-    ///   loadingManager.showSuccess("Data loaded successfully")
+    ///   loadingManager.showSuccess("Data loaded successfully", provider: DefaultDMLoadingViewProvider())
     ///   ```
-    func showSuccess<PR: DMLoadingViewProvider>(_ message: DMLoadableTypeSuccess, provider: PR)
+    func showSuccess<PR: DMLoadingViewProvider>(_ message: any DMLoadableTypeSuccess, provider: PR)
     
     /// Shows the failure state with an error and an optional retry action.
     /// - Parameters:
     ///   - error: The error that occurred during the operation.
-    ///   - onRetry: An optional action (`DMAction`) to retry the operation.
+    ///   - provider: The provider of the error view.
+    ///   - onRetry: An optional action (`DMAction`) to retry the operation. The default error
+    ///     view shows a Retry button for it.
     /// - Example:
     ///   ```swift
-    ///   let retryAction = DMButtonAction({ _ in }) {
+    ///   let retryAction = DMButtonAction {
     ///       // Retry logic here
     ///   }
-    ///   loadingManager.showFailure(NSError(domain: "Example", code: 404), onRetry: retryAction)
+    ///   loadingManager.showFailure(
+    ///       NSError(domain: "Example", code: 404),
+    ///       provider: DefaultDMLoadingViewProvider(),
+    ///       onRetry: retryAction
+    ///   )
     ///   ```
-    func showFailure<PR: DMLoadingViewProvider>(_ error: Error, provider: PR, onRetry: DMAction?)
+    func showFailure<PR: DMLoadingViewProvider>(_ error: any Error, provider: PR, onRetry: (any DMAction)?)
     
     /// Hides the loading state, resetting it to `.none`.
     /// - Example:
@@ -61,5 +70,21 @@ public protocol DMLoadingManager: ObservableObject {
     ///   ```
     func hide()
     
+    /// Creates a manager with no state shown and its default settings. The root view that creates its own
+    /// manager (`DMRootLoadingView(content:)`) and the scene delegates create their manager with it.
     init()
+}
+
+extension DMLoadingManager {
+
+    /// Shows a failure without a Retry button: the same as
+    /// `showFailure(error, provider: provider, onRetry: nil)`.
+    ///
+    /// `DMLoadingManagerMain` already accepts this call through the default value of its
+    /// `onRetry` parameter, and keeps using its own method. This method makes the call compile
+    /// for every loading manager: a generic `LM`, `any DMLoadingManager`, or a manager of the
+    /// host's own.
+    public func showFailure<PR: DMLoadingViewProvider>(_ error: any Error, provider: PR) {
+        showFailure(error, provider: provider, onRetry: nil)
+    }
 }

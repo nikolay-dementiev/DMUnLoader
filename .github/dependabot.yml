@@ -1,0 +1,17 @@
+# The actions of the workflows are pinned to commits, and the package's dependencies are
+# resolved in the committed Package.resolved. Dependabot proposes the newer ones.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # A release is proposed a week after it appears, not on the day it does.
+    cooldown:
+      default-days: 7
+  - package-ecosystem: swift
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7

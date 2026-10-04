@@ -19,11 +19,12 @@ public protocol DMProgressViewSettings {
     /// The background color of the loading container.
     var loadingContainerBackgroundColor: Color { get }
     
-    /// The size of the frame geometry for the loading view.
+    /// The reference size of the loading view: the view takes at most half of this width and half
+    /// of this height, and at least 30 points in each direction, sized to its content within those limits.
     var frameGeometrySize: CGSize { get }
 }
 
-/// A concrete implementation of the `DMLoadingViewSettings` protocol.
+/// A concrete implementation of the `DMProgressViewSettings` protocol.
 /// This struct provides default settings for a loading view, with customizable properties.
 public struct DMProgressViewDefaultSettings: DMProgressViewSettings {
     
@@ -33,24 +34,26 @@ public struct DMProgressViewDefaultSettings: DMProgressViewSettings {
     /// Properties related to the progress indicator displayed in the loading view.
     public let progressIndicatorProperties: ProgressIndicatorProperties
     
-    /// The foreground color of the loading container.
+    /// The background color of the loading container.
     public let loadingContainerBackgroundColor: Color
     
-    /// The size of the frame geometry for the loading view.
+    /// The reference size of the loading view: the view takes at most half of this width and half
+    /// of this height, and at least 30 points in each direction, sized to its content within those limits.
     public let frameGeometrySize: CGSize
     
-    /// Initializes a new instance of `DMLoadingDefaultViewSettings` with optional customizations.
+    /// Initializes a new instance of `DMProgressViewDefaultSettings` with optional customizations.
     /// - Parameters:
-    ///   - loadingTextProperties: The properties for the loading text. Defaults to `LoadingTextProperties()`.
+    ///   - loadingTextProperties: The properties for the loading text. Defaults to `ProgressTextProperties()`.
     ///   - progressIndicatorProperties: The properties for the progress indicator. Defaults to `ProgressIndicatorProperties()`.
-    ///   - loadingContainerForegroundColor: The foreground color of the loading container. Defaults to `Color.primary`.
-    ///   - frameGeometrySize: The size of the frame geometry. Defaults to `CGSize(width: 300, height: 300)`.
+    ///   - loadingContainerBackgroundColor: The background color of the loading container. Defaults to `Color.clear`.
+    ///   - frameGeometrySize: The reference size of the loading view: at most half of its width and
+///     height. Defaults to `CGSize(width: 300, height: 300)`.
     /// - Example:
     ///   ```swift
-    ///   let customSettings = DMLoadingDefaultViewSettings(
-    ///       loadingTextProperties: LoadingTextProperties(text: "Please wait..."),
+    ///   let customSettings = DMProgressViewDefaultSettings(
+    ///       loadingTextProperties: ProgressTextProperties(text: "Please wait..."),
     ///       progressIndicatorProperties: ProgressIndicatorProperties(size: .small),
-    ///       loadingContainerForegroundColor: .blue,
+    ///       loadingContainerBackgroundColor: .blue,
     ///       frameGeometrySize: CGSize(width: 400, height: 400)
     ///   )
     ///   ```
@@ -68,18 +71,25 @@ public struct DMProgressViewDefaultSettings: DMProgressViewSettings {
 
 extension DMProgressViewDefaultSettings: Hashable {
     
+    /// Equal when every setting is equal: the text, the indicator, the background color and
+    /// the frame geometry size.
     public static func == (
         lhs: DMProgressViewDefaultSettings,
         rhs: DMProgressViewDefaultSettings
     ) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.loadingTextProperties == rhs.loadingTextProperties
+            && lhs.progressIndicatorProperties == rhs.progressIndicatorProperties
+            && lhs.loadingContainerBackgroundColor == rhs.loadingContainerBackgroundColor
+            && lhs.frameGeometrySize == rhs.frameGeometrySize
     }
-    
+
+    /// Hashes every setting; the frame geometry size by its width and height.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(loadingTextProperties)
         hasher.combine(progressIndicatorProperties)
         hasher.combine(loadingContainerBackgroundColor)
-        hasher.combine(frameGeometrySize)
+        hasher.combine(frameGeometrySize.width)
+        hasher.combine(frameGeometrySize.height)
     }
 }
 
@@ -89,7 +99,9 @@ public struct ProgressTextProperties {
     /// The text to display in the loading view.
     public var text: String
     
-    /// The alignment of the text within the loading view.
+    /// How the lines of the text line up when it takes more than one line: `.leading`,
+    /// `.center` or `.trailing`. A single line is centered in the loading view whatever this
+    /// value is.
     public var alignment: TextAlignment
     
     /// The foreground color of the text.
@@ -101,21 +113,22 @@ public struct ProgressTextProperties {
     /// The maximum number of lines the text can occupy.
     public var lineLimit: Int?
     
-    /// The padding applied around each line of text.
+    /// The padding applied around the text as a whole, once: outside its outermost lines, not around
+    /// each line.
     public var linePadding: EdgeInsets
     
-    /// Initializes a new instance of `LoadingTextProperties` with optional customizations.
+    /// Initializes a new instance of `ProgressTextProperties` with optional customizations.
     /// - Parameters:
     ///   - text: The text to display. Defaults to `"Loading..."`.
-    ///   - alignment: The alignment of the text. Defaults to `.center`.
+    ///   - alignment: How the lines of a text of more than one line line up. Defaults to `.center`.
     ///   - foregroundColor: The foreground color of the text. Defaults to `.white`.
     ///   - font: The font used for the text. Defaults to `.body`.
     ///   - lineLimit: The maximum number of lines the text can occupy. Defaults to `3`.
-    ///   - linePadding: The padding applied around each line of text.
+    ///   - linePadding: The padding applied around the text as a whole, not around each line.
     ///   Defaults to `EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)`.
     /// - Example:
     ///   ```swift
-    ///   let customTextProperties = LoadingTextProperties(
+    ///   let customTextProperties = ProgressTextProperties(
     ///       text: "Processing...",
     ///       alignment: .leading,
     ///       foregroundColor: .black,
@@ -142,13 +155,17 @@ public struct ProgressTextProperties {
 }
 
 extension ProgressTextProperties: Hashable {
+    /// Hashes the properties that `==` compares.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(text)
         hasher.combine(alignment)
         hasher.combine(foregroundColor)
         hasher.combine(font)
         hasher.combine(lineLimit)
-        hasher.combine(linePadding)
+        hasher.combine(linePadding.top)
+        hasher.combine(linePadding.leading)
+        hasher.combine(linePadding.bottom)
+        hasher.combine(linePadding.trailing)
     }
 }
 
@@ -160,7 +177,10 @@ public struct ProgressIndicatorProperties {
     
     /// The tint color of the progress indicator.
     public let tintColor: Color?
-    
+
+    /// The style of the progress indicator. It is always `CircularProgressViewStyle()` and
+    /// cannot be changed; for another indicator, return your own view from
+    /// `DMLoadingViewProvider.getLoadingView()`.
     public let style = CircularProgressViewStyle()
     
     /// Initializes a new instance of `ProgressIndicatorProperties` with optional customizations.
@@ -184,10 +204,13 @@ public struct ProgressIndicatorProperties {
 }
 
 extension ProgressIndicatorProperties: Hashable {
+    /// Equal when the size and the tint color are equal. `style` is the same constant in
+    /// every value, so it is not compared.
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
+        lhs.size == rhs.size && lhs.tintColor == rhs.tintColor
     }
     
+    /// Hashes the size and the tint color, which `==` compares.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(size)
         hasher.combine(tintColor)

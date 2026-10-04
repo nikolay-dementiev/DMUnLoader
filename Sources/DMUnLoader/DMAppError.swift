@@ -29,7 +29,7 @@ public enum DMAppError: DMError {
     
     /// Wraps a general error conforming to `DMError`.
     /// - Parameter error: The underlying error.
-    case generalError(DMError)
+    case generalError(any DMError)
 }
 
 /// Extensions for `DMAppError` to define associated types and localized error descriptions.
@@ -42,7 +42,7 @@ public extension DMAppError {
         
         /// Wraps an underlying error related to resource access.
         /// - Parameter error: The underlying error.
-        case error(Error)
+        case error(any Error)
     }
 }
 
@@ -70,6 +70,8 @@ extension DMAppError: LocalizedError {
 /// An enumeration representing errors related to network operations.
 /// It includes pass-through `URLError` cases and custom network-related errors.
 extension DMAppError {
+    /// An error of a network operation: a `URLError` passed through, or one of the cases below,
+    /// which your code reports; the library raises none of them.
     public enum NetworkError: DMError {
         
         /// Indicates that the network is inaccessible due to poor conditions after multiple retries.
@@ -81,7 +83,7 @@ extension DMAppError {
         
         /// Wraps a general `Error` object that is not a `URLError`.
         /// - Parameter error: The underlying error.
-        case generalError(Swift.Error)
+        case generalError(any Swift.Error)
         
         /// Indicates that no response was received from the server.
         case noResponse

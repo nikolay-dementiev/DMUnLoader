@@ -1,38 +1,23 @@
-disabled_rules: # rule identifiers to exclude from running
-#  - colon
-#  - comma
-#  - control_statement
-#  - file_length
-#  - force_cast
-#  - force_try
-#  - function_body_length
-#  - leading_whitespace
-#  - line_length
-  - nesting
-  - large_tuple
-  - unused_closure_parameter
-#  - opening_brace
-#  - operator_whitespace
-#  - return_arrow_whitespace
-#  - statement_position
-  - todo
-#  - trailing_newline
-#  - trailing_semicolon
-  - trailing_whitespace
-  - type_name
-  - xctfail_message
-  - trailing_comma
-#  - variable_name_max_length
-#  - variable_name_min_length
-#  - variable_name
-#included: # paths to include during linting. `--path` is ignored if present. takes precendence over `excluded`.
+swiftlint_version: 0.65.1
+included:
+  - Sources
+  - Tests
+  - Examples/DMUnLoaderExample
+  - Fixtures
 
-excluded: # paths to ignore during linting. overridden by `included`.
-  - Carthage
-  - Pods
-  - Modules
-  - Tests/LinuxMain.swift
-  - Tests/ViewInspectorTests/XCTestManifests.swift
+disabled_rules:
+  # Blank lines carry their indentation throughout the sources.
+  - trailing_whitespace
+  # One open note in the library, about colours in light and dark appearance.
+  - todo
+
+opt_in_rules:
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - missing_docs
+
+analyzer_rules:
+  - unused_import
 
 identifier_name:
   min_length: 2
@@ -54,15 +39,27 @@ line_length:
   warning: 130
   error: 200
 
+# Every public symbol is documented. By default the rule skips the members of a type that
+# conforms to a protocol, which is every public type of the library.
+missing_docs:
+  error: [open, public]
+  excludes_inherited_types: false
+
 custom_rules:
-  assert_throws_error:
-    name: 'API usage'
-    regex: '(XCTAssertThrowsError)'
+  no_process_termination:
+    name: "No process termination"
+    # The library only: the consumer fixture compiles the README samples as they are.
+    included: ".*/Sources/DMUnLoader/.*\\.swift"
+    regex: '\b(fatalError|preconditionFailure|assertionFailure)\b'
     match_kinds:
       - identifier
-    message: 'Please use XCTAssertThrows instead of XCTAssertThrowsError'
-  # underscore_only_at_beginning:
-  #   name: "Underscore allowed only at position 0 (start)"
-  #   regex: "(?<!^)_"
-  #   message: "Underscore allowed only at position 0 (start)"
-  #   severity: warning
+    message: "A library never terminates its host. Report the failure to the caller."
+    severity: error
+  domain_imports_no_ui_or_platform:
+    name: "Domain imports no UI or platform framework"
+    # The Domain layer holds the plain types and policies. A framework of the UI or of the
+    # platform comes in through a protocol that an adapter implements.
+    included: ".*/Sources/DMUnLoader/Domain/.*\\.swift"
+    regex: '^\s*import\s+(UIKit|SwiftUI|AppKit|WatchKit|DMVariableBlurView)\b'
+    message: "The Domain layer imports no UI or platform framework. Declare a protocol and let an adapter implement it."
+    severity: error
