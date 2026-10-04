@@ -101,9 +101,24 @@ iOS 17 and later.
 To integrate **DMUnLoader** using **Swift Package Manager**, add the following dependency to your `Package.swift`:
 
 ```swift
-dependencies: [
-    .package(url: "https://github.com/nikolay-dementiev/DMUnLoader.git", from: "1.0.3")
-]
+// swift-tools-version: 6.2
+import PackageDescription
+
+let package = Package(
+    name: "MyApp",
+    platforms: [.iOS(.v17)],
+    dependencies: [
+        .package(url: "https://github.com/nikolay-dementiev/DMUnLoader.git", from: "1.1.0")
+    ],
+    targets: [
+        .target(
+            name: "MyApp",
+            dependencies: [
+                .product(name: "DMUnLoader", package: "DMUnLoader")
+            ]
+        )
+    ]
+)
 ```
 
 ### CocoaPods
@@ -168,6 +183,9 @@ struct ContentView<
 `DMRootLoadingView(manager:content:)` needs no app delegate of DMUnLoader. It shows the HUD of the manager you give it over the scene of the window the view is in.
 
 ```swift
+import DMUnLoader
+import SwiftUI
+
 @main
 struct ExampleApp: App {
     @StateObject private var loadingManager = DMLoadingManagerMain(
@@ -178,10 +196,9 @@ struct ExampleApp: App {
     var body: some Scene {
         WindowGroup {
             DMRootLoadingView(manager: loadingManager) { loadingManager in
-                ContentView(
-                    loadingManager: loadingManager,
-                    provider: DefaultDMLoadingViewProvider()
-                )
+                Button("Show loading") {
+                    loadingManager.showLoading(provider: DefaultDMLoadingViewProvider())
+                }
             }
         }
     }
@@ -300,33 +317,33 @@ final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
 ```
 
 ### Settings
-Override only the view settings you need; `DMLoadingViewProvider` supplies defaults for the rest. This example changes the success icon color:
+Override only the view settings you need; `DMLoadingViewProvider` supplies defaults for the rest. This provider changes the color of the success image:
 
 ```swift
-extension CustomDMLoadingViewProvider {
-    var successViewSettings: DMSuccessViewSettings {
+import DMUnLoader
+import SwiftUI
+
+final class MintSuccessProvider: DMLoadingViewProvider {
+    var successViewSettings: any DMSuccessViewSettings {
         DMSuccessDefaultViewSettings(
-            successImageProperties: SuccessImageProperties(
-                foregroundColor: .green
-            )
+            successImageProperties: SuccessImageProperties(foregroundColor: .mint)
         )
     }
 }
-
-let provider = CustomDMLoadingViewProvider()
-loadingManager.showSuccess(
-    "Data successfully loaded!",
-    provider: provider
-)
 ```
 
 The auto-hide delay belongs to the loading manager: a success or a failure hides after its `settings.autoHideDelay`, 2 seconds for the manager that `DMRootLoadingView` and `DMSceneDelegateTypeUIKit` create. A provider's `loadingManagerSettings` is not read; earlier versions of this README set the delay there, which never had an effect. To choose the delay, create the manager yourself and give it to `DMRootLoadingView(manager:content:)`, as in [SwiftUI with a manager your app owns](#swiftui-with-a-manager-your-app-owns):
 
 ```swift
-@StateObject private var loadingManager = DMLoadingManagerMain(
-    state: .none,
-    settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(4))
-)
+import DMUnLoader
+
+@MainActor
+func makeLoadingManager() -> DMLoadingManagerMain {
+    DMLoadingManagerMain(
+        state: .none,
+        settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(4))
+    )
+}
 ```
 
 ### Texts and languages
@@ -365,10 +382,15 @@ Core views and the loading manager were developed through a test-driven workflow
 While a HUD is shown, DMUnLoader draws a backdrop behind its card. The default, `.variableBlur`, is the backdrop of every release so far: the variable blur of [DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView) under a black dim. That blur uses a private API of the system; read the README of DMVariableBlurView before you ship it. `.dim()`, `.material()` and `.clear` draw with public API only. Under the system's Reduce Transparency the HUD draws neither the blur nor a material: `.variableBlur` keeps its dim, and `.material()` gives way to that dim.
 
 ```swift
-let loadingManager = DMLoadingManagerMain(
-    state: .none,
-    settings: DMLoadingManagerDefaultSettings(backdrop: .dim())
-)
+import DMUnLoader
+
+@MainActor
+func makeDimmedLoadingManager() -> DMLoadingManagerMain {
+    DMLoadingManagerMain(
+        state: .none,
+        settings: DMLoadingManagerDefaultSettings(backdrop: .dim())
+    )
+}
 ```
 
 Choosing one of them only stops DMUnLoader from creating the variable blur while your app runs. DMUnLoader still depends on DMVariableBlurView, so its code, with the private names a scan of your binary finds, stays in your app. No setting of DMUnLoader 1.1.0 removes it.
