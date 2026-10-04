@@ -26,6 +26,23 @@ final class RunLoopAutoHideSchedulerTests: XCTestCase {
         subscription.cancel()
     }
 
+    func test_schedule_hideNeverRunsBeforeItsDelay() {
+        let sut = makeSUT()
+        let hidden = expectation(description: "hide runs once the delay has passed")
+        let scheduledAt = ProcessInfo.processInfo.systemUptime
+        var hiddenAt: TimeInterval?
+
+        let subscription = sut.schedule(after: .milliseconds(200)) {
+            hiddenAt = ProcessInfo.processInfo.systemUptime
+            hidden.fulfill()
+        }
+
+        wait(for: [hidden], timeout: 0.2 + TestTiming.callbackAllowance)
+        subscription.cancel()
+        let elapsed = (hiddenAt ?? scheduledAt) - scheduledAt
+        XCTAssertGreaterThanOrEqual(elapsed, 0.19, "the hide never runs before its delay, to within 10 milliseconds")
+    }
+
     func test_schedule_cancelledBeforeTheDelay_neverRunsHide() {
         let sut = makeSUT()
         let hidden = expectation(description: "a cancelled hide never runs")

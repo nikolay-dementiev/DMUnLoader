@@ -196,6 +196,22 @@ final class HUDWindowTests: XCTestCase {
         XCTAssertEqual(manager.loadableState, .none, "the escape hides the failure, as a tap outside the card does")
     }
 
+    func test_overlay_escapeOnASuccess_hidesTheHUD() throws {
+        let (scene, sceneDelegate) = try connectedSceneDelegate()
+        defer { sceneDelegate.loadingManager = DMLoadingManagerMain() }
+        let manager = DMLoadingManagerMain(
+            state: .success("Saved", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
+            settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
+        )
+        sceneDelegate.loadingManager = manager
+        let window = try XCTUnwrap(waitForHUDWindows(in: scene).first, "a HUD window")
+
+        let escaped = window.accessibilityPerformEscape()
+
+        XCTAssertTrue(escaped, "the escape reports that it hid the success")
+        XCTAssertEqual(manager.loadableState, .none, "the escape hides the success, as a tap outside the card does")
+    }
+
     func test_overlay_escapeWhileLoading_returnsFalse() throws {
         let (scene, sceneDelegate) = try connectedSceneDelegate()
         defer { sceneDelegate.loadingManager = DMLoadingManagerMain() }
