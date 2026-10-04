@@ -50,7 +50,8 @@ package struct DefaultHUDViewModel<LM: DMLoadingManager>: HUDViewModel {
     }
 
     /// Hides the HUD when the rules of the manager's settings let a tap at `target` hide the
-    /// kind shown, and returns whether it did.
+    /// kind shown, and returns whether the HUD is gone after the call: a manager's `hide()` that
+    /// keeps its state does not count as a hide.
     @discardableResult
     private func hide(onTapAt target: HUDTapTarget) -> Bool {
         let phase = loadingManager.loadableState.phase
@@ -58,6 +59,6 @@ package struct DefaultHUDViewModel<LM: DMLoadingManager>: HUDViewModel {
             return false
         }
         loadingManager.hide()
-        return phase.showsHUD
+        return !loadingManager.loadableState.showsHUD
     }
 }
