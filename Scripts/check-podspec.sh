@@ -13,8 +13,10 @@
 #   table, every key of Sources/DMUnLoader/Resources/Localizable.xcstrings in it, because the
 #   library reads its default texts from there.
 #
-# CocoaPods runs with a home folder of its own under .build, so the index of the trunk is
-# fetched anew and nothing in the home folder of the machine changes. The lint builds into
+# CocoaPods runs with a home folder of its own under .build, so nothing in the home folder of
+# the machine changes. Its copy of the trunk index is removed before every run: CocoaPods
+# never revalidates a part of the index it already has, so a stale copy would fail the lint
+# on a dependency that was released since. The downloaded pods stay. The lint builds into
 # the default DerivedData; the script removes the one folder there that records the
 # consumer of this run as its workspace, and no other. It installs nothing. It needs
 # CocoaPods on the machine.
@@ -37,6 +39,7 @@ if ! command -v pod > /dev/null; then
 fi
 
 mkdir -p "$WORK" "$CP_HOME_DIR"
+rm -rf "$CP_HOME_DIR/repos"
 
 MODES="$(pod ipc spec "$PODSPEC" | python3 -c '
 import json, sys
@@ -115,10 +118,13 @@ for MODE in $MODES; do
 
     # Either command may fail; an empty result is reported below as a missing bundle.
     PRODUCTS="$(xcodebuild -showBuildSettings -workspace "$WORKSPACE" -scheme App \
-        -configuration Release -sdk iphonesimulator 2> /dev/null \
+        -configuration Release -sdk iphonesimulator 2> "$WORK/build-settings-swift$MODE.log" \
         | sed -n 's/^ *BUILT_PRODUCTS_DIR = //p' | head -1 || true)"
     BUNDLE="$(find "$PRODUCTS/App.app" -type d -name "DMUnLoader.bundle" 2> /dev/null | head -1 || true)"
-    if [ -z "$BUNDLE" ]; then
+    if [ -z "$PRODUCTS" ]; then
+        echo "check-podspec: the build settings of the Swift $MODE consumer name no products folder. See ${WORK#"$ROOT"/}/build-settings-swift$MODE.log" >&2
+        FAILED=1
+    elif [ -z "$BUNDLE" ]; then
         echo "check-podspec: in Swift $MODE mode the consumer app carries no DMUnLoader.bundle." >&2
         FAILED=1
     elif ! python3 - "$CATALOG" "$BUNDLE/en.lproj/Localizable.strings" <<'PY'

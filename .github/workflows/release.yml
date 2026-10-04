@@ -11,6 +11,11 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    # Named explicitly, so a failing command in front of a pipe fails the step.
+    shell: bash
+
 jobs:
   check:
     runs-on: macos-26

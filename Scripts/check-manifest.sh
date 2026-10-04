@@ -169,6 +169,11 @@ DOCUMENTS=("$ROOT/README.md")
 while IFS= read -r DOCUMENT; do
     DOCUMENTS+=("$DOCUMENT")
 done < <(find "$ROOT/Sources/$MODULE/$MODULE.docc" -name '*.md' | LC_ALL=C sort)
+# The status of find is lost in the substitution above, so a missing catalog is caught here.
+if [ "${#DOCUMENTS[@]}" -lt 2 ]; then
+    echo "check-manifest: the documentation catalog Sources/$MODULE/$MODULE.docc has no Markdown file." >&2
+    SNIPPETS_FAILED=1
+fi
 if ! python3 - "$ROOT" "$SNIPPETS" "${DOCUMENTS[@]}" > "$WORK/snippet-blocks.txt" <<'PY'
 import os
 import re
