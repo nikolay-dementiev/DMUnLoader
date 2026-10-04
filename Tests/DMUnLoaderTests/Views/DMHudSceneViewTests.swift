@@ -65,6 +65,23 @@ final class DMHudSceneViewTests: XCTestCase {
         )
     }
 
+    func test_anotherFailureWhileShown_reportsTheNewState() {
+        let fixture = makeSUT(
+            initialState: .failure(error: DMAppError.custom("first"), provider: Self.provider, onRetry: nil)
+        )
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForReports(fixture.reports, count: 1)
+
+        fixture.manager.showFailure(DMAppError.custom("second"), provider: DefaultDMLoadingViewProvider())
+
+        XCTAssertEqual(
+            waitForReports(fixture.reports, count: 2),
+            [.failure, .failure],
+            "the window learns that the shown HUD shows another failure"
+        )
+    }
+
     // MARK: - What is drawn
 
     func test_noState_drawsNothing() throws {
@@ -136,7 +153,7 @@ final class DMHudSceneViewTests: XCTestCase {
     }
 
     private final class Reports {
-        var values: [HUDPhase] = []
+        var values: [DMLoadableType] = []
     }
 
     private struct Fixture {
@@ -159,13 +176,14 @@ final class DMHudSceneViewTests: XCTestCase {
         return Fixture(sut: sut, manager: manager, reports: reports)
     }
 
-    /// Turns the run loop until `count` reports arrived or the callback allowance passed.
+    /// Turns the run loop until `count` reports arrived or the callback allowance passed, and
+    /// returns the phases of the reported states.
     private func waitForReports(_ reports: Reports, count: Int) -> [HUDPhase] {
         let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
         while reports.values.count < count, Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.02))
         }
-        return reports.values
+        return reports.values.map(\.phase)
     }
 
     /// Renders `view` in a window with a clear background, the way the HUD window shows it,
