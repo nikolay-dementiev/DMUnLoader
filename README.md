@@ -23,7 +23,7 @@
     - [Custom HUDs in SwiftUI](https://www.fivestars.blog/articles/swiftui-hud/)
     - [How to layer multiple windows in SwiftUI](https://www.fivestars.blog/articles/swiftui-windows/)
 - **Custom views:** The `DMLoadingViewProvider` protocol lets clients replace `DMErrorView`, `DMProgressView`, and `DMSuccessView`.
-- **Configurable appearance:** Override text, color, layout, and auto-hide settings while retaining defaults for everything else.
+- **Configurable appearance and timing:** A view provider overrides texts, colors and layout and keeps the defaults for the rest. The loading manager's settings decide how long a success or a failure stays on screen.
 - **Retry and fallback:** Composes retry and fallback behavior through `DMAction`. See the [DMAction article](https://medium.com/@mykola.dementiev/handling-actions-in-swift-using-retry-and-fallback-feature-fab138d35165) or the [DMAction GitHub repository](https://github.com/nikolay-dementiev/DMAction).
 - **Dynamic blur:** Uses [`DMVariableBlurView`](https://github.com/nikolay-dementiev/DMVariableBlurView) to render the blur behind active states.
 
@@ -298,18 +298,10 @@ final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
 ```
 
 ### Settings
-Override only the settings you need; `DMLoadingViewProvider` supplies defaults for the rest. This example changes the auto-hide delay and success icon color:
+Override only the view settings you need; `DMLoadingViewProvider` supplies defaults for the rest. This example changes the success icon color:
 
 ```swift
 extension CustomDMLoadingViewProvider {
-    var loadingManagerSettings: DMLoadingManagerSettings {
-        CustomLoadingManagerSettings()
-    }
-
-    private struct CustomLoadingManagerSettings: DMLoadingManagerSettings {
-        var autoHideDelay: Duration = .seconds(4)
-    }
-
     var successViewSettings: DMSuccessViewSettings {
         DMSuccessDefaultViewSettings(
             successImageProperties: SuccessImageProperties(
@@ -323,6 +315,15 @@ let provider = CustomDMLoadingViewProvider()
 loadingManager.showSuccess(
     "Data successfully loaded!",
     provider: provider
+)
+```
+
+The auto-hide delay belongs to the loading manager: a success or a failure hides after its `settings.autoHideDelay`, 2 seconds for the manager that `DMRootLoadingView` and `DMSceneDelegateTypeUIKit` create. A provider's `loadingManagerSettings` is not read; earlier versions of this README set the delay there, which never had an effect. To choose the delay, create the manager yourself and give it to `DMRootLoadingView(manager:content:)`, as in [SwiftUI with a manager your app owns](#swiftui-with-a-manager-your-app-owns):
+
+```swift
+@StateObject private var loadingManager = DMLoadingManagerMain(
+    state: .none,
+    settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(4))
 )
 ```
 

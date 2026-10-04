@@ -31,20 +31,24 @@ final class CustomDMLoadingViewProvider: DMLoadingViewProvider {
 }
 
 extension CustomDMLoadingViewProvider {
-    var loadingManagerSettings: DMLoadingManagerSettings {
-        CustomLoadingManagerSettings()
-    }
-
-    private struct CustomLoadingManagerSettings: DMLoadingManagerSettings {
-        var autoHideDelay: Duration = .seconds(4)
-    }
-
     var successViewSettings: DMSuccessViewSettings {
         DMSuccessDefaultViewSettings(
             successImageProperties: SuccessImageProperties(
                 foregroundColor: .green
             )
         )
+    }
+}
+
+/// The README of 1.0.x also set the auto-hide delay in the provider. The library never read it,
+/// and a provider written that way must still compile.
+extension CustomDMLoadingViewProvider {
+    var loadingManagerSettings: DMLoadingManagerSettings {
+        CustomLoadingManagerSettings()
+    }
+
+    private struct CustomLoadingManagerSettings: DMLoadingManagerSettings {
+        var autoHideDelay: Duration = .seconds(4)
     }
 }
 
