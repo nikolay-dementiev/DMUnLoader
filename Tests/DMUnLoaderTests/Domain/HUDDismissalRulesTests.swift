@@ -63,11 +63,11 @@ final class HUDDismissalRulesTests: XCTestCase {
         )
     }
 
-    func test_hidesAfterDelay_neverRule_isFalse() {
+    func test_delay_neverRule_isNil() {
         let rules = DMHUDDismissalRules(failureWithRetry: DMHUDDismissal(autoHide: .never))
 
-        XCTAssertFalse(
-            AutoHidePolicy.hidesAfterDelay(.failureWithRetry, rules: rules),
+        XCTAssertNil(
+            AutoHidePolicy.delay(for: .failureWithRetry, rules: rules, autoHideDelay: .seconds(2)),
             "a failure with Retry that never hides by itself schedules nothing"
         )
     }

@@ -9,19 +9,6 @@ import DMUnLoader
 
 /// The decisions of the inner core, one phase at a time. The policies are plain values:
 /// no actor, no scheduler, no view.
-final class AutoHidePolicyTests: XCTestCase {
-
-    func test_hidesAfterDelay_successAndFailure_isTrue() {
-        XCTAssertTrue(AutoHidePolicy.hidesAfterDelay(.success), "a success hides after the delay")
-        XCTAssertTrue(AutoHidePolicy.hidesAfterDelay(.failure), "a failure hides after the delay")
-    }
-
-    func test_hidesAfterDelay_noneAndLoading_isFalse() {
-        XCTAssertFalse(AutoHidePolicy.hidesAfterDelay(.none), "nothing to hide without a state")
-        XCTAssertFalse(AutoHidePolicy.hidesAfterDelay(.loading), "the loading phase waits for its result")
-    }
-}
-
 final class DismissPolicyTests: XCTestCase {
 
     func test_tapDismisses_noneSuccessAndFailure_isTrue() {
