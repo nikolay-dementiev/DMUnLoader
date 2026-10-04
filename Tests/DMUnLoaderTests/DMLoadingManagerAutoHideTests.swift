@@ -64,6 +64,22 @@ final class DMLoadingManagerAutoHideTests: XCTestCase {
         XCTAssertTrue(idle.scheduler.scheduled.isEmpty, "with nothing shown there is nothing to hide")
     }
 
+    func test_showSuccess_providerDeclaresAnotherDelay_schedulesTheManagerDelay() {
+        let (sut, scheduler) = makeSUT(autoHideDelay: .seconds(2))
+
+        sut.showSuccess("Saved", provider: providerWithAnotherDelay)
+
+        XCTAssertEqual(scheduler.scheduled.map(\.delay), [.seconds(2)], "the manager's delay decides, not the provider's")
+    }
+
+    func test_showFailure_providerDeclaresAnotherDelay_schedulesTheManagerDelay() {
+        let (sut, scheduler) = makeSUT(autoHideDelay: .seconds(2))
+
+        sut.showFailure(DMAppError.custom("Lost"), provider: providerWithAnotherDelay, onRetry: nil)
+
+        XCTAssertEqual(scheduler.scheduled.map(\.delay), [.seconds(2)], "the manager's delay decides, not the provider's")
+    }
+
     // MARK: - Cancellation
 
     func test_showLoading_afterSuccess_cancelsTheScheduledHide() {
@@ -165,6 +181,11 @@ final class DMLoadingManagerAutoHideTests: XCTestCase {
     // MARK: - Helpers
 
     private let provider = DefaultDMLoadingViewProvider()
+
+    /// A provider whose own manager settings, which the library does not read, say 4 seconds.
+    private let providerWithAnotherDelay = DefaultDMLoadingViewProvider(
+        loadingManagerSettings: AutoHideSettings(autoHideDelay: .seconds(4))
+    )
 
     private func makeSUT(
         state: DMLoadableType = .none,
