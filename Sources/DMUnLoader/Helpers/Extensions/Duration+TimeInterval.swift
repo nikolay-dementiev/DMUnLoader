@@ -19,7 +19,7 @@ extension Duration {
     ///   let timeInterval = duration.timeInterval
     ///   print(timeInterval) // Output: 2.5
     ///   ```
-    var timeInterval: TimeInterval {
+    package var timeInterval: TimeInterval {
         let seconds = Double(components.seconds)
         let attoseconds = Double(components.attoseconds) / 1_000_000_000_000_000_000
         return seconds + attoseconds
