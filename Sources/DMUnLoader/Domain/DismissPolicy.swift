@@ -9,19 +9,9 @@
 /// dismiss.
 package enum DismissPolicy {
     package static func tapDismisses(_ phase: HUDPhase, on target: HUDTapTarget, rules: DMHUDDismissalRules) -> Bool {
-        switch phase {
-        case .none, .loading:
+        guard let kind = phase.dismissableKind else {
             return false
-        case .success, .failure, .failureWithRetry:
-            guard let dismissal = rules.dismissal(for: phase) else {
-                return false
-            }
-            switch target {
-            case .card:
-                return dismissal.cardTapHides
-            case .backdrop:
-                return dismissal.backdropTapHides
-            }
         }
+        return rules.dismissal(for: kind).hides(onTapAt: target)
     }
 }

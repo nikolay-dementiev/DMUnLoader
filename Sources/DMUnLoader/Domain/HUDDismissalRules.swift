@@ -92,15 +92,49 @@ public struct DMHUDDismissalRules: Hashable, Sendable {
         self.failureWithRetry = failureWithRetry
     }
 
-    /// The rule of the kind a phase shows; none for no state and for loading.
-    package func dismissal(for phase: HUDPhase) -> DMHUDDismissal? {
-        switch phase {
+    /// The rule of `kind`.
+    package func dismissal(for kind: HUDDismissableKind) -> DMHUDDismissal {
+        switch kind {
         case .success:
             return success
-        case .failure:
+        case .failureWithoutRetry:
             return failureWithoutRetry
         case .failureWithRetry:
             return failureWithRetry
+        }
+    }
+}
+
+extension DMHUDDismissal {
+    /// Whether a tap at `target` hides a HUD of this rule.
+    package func hides(onTapAt target: HUDTapTarget) -> Bool {
+        switch target {
+        case .card:
+            return cardTapHides
+        case .backdrop:
+            return backdropTapHides
+        }
+    }
+}
+
+/// A kind of HUD that leaves by a rule of `DMHUDDismissalRules`.
+package enum HUDDismissableKind: Sendable {
+    case success
+    case failureWithoutRetry
+    case failureWithRetry
+}
+
+extension HUDPhase {
+    /// The kind whose rule this phase follows; none for no state and for loading, which no rule
+    /// ends.
+    package var dismissableKind: HUDDismissableKind? {
+        switch self {
+        case .success:
+            return .success
+        case .failure:
+            return .failureWithoutRetry
+        case .failureWithRetry:
+            return .failureWithRetry
         case .none, .loading:
             return nil
         }

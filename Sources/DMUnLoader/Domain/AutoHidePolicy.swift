@@ -9,10 +9,10 @@
 package enum AutoHidePolicy {
     /// The delay after which `phase` hides by itself, or `nil` when it stays.
     package static func delay(for phase: HUDPhase, rules: DMHUDDismissalRules, autoHideDelay: Duration) -> Duration? {
-        guard let dismissal = rules.dismissal(for: phase) else {
+        guard let kind = phase.dismissableKind else {
             return nil
         }
-        switch dismissal.autoHide.rule {
+        switch rules.dismissal(for: kind).autoHide.rule {
         case .afterAutoHideDelay:
             return autoHideDelay
         case .never:
