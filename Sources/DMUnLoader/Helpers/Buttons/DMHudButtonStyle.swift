@@ -25,6 +25,9 @@ struct DMHudButtonStyle: ButtonStyle {
                         lineWidth: 2
                     )
             )
+            // The whole capsule takes the tap. Without a shape only the title and the outline
+            // did, and a tap beside the title landed on the card, which hides a failure.
+            .contentShape(Capsule())
             .modifier(HUDPressScale(isPressed: configuration.isPressed))
 //            .colorInvert()
     }
