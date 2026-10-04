@@ -190,15 +190,15 @@ jobs:
     # CocoaPods stays a channel until its trunk is frozen, so the spec has to pass its lint.
     name: podspec
     runs-on: macos-26
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Lint the pod
-        run: pod lib lint DMUnLoader.podspec --platforms=ios --fail-fast
+      - name: Lint the podspec and check what a consumer gets
+        run: Scripts/check-podspec.sh
 
   docs:
     name: docs
