@@ -72,7 +72,9 @@ for MODE in $MODES; do
         continue
     fi
 
-    # --no-clean keeps the consumer app that the lint built, and the log says where.
+    # --no-clean keeps the consumer app that the lint built, and the log says where. The
+    # backticks are characters of that message, not a command substitution.
+    # shellcheck disable=SC2016
     WORKSPACE="$(sed -n 's/^Pods workspace available at `\(.*\)` for inspection\.$/\1/p' "$LOG" | tail -1)"
     CONSUMER="$(dirname "$WORKSPACE")"
     if [ -z "$WORKSPACE" ] || [ ! -d "$CONSUMER/Pods/Target Support Files" ]; then
