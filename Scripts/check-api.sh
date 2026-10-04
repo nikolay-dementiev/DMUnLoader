@@ -38,8 +38,8 @@ LIBRARY_EVOLUTION="no"
 # order. One entry per module: "<module>|<source directory>|<compiler flags>", where the
 # flags mirror the manifest of the dependency, including its -package-name.
 DEPENDENCIES=(
-    "DMAction|.build/checkouts/DMAction/Sources|-swift-version 6 -parse-as-library -package-name DMAction"
-    "DMVariableBlurView|.build/checkouts/DMVariableBlurView/Sources/DMVariableBlurView|-swift-version 6 -parse-as-library -package-name DMVariableBlurView"
+    "DMAction|.build/checkouts/DMAction/Sources|-swift-version 6 -parse-as-library -enable-upcoming-feature ExistentialAny -package-name DMAction"
+    "DMVariableBlurView|.build/checkouts/DMVariableBlurView/Sources/DMVariableBlurView|-swift-version 6 -parse-as-library -enable-upcoming-feature ExistentialAny -package-name DMVariableBlurView"
 )
 # A command run from the repository root before anything is compiled, for example
 # (swift package resolve) to check out the dependencies. Empty: nothing to prepare.
