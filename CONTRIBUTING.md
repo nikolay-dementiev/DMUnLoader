@@ -38,10 +38,12 @@ CI also builds the documentation, with DocC's warnings as errors:
 xcodebuild docbuild -scheme DMUnLoader -destination 'generic/platform=iOS Simulator' -skipPackagePluginValidation OTHER_DOCC_FLAGS=--warnings-as-errors
 ```
 
-The checks run code that the branch contains: `Package.swift` and the manifest blocks of the
-README are evaluated by Swift Package Manager, the podspec by CocoaPods, and `project.yml` by
-XcodeGen. Before you run them on someone else's branch, read what that branch changes in those
-files.
+The checks and the tests run code that the branch contains: the scripts in `Scripts/`, the tests
+and the example app, `Package.swift`, `Package.resolved` and the manifest blocks of the README
+through Swift Package Manager, the podspec through CocoaPods, and `project.yml` through XcodeGen.
+Tests in a simulator run as your macOS user. Before you run anything of someone else's branch,
+read what it changes in those files; the CI run of a pull request, with its read-only token, is
+the safer place to see it work.
 
 ## The example app
 
