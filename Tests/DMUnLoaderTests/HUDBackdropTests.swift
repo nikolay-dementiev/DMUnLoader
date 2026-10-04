@@ -114,6 +114,10 @@ final class HUDBackdropTests: XCTestCase {
         // The dim before the fade: black at no opacity.
         let dim = Color.black.opacity(0)
 
+        XCTAssertNoThrow(
+            try makeSUT(backdrop: nil).inspect().find(ViewType.Color.self, where: { try $0.value() == dim }),
+            "the default backdrop draws the black dim, so the search does find a dim"
+        )
         XCTAssertThrowsError(
             try makeSUT(backdrop: .material()).inspect().find(ViewType.Color.self, where: { try $0.value() == dim }),
             "the material backdrop draws its material and no dim"
