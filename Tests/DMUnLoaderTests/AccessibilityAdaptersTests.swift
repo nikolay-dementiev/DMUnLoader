@@ -109,6 +109,23 @@ final class AccessibilityAdaptersTests: XCTestCase {
         XCTAssertFalse(SystemAccessibilityAnnouncer().isOnScreen(element))
     }
 
+    @MainActor
+    func test_announcer_screenChanged_postsTheElementOnALaterTurn() async {
+        let posted = PostedElements()
+        let element = NSObject()
+        let sut = SystemAccessibilityAnnouncer { posted.elements.append($0) }
+
+        sut.screenChanged(focusing: element)
+
+        XCTAssertTrue(posted.elements.isEmpty, "nothing is posted within the call: the HUD window changes in this turn")
+        let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
+        while posted.elements.isEmpty, Date() < deadline {
+            await Task.yield()
+        }
+        XCTAssertEqual(posted.elements.count, 1, "the screen change is posted once, on a later turn")
+        XCTAssertTrue((posted.elements.first ?? nil) === element, "the notification carries the element to focus")
+    }
+
     // MARK: - Helpers
 
     /// The windows of a scene around a HUD window at the normal level.
@@ -134,4 +151,9 @@ final class AccessibilityAdaptersTests: XCTestCase {
     private func makeHider(for windows: SceneWindows) -> SceneContentHider {
         SceneContentHider(hudWindow: windows.hud) { windows.all }
     }
+}
+
+@MainActor
+private final class PostedElements {
+    var elements: [AnyObject?] = []
 }
