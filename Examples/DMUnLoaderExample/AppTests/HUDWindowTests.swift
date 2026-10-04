@@ -213,7 +213,7 @@ final class HUDWindowTests: XCTestCase {
         XCTAssertEqual(manager.loadableState, loading, "the loading HUD stays until its work ends")
     }
 
-    func test_hudUnderReduceTransparency_drawsNoBlur() throws {
+    func test_hudUnderReduceTransparency_drawsNoBlurAndAnOpaqueCard() throws {
         let (scene, sceneDelegate) = try connectedSceneDelegate()
         defer { sceneDelegate.loadingManager = DMLoadingManagerMain() }
         sceneDelegate.loadingManager = DMLoadingManagerMain(
@@ -233,6 +233,11 @@ final class HUDWindowTests: XCTestCase {
 
         XCTAssertTrue(blurredByDefault, "the default backdrop blurs the app behind a shown HUD")
         XCTAssertTrue(waitUntil(!containsBlur(window)), "under Reduce Transparency the HUD draws no blur")
+        let cardIsOpaque = waitUntil(cardBackgroundAlpha(in: window) == 255)
+        XCTAssertTrue(
+            cardIsOpaque,
+            "under Reduce Transparency the card hides what is behind it: alpha \(cardBackgroundAlpha(in: window) ?? 0)"
+        )
     }
 
     // MARK: - Root view with an injected manager
@@ -430,6 +435,49 @@ final class HUDWindowTests: XCTestCase {
     }
 
     /// Whether `view` or a view inside it is the UIKit view of the variable blur.
+    /// The alpha of the card's own background in the HUD window drawn alone, at the centre
+    /// column, a few points inside the card's upper edge: its padding, where no text is. The card
+    /// is centred and stands out from the dim around it, so the edge is the first row, going up
+    /// from the centre, below half the card's alpha. Nil when no edge is found.
+    private func cardBackgroundAlpha(in window: UIWindow) -> UInt8? {
+        let format = UIGraphicsImageRendererFormat()
+        format.opaque = false
+        format.scale = 1
+        let image = UIGraphicsImageRenderer(bounds: window.bounds, format: format).image { _ in
+            window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        }
+        guard let cgImage = image.cgImage else {
+            return nil
+        }
+        let width = cgImage.width
+        let height = cgImage.height
+        var pixels = [UInt8](repeating: 0, count: width * height * 4)
+        let drawn = pixels.withUnsafeMutableBytes { buffer -> Bool in
+            guard let context = CGContext(
+                data: buffer.baseAddress,
+                width: width,
+                height: height,
+                bitsPerComponent: 8,
+                bytesPerRow: width * 4,
+                space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            ) else {
+                return false
+            }
+            context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+            return true
+        }
+        guard drawn else {
+            return nil
+        }
+        let alpha = { (row: Int) in pixels[(row * width + width / 2) * 4 + 3] }
+        guard let outside = stride(from: height / 2, through: 0, by: -1).first(where: { alpha($0) < 128 }),
+              outside + 6 < height / 2 else {
+            return nil
+        }
+        return alpha(outside + 6)
+    }
+
     private func containsBlur(_ view: UIView) -> Bool {
         NSStringFromClass(type(of: view)).hasSuffix("DMVariableBlurUIView") || view.subviews.contains { containsBlur($0) }
     }
