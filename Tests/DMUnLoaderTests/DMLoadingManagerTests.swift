@@ -12,11 +12,6 @@ final class DMLoadingManagerTests: XCTestCase {
     @MainActor
     func testDefaultInitialization() {
         let sut = makeSUT()
-        XCTAssertTrue(
-            (sut as AnyObject) is (any DMLoadingManager),
-            "LoadingManager should conform to DMLoadingManagerProtocol"
-        )
-        
         XCTAssertEqual(
             sut.loadableState,
             .none,

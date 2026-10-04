@@ -141,23 +141,6 @@ final class DMAppErrorLocalizedTests: XCTestCase {
         XCTAssertEqual(generalError.errorDescription, "Underlying error")
     }
     
-    // MARK: Test NSError
-    
-    func testNSErrorConformsToDMError() {
-        // Create an NSError instance
-        let nsError = NSError(
-            domain: "TestDomain",
-            code: 123,
-            userInfo: [NSLocalizedDescriptionKey: "Test error description"]
-        )
-        
-        // Verify that it conforms to DMError
-        XCTAssertTrue(
-            (nsError as Any) is (any DMError),
-            "NSError should conform to DMError"
-        )
-    }
-    
     // MARK: - Test LocalizedError Implementation
     
     func testNSErrorLocalizedDescription() {

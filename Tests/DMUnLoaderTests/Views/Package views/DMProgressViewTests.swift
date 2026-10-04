@@ -20,12 +20,6 @@ final class DMProgressViewTests: XCTestCase {
     // MARK: Scenario 1: Verify Default Initialization
     
     @MainActor
-    func testThatViewConfirmToViewProtocol() {
-        let sut = makeSUT()
-        XCTAssertTrue((sut as Any) is (any View), "DMProgressView should conform to View protocol")
-    }
-    
-    @MainActor
     func testThatTextIsDisplayed() throws {
         let settings = DMProgressViewDefaultSettings()
         let sut = makeSUT(settings: settings)

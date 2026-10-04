@@ -167,48 +167,44 @@ final class DMLoadingViewProviderTests: XCTestCase {
     func testCustomImplementation() throws {
         final class CustomProvider: DMLoadingViewProvider {
             let id = UUID()
+            private(set) var loadingViewRequests = 0
+            private(set) var errorViewRequests = 0
+            private(set) var successViewRequests = 0
             
             @MainActor
             func getLoadingView() -> some View {
-                MockDMSuccessViewTest()
+                loadingViewRequests += 1
+                return MockDMSuccessViewTest()
             }
             
             @MainActor
             func getErrorView(error: any Error,
                               onRetry: (any DMAction)?,
                               onClose: any DMAction) -> some View {
-                MockDMErrorViewTest()
+                errorViewRequests += 1
+                return MockDMErrorViewTest()
             }
             
             @MainActor
             func getSuccessView(object: any DMLoadableTypeSuccess) -> some View {
-                MockDMSuccessViewTest()
+                successViewRequests += 1
+                return MockDMSuccessViewTest()
             }
         }
         
-        let provider = CustomProvider()
+        let custom = CustomProvider()
+        // A loading state holds the erased provider, so every request must reach the custom one.
+        let provider = custom.eraseToAnyViewProvider()
         
-        let loadingView: MockDMSuccessViewTest = try castView(provider
-            .getLoadingView()
-        )
-        let errorView: MockDMErrorViewTest = try castView(provider
-            .getErrorView(error: NSError(domain: "TestError",
-                                         code: 1,
-                                         userInfo: nil),
-                          onRetry: nil,
-                          onClose: DMButtonAction({}))
-        )
+        _ = provider.getLoadingView()
+        _ = provider.getErrorView(error: NSError(domain: "TestError", code: 1, userInfo: nil),
+                                  onRetry: nil,
+                                  onClose: DMButtonAction({}))
+        _ = provider.getSuccessView(object: StubDMLoadableTypeSuccess())
         
-        let successView: MockDMSuccessViewTest = try castView(provider
-            .getSuccessView(object: StubDMLoadableTypeSuccess())
-        )
-        
-        XCTAssertTrue((loadingView as Any) is MockDMSuccessViewTest,
-                      "Custom loading view should be an instance of Text")
-        XCTAssertTrue((errorView as Any) is MockDMErrorViewTest,
-                      "Custom error view should be an instance of Image")
-        XCTAssertTrue((successView as Any) is MockDMSuccessViewTest,
-                      "Custom success view should be an instance of Text")
+        XCTAssertEqual(custom.loadingViewRequests, 1, "the erased provider asks the custom provider for the loading view")
+        XCTAssertEqual(custom.errorViewRequests, 1, "the erased provider asks the custom provider for the error view")
+        XCTAssertEqual(custom.successViewRequests, 1, "the erased provider asks the custom provider for the success view")
     }
     
     // MARK: - Helpers
