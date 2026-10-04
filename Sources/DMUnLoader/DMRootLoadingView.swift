@@ -44,8 +44,8 @@ public struct DMRootLoadingView<
     /// does not read the scene delegate from the environment, so the requirement of
     /// `init(content:)` does not apply: the view finds its scene from the window it is shown in.
     ///
-    /// - The HUD appears once the view is in a window of a scene. Until then the manager is kept
-    ///   and nothing is reported: a view that is not in a window yet is waiting, not failing.
+    /// - The HUD appears once the view is in a window of a scene. Until then the manager is kept,
+    ///   and a view that is not in a window yet is waiting, not failing.
     /// - When the view leaves its window, or its scene disconnects, the HUD window leaves the
     ///   scene. The manager is kept, and the HUD comes back when the view is in a window again.
     /// - Another manager given in a later update takes over the HUD window. The HUD keeps no

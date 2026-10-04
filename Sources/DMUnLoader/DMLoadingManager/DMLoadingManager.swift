@@ -70,8 +70,8 @@ public protocol DMLoadingManager: ObservableObject {
     ///   ```
     func hide()
     
-    /// Creates a manager with no state shown and its default settings. `DMRootLoadingView`'s
-    /// released initializers and the UIKit scene delegate create their manager with it.
+    /// Creates a manager with no state shown and its default settings. The root view that creates its own
+    /// manager (`DMRootLoadingView(content:)`) and the scene delegates create their manager with it.
     init()
 }
 

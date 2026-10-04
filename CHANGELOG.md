@@ -37,7 +37,7 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   touch through while none is, decided from the state of the loading manager.
 - The auto-hide of a success or a failure is cancelled when the state is replaced, and a hide that
   was already on its way is ignored. The library's own scheduler never delivers a cancelled hide,
-  so an app sees no change; the guard matters for a scheduler that does.
+  so an app sees no change.
 - One HUD window per scene. The window is reused for a new loading manager, so the replaced
   manager is released. It is removed when the loading manager of the scene delegate is set to
   `nil` and when the scene disconnects, and created when a manager was set before the scene
@@ -84,9 +84,9 @@ Behaviour changes. None of them removes a declaration; each one is pinned by a t
 
 ### Deprecated
 
-- The CocoaPods channel. Version 1.1.0 is the last release published to the CocoaPods trunk,
-  which becomes read-only on 2 December 2026. Later releases come through Swift Package Manager
-  only.
+- The CocoaPods channel. Version 1.1.0 is the last release published to the CocoaPods trunk. The
+  trunk is planned to become read-only two years after the CocoaPods announcement of 30 November
+  2024, so later releases come through Swift Package Manager.
 
 ### Removed
 

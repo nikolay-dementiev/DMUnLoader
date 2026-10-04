@@ -25,7 +25,7 @@ public struct DMHUDAutoHide: Hashable, Sendable {
     public static let never = DMHUDAutoHide(rule: .never)
 
     /// After `delay`, whatever `autoHideDelay` is. A delay of zero or less hides the HUD as soon as
-    /// the main run loop turns, as a delay of zero does.
+    /// the main run loop turns.
     public static func after(_ delay: Duration) -> DMHUDAutoHide {
         DMHUDAutoHide(rule: .after(delay))
     }

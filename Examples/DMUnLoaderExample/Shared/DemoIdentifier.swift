@@ -13,7 +13,7 @@ enum DemoIdentifier {
     /// The elements of the HUD window that assistive technology reaches, which
     /// `--accessibility-tree` shows in the counters window.
     static let hudAccessibilityTree = "hudAccessibilityTree"
-    /// The number of HUD windows in the scene, which `--accessibility-tree` shows in the counters window.
+    /// The number of HUD windows in the connected scenes, which `--accessibility-tree` shows in the counters window.
     static let hudWindowCount = "hudWindowCount"
 }
 
