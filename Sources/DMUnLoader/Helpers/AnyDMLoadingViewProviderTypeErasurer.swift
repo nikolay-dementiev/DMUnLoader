@@ -76,6 +76,9 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
 // MARK: - Universal type erasures
 
 public extension DMLoadingViewProvider {
+    /// Wraps the provider in an `AnyDMLoadingViewProvider`. The settings are read once, now;
+    /// every view is built by this provider when it is needed. The wrapper does not pass on
+    /// this provider's change notifications. An `AnyDMLoadingViewProvider` is returned as it is.
     @MainActor
     func eraseToAnyViewProvider() -> AnyDMLoadingViewProvider {
         if let castedSelf = self as? AnyDMLoadingViewProvider {
