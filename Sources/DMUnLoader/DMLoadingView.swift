@@ -116,9 +116,9 @@ struct HUDCard: View {
             .contentShape(RoundedRectangle(cornerRadius: 10))
     }
 
-    /// Opaque under Reduce Transparency, so nothing behind the card shows through it.
+    /// The gray of the card, decided by `HUDCardStyle`.
     private var backgroundOpacity: Double {
-        reducesTransparency ? 1 : (isShown ? 0.8 : 0.1)
+        HUDCardStyle.backgroundOpacity(isShown: isShown, reducesTransparency: reducesTransparency)
     }
 }
 
@@ -138,6 +138,11 @@ private func loadingViewPreview(_ state: (AnyDMLoadingViewProvider) -> DMLoadabl
 #Preview("Loading under Reduce Motion") {
     loadingViewPreview { .loading(provider: $0) }
         .environment(\.hudReducesMotion, true)
+}
+
+#Preview("Loading under Reduce Transparency") {
+    loadingViewPreview { .loading(provider: $0) }
+        .environment(\.hudReducesTransparency, true)
 }
 
 #Preview("Success") {
