@@ -7,8 +7,8 @@
 # 1. The manifest has no dependency by branch or revision, uses no plugin on any target
 #    and does not read the environment. SwiftPM refuses a version requirement on a package
 #    that has an unstable dependency, a build plugin of a dependency runs in every
-#    consumer's build, and a manifest that reads the environment describes more than one
-#    package.
+#    consumer's build, a manifest that reads the environment describes more than one
+#    package, and unsafe flags make a package that a consumer cannot depend on by version.
 # 2. A consumer that asks for the package by version resolves it. This runs against a
 #    throw-away tagged copy of the tracked files: a consumer that depends on the checkout
 #    by path cannot show that failure.
@@ -66,6 +66,9 @@ for dependency in manifest.get("dependencies", []):
 for target in manifest.get("targets", []):
     for usage in target.get("pluginUsages") or []:
         problems.append(f"target '{target['name']}' uses a plugin: {json.dumps(usage)}")
+    for setting in target.get("settings") or []:
+        if "unsafeFlags" in setting.get("kind", {}):
+            problems.append(f"target '{target['name']}' sets unsafe flags: {json.dumps(setting['kind']['unsafeFlags'])}")
 if re.search(r"ProcessInfo|getenv|\.environment\b", source):
     problems.append("Package.swift reads the environment")
 for problem in problems:
@@ -75,7 +78,7 @@ PY
 then
     FAILED=1
 else
-    echo "check-manifest: no unstable requirement beyond the allowed ones, no plugin and no environment switch in Package.swift."
+    echo "check-manifest: no unstable requirement beyond the allowed ones, no plugin, no unsafe flag and no environment switch in Package.swift."
 fi
 
 # 2. Resolution by version, against a throw-away copy of the tracked files with a tag.
