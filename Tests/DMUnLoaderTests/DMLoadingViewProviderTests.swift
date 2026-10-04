@@ -20,7 +20,7 @@ final class DMLoadingViewProviderTests: XCTestCase {
         )
         XCTAssertTrue(
             sut.loadingViewSettings is DMProgressViewDefaultSettings,
-            "Default loadingViewSettings should be of type DMLoadingDefaultViewSettings."
+            "Default loadingViewSettings should be of type DMProgressViewDefaultSettings."
         )
         XCTAssertTrue(
             sut.errorViewSettings is DMErrorDefaultViewSettings,
@@ -67,7 +67,7 @@ final class DMLoadingViewProviderTests: XCTestCase {
         let settings = loadingView?.settingsProvider as? DMProgressViewDefaultSettings
         XCTAssertNotNil(
             settings,
-            "Loading view settings should be of type DMLoadingDefaultViewSettings.",
+            "Loading view settings should be of type DMProgressViewDefaultSettings.",
             file: file,
             line: line
         )
@@ -209,17 +209,4 @@ final class DMLoadingViewProviderTests: XCTestCase {
     
     // MARK: - Helpers
     
-    func castView<T: View>(_ viewToCast: some View) throws -> T {
-        
-        guard let viewToCast = viewToCast as? T else {
-            let requestedView = try viewToCast
-                .inspect()
-                .view(T.self)
-                .actualView()
-            
-            return requestedView
-        }
-        
-        return viewToCast
-    }
 }

@@ -105,7 +105,7 @@ final class LoadableStateEqualityTests: XCTestCase {
         XCTAssertNotEqual(
             DMLoadableType.none.hashValue,
             DMLoadableType.loading(provider: first).hashValue,
-            "a state of no load hashes apart from a loading one"
+            "the state of no load and a loading state hash apart"
         )
         XCTAssertEqual(
             DMLoadableType.loading(provider: first).hashValue,
