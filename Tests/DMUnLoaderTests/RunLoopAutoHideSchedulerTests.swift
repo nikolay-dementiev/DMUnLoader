@@ -47,40 +47,57 @@ final class RunLoopAutoHideSchedulerTests: XCTestCase {
         let sut = makeSUT()
         let hidden = expectation(description: "hide runs as soon as the run loop turns")
         hidden.assertForOverFulfill = true
+        var returned = false
+        var hiddenBeforeReturn = false
 
         // A turn of the run loop is far below a second, and the default auto-hide is two seconds.
         let subscription = sut.schedule(after: .zero) {
+            hiddenBeforeReturn = !returned
             hidden.fulfill()
         }
+        returned = true
 
         wait(for: [hidden], timeout: 1)
         subscription.cancel()
+        XCTAssertFalse(hiddenBeforeReturn, "the hide is not delivered before schedule returns, even without a delay")
     }
 
     func test_schedule_negativeDelay_runsHideAtOnce() {
         let sut = makeSUT()
         let hidden = expectation(description: "hide runs as soon as the run loop turns")
         hidden.assertForOverFulfill = true
+        var returned = false
+        var hiddenBeforeReturn = false
 
         let subscription = sut.schedule(after: .seconds(-1)) {
+            hiddenBeforeReturn = !returned
             hidden.fulfill()
         }
+        returned = true
 
         wait(for: [hidden], timeout: 1)
         subscription.cancel()
+        XCTAssertFalse(hiddenBeforeReturn, "the hide is not delivered before schedule returns, even with a negative delay")
     }
 
     func test_schedule_cancelledBeforeTheDelay_neverRunsHide() {
         let sut = makeSUT()
-        let hidden = expectation(description: "a cancelled hide never runs")
-        hidden.isInverted = true
+        var hiddenRan = false
+        let witness = expectation(description: "a later hide runs, so the cancelled deadline has passed")
 
-        let subscription = sut.schedule(after: .milliseconds(50)) {
-            hidden.fulfill()
+        let cancelled = sut.schedule(after: .milliseconds(50)) {
+            hiddenRan = true
         }
-        subscription.cancel()
+        cancelled.cancel()
+        // The witness is due after the cancelled deadline: once it runs, the scheduler has
+        // passed that deadline and the cancelled hide has had its chance.
+        let later = sut.schedule(after: .milliseconds(150)) {
+            witness.fulfill()
+        }
 
-        wait(for: [hidden], timeout: 0.5)
+        wait(for: [witness], timeout: TestTiming.callbackAllowance)
+        later.cancel()
+        XCTAssertFalse(hiddenRan, "a cancelled hide never runs, even once its deadline has passed")
     }
 
     // MARK: - Helpers
