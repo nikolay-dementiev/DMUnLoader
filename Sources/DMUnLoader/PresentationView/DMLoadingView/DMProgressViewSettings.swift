@@ -19,7 +19,8 @@ public protocol DMProgressViewSettings {
     /// The background color of the loading container.
     var loadingContainerBackgroundColor: Color { get }
     
-    /// The size of the frame geometry for the loading view.
+    /// The reference size of the loading view: the view takes at most half of this width and half
+    /// of this height, and at least 30 points in each direction, sized to its content within those limits.
     var frameGeometrySize: CGSize { get }
 }
 
@@ -36,7 +37,8 @@ public struct DMProgressViewDefaultSettings: DMProgressViewSettings {
     /// The background color of the loading container.
     public let loadingContainerBackgroundColor: Color
     
-    /// The size of the frame geometry for the loading view.
+    /// The reference size of the loading view: the view takes at most half of this width and half
+    /// of this height, and at least 30 points in each direction, sized to its content within those limits.
     public let frameGeometrySize: CGSize
     
     /// Initializes a new instance of `DMProgressViewDefaultSettings` with optional customizations.
@@ -44,7 +46,7 @@ public struct DMProgressViewDefaultSettings: DMProgressViewSettings {
     ///   - loadingTextProperties: The properties for the loading text. Defaults to `ProgressTextProperties()`.
     ///   - progressIndicatorProperties: The properties for the progress indicator. Defaults to `ProgressIndicatorProperties()`.
     ///   - loadingContainerBackgroundColor: The background color of the loading container. Defaults to `Color.clear`.
-    ///   - frameGeometrySize: The size of the frame geometry. Defaults to `CGSize(width: 300, height: 300)`.
+    ///   - frameGeometrySize: The reference size of the loading view: at most half of its width and height. Defaults to `CGSize(width: 300, height: 300)`.
     /// - Example:
     ///   ```swift
     ///   let customSettings = DMProgressViewDefaultSettings(
@@ -110,7 +112,8 @@ public struct ProgressTextProperties {
     /// The maximum number of lines the text can occupy.
     public var lineLimit: Int?
     
-    /// The padding applied around each line of text.
+    /// The padding applied around the text as a whole, once: outside its outermost lines, not around
+    /// each line.
     public var linePadding: EdgeInsets
     
     /// Initializes a new instance of `ProgressTextProperties` with optional customizations.
@@ -120,7 +123,7 @@ public struct ProgressTextProperties {
     ///   - foregroundColor: The foreground color of the text. Defaults to `.white`.
     ///   - font: The font used for the text. Defaults to `.body`.
     ///   - lineLimit: The maximum number of lines the text can occupy. Defaults to `3`.
-    ///   - linePadding: The padding applied around each line of text.
+    ///   - linePadding: The padding applied around the text as a whole, not around each line.
     ///   Defaults to `EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10)`.
     /// - Example:
     ///   ```swift
