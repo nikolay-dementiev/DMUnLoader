@@ -17,6 +17,8 @@ public protocol DMLoadingManagerSettings {
     ///   let settings: any DMLoadingManagerSettings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(3))
     ///   print("Auto-hide delay: \(settings.autoHideDelay)") // Output: "Auto-hide delay: 3.0 seconds"
     ///   ```
+    ///
+    /// Read when a state is shown: the hide of that state is scheduled from it.
     var autoHideDelay: Duration { get }
 
     /// How a success and a failure leave the screen.
@@ -24,6 +26,9 @@ public protocol DMLoadingManagerSettings {
     /// `DMLoadingManagerMain` schedules its auto-hide from these rules. The HUD applies the tap
     /// rules whatever the manager; a manager of the host's own decides its auto-hide itself. A
     /// conforming type that does not implement this property gets `DMHUDDismissalRules()`.
+    ///
+    /// Read when a state is shown, to schedule its hide, and at each tap, to decide whether the
+    /// tap hides the HUD.
     var hudDismissal: DMHUDDismissalRules { get }
 
     /// The level of the window that shows the HUD over its scene.
@@ -38,6 +43,8 @@ public protocol DMLoadingManagerSettings {
 
     /// What the HUD of the loading manager draws behind its card. The default implementation
     /// returns ``DMHUDBackdrop/variableBlur``, the backdrop of every release so far.
+    ///
+    /// Read at each render of the HUD.
     var backdrop: DMHUDBackdrop { get }
 }
 

@@ -526,6 +526,9 @@ At large accessibility text sizes the default loading view, at most 150 points w
 text; an app that needs those sizes gives `DMProgressViewDefaultSettings` a larger
 `frameGeometrySize`, or supplies its own loading view.
 
+A success or a failure hides after 2 seconds by default. With VoiceOver or Switch Control that can be
+too short to reach Retry; the Accessibility section names the settings that give more time.
+
 ## The family
 
 DMUnLoader is one of three packages that share their conventions:
