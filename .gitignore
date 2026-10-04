@@ -31,6 +31,9 @@ playground.xcworkspace
 
 .build/
 
+# Written by Scripts/analyze_recurrent_file_changes*.py, which are run by hand.
+Artifacts/
+
 # The consumer fixture resolves against the checkout; its resolution output is not source.
 Fixtures/Consumer/Package.resolved
 Fixtures/Consumer/.swiftpm/xcode/package.xcworkspace/xcshareddata/
