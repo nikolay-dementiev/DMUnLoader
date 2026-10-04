@@ -48,11 +48,12 @@ final class RunLoopAutoHideSchedulerTests: XCTestCase {
         let hidden = expectation(description: "hide runs as soon as the run loop turns")
         hidden.assertForOverFulfill = true
 
+        // A turn of the run loop is far below a second, and the default auto-hide is two seconds.
         let subscription = sut.schedule(after: .zero) {
             hidden.fulfill()
         }
 
-        wait(for: [hidden], timeout: TestTiming.callbackAllowance)
+        wait(for: [hidden], timeout: 1)
         subscription.cancel()
     }
 
@@ -65,7 +66,7 @@ final class RunLoopAutoHideSchedulerTests: XCTestCase {
             hidden.fulfill()
         }
 
-        wait(for: [hidden], timeout: TestTiming.callbackAllowance)
+        wait(for: [hidden], timeout: 1)
         subscription.cancel()
     }
 

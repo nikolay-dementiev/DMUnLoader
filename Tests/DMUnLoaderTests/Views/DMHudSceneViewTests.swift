@@ -183,6 +183,11 @@ final class DMHudSceneViewTests: XCTestCase {
         while reports.values.count < count, Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.02))
         }
+        XCTAssertGreaterThanOrEqual(
+            reports.values.count,
+            count,
+            "the window reports \(count) state(s) within the callback allowance"
+        )
         return reports.values.map(\.phase)
     }
 
