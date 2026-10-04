@@ -65,6 +65,38 @@ final class DMLoadingManagerTests: XCTestCase {
         }
     }
 
+    // MARK: - Identity from several tasks
+
+    @MainActor
+    func test_equalityAndHash_fromSeveralTasksAtOnce_compareByIdentity() async {
+        let manager = DMLoadingManagerMain()
+        let other = DMLoadingManagerMain()
+
+        let outcomes = await withTaskGroup(of: [Bool].self) { group in
+            for _ in 0..<8 {
+                group.addTask {
+                    [
+                        manager == manager,
+                        manager == other,
+                        identityHash(of: manager) == identityHash(of: manager),
+                        identityHash(of: manager) == identityHash(of: other)
+                    ]
+                }
+            }
+            var collected: [[Bool]] = []
+            for await outcome in group {
+                collected.append(outcome)
+            }
+            return collected
+        }
+
+        XCTAssertEqual(outcomes.count, 8, "every task reports its outcome")
+        XCTAssertTrue(outcomes.allSatisfy { $0[0] }, "a manager equals itself from every task")
+        XCTAssertTrue(outcomes.allSatisfy { !$0[1] }, "two managers are not equal from any task")
+        XCTAssertTrue(outcomes.allSatisfy { $0[2] }, "a manager hashes alike with itself from every task")
+        XCTAssertTrue(outcomes.allSatisfy { !$0[3] }, "two managers hash apart from every task")
+    }
+
     // MARK: Helpers
 
     @MainActor
@@ -111,4 +143,11 @@ private struct LoadingManagerDefaultSettingsTDD: DMLoadingManagerSettings {
 
 private final class TestDMLoadingViewProvider: DMLoadingViewProvider {
     var id: UUID = UUID()
+}
+
+/// The hash of a manager's identity, computed without the main actor: `hashValue` is isolated, `hash(into:)` is not.
+private nonisolated func identityHash(of manager: DMLoadingManagerMain) -> Int {
+    var hasher = Hasher()
+    manager.hash(into: &hasher)
+    return hasher.finalize()
 }
