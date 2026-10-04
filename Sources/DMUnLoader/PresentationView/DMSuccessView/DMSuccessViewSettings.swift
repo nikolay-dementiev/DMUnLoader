@@ -10,6 +10,7 @@ import SwiftUI
 /// Conforming types must provide properties for the success image and text.
 public protocol DMSuccessViewSettings {
     
+    /// The space between the image and the text, or `nil` for the default spacing of a stack.
     var spacingBetweenElements: CGFloat? { get }
     
     /// Properties related to the success image displayed in the success view.
@@ -61,6 +62,7 @@ extension DMSuccessDefaultViewSettings: Hashable {
             && lhs.spacingBetweenElements == rhs.spacingBetweenElements
     }
     
+    /// Hashes the settings that `==` compares.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(successImageProperties)
         hasher.combine(successTextProperties)
@@ -74,6 +76,8 @@ extension DMSuccessDefaultViewSettings: Hashable {
 /// text of the success view names the success. An image equal to it counts as that default;
 /// any other image keeps the accessibility it was given.
 public struct SuccessImageProperties: Identifiable {
+    /// Identifies the properties. Two values are equal only when their `id` is equal, so two
+    /// values made with the default `id` are different.
     public var id: UUID
     
     /// The image to display as the success icon.

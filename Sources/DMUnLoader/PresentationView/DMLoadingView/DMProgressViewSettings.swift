@@ -151,6 +151,7 @@ public struct ProgressTextProperties {
 }
 
 extension ProgressTextProperties: Hashable {
+    /// Hashes the properties that `==` compares.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(text)
         hasher.combine(alignment)
@@ -205,6 +206,7 @@ extension ProgressIndicatorProperties: Hashable {
         lhs.size == rhs.size && lhs.tintColor == rhs.tintColor
     }
     
+    /// Hashes the size and the tint color, which `==` compares.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(size)
         hasher.combine(tintColor)

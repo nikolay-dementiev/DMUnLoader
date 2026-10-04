@@ -92,6 +92,7 @@ extension DMErrorDefaultViewSettings: Hashable {
             && lhs.errorImageSettings == rhs.errorImageSettings
     }
     
+    /// Hashes the settings that `==` compares.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(errorText)
         hasher.combine(actionButtonCloseSettings)
@@ -104,13 +105,21 @@ extension DMErrorDefaultViewSettings: Hashable {
 /// A struct defining settings for an action button in an error view.
 public struct ActionButtonSettings: Identifiable {
     
+    /// Identifies the settings. Two settings are equal when their `id` and text are equal, so
+    /// give settings with another style another `id`.
     public let id: UUID
     
     /// The text displayed on the button.
     public let text: String
     
+    /// Makes the style of the button. Called on the main actor each time the button is drawn.
     public let styleFactory: @MainActor () -> AnyButtonStyle
 
+    /// Creates the settings of a button with a style of your own.
+    /// - Parameters:
+    ///   - id: Identifies the settings. Defaults to a new `UUID`.
+    ///   - text: The text of the button.
+    ///   - styleFactory: Makes the style of the button, on the main actor.
     public init(
         id: UUID = UUID(),
         text: String,
@@ -121,6 +130,11 @@ public struct ActionButtonSettings: Identifiable {
         self.styleFactory = styleFactory
     }
     
+    /// Creates the settings of a button with the style of the HUD: white text in a white capsule,
+    /// which in the HUD shrinks a little while pressed, unless Reduce Motion is on.
+    /// - Parameters:
+    ///   - id: Identifies the settings. Defaults to a new `UUID`.
+    ///   - text: The text of the button.
     public init(
         id: UUID = UUID(),
         text: String
@@ -149,15 +163,18 @@ extension ActionButtonSettings: Hashable {
     }
 }
 
+/// A button style that wraps another one, so that button settings can hold any style.
 public struct AnyButtonStyle: ButtonStyle {
     private let _makeBody: (Configuration) -> AnyView
 
+    /// Wraps `style`.
     public init<S: ButtonStyle>(_ style: S) {
         self._makeBody = { configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
 
+    /// The body that the wrapped style makes for `configuration`.
     public func makeBody(configuration: Configuration) -> some View {
         _makeBody(configuration)
     }
@@ -199,6 +216,7 @@ public struct ErrorTextSettings {
 }
 
 extension ErrorTextSettings: Hashable {
+    /// Hashes the settings that `==` compares: the colour, the alignment and the padding.
     public func hash(into hasher: inout Hasher) {
         hasher.combine(foregroundColor)
         hasher.combine(multilineTextAlignment)
