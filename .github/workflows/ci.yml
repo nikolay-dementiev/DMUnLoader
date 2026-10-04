@@ -165,7 +165,8 @@ jobs:
           persist-credentials: false
       - name: Test with the Thread Sanitizer
         # The snapshot test classes compare images, which says nothing about data races and
-        # is slow under the sanitizer. They run in both test cells.
+        # is slow under the sanitizer, so this job skips them. The test job runs them on each
+        # of its matrix cells.
         run: |
           mkdir -p .build/results/ci
           xcodebuild test \
@@ -177,6 +178,8 @@ jobs:
             -skip-testing:DMUnLoaderTests/DMLoadingViewTests \
             -skip-testing:DMUnLoaderTests/DMProgressViewTests \
             -skip-testing:DMUnLoaderTests/DMSuccessViewTests \
+            -skip-testing:DMUnLoaderTests/AccessibilitySnapshotTests \
+            -skip-testing:DMUnLoaderTests/RightToLeftSnapshotTests \
             -resultBundlePath .build/results/ci/thread-sanitizer.xcresult \
             -skipPackagePluginValidation
       - name: Upload the result bundle
