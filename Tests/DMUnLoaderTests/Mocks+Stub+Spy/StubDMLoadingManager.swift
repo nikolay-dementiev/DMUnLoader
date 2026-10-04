@@ -9,7 +9,7 @@ import Combine
 
 @MainActor
 final class StubDMLoadingManager: DMLoadingManager {
-    public let settings: any DMLoadingManagerSettings
+    let settings: any DMLoadingManagerSettings
     
     @Published var loadableState: DMLoadableType = .none
     
@@ -52,7 +52,7 @@ final class StubDMLoadingManager: DMLoadingManager {
         )
     }
     
-    public func hide() {
+    func hide() {
         loadableState = .none
     }
 }

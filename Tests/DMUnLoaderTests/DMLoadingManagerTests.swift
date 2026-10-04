@@ -115,5 +115,5 @@ private struct LoadingManagerDefaultSettingsTDD: DMLoadingManagerSettings {
 }
 
 private final class TestDMLoadingViewProvider: DMLoadingViewProvider {
-    public var id: UUID = UUID()
+    var id: UUID = UUID()
 }
