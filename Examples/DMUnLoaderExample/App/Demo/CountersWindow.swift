@@ -42,8 +42,12 @@ private struct CountersView<LM: DMLoadingManager>: View {
             if LaunchOptions.current.showsAccessibilityTree {
                 // Read again twice a second: nothing tells the app when the HUD's tree changes.
                 TimelineView(.periodic(from: .now, by: 0.5)) { _ in
-                    Text(HUDAccessibilityTree.elements().joined(separator: DemoText.treeSeparator))
-                        .accessibilityIdentifier(DemoIdentifier.hudAccessibilityTree)
+                    VStack {
+                        Text(HUDAccessibilityTree.elements().joined(separator: DemoText.treeSeparator))
+                            .accessibilityIdentifier(DemoIdentifier.hudAccessibilityTree)
+                        Text(DemoText.hudWindows(HUDAccessibilityTree.hudWindows().count))
+                            .accessibilityIdentifier(DemoIdentifier.hudWindowCount)
+                    }
                 }
             }
         }
@@ -56,13 +60,17 @@ private struct CountersView<LM: DMLoadingManager>: View {
 /// the elements that SwiftUI hides from assistive technology.
 @MainActor
 private enum HUDAccessibilityTree {
-    static func elements() -> [String] {
-        let hudWindows = UIApplication.shared.connectedScenes
+    /// The HUD windows of the connected scenes.
+    static func hudWindows() -> [UIWindow] {
+        UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
             .flatMap { $0.windows }
             .filter { NSStringFromClass(type(of: $0)).hasSuffix("DMPassThroughWindow") }
+    }
+
+    static func elements() -> [String] {
         var elements: [String] = []
-        hudWindows.forEach { collect($0, into: &elements) }
+        hudWindows().forEach { collect($0, into: &elements) }
         return elements
     }
 
