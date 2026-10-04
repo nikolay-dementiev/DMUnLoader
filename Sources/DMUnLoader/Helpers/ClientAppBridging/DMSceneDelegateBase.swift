@@ -51,10 +51,6 @@ public final class DMSceneDelegateUIKit<
     }
 
     private func setupMainWindow(in scene: UIWindowScene, loadingManager: LM) {
-        guard windowScene != nil else {
-            return
-        }
-
         let window = UIWindow(windowScene: scene)
         
         let rootVC = Helper.makeUIKitRootViewHierarhy(loadingManager: loadingManager)

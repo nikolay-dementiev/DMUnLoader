@@ -83,7 +83,11 @@ private enum WindowHiding {
         guard var hiding = hidings[key], hiding.window === window else {
             // A hider restores only the windows it hid, and those stay counted until then.
             Logger(subsystem: "DMUnLoader", category: "accessibility")
-                .fault("A window was given back to assistive technology that no HUD had hidden.")
+                .fault("""
+                    A window of type \(String(describing: type(of: window)), privacy: .public) at level \
+                    \(window.windowLevel.rawValue, privacy: .public) was given back to assistive technology \
+                    that no HUD had hidden.
+                    """)
             return
         }
         hiding.count -= 1
