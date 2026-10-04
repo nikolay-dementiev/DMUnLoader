@@ -27,11 +27,21 @@ struct ContentView: View {
         DMRootLoadingView(manager: loadingManager) { manager in
             Button("Load") {
                 manager.showLoading(provider: provider)
+                Task {
+                    do {
+                        try await Task.sleep(for: .seconds(1))
+                        manager.showSuccess("Loaded", provider: provider)
+                    } catch {
+                        manager.showFailure(error, provider: provider)
+                    }
+                }
             }
         }
     }
 }
 ```
+
+The loading HUD stays until the next state; the success hides by itself after 2 seconds.
 
 ## Topics
 

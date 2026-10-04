@@ -203,7 +203,9 @@ struct ContentView: View {
 ### UIKit
 
 The UIKit integration installs `DMSceneDelegateTypeUIKit` as the scene delegate.
-`DMSceneDelegateHelper` supplies the root view controller and receives the loading manager.
+`DMSceneDelegateHelper` supplies the root view controller and receives the loading manager. The
+app declares a scene manifest, `UIApplicationSceneManifest` in its Info.plist: without one, UIKit
+does not ask the app delegate for a scene configuration.
 
 ```swift
 import UIKit
@@ -279,7 +281,10 @@ manager with `init()`, so with `DMLoadingManagerMain` it has the default setting
   given. `showFailure(_:provider:)` shows a failure without Retry.
 - `hide()` removes the HUD.
 
-Retry runs your action and leaves the HUD as it is, so the action shows the next state itself:
+Retry runs your action and leaves the HUD as it is, so the action shows the next state itself.
+By default a failure with Retry also hides by itself after 2 seconds and on any tap;
+[The loading manager's settings](#the-loading-managers-settings) shows how to keep it until the
+user acts.
 
 ```swift
 import DMUnLoader
@@ -355,7 +360,9 @@ While a HUD is shown, DMUnLoader draws a backdrop behind its card. The default, 
 is the backdrop of every release so far: the variable blur of
 [DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView) under a black dim.
 That blur uses a private API of the system; read the README of DMVariableBlurView before you ship
-it. `.dim()`, `.material()` and `.clear` draw with public API only. Under the system's Reduce
+it. Where the system does not offer that API, DMVariableBlurView draws the plain blur of the system
+over the whole screen instead and logs the reason under its own subsystem. `.dim()`, `.material()`
+and `.clear` draw with public API only. Under the system's Reduce
 Transparency the HUD draws neither the blur nor a material: `.variableBlur` keeps its dim, and
 `.material()` gives way to that dim.
 
@@ -452,7 +459,7 @@ would reach `onAttachmentFailure`. Version 1.1.0 knows no such reason.
 ### Accessibility
 
 While a HUD is shown, DMUnLoader hides from assistive technology, and so from your own UI tests,
-the windows of its scene that are open when the HUD appears and are not above the HUD's window,
+the windows of its scene at the HUD window's level or below that are open when the HUD appears,
 until the HUD goes. When the HUD appears or shows another state, VoiceOver is told that the
 screen changed and starts at its first element: the HUD's, unless a window above the HUD has
 elements. When the HUD goes, VoiceOver returns to the element it was on, if that element is still
@@ -479,15 +486,15 @@ remains at the tag `1.0.3`.
 How the package is tested:
 
 - Package tests: the state and the policies of the HUD, the managers and their timers, the
-  adapters with hand-written spies, the views through their public API, and snapshots of the
-  views.
+  adapters with hand-written spies, the views, and snapshots of the views.
 - Tests hosted in the example app: the HUD windows of real scenes, two scenes on an iPad
   included, the touches they take and let through, and what the HUD draws under Reduce
   Transparency.
 - UI tests: Retry, Close and taps on and outside the card, the touches that reach the app with
   and without a HUD in the four integrations, the texts in other languages and right to left,
   the failure HUD over content compared with reference pictures, and accessibility audits of the
-  HUD, which leave out contrast and, for the loading HUD, clipped text.
+  HUD, which leave out contrast and, for the loading HUD, clipped text and the readability of
+  its "Loading..." label.
 - CI also lints, compares the public interface with a committed baseline, builds a consumer
   package and every Swift block of this README and of the documentation catalog, builds the
   documentation, lints the podspec, runs the tests under the Thread Sanitizer, and fails below a
@@ -515,7 +522,7 @@ The default card of the HUD, white text on gray at opacity 0.8, does not reach t
 4.5:1; an app that needs it sets its own colours through the settings types, or supplies its own
 views through `DMLoadingViewProvider`.
 
-At large accessibility text sizes the default loading card, at most 150 points wide, cuts its
+At large accessibility text sizes the default loading view, at most 150 points wide, cuts its
 text; an app that needs those sizes gives `DMProgressViewDefaultSettings` a larger
 `frameGeometrySize`, or supplies its own loading view.
 

@@ -18,8 +18,8 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   Retry leave the screen), `hudWindowLevel` (the level of the HUD window) and `backdrop`
   (`DMHUDBackdrop`: `.variableBlur`, the default, `.dim(_:)`, `.material(_:)` and `.clear`).
 - `showFailure(_:provider:)` on every loading manager: a failure without Retry.
-- Accessibility. While a HUD is shown, the windows of its scene that are open when it appears
-  and are not above its window are hidden from assistive technology. When the HUD appears or
+- Accessibility. While a HUD is shown, the windows of its scene at its window's level or below
+  that are open when it appears are hidden from assistive technology. When the HUD appears or
   shows another state, VoiceOver is told that the screen changed; when it goes, VoiceOver returns
   to the element it was on, if that element is still on the screen. The escape gesture hides a
   success or a failure as a tap outside the card does. Reduce Motion keeps the card and a pressed
@@ -37,10 +37,10 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   touch through while none is, decided from the state of the loading manager.
 - A late automatic hide no longer hides a newer HUD. The auto-hide of a success or a failure is
   cancelled when the state is replaced, and a hide that was already on its way is ignored.
-- One HUD window per scene. It is reused for a new loading manager, so the replaced manager is
-  released, removed when the loading manager of the scene delegate is set to `nil` and when the
-  scene disconnects, and created when a manager was set before the scene connected. The UIKit
-  integration no longer creates two HUD windows.
+- One HUD window per scene. The window is reused for a new loading manager, so the replaced
+  manager is released. It is removed when the loading manager of the scene delegate is set to
+  `nil` and when the scene disconnects, and created when a manager was set before the scene
+  connected. The UIKit integration no longer creates two HUD windows.
 - A second appearance of the HUD view no longer reverses its fade. No route of the library
   makes that view appear twice today; the fix guards a later change.
 - The package can be added by version. The manifest of 1.0.x required a lint plugin and its two
@@ -52,6 +52,9 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   values, so two different providers could be equal.
 - The alignment settings of the loading text and of the success text are applied.
 - The default failure title reads "An error has occurred!". It read "An error has occured!".
+- A tap anywhere inside the capsule of Close or Retry presses the button. Only the title and
+  the outline took a tap, and a tap beside the title fell through to the card, which hides a
+  failure by default.
 - The pod no longer makes the apps that use it link XCTest.
 - The README and the doc comments say that the auto-hide delay belongs to the loading manager's
   settings. The README of 1.0.x set it in the view provider, which never had an effect.
@@ -63,9 +66,9 @@ Behaviour changes. None of them removes a declaration; each one is pinned by a t
 - Building needs the Swift 6.2 compiler, which is Xcode 26.0 or later. The sources already
   needed it; the manifest now declares Swift tools 6.2. The pod declares the Swift 5.0 and 6.0
   language modes.
-- Settings and states compare what they show. Twelve comparisons that were true are false now,
-  and a view that animates on the state animates a change it missed before, such as a failure
-  shown again with a retry action.
+- Settings and states compare what they show, where twelve equality operators compared hash
+  values. A view that animates on the state animates a change it missed before, such as a
+  failure shown again with a retry action.
 - A loading text or a success message of more than one line is centred with the default
   settings. It was aligned to the leading edge.
 - While a HUD is shown, the content under it is hidden from assistive technology, and so from
@@ -92,7 +95,7 @@ Behaviour changes. None of them removes a declaration; each one is pinned by a t
 - The default card of the HUD, white text on gray at opacity 0.8, does not reach the contrast of
   4.5:1; an app that needs it sets its own colours through the settings types, or supplies its
   own views through `DMLoadingViewProvider`.
-- At large accessibility text sizes the default loading card, at most 150 points wide, cuts its
+- At large accessibility text sizes the default loading view, at most 150 points wide, cuts its
   text; an app that needs those sizes gives `DMProgressViewDefaultSettings` a larger
   `frameGeometrySize`, or supplies its own loading view.
 
