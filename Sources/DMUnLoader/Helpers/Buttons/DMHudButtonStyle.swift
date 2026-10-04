@@ -10,7 +10,7 @@ struct DMHudButtonStyle: ButtonStyle {
     private func getMainColor(_ isPressed: Bool) -> Color {
         isPressed ? .white.opacity(0.8) : .white
     }
-    /// The label in white, in a white capsule, with the press scale of the HUD.
+    /// The label in white, in the white outline of a capsule, with the press scale of the HUD.
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .frame(maxWidth: .infinity, minHeight: 44)

@@ -38,7 +38,10 @@ public struct DMHUDBackdrop: Sendable {
     ///
     /// The blur is strongest in a band across the middle of the screen, where the card is, and
     /// fades to clear towards the top and the bottom. Its radius is at most 4 points. It uses a
-    /// private API of the system: read the README of DMVariableBlurView before you ship it.
+    /// private API of the system: read the README of DMVariableBlurView before you ship it. Where
+    /// the system does not offer or accept that API, DMVariableBlurView draws the plain blur of
+    /// the system over the whole screen instead and writes the reason to the unified log, under
+    /// its subsystem `DMVariableBlurView`.
     public static let variableBlur = DMHUDBackdrop(kind: .variableBlur)
 
     /// A colour over the whole screen, faded in with the card. Draws no blur.

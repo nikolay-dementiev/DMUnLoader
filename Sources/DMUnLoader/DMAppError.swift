@@ -70,8 +70,8 @@ extension DMAppError: LocalizedError {
 /// An enumeration representing errors related to network operations.
 /// It includes pass-through `URLError` cases and custom network-related errors.
 extension DMAppError {
-    /// An error of a network operation: a `URLError` passed through, or a network error of the
-    /// library.
+    /// An error of a network operation: a `URLError` passed through, or one of the cases below,
+    /// which your code reports; the library raises none of them.
     public enum NetworkError: DMError {
         
         /// Indicates that the network is inaccessible due to poor conditions after multiple retries.

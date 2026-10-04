@@ -8,10 +8,10 @@ import SwiftUI
 
 /// Supplies the views of a HUD: one while work runs, one for a failure and one for a success.
 ///
-/// The library asks for a view on the main actor each time the HUD shows that state, so a view
-/// is built for the state it shows. Every requirement has a default implementation that shows
-/// the library's view with the matching settings, so a conforming type implements only what it
-/// changes. Providers are equal only to themselves.
+/// The library asks for a view on the main actor whenever the HUD draws that state, which can be
+/// more than once for one state, so keep these methods free of side effects. Every requirement
+/// has a default implementation that shows the library's view with the matching settings, so a
+/// conforming type implements only what it changes. Providers are equal only to themselves.
 public protocol DMLoadingViewProvider: ObservableObject, Hashable {
     /// The view shown while work runs.
     associatedtype LoadingViewType: View
@@ -20,18 +20,20 @@ public protocol DMLoadingViewProvider: ObservableObject, Hashable {
     /// The view shown for a success.
     associatedtype SuccessViewType: View
     
-    /// Returns the view of a loading HUD. Called on the main actor each time a loading state
-    /// is shown.
+    /// Returns the view of a loading HUD. Called on the main actor whenever the HUD draws a
+    /// loading state, possibly more than once for one state.
     @MainActor
     func getLoadingView() -> LoadingViewType
-    /// Returns the view of a failure. Called on the main actor each time a failure is shown.
+    /// Returns the view of a failure. Called on the main actor whenever the HUD draws a failure,
+    /// possibly more than once for one failure.
     /// - Parameters:
     ///   - error: The failure the loading manager shows.
     ///   - onRetry: The retry action of that failure, or `nil` for a failure without one.
     ///   - onClose: Hides the HUD; the close control of the view runs it.
     @MainActor
     func getErrorView(error: any Error, onRetry: (any DMAction)?, onClose: any DMAction) -> ErrorViewType
-    /// Returns the view of a success. Called on the main actor each time a success is shown.
+    /// Returns the view of a success. Called on the main actor whenever the HUD draws a success,
+    /// possibly more than once for one success.
     /// - Parameter object: The message passed to `showSuccess(_:provider:)`.
     @MainActor
     func getSuccessView(object: any DMLoadableTypeSuccess) -> SuccessViewType

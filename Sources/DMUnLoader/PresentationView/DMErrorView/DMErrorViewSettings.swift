@@ -130,8 +130,9 @@ public struct ActionButtonSettings: Identifiable {
         self.styleFactory = styleFactory
     }
     
-    /// Creates the settings of a button with the style of the HUD: white text in a white capsule,
-    /// which in the HUD shrinks a little while pressed, unless Reduce Motion is on.
+    /// Creates the settings of a button with the style of the HUD: white text in the white outline
+    /// of a capsule, which takes a tap anywhere inside it and in the HUD shrinks a little while
+    /// pressed, unless Reduce Motion is on.
     /// - Parameters:
     ///   - id: Identifies the settings. Defaults to a new `UUID`.
     ///   - text: The text of the button.
