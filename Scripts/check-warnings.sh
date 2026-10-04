@@ -30,9 +30,11 @@ fi
 
 # A diagnostic starts with the file it points to. The path is compared as text, so a
 # folder name with characters that mean something in a pattern cannot change the match.
+# It reaches awk through the environment: -v would turn a backslash in it into an escape.
 # The build folder inside the checkout holds dependency checkouts and generated files,
 # so it is left out.
-WARNINGS="$(awk -v root="$ROOT/" '
+WARNINGS="$(CHECK_WARNINGS_ROOT="$ROOT/" awk '
+    BEGIN { root = ENVIRON["CHECK_WARNINGS_ROOT"] }
     index($0, root) == 1 && index($0, root ".build/") != 1 {
         rest = substr($0, length(root) + 1)
         if (rest ~ /^[^:]+:[0-9]+:[0-9]+: warning:/) print rest

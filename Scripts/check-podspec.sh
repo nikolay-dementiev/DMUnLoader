@@ -54,6 +54,7 @@ remove_derived_data() {
     local workspace="$1" products="$2" folder recorded
     folder="${products%/Build/Products/*}"
     case "$folder" in
+        *..*) return 0 ;;
         */DerivedData/App-*) ;;
         *) return 0 ;;
     esac
@@ -82,6 +83,15 @@ for MODE in $MODES; do
         FAILED=1
         continue
     fi
+    # The folder is deleted at the end, so it has to be the temporary folder of a lint.
+    case "$WORKSPACE" in
+        */CocoaPods-Lint-*/App.xcworkspace) ;;
+        *)
+            echo "check-podspec: $WORKSPACE is not the workspace of a CocoaPods lint; nothing is deleted." >&2
+            FAILED=1
+            continue
+            ;;
+    esac
 
     # grep exits 1 when nothing matches, and 2 when it cannot read what it searches. Its
     # output is kept in a variable: a file that cannot be written would end the command
@@ -103,10 +113,11 @@ for MODE in $MODES; do
             ;;
     esac
 
+    # Either command may fail; an empty result is reported below as a missing bundle.
     PRODUCTS="$(xcodebuild -showBuildSettings -workspace "$WORKSPACE" -scheme App \
         -configuration Release -sdk iphonesimulator 2> /dev/null \
-        | sed -n 's/^ *BUILT_PRODUCTS_DIR = //p' | head -1)"
-    BUNDLE="$(find "$PRODUCTS/App.app" -type d -name "DMUnLoader.bundle" 2> /dev/null | head -1)"
+        | sed -n 's/^ *BUILT_PRODUCTS_DIR = //p' | head -1 || true)"
+    BUNDLE="$(find "$PRODUCTS/App.app" -type d -name "DMUnLoader.bundle" 2> /dev/null | head -1 || true)"
     if [ -z "$BUNDLE" ]; then
         echo "check-podspec: in Swift $MODE mode the consumer app carries no DMUnLoader.bundle." >&2
         FAILED=1
