@@ -18,6 +18,10 @@ public protocol DMLoadingViewProvider: ObservableObject, Hashable {
     @MainActor
     func getSuccessView(object: any DMLoadableTypeSuccess) -> SuccessViewType
 
+    /// Loading manager settings carried by the provider. The library does not read them: a
+    /// success or a failure hides after the `settings.autoHideDelay` of the loading manager
+    /// that shows it, whatever provider it was shown with. `eraseToAnyViewProvider()` passes
+    /// the value on unchanged.
     var loadingManagerSettings: any DMLoadingManagerSettings { get }
     var loadingViewSettings: any DMProgressViewSettings { get }
     var errorViewSettings: any DMErrorViewSettings { get }
@@ -62,7 +66,9 @@ public extension DMLoadingViewProvider {
     }
     
     // MARK: - Default Settings
-    
+
+    /// Settings with an auto-hide delay of 2 seconds. Not read by the library: the loading
+    /// manager's own settings decide the delay.
     var loadingManagerSettings: any DMLoadingManagerSettings {
         DMLoadingManagerDefaultSettings()
     }
@@ -81,11 +87,21 @@ public extension DMLoadingViewProvider {
 }
 
 public class DefaultDMLoadingViewProvider: @MainActor DMLoadingViewProvider {
+    /// The settings passed to the initializer, or settings with a 2-second delay. Not read by
+    /// the library: the loading manager's own settings decide the delay.
     public let loadingManagerSettings: any DMLoadingManagerSettings
     public let loadingViewSettings: any DMProgressViewSettings
     public let errorViewSettings: any DMErrorViewSettings
     public let successViewSettings: any DMSuccessViewSettings
-    
+
+    /// Creates a provider of the default loading, error and success views.
+    /// - Parameters:
+    ///   - loadingManagerSettings: Kept as `loadingManagerSettings` and not read by the
+    ///     library; set the delay on the loading manager, `DMLoadingManagerMain(state:settings:)`.
+    ///     Defaults to settings with a 2-second delay.
+    ///   - loadingViewSettings: Settings of the loading view. Defaults to `DMProgressViewDefaultSettings()`.
+    ///   - errorViewSettings: Settings of the error view. Defaults to `DMErrorDefaultViewSettings()`.
+    ///   - successViewSettings: Settings of the success view. Defaults to `DMSuccessDefaultViewSettings()`.
     public init(
         loadingManagerSettings: (any DMLoadingManagerSettings)? = nil,
         loadingViewSettings: (any DMProgressViewSettings)? = nil,

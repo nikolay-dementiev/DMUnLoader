@@ -23,6 +23,8 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
     /// identifier cannot belong to another object while this one exists.
     let wrappedProviderID: ObjectIdentifier
 
+    /// The `loadingManagerSettings` of the erased provider at the moment it was erased. Not
+    /// read by the library.
     public var loadingManagerSettings: any DMLoadingManagerSettings { _loadingManagerSettings() }
     public var loadingViewSettings: any DMProgressViewSettings { _loadingViewSettings() }
     public var errorViewSettings: any DMErrorViewSettings { _errorViewSettings() }

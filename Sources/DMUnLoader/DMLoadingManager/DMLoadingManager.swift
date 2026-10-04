@@ -19,11 +19,9 @@ public protocol DMLoadingManager: ObservableObject {
     /// - Note: This property is mutable and allows the manager to update its state dynamically.
     var loadableState: DMLoadableType { get }
     
-    /// The settings used by the loading manager to configure its behavior.
-    /// - Example:
-    ///   ```swift
-    ///   let settings = DMLoadingManagerSettings(autoHideDelay: 10)
-    ///   ```
+    /// The settings of the manager. `DMLoadingManagerMain` hides a success or a failure as these
+    /// settings say, by default once `settings.autoHideDelay` has passed; the settings of a view
+    /// provider do not change it.
     var settings: any DMLoadingManagerSettings { get }
     
     /// Shows the loading state, typically indicating that an operation is in progress.

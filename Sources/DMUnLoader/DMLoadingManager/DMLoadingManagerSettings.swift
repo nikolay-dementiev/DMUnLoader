@@ -6,12 +6,8 @@
 
 import UIKit
 
-/// A protocol defining the settings for a loading manager.
-/// Conforming types must provide an `autoHideDelay` property, which specifies
-/// the duration after which the loading state should automatically hide.
-///
-/// This protocol allows customization of the behavior of a loading manager,
-/// such as how long success or failure states remain visible before being hidden.
+/// The settings of a loading manager. Pass them to `DMLoadingManagerMain(state:settings:)`; a
+/// view provider's `loadingManagerSettings` is not read.
 public protocol DMLoadingManagerSettings {
     
     /// How long a success or a failure stays before it hides by itself, for every kind whose

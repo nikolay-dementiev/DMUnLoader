@@ -34,15 +34,18 @@ public final class DMLoadingManagerMain: DMLoadingManager {
     /// after that cannot hide a newer state.
     private var autoHideGeneration = 0
     
-    /// Initializes a new instance of `DMLoadingManager`.
+    /// Creates a manager in `state` that hides a success or a failure as its `settings` say, by
+    /// default once `settings.autoHideDelay` has passed. A view provider's
+    /// `loadingManagerSettings` is not read.
     /// - Parameters:
-    ///   - id: A unique identifier for the loading manager. Defaults to a new `UUID`.
-    ///   - state: The initial loadable state of the manager.
-    ///   - settings: The settings used by the loading manager.
+    ///   - state: The state the manager starts in.
+    ///   - settings: The settings of the manager.
     /// - Example:
     ///   ```swift
-    ///   let settings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(3))
-    ///   let loadingManager = DMLoadingManager(state: .none, settings: settings)
+    ///   let loadingManager = DMLoadingManagerMain(
+    ///       state: .none,
+    ///       settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(3))
+    ///   )
     ///   ```
     public init(state loadableState: DMLoadableType,
                 settings: any DMLoadingManagerSettings) {
