@@ -20,15 +20,16 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      - name: Check that the tag, the podspec and the changelog agree
-        run: Scripts/check-release.sh "$GITHUB_REF_NAME"
-      # A version tag on a branch that was never merged would release unreviewed code.
+      # A version tag on a branch that was never merged would release unreviewed code. This
+      # runs first, before any script of the tagged commit.
       - name: Check that the tagged commit is on main
         run: |
-          if ! git merge-base --is-ancestor HEAD origin/main; then
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
             echo "The tag $GITHUB_REF_NAME is on a commit that main does not contain." >&2
             exit 1
           fi
+      - name: Check that the tag, the podspec and the changelog agree
+        run: Scripts/check-release.sh "$GITHUB_REF_NAME"
 
   ci:
     needs: check
@@ -44,12 +45,16 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      # The tested commit is written into the draft, so the person who publishes it can compare
+      # it with the commit the tag names at that moment.
       - name: Write the release notes from the changelog
-        run: Scripts/check-release.sh --notes "$GITHUB_REF_NAME" > "$RUNNER_TEMP/notes.md"
+        run: |
+          Scripts/check-release.sh --notes "$GITHUB_REF_NAME" > "$RUNNER_TEMP/notes.md"
+          printf '\nTested commit: %s\n' "$(git rev-parse "$GITHUB_SHA^{commit}")" >> "$RUNNER_TEMP/notes.md"
       # The tag could have been moved while CI ran. The draft must name the commit CI tested.
       - name: Check that the tag still points at the tested commit
         run: |
-          TESTED="$(git rev-parse HEAD)"
+          TESTED="$(git rev-parse "$GITHUB_SHA^{commit}")"
           NOW="$(git ls-remote origin "refs/tags/$GITHUB_REF_NAME^{}" | cut -f1)"
           if [ -z "$NOW" ]; then
             NOW="$(git ls-remote origin "refs/tags/$GITHUB_REF_NAME" | cut -f1)"
