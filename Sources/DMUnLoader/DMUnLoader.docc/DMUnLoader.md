@@ -11,9 +11,9 @@ HUD follows. ``DMLoadingManagerMain`` is the manager of the library: by default 
 success or a failure 2 seconds after it appears, and its settings change that.
 
 The HUD is shown in a window of its own over the scene. While it is shown, it takes the
-touches of the scene, and assistive technology reads the HUD only. A view provider supplies
-the view of each state: ``DefaultDMLoadingViewProvider`` draws the views of the library with
-the settings it is given, and a provider of your own returns any view.
+touches of the scene, and assistive technology does not reach the content under it. A view
+provider supplies the view of each state: ``DefaultDMLoadingViewProvider`` draws the views of
+the library with the settings it is given, and a provider of your own returns any view.
 
 ```swift
 import DMUnLoader

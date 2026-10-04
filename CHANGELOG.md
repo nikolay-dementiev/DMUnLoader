@@ -18,13 +18,15 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   Retry leave the screen), `hudWindowLevel` (the level of the HUD window) and `backdrop`
   (`DMHUDBackdrop`: `.variableBlur`, the default, `.dim(_:)`, `.material(_:)` and `.clear`).
 - `showFailure(_:provider:)` on every loading manager: a failure without Retry.
-- Accessibility. While a HUD is shown, the windows of its scene that are not above the HUD's
-  window are hidden from assistive technology. VoiceOver moves into the HUD, hears a change of
-  its content, and returns to the element it was on. The escape gesture hides a success or a
-  failure as a tap outside the card does. Reduce Motion keeps the card and a pressed button
-  still; Reduce Transparency draws the dim without a blur or a material.
+- Accessibility. While a HUD is shown, the windows of its scene that are open when it appears
+  and are not above its window are hidden from assistive technology. When the HUD appears or
+  shows another state, VoiceOver is told that the screen changed; when it goes, VoiceOver returns
+  to the element it was on, if that element is still on the screen. The escape gesture hides a
+  success or a failure as a tap outside the card does. Reduce Motion keeps the card and a pressed
+  button still; Reduce Transparency draws the dim without a blur or a material.
 - The default texts come from a string catalog, English only in this version, and follow the
-  language of the app. A text the app sets is shown as written.
+  language of the app. A text the app sets is shown as written, unless it equals an English
+  default: then it counts as that default and follows the catalog.
 - Documentation for every public symbol, and a documentation catalog.
 
 ### Fixed
@@ -90,6 +92,9 @@ Behaviour changes. None of them removes a declaration; each one is pinned by a t
 - The default card of the HUD, white text on gray at opacity 0.8, does not reach the contrast of
   4.5:1; an app that needs it sets its own colours through the settings types, or supplies its
   own views through `DMLoadingViewProvider`.
+- At large accessibility text sizes the default loading card, at most 150 points wide, cuts its
+  text; an app that needs those sizes gives `DMProgressViewDefaultSettings` a larger
+  `frameGeometrySize`, or supplies its own loading view.
 
 ## [1.0.3] - 2025-12-29
 

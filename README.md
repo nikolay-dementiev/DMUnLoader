@@ -451,12 +451,19 @@ would reach `onAttachmentFailure`. Version 1.1.0 knows no such reason.
 
 ### Accessibility
 
-While a HUD is shown, DMUnLoader hides the windows of its scene that are not above the HUD's
-window from assistive technology, and so from your own UI tests, until the HUD goes. VoiceOver
-moves into the HUD, hears a change of its content, and returns to the element it was on. The
-escape gesture hides a success or a failure as a tap outside the card does. Reduce Motion keeps
-the card and a pressed button still. VoiceOver does not read the default images; an image you
-supply keeps the accessibility you give it.
+While a HUD is shown, DMUnLoader hides from assistive technology, and so from your own UI tests,
+the windows of its scene that are open when the HUD appears and are not above the HUD's window,
+until the HUD goes. When the HUD appears or shows another state, VoiceOver is told that the
+screen changed and starts at its first element: the HUD's, unless a window above the HUD has
+elements. When the HUD goes, VoiceOver returns to the element it was on, if that element is still
+on the screen. The escape gesture hides a success or a failure as a tap outside the card does.
+Reduce Motion keeps the card and a pressed button still. VoiceOver does not read the default
+images; an image you supply keeps the accessibility you give it.
+
+A success or a failure hides after 2 seconds by default, which can be too short to reach Retry
+with VoiceOver or Switch Control. An app whose users need more time keeps a failure on the screen
+with `DMHUDDismissal(autoHide: .never)`, or gives it a longer delay; see
+[The loading manager's settings](#the-loading-managers-settings).
 
 ## Example app and tests
 
@@ -480,7 +487,7 @@ How the package is tested:
 - UI tests: Retry, Close and taps on and outside the card, the touches that reach the app with
   and without a HUD in the four integrations, the texts in other languages and right to left,
   the failure HUD over content compared with reference pictures, and accessibility audits of the
-  HUD.
+  HUD, which leave out contrast and, for the loading HUD, clipped text.
 - CI also lints, compares the public interface with a committed baseline, builds a consumer
   package and every Swift block of this README and of the documentation catalog, builds the
   documentation, lints the podspec, runs the tests under the Thread Sanitizer, and fails below a
@@ -507,6 +514,10 @@ behaviour changed, and the changelog lists each change. The ones most likely to 
 The default card of the HUD, white text on gray at opacity 0.8, does not reach the contrast of
 4.5:1; an app that needs it sets its own colours through the settings types, or supplies its own
 views through `DMLoadingViewProvider`.
+
+At large accessibility text sizes the default loading card, at most 150 points wide, cuts its
+text; an app that needs those sizes gives `DMProgressViewDefaultSettings` a larger
+`frameGeometrySize`, or supplies its own loading view.
 
 ## The family
 
