@@ -104,14 +104,14 @@ private enum WindowHiding {
 /// HUD does.
 @MainActor
 package final class SystemAccessibilityAnnouncer: AccessibilityAnnouncer {
-    private let postScreenChanged: @MainActor (AnyObject?) -> Void
+    private let post: @MainActor (UIAccessibility.Notification, Any?) -> Void
 
-    /// - Parameter postScreenChanged: Posts the screen-changed notification with the element to
-    ///   focus. The default calls `UIAccessibility.post`.
-    package init(postScreenChanged: @escaping @MainActor (AnyObject?) -> Void = { element in
-        UIAccessibility.post(notification: .screenChanged, argument: element)
+    /// - Parameter post: Posts a notification with its argument. The default calls
+    ///   `UIAccessibility.post`.
+    package init(post: @escaping @MainActor (UIAccessibility.Notification, Any?) -> Void = { notification, argument in
+        UIAccessibility.post(notification: notification, argument: argument)
     }) {
-        self.postScreenChanged = postScreenChanged
+        self.post = post
     }
 
     package var focusedElement: AnyObject? {
@@ -133,7 +133,7 @@ package final class SystemAccessibilityAnnouncer: AccessibilityAnnouncer {
     package func screenChanged(focusing element: AnyObject?) {
         // The HUD window changes in this turn; the notification follows on the next one.
         Task { @MainActor in
-            postScreenChanged(element)
+            post(.screenChanged, element)
         }
     }
 }
