@@ -122,6 +122,26 @@ final class HUDControlsUITests: XCTestCase {
         assertContentCountedNoTouch(in: app)
     }
 
+    func test_failureHUD_swiftUI_retryTappedBesideItsTitle_runsTheRetryActionOnly() {
+        let app = launchExample(Launch.swiftUI + ["--retry-counts-only"])
+        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: 30), "the demo screen is shown")
+        app.buttons[DemoIdentifier.showFailure].tap()
+        let retry = app.buttons["Retry"]
+        XCTAssertTrue(retry.waitForExistence(timeout: 5), "the failure HUD is shown")
+
+        // Inside the capsule of the button, away from its centred title.
+        retry.coordinate(withNormalizedOffset: CGVector(dx: 0.12, dy: 0.5)).tap()
+
+        XCTAssertTrue(
+            label(of: app.staticTexts[DemoIdentifier.windowRetries], becomes: DemoText.retries(1), within: 5),
+            "a tap inside the capsule of Retry, beside its title, runs the retry action"
+        )
+        XCTAssertFalse(
+            app.buttons["Close"].waitForNonExistence(timeout: 1),
+            "that tap is not a tap on the card, so the failure stays on screen"
+        )
+    }
+
     // MARK: - Dismissal rules
 
     func test_failureHUD_retryRuleCardOff_cardTapKeepsTheHUD() {
