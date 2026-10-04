@@ -110,6 +110,16 @@ final class HUDBackdropTests: XCTestCase {
         )
     }
 
+    func test_hudScene_materialBackdrop_drawsNoDim() throws {
+        // The dim before the fade: black at no opacity.
+        let dim = Color.black.opacity(0)
+
+        XCTAssertThrowsError(
+            try makeSUT(backdrop: .material()).inspect().find(ViewType.Color.self, where: { try $0.value() == dim }),
+            "the material backdrop draws its material and no dim"
+        )
+    }
+
     func test_hudScene_materialBackdrop_drawsTheMaterial() throws {
         XCTAssertNoThrow(
             try materialFill(in: makeSUT(backdrop: .material())),
