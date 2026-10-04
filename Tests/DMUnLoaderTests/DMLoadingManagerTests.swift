@@ -75,12 +75,15 @@ final class DMLoadingManagerTests: XCTestCase {
         let outcomes = await withTaskGroup(of: [Bool].self) { group in
             for _ in 0..<8 {
                 group.addTask {
-                    [
-                        manager == manager,
-                        manager == other,
-                        identityHash(of: manager) == identityHash(of: manager),
-                        identityHash(of: manager) == identityHash(of: other)
-                    ]
+                    await Task.detached {
+                        [
+                            manager == manager,
+                            manager == other,
+                            identityHash(of: manager) == identityHash(of: manager),
+                            identityHash(of: manager) == identityHash(of: other),
+                            pthread_main_np() == 0
+                        ]
+                    }.value
                 }
             }
             var collected: [[Bool]] = []
@@ -95,6 +98,7 @@ final class DMLoadingManagerTests: XCTestCase {
         XCTAssertTrue(outcomes.allSatisfy { !$0[1] }, "two managers are not equal from any task")
         XCTAssertTrue(outcomes.allSatisfy { $0[2] }, "a manager hashes alike with itself from every task")
         XCTAssertTrue(outcomes.allSatisfy { !$0[3] }, "two managers hash apart from every task")
+        XCTAssertTrue(outcomes.allSatisfy { $0[4] }, "every task leaves the main thread, so the calls are not serialised on it")
     }
 
     // MARK: Helpers
