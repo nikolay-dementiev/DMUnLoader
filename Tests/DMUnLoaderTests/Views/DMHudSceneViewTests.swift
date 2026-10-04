@@ -66,19 +66,21 @@ final class DMHudSceneViewTests: XCTestCase {
     }
 
     func test_anotherFailureWhileShown_reportsTheNewState() {
-        let fixture = makeSUT(
-            initialState: .failure(error: DMAppError.custom("first"), provider: Self.provider, onRetry: nil)
-        )
+        // One provider for both states: a provider's identity is part of the state's equality.
+        let provider = DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+        let first = DMLoadableType.failure(error: DMAppError.custom("first"), provider: provider, onRetry: nil)
+        let second = DMLoadableType.failure(error: DMAppError.custom("second"), provider: provider, onRetry: nil)
+        let fixture = makeSUT(initialState: first)
         ViewHosting.host(view: fixture.sut)
         defer { ViewHosting.expel() }
-        _ = waitForReports(fixture.reports, count: 1)
+        _ = waitForStates(fixture.reports, count: 1)
 
-        fixture.manager.showFailure(DMAppError.custom("second"), provider: DefaultDMLoadingViewProvider())
+        fixture.manager.showFailure(DMAppError.custom("second"), provider: provider)
 
         XCTAssertEqual(
-            waitForReports(fixture.reports, count: 2),
-            [.failure, .failure],
-            "the window learns that the shown HUD shows another failure"
+            waitForStates(fixture.reports, count: 2),
+            [first, second],
+            "the window learns the second failure as a state of its own, not only as another failure phase"
         )
     }
 
@@ -179,6 +181,12 @@ final class DMHudSceneViewTests: XCTestCase {
     /// Turns the run loop until `count` reports arrived or the callback allowance passed, and
     /// returns the phases of the reported states.
     private func waitForReports(_ reports: Reports, count: Int) -> [HUDPhase] {
+        waitForStates(reports, count: count).map(\.phase)
+    }
+
+    /// Turns the run loop until `count` reports arrived or the callback allowance passed, and
+    /// returns the reported states themselves.
+    private func waitForStates(_ reports: Reports, count: Int) -> [DMLoadableType] {
         let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
         while reports.values.count < count, Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.02))
@@ -188,7 +196,7 @@ final class DMHudSceneViewTests: XCTestCase {
             count,
             "the window reports \(count) state(s) within the callback allowance"
         )
-        return reports.values.map(\.phase)
+        return reports.values
     }
 
     /// Renders `view` in a window with a clear background, the way the HUD window shows it,
