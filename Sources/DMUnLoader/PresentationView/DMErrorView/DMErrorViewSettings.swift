@@ -210,6 +210,10 @@ extension ErrorTextSettings: Hashable {
 }
 
 /// A struct defining settings for the error image displayed in an error view.
+///
+/// The image of the default error settings, the exclamation mark triangle, is hidden from
+/// assistive technology: the texts of the error view name the failure. Any other image keeps
+/// the accessibility it was given.
 public struct ErrorImageSettings {
     
     /// The image to display as the error icon.
@@ -255,5 +259,12 @@ extension ErrorImageSettings: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(foregroundColor)
         hasher.combine(frameSize)
+    }
+}
+
+extension ErrorImageSettings {
+    /// Whether the image is the one of the default error settings, which only decorates.
+    var showsTheDefaultImage: Bool {
+        image == Image(systemName: "exclamationmark.triangle")
     }
 }

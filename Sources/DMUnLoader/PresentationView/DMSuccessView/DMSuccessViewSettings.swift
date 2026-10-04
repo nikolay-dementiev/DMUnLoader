@@ -69,6 +69,10 @@ extension DMSuccessDefaultViewSettings: Hashable {
 }
 
 /// A struct defining properties for the success image displayed in a success view.
+///
+/// The default image, the filled checkmark circle, is hidden from assistive technology: the
+/// text of the success view names the success. Any other image keeps the accessibility it was
+/// given.
 public struct SuccessImageProperties: Identifiable {
     public var id: UUID
     
@@ -122,6 +126,13 @@ extension SuccessImageProperties: Hashable {
         hasher.combine(id)
         hasher.combine(frame)
         hasher.combine(foregroundColor)
+    }
+}
+
+extension SuccessImageProperties {
+    /// Whether the image is the default checkmark, which only decorates.
+    var showsTheDefaultImage: Bool {
+        image == Image(systemName: "checkmark.circle.fill")
     }
 }
 

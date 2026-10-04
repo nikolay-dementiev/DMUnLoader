@@ -38,6 +38,7 @@ struct DMErrorView: View {
                        height: imageSettings.frameSize.height,
                        alignment: imageSettings.frameSize.alignment)
                 .foregroundStyle(imageSettings.foregroundColor)
+                .hiddenFromAccessibility(if: imageSettings.showsTheDefaultImage)
             
             if let errorText = settingsProvider.errorText {
                 ErrorText(HUDDefaultText.failureTitle.displayed(errorText, using: hudTexts),

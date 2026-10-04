@@ -29,6 +29,7 @@ struct DMSuccessView: View {
                        height: successImageProperties.frame.height,
                        alignment: successImageProperties.frame.alignment)
                 .foregroundColor(successImageProperties.foregroundColor)
+                .hiddenFromAccessibility(if: successImageProperties.showsTheDefaultImage)
             
             let successTextProperties = settingsProvider.successTextProperties
             if let successText = assosiatedObject?.description ?? successTextProperties.text {
