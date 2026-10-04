@@ -128,6 +128,7 @@ final class HUDWindowTests: XCTestCase {
 
     func test_hudRemovedWhileShown_givesTheAppWindowBackToAssistiveTechnology() throws {
         let (scene, sceneDelegate) = try connectedSceneDelegate()
+        addTeardownBlock { sceneDelegate.loadingManager = DMLoadingManagerMain() }
         sceneDelegate.loadingManager = DMLoadingManagerMain(
             state: .loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
             settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
@@ -145,7 +146,6 @@ final class HUDWindowTests: XCTestCase {
             waitUntil(!appWindow.accessibilityElementsHidden),
             "removing the HUD while it is shown gives the app's window back"
         )
-        sceneDelegate.loadingManager = DMLoadingManagerMain()
     }
 
     func test_idleManagerReplacesAShownOne_givesTheAppWindowBackAndLetsTouchesThrough() throws {
