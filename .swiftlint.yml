@@ -55,3 +55,11 @@ custom_rules:
       - identifier
     message: "A library never terminates its host. Report the failure to the caller."
     severity: error
+  domain_imports_no_ui_or_platform:
+    name: "Domain imports no UI or platform framework"
+    # The Domain layer holds the plain types and policies. A framework of the UI or of the
+    # platform comes in through a protocol that an adapter implements.
+    included: ".*/Sources/DMUnLoader/Domain/.*\\.swift"
+    regex: '^\s*import\s+(UIKit|SwiftUI|AppKit|WatchKit|DMVariableBlurView)\b'
+    message: "The Domain layer imports no UI or platform framework. Declare a protocol and let an adapter implement it."
+    severity: error
