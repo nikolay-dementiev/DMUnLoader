@@ -47,37 +47,35 @@ final class RunLoopAutoHideSchedulerTests: XCTestCase {
         let sut = makeSUT()
         let hidden = expectation(description: "hide runs as soon as the run loop turns")
         hidden.assertForOverFulfill = true
-        var returned = false
-        var hiddenBeforeReturn = false
+        let timing = ScheduleTiming()
 
         // A turn of the run loop is far below a second, and the default auto-hide is two seconds.
         let subscription = sut.schedule(after: .zero) {
-            hiddenBeforeReturn = !returned
+            timing.hiddenBeforeReturn = !timing.returned
             hidden.fulfill()
         }
-        returned = true
+        timing.returned = true
 
         wait(for: [hidden], timeout: 1)
         subscription.cancel()
-        XCTAssertFalse(hiddenBeforeReturn, "the hide is not delivered before schedule returns, even without a delay")
+        XCTAssertFalse(timing.hiddenBeforeReturn, "the hide is not delivered before schedule returns, even without a delay")
     }
 
     func test_schedule_negativeDelay_runsHideAtOnce() {
         let sut = makeSUT()
         let hidden = expectation(description: "hide runs as soon as the run loop turns")
         hidden.assertForOverFulfill = true
-        var returned = false
-        var hiddenBeforeReturn = false
+        let timing = ScheduleTiming()
 
         let subscription = sut.schedule(after: .seconds(-1)) {
-            hiddenBeforeReturn = !returned
+            timing.hiddenBeforeReturn = !timing.returned
             hidden.fulfill()
         }
-        returned = true
+        timing.returned = true
 
         wait(for: [hidden], timeout: 1)
         subscription.cancel()
-        XCTAssertFalse(hiddenBeforeReturn, "the hide is not delivered before schedule returns, even with a negative delay")
+        XCTAssertFalse(timing.hiddenBeforeReturn, "the hide is not delivered before schedule returns, even with a negative delay")
     }
 
     func test_schedule_cancelledBeforeTheDelay_neverRunsHide() {
@@ -105,4 +103,11 @@ final class RunLoopAutoHideSchedulerTests: XCTestCase {
     private func makeSUT() -> RunLoopAutoHideScheduler {
         RunLoopAutoHideScheduler()
     }
+}
+
+/// Tells whether a hide ran before the call that scheduled it had returned.
+@MainActor
+private final class ScheduleTiming {
+    var returned = false
+    var hiddenBeforeReturn = false
 }
