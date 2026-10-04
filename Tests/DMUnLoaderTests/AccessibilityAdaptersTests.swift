@@ -111,19 +111,21 @@ final class AccessibilityAdaptersTests: XCTestCase {
 
     @MainActor
     func test_announcer_screenChanged_postsTheElementOnALaterTurn() async {
-        let posted = PostedElements()
+        let posted = PostedNotifications()
         let element = NSObject()
-        let sut = SystemAccessibilityAnnouncer { posted.elements.append($0) }
+        let sut = SystemAccessibilityAnnouncer { notification, argument in
+            posted.record(notification, argument as AnyObject?)
+        }
 
         sut.screenChanged(focusing: element)
 
-        XCTAssertTrue(posted.elements.isEmpty, "nothing is posted within the call: the HUD window changes in this turn")
+        XCTAssertTrue(posted.isEmpty, "nothing is posted within the call: the HUD window changes in this turn")
         let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
-        while posted.elements.isEmpty, Date() < deadline {
+        while posted.isEmpty, Date() < deadline {
             await Task.yield()
         }
-        XCTAssertEqual(posted.elements.count, 1, "the screen change is posted once, on a later turn")
-        XCTAssertTrue((posted.elements.first ?? nil) === element, "the notification carries the element to focus")
+        XCTAssertEqual(posted.notifications, [.screenChanged], "the screen change is posted once, as a screen-changed notification")
+        XCTAssertTrue(posted.argument === element, "the notification carries the element to focus")
     }
 
     // MARK: - Helpers
@@ -153,7 +155,18 @@ final class AccessibilityAdaptersTests: XCTestCase {
     }
 }
 
+/// What the announcer posted: each notification, and the argument of the last one.
 @MainActor
-private final class PostedElements {
-    var elements: [AnyObject?] = []
+private final class PostedNotifications {
+    private(set) var notifications: [UIAccessibility.Notification] = []
+    private(set) var argument: AnyObject?
+
+    var isEmpty: Bool {
+        notifications.isEmpty
+    }
+
+    func record(_ notification: UIAccessibility.Notification, _ argument: AnyObject?) {
+        notifications.append(notification)
+        self.argument = argument
+    }
 }
