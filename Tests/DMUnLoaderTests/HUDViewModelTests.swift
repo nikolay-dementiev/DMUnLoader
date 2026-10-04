@@ -108,6 +108,29 @@ final class HUDViewModelTests: XCTestCase {
         XCTAssertTrue(manager.loadableState.showsHUD, "a manager of the host's own keeps the success when its settings say so")
     }
 
+    func test_backdropTapped_aManagerWhoseHideKeepsItsState_reportsThatTheHUDStayed() {
+        let manager = HideKeepingManagerSpy(
+            loadableState: .success("done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
+        )
+        let sut = DefaultHUDViewModel(loadingManager: manager)
+
+        let hid = sut.backdropTapped()
+
+        XCTAssertEqual(manager.hideCount, 1, "the tap asks the manager to hide the success")
+        XCTAssertFalse(hid, "the success is still shown after the call, so the tap reports that the HUD stayed")
+    }
+
+    func test_cardAndBackdropTap_withNoState_askTheManagerForNothing() {
+        let manager = HideKeepingManagerSpy()
+        let sut = DefaultHUDViewModel(loadingManager: manager)
+
+        sut.cardTapped()
+        let hid = sut.backdropTapped()
+
+        XCTAssertEqual(manager.hideCount, 0, "with no state a tap has nothing to hide and asks the manager for nothing")
+        XCTAssertFalse(hid, "with no state a tap outside the card reports that nothing went")
+    }
+
     func test_closeTapped_onAFailure_hidesIt() {
         let (sut, manager) = makeSUT()
         manager.showFailure(DMAppError.custom("failed"), provider: DefaultDMLoadingViewProvider(), onRetry: nil)
@@ -118,6 +141,30 @@ final class HUDViewModelTests: XCTestCase {
     }
 
     // MARK: - Helpers
+
+    /// A loading manager of the host's own that records `hide()` and keeps the state it has.
+    @MainActor
+    private final class HideKeepingManagerSpy: DMLoadingManager {
+        let settings: any DMLoadingManagerSettings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
+        @Published private(set) var loadableState: DMLoadableType
+        private(set) var hideCount = 0
+
+        init(loadableState: DMLoadableType) {
+            self.loadableState = loadableState
+        }
+
+        init() {
+            self.loadableState = .none
+        }
+
+        func showLoading<PR: DMLoadingViewProvider>(provider: PR) {}
+        func showSuccess<PR: DMLoadingViewProvider>(_ message: any DMLoadableTypeSuccess, provider: PR) {}
+        func showFailure<PR: DMLoadingViewProvider>(_ error: any Error, provider: PR, onRetry: (any DMAction)?) {}
+
+        func hide() {
+            hideCount += 1
+        }
+    }
 
     private enum Tap: CaseIterable, CustomStringConvertible {
         case card

@@ -11,15 +11,20 @@ import DMUnLoader
 /// no actor, no scheduler, no view.
 final class DismissPolicyTests: XCTestCase {
 
-    func test_tapDismisses_noneSuccessAndFailure_isTrue() {
+    func test_tapDismisses_successAndFailure_isTrue() {
         let rules = DMHUDDismissalRules()
         for target in [HUDTapTarget.card, .backdrop] {
-            XCTAssertTrue(
-                DismissPolicy.tapDismisses(.none, on: target, rules: rules),
-                "a tap without a state hides nothing (\(target))"
-            )
             XCTAssertTrue(DismissPolicy.tapDismisses(.success, on: target, rules: rules), "a tap dismisses a success (\(target))")
             XCTAssertTrue(DismissPolicy.tapDismisses(.failure, on: target, rules: rules), "a tap dismisses a failure (\(target))")
+        }
+    }
+
+    func test_tapDismisses_none_isFalse() {
+        for target in [HUDTapTarget.card, .backdrop] {
+            XCTAssertFalse(
+                DismissPolicy.tapDismisses(.none, on: target, rules: DMHUDDismissalRules()),
+                "with no state a tap has nothing to dismiss (\(target))"
+            )
         }
     }
 
