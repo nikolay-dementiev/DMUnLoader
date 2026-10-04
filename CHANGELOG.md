@@ -35,14 +35,20 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   and 26 the buttons of the failure HUD did nothing: the HUD window guessed from the view a
   touch landed on whether to take it. It now takes touches while a HUD is shown and lets every
   touch through while none is, decided from the state of the loading manager.
-- A late automatic hide no longer hides a newer HUD. The auto-hide of a success or a failure is
-  cancelled when the state is replaced, and a hide that was already on its way is ignored.
+- The auto-hide of a success or a failure is cancelled when the state is replaced, and a hide that
+  was already on its way is ignored. The library's own scheduler never delivers a cancelled hide,
+  so an app sees no change; the guard matters for a scheduler that does.
 - One HUD window per scene. The window is reused for a new loading manager, so the replaced
   manager is released. It is removed when the loading manager of the scene delegate is set to
   `nil` and when the scene disconnects, and created when a manager was set before the scene
   connected. The UIKit integration no longer creates two HUD windows.
 - A second appearance of the HUD view no longer reverses its fade. No route of the library
   makes that view appear twice today; the fix guards a later change.
+- A change of content inside one phase is announced to assistive technology. A failure replaced by
+  another failure, a success by another success, or a manager that takes over in the same phase now
+  tells VoiceOver what changed; before, the card changed and nothing was announced.
+- A tap with no HUD shown dismisses nothing. The escape gesture reports whether the HUD went, so a
+  manager whose hide keeps its state no longer makes the escape report a hide that did not happen.
 - The package can be added by version. The manifest of 1.0.x required a lint plugin and its two
   sibling packages by branch, and Swift Package Manager refuses a version requirement on a
   package that does that; the lint plugin also ran in every app's build. DMAction and
