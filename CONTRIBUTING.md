@@ -26,6 +26,8 @@ The checks are scripts in `Scripts/`, and CI runs them as you do, except
 | `Scripts/check-api.sh` | the public interface against `Fixtures/API/public-interface.txt`; `--self-test` runs the cases of its normalisation |
 | `Scripts/check-manifest.sh` | the manifest, installation by version, the consumer fixture, and every Swift block of `README.md` and of the documentation catalog, each on its own, in Swift 6 and Swift 5 mode: a manifest block is evaluated, every other block compiled. A warning in a block fails it too |
 | `Scripts/coverage-gate.sh <result bundle>` | the line coverage of the library against its floor |
+| `Scripts/check-podspec.sh` | `pod lib lint` in every Swift version of the podspec, that the pod makes its consumer link no test framework, and that the consumer app carries the pod's resource bundle with every key of the string catalog |
+| `Scripts/check-release.sh <version>` | that the podspec and the newest heading of the changelog agree on a version; `--notes` prints its notes |
 | `Scripts/check-warnings.sh <build log>` | that no compiler warning points into this repository |
 | `Scripts/check-example-project.sh` | that the example's Xcode project matches its XcodeGen spec |
 | `Scripts/test-example.sh <simulator udid>` | the example's tests, below |
@@ -89,6 +91,26 @@ project, and run `Scripts/check-example-project.sh` before you commit.
 - Pull requests go to `main` and are merged with a merge commit, so the test and fix pairs stay
   visible.
 - A change that people using the package can notice gets an entry in `CHANGELOG.md`.
+
+## Releases
+
+A release starts from a tag that is the version itself, such as `1.1.0`, on a commit of `main`:
+merge first, then tag. Before the tag is pushed:
+
+1. The podspec names that version, and the newest heading of `CHANGELOG.md` is `## [1.1.0] -` with
+   the release date and the notes under it. `Scripts/check-release.sh 1.1.0` checks them.
+2. The tests of the package and of the example app pass on iOS 17.5, the oldest version the
+   package supports, and on iOS 18.6. CI runs neither for the package and only iOS 18.6 for the
+   example, so these runs are local:
+   `xcodebuild test -scheme DMUnLoader -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 13 Pro,OS=17.5' -skipPackagePluginValidation`,
+   the same with `name=iPhone 16 Pro,OS=18.6`, and `Scripts/test-example.sh` with the udid of
+   each of those simulators.
+3. The example's tests pass on an iPad simulator, where two scenes run side by side:
+   `Scripts/test-example.sh` with the udid of an iPad simulator. CI runs no iPad.
+
+On the tag, the release workflow runs the check, makes sure the tagged commit is on `main`, runs the
+whole CI workflow, makes sure the tag still points at the commit CI tested, and drafts a GitHub
+release from the changelog section. Publishing the release, and the pod, stays a manual step.
 
 ## Security
 
