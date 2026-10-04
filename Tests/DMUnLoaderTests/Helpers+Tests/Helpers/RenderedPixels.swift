@@ -19,24 +19,26 @@ extension UIView {
         }
     }
 
-    /// Turns the run loop until the rendering of the view has appeared and has stopped changing:
-    /// a rendering that differs from the blank first one, then two renderings a tenth of a second
-    /// apart that are the same. Gives up after the callback allowance, so a view that never
-    /// settles still ends the test.
-    func waitForSettledRendering() {
+    /// Turns the run loop until the view has appeared, has run for at least `minimumDuration`, and has
+    /// stopped changing: a rendering that differs from the blank first one, then two renderings a tenth of
+    /// a second apart that are the same. Returns false when the view did not settle within the callback
+    /// allowance, so the caller asserts the result.
+    func waitForSettledRendering(after minimumDuration: TimeInterval = 0) -> Bool {
         let blank = renderedLayers().pngData()
+        let start = Date()
         var previous = blank
         var appeared = false
-        let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
+        let deadline = start.addingTimeInterval(TestTiming.callbackAllowance)
         while Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.1))
             let current = renderedLayers().pngData()
             appeared = appeared || current != blank
-            if appeared && current == previous {
-                return
+            if appeared && current == previous && Date().timeIntervalSince(start) >= minimumDuration {
+                return true
             }
             previous = current
         }
+        return false
     }
 }
 

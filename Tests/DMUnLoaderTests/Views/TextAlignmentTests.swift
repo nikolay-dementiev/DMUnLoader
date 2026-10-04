@@ -67,6 +67,15 @@ final class TextAlignmentTests: XCTestCase {
 
     // MARK: - Helpers
 
+    /// The rows of the view were not drawn as text lines: the test stops here, with the count it found.
+    private struct MissingTextLines: Error, CustomStringConvertible {
+        let count: Int
+
+        var description: String {
+            "expected at least three drawn lines (two lines of text and the image or indicator), found \(count)"
+        }
+    }
+
     /// The two text lines of a loading view; `nil` keeps the default alignment.
     private func loadingTextLines(alignment: TextAlignment?) throws -> (TextLine, TextLine) {
         let text = "Wait\nLoading data"
@@ -77,7 +86,9 @@ final class TextAlignmentTests: XCTestCase {
         )
         let lines = try drawnLines(of: provider.getLoadingView())
         // The text comes first; the progress indicator below it.
-        XCTAssertGreaterThanOrEqual(lines.count, 3, "two text lines above the progress indicator")
+        guard lines.count >= 3 else {
+            throw MissingTextLines(count: lines.count)
+        }
         return (try XCTUnwrap(lines.first), lines[1])
     }
 
@@ -89,11 +100,15 @@ final class TextAlignmentTests: XCTestCase {
         )
         let lines = try drawnLines(of: provider.getSuccessView(object: "Done\nAll items were saved"))
         // The image comes first; the two text lines below it.
-        XCTAssertGreaterThanOrEqual(lines.count, 3, "the image above two text lines")
+        guard lines.count >= 3 else {
+            throw MissingTextLines(count: lines.count)
+        }
         return (lines[lines.count - 2], try XCTUnwrap(lines.last))
     }
 
-    /// The horizontal extent of each band of drawn rows of `view`, from the top.
+    /// The horizontal extent of each band of drawn rows of `view`, from the top. The rendering is read once
+    /// the view draws three bands: the two text lines and the image or indicator beside them. An animation
+    /// keeps changing the rendering, so the wait is for the bands, not for the rendering to stop.
     private func drawnLines(of view: some View) throws -> [TextLine] {
         let controller = UIHostingController(rootView: view)
         controller.view.backgroundColor = .clear
@@ -101,9 +116,19 @@ final class TextAlignmentTests: XCTestCase {
         window.rootViewController = controller
         window.isHidden = false
         defer { window.isHidden = true }
-        controller.view.waitForSettledRendering()
-        let alphas = try RenderedAlphas(of: controller.view.renderedLayers())
 
+        var lines = bands(in: try RenderedAlphas(of: controller.view.renderedLayers()))
+        let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
+        while lines.count < 3, Date() < deadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+            lines = bands(in: try RenderedAlphas(of: controller.view.renderedLayers()))
+        }
+        XCTAssertGreaterThanOrEqual(lines.count, 3, "the view draws its two text lines and what follows them")
+        return lines
+    }
+
+    /// The horizontal extent of each band of drawn rows of the rendering, from the top.
+    private func bands(in alphas: RenderedAlphas) -> [TextLine] {
         var lines: [TextLine] = []
         var current: TextLine?
         for row in 0..<alphas.height {

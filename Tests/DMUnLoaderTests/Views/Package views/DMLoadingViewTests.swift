@@ -282,27 +282,17 @@ final class DMLoadingViewTests: XCTestCase {
     /// 0.2 seconds.
     private static let fadeInTime: Double = 0.6
 
-    /// The view hosted in a window of the snapshot device's size until its fade-in has
-    /// ended, then taken out of the window, so a snapshot shows the HUD as a person sees it
-    /// once it has appeared. The fade-in has ended when two renderings a tenth of a second
-    /// apart are the same: on a busy machine, with test runs in parallel, the spring can
-    /// still be moving after `fadeInTime`.
+    /// The view hosted in a window of the snapshot device's size until its fade-in has ended, then taken
+    /// out of the window, so a snapshot shows the HUD as a person sees it once it has appeared. The fade-in
+    /// has ended when the view has run for the fade's duration and its rendering has stopped changing; on a
+    /// busy machine the spring can still be moving after `fadeInTime`, so the stability is required too.
     private func fadedIn(_ view: some View) -> UIViewController {
         let controller = UIHostingController(rootView: view)
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 390, height: 844))
         window.rootViewController = controller
         window.isHidden = false
-        RunLoop.current.run(until: Date().addingTimeInterval(Self.fadeInTime))
-        let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
-        var previous = controller.view.renderedLayers().pngData()
-        while Date() < deadline {
-            RunLoop.current.run(until: Date().addingTimeInterval(0.1))
-            let current = controller.view.renderedLayers().pngData()
-            if current == previous {
-                break
-            }
-            previous = current
-        }
+        let settled = controller.view.waitForSettledRendering(after: Self.fadeInTime)
+        XCTAssertTrue(settled, "the HUD settles within the callback allowance, so the snapshot shows it faded in")
         window.isHidden = true
         window.rootViewController = nil
         return controller
