@@ -68,6 +68,8 @@ public final class DMLoadingManagerMain: DMLoadingManager {
         handleInactivityTimer(forState: loadableState)
     }
     
+    /// Creates a manager with no state shown and `DMLoadingManagerDefaultSettings()`: a success
+    /// or a failure hides after 2 seconds.
     public convenience init() {
         self.init(state: .none,
                   settings: DMLoadingManagerDefaultSettings())

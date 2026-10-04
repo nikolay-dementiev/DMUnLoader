@@ -3,6 +3,8 @@
 
 import SwiftUI
 
+/// The root view of a scene that shows the HUD of a loading manager over that scene. The
+/// content of the scene receives the manager, to show its states.
 public struct DMRootLoadingView<
     LM: DMLoadingManager,
     Content: View
@@ -71,6 +73,7 @@ public struct DMRootLoadingView<
         self.content = content
     }
 
+    /// The content of the scene; the HUD of the manager is shown over the scene.
     public var body: some View {
         switch managerSource {
         case .createdForTheSceneDelegate:

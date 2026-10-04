@@ -4,17 +4,26 @@
 //  Created by Mykola Dementiev
 //
 
-/// An enumeration representing the possible states of a loadable operation.
-/// Conforms to `Hashable` and `RawRepresentable` for easy comparison and serialization.
+/// The state of a loading manager: nothing shown, work running, a failure or a success.
+///
+/// `rawValue` describes a state for logs. It cannot be read back: `init?(rawValue:)` always
+/// returns `nil`.
 public enum DMLoadableType: Hashable, RawRepresentable {
     
+    /// A description of the state, for logs.
     public typealias RawValue = String
     
+    /// Work runs; `provider` supplies the loading view.
     case loading(provider: AnyDMLoadingViewProvider)
+    /// A failure: `provider` supplies the view of `error`, and `onRetry`, when not `nil`, runs
+    /// from its Retry button.
     case failure(error: any Error, provider: AnyDMLoadingViewProvider, onRetry: (any DMAction)? = nil)
+    /// A success with its message; `provider` supplies the view.
     case success(any DMLoadableTypeSuccess, provider: AnyDMLoadingViewProvider)
+    /// No HUD is shown.
     case none
     
+    /// "Loading", "Error: `<error>`", "Success: `<message>`" or "None".
     public var rawValue: RawValue {
         let rawValueForReturn: RawValue
         switch self {
@@ -30,6 +39,7 @@ public enum DMLoadableType: Hashable, RawRepresentable {
         return rawValueForReturn
     }
     
+    /// Always `nil`: a state holds a provider and actions that no text can restore.
     public init?(rawValue: RawValue) {
         nil
     }
