@@ -61,7 +61,7 @@ TEST_GROUPS=(
 # refused.
 CLASSES="$(find "$UI_TESTS" -name '*.swift' -exec grep -hoE '(^|[^A-Za-z0-9_])class +[A-Za-z0-9_]+ *: *[A-Za-z0-9_.]+' {} + \
     | sed -E 's/.*class +([A-Za-z0-9_]+) *: *([A-Za-z0-9_.]+).*/\1 \2/')"
-INDIRECT="$(awk '$1 ~ /Tests$/ && $2 != "XCTestCase" { print $1 }' <<< "$CLASSES" | sort -u | tr '\n' ' ')"
+INDIRECT="$(awk '$2 != "XCTestCase" { print $1 }' <<< "$CLASSES" | sort -u | tr '\n' ' ')"
 if [ -n "${INDIRECT// /}" ]; then
     echo "test-example: UI test classes that do not derive from XCTestCase directly: ${INDIRECT}- the groups cannot see them." >&2
     exit 2
