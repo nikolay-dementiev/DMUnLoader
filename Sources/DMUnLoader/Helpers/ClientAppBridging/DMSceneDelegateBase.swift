@@ -14,9 +14,10 @@ public final class DMSceneDelegateUIKit<
     
     private let decoratee = DMSceneDelegateBase<LM>()
     
-    /// The loading manager of the scene, created when the scene connects. It is set after
-    /// `Helper` built the root view controller, which receives the same manager as its
-    /// argument. Setting it works as `DMSceneDelegateBase.loadingManager` describes.
+    /// The loading manager of the scene, created when the scene connects. It is set before
+    /// `Helper` builds the root view controller, which receives the same manager as its
+    /// argument, so the root view controller finds it here. Setting it works as
+    /// `DMSceneDelegateBase.loadingManager` describes.
     public var loadingManager: LM? {
         get { decoratee.loadingManager }
         set { decoratee.loadingManager = newValue }
@@ -40,14 +41,14 @@ public final class DMSceneDelegateUIKit<
             return
         }
         
+        let loadingManager = LM()
+        // Set before the main window is built, so the root view controller can read it through
+        // this delegate. The HUD connects after the main window is shown, so its window is above it.
+        self.loadingManager = loadingManager
+        setupMainWindow(in: windowScene, loadingManager: loadingManager)
         decoratee.scene(windowScene,
                         willConnectTo: session,
                         options: connectionOptions)
-
-        let loadingManager = LM()
-        setupMainWindow(in: windowScene, loadingManager: loadingManager)
-        // Handed over after the main window is shown, so the HUD window is created above it.
-        self.loadingManager = loadingManager
     }
 
     private func setupMainWindow(in scene: UIWindowScene, loadingManager: LM) {
