@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024" role="img" aria-labelledby="title desc">
+  <title id="title">DMUnLoader</title>
+  <desc id="desc">Loading, success and failure for iOS. SwiftUI and UIKit. Three panels show an eight-spoke loading indicator, a checkmark in a filled circle, and a warning triangle.</desc>
+  <rect width="1536" height="1024" fill="#FFF6DC"/>
+  <g id="panels">
+    <path fill="#76C0EC" d="M0 403H512V1024H0Z"/>
+    <path fill="#425B9A" d="M512 403H1024V1024H512Z"/>
+    <path fill="#FF95A5" d="M1024 403H1536V1024H1024Z"/>
+  </g>
+  <g id="typography" font-family="Arial, Helvetica, sans-serif" fill="#425B9A">
+    <text x="55" y="256" font-size="220" font-weight="700">DMUnLoader</text>
+    <text x="59" y="345" font-size="65" font-weight="700">Loading, success &amp; failure for iOS</text>
+    <text x="1257" y="345" font-size="31">SwiftUI · UIKit</text>
+    <g font-size="58" font-weight="700" text-anchor="middle">
+      <text x="256" y="927">Loading</text>
+      <text x="768" y="927" fill="#FFF6DC">Success</text>
+      <text x="1280" y="879">Failure</text>
+    </g>
+  </g>
+  <g id="loading" fill="none" stroke="#425B9A" stroke-width="40" stroke-linecap="round" transform="translate(252 649)">
+    <path d="M0 -86V-146"/>
+    <path d="M0 -86V-146" transform="rotate(45)" stroke="#4d71ac"/>
+    <path d="M0 -86V-146" transform="rotate(90)" stroke="#5988bf"/>
+    <path d="M0 -86V-146" transform="rotate(135)" stroke="#639cce"/>
+    <path d="M0 -86V-146" transform="rotate(180)" stroke="#65a0d2"/>
+    <path d="M0 -86V-146" transform="rotate(225)" stroke="#6198cb"/>
+    <path d="M0 -86V-146" transform="rotate(270)" stroke="#5988bf"/>
+    <path d="M0 -86V-146" transform="rotate(315)" stroke="#4d71ac"/>
+  </g>
+  <g id="success">
+    <circle cx="767" cy="646" r="152" fill="#FFF6DC"/>
+    <path d="M710 656L750 701L830 601" fill="none" stroke="#425B9A" stroke-width="33" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g id="failure" transform="translate(256 91) scale(.8)" fill="none" stroke="#425B9A" stroke-width="29" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1256 529Q1281 493 1305 530L1428 740Q1444 779 1407 780H1153Q1115 780 1132 743Z"/>
+    <path d="M1281 599V680"/>
+    <circle cx="1281" cy="725" r="18" fill="#425B9A" stroke="none"/>
+  </g>
+  <g id="retry">
+    <rect x="1150" y="917" width="260" height="70" rx="35" fill="#425B9A"/>
+    <g fill="none" stroke="#FFF6DC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M1206 943A14 14 0 1 0 1208 958"/>
+      <path d="M1196 943H1207V932"/>
+    </g>
+    <text x="1231" y="965" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700" fill="#FFF6DC">Retry</text>
+  </g>
+</svg>
