@@ -7,9 +7,8 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
 
 ### Added
 
-- `DMRootLoadingView(manager:content:onAttachmentFailure:)` shows the HUD of a loading manager
-  that the app owns over the scene of the view, with no app delegate of the library.
-  `DMHUDAttachmentFailure` is the reason it would report; version 1.1.0 knows none.
+- `DMRootLoadingView(manager:content:)` shows the HUD of a loading manager that the app owns over
+  the scene of the view, with no app delegate of the library.
 - `DMLoadingManagerDefaultSettings` is public and `Sendable`, with one initializer whose
   arguments default to the released values.
 - Three settings of a loading manager, each defaulting to the released behaviour, so a settings

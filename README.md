@@ -452,9 +452,8 @@ scene delegate of DMUnLoader holds a manager and that also shows
 ### Failures
 
 `DMRootLoadingView(content:)` without the app delegate of DMUnLoader stops the app when the view
-appears. `DMRootLoadingView(manager:content:onAttachmentFailure:)` needs no app delegate: until
-the view is in a window of a scene, the manager waits, and a reason that the HUD cannot be shown
-would reach `onAttachmentFailure`. Version 1.1.0 knows no such reason.
+appears. `DMRootLoadingView(manager:content:)` needs no app delegate: until the view is in a
+window of a scene, the manager waits, and the HUD appears once the view is in one.
 
 ### Accessibility
 

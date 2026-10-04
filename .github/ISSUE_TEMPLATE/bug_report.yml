@@ -49,6 +49,6 @@ body:
     id: actual
     attributes:
       label: What happened
-      description: A screenshot of the HUD, the DMHUDAttachmentFailure your app received, or the line in the unified log under the subsystem DMUnLoader.
+      description: A screenshot of the HUD, or the line in the unified log under the subsystem DMUnLoader.
     validations:
       required: true
