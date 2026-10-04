@@ -1,3 +1,5 @@
+> Records the design of DMUnLoader 1.0. The code is the reference: where this document and the code differ, the code is right.
+
 # Test Cases: "DMLoadingViewProvider"
 
 ## 1. ✅ General Information
@@ -41,7 +43,7 @@ protocol DMLoadingViewProvider: ObservableObject, Hashable {
 ### Scenario 2: 🚧 Verify Loading View
 - **Description**: Check if the `getLoadingView` method returns a `DMProgressView` configured with the provided `loadingViewSettings`.
 
-**[> test plan available here <](../TestPlanning/LoadingView-TestCases.md)**
+**[> test plan available here <](../TestPlanning/DMLoading%20View%20-%20TestCases%20-%20%E2%9C%85.md)**
 - **Status**: ? / 🚧 / ❌ / ✅
 
 ---
@@ -49,7 +51,7 @@ protocol DMLoadingViewProvider: ObservableObject, Hashable {
 ### Scenario 3: ? Verify Error View
 - **Description**: Check if the `getErrorView` method returns a `DMErrorView` configured with the provided `errorViewSettings`, `error`, `onRetry`, and `onClose`.
 
-**[> test plan available here <](../TestPlanning/Error%20View%20-%20TestCases.md)**
+**[> test plan available here <](../TestPlanning/Error%20View%20-%20TestCases%20-%20%E2%9C%85.md)**
 - **Status**: ? / 🚧 / ❌ / ✅
 
 ---
@@ -57,7 +59,7 @@ protocol DMLoadingViewProvider: ObservableObject, Hashable {
 ### Scenario 4: ? Verify Success View
 - **Description**: Check if the `getSuccessView` method returns a `DMSuccessView` configured with the provided `successViewSettings` and `object`.
 
-**[> test plan available here <](../TestPlanning/Success%20View%20-%20TestCases.md)**
+**[> test plan available here <](../TestPlanning/Success%20View%20-%20TestCases%20-%20%E2%9C%85.md)**
 - **Status**: ? / 🚧 / ❌ / ✅
 
 ---

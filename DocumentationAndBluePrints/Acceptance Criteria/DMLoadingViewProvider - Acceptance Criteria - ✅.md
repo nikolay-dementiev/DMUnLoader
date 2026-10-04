@@ -1,3 +1,5 @@
+> Records the design of DMUnLoader 1.0. The code is the reference: where this document and the code differ, the code is right.
+
 # Acceptance Criteria: "DMLoadingViewProvider"
 
 ## 1. General Information
@@ -23,21 +25,21 @@
 ### Criterion 2: Loading View Behavior
 - **Description**: The `getLoadingView` method should return a `DMProgressView` configured with the provided `loadingViewSettings`.
 
-**[> Acceptance Criteria available here <](../Acceptance%20Criteria/Loading%20View%20-%20Acceptance%20Criteria.md)**
+**[> Acceptance Criteria available here <](../Acceptance%20Criteria/DMLoading%20View%20-%20Acceptance%20Criteria%20-%20%E2%9C%85.md)**
 
 ---
 
 ### Criterion 3: Error View Behavior
 - **Description**: The `getErrorView` method should return a `DMErrorView` configured with the provided `errorViewSettings`, `error`, `onRetry`, and `onClose`.
 
-**[> Acceptance Criteria available here <](../Acceptance%20Criteria/Error%20View%20-%20Acceptance%20Criteria.md)**
+**[> Acceptance Criteria available here <](../Acceptance%20Criteria/Error%20View%20-%20Acceptance%20Criteria%20-%20%E2%9C%85.md)**
 
 ---
 
 ### Criterion 4: Success View Behavior
 - **Description**: The `getSuccessView` method should return a `DMSuccessView` configured with the provided `successViewSettings` and `object`.
 
-**[> Acceptance Criteria available here <](../Acceptance%20Criteria/Success%20View%20-%20Acceptance%20Criteria.md)**
+**[> Acceptance Criteria available here <](../Acceptance%20Criteria/Success%20View%20-%20Acceptance%20Criteria%20-%20%E2%9C%85.md)**
 
 ---
 
