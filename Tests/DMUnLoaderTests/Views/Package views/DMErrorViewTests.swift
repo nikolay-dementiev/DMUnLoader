@@ -59,21 +59,26 @@ final class DMErrorViewTests: XCTestCase {
     }
     
     func test_ErrorText_CorrespondsTo_AnEmpty_Settings() throws {
-        // Given
-        let defaultSettings = DMErrorDefaultViewSettings()
+        // Given: an errorText of nil shows the description only (DMErrorViewSettings)
+        let settings = DMErrorDefaultViewSettings(errorText: nil)
+        let error = NSError(
+            domain: "TestErrorDomain",
+            code: 1,
+            userInfo: [NSLocalizedDescriptionKey: "Something failed"]
+        )
         
         // When
         let sut = makeSUT(
-            settings: defaultSettings,
+            settings: settings,
+            error: error,
             onClose: DMButtonAction { }
         )
         
         // Then
-        try checkErrorTextCorrespondsToSettings(
-            sut: sut,
-            expectedTextFromSettings: nil,
-            expectedTextString: nil
-        )
+        let titles = try sut.inspect().findAll(DMErrorView.ErrorText.self)
+        XCTAssertEqual(titles.count, 1, "a nil errorText leaves one text: the description")
+        let description = try descriptionText(of: sut).string()
+        XCTAssertEqual(description, "Something failed", "the one text is the localized description of the error")
     }
     
     func testThatThe_CloseButton_IsPresent() throws {
@@ -757,11 +762,6 @@ final class DMErrorViewTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
-        guard expectedTextFromSettings?.isEmpty == false
-                || expectedTextString?.isEmpty == false else {
-            return
-        }
-        
         // When
         let text = try titleText(of: sut)
         
