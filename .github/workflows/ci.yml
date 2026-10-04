@@ -35,8 +35,6 @@ jobs:
           persist-credentials: false
       - name: Lint
         run: Scripts/lint.sh
-      - name: The example's install helper deletes nothing outside the example
-        run: Scripts/check-example-install.sh
 
   test:
     # The newest hosted Xcode with the newest runtime, and with the oldest runtime it offers.

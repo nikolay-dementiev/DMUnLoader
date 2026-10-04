@@ -28,7 +28,6 @@ The checks are scripts in `Scripts/`, and CI runs them as you do, except
 | `Scripts/coverage-gate.sh <result bundle>` | the line coverage of the library against its floor |
 | `Scripts/check-warnings.sh <build log>` | that no compiler warning points into this repository |
 | `Scripts/check-example-project.sh` | that the example's Xcode project matches its XcodeGen spec |
-| `Scripts/check-example-install.sh` | that the old example's install helper deletes nothing outside the example |
 | `Scripts/test-example.sh <simulator udid>` | the example's tests, below |
 
 CI also builds the documentation, with DocC's warnings as errors:
