@@ -29,12 +29,13 @@ package protocol AccessibilityAnnouncer: AnyObject {
 }
 
 /// Moves the focus of assistive technology into a HUD and back, tells it when the HUD shows
-/// another phase, and keeps the content under the HUD out of its reach while the HUD is shown.
+/// another state, and keeps the content under the HUD out of its reach while the HUD is shown.
 @MainActor
 package final class HUDAccessibilityCoordinator {
     private let announcer: any AccessibilityAnnouncer
     private let contentHider: any ContentUnderneathHiding
     private var phase: HUDPhase = .none
+    private var state: AnyHashable?
     private weak var focusBeforeHUD: AnyObject?
 
     package init(announcer: any AccessibilityAnnouncer, contentHider: any ContentUnderneathHiding) {
@@ -42,10 +43,12 @@ package final class HUDAccessibilityCoordinator {
         self.contentHider = contentHider
     }
 
-    /// The HUD shows `next` now.
-    package func phaseDidChange(to next: HUDPhase) {
-        let transition = HUDAccessibilityTransition(from: phase, to: next)
+    /// The HUD shows `next` now, in the state that `state` identifies. Another state in the same
+    /// phase is a change of content.
+    package func stateDidChange(to next: HUDPhase, identifiedBy state: AnyHashable) {
+        let transition = HUDAccessibilityTransition(from: phase, to: next, stateChanged: state != self.state)
         phase = next
+        self.state = state
         switch transition {
         case .entered:
             focusBeforeHUD = announcer.focusedElement
@@ -62,6 +65,7 @@ package final class HUDAccessibilityCoordinator {
 
     /// The presenter removed the HUD, whatever it showed.
     package func hudDidGo() {
+        state = nil
         guard phase.showsHUD else {
             return
         }

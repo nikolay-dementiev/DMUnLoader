@@ -8,13 +8,13 @@ import SwiftUI
 
 package struct DMHudSceneView<LM: DMLoadingManager>: View {
     @ObservedObject var loadingManager: LM
-    private let onPhaseChange: @MainActor (HUDPhase) -> Void
+    private let onStateChange: @MainActor (DMLoadableType) -> Void
 
-    /// - Parameter onPhaseChange: Called with the phase of the state of `loadingManager` when
-    ///   the view appears and whenever the phase changes.
-    package init(loadingManager: LM, onPhaseChange: @escaping @MainActor (HUDPhase) -> Void = { _ in }) {
+    /// - Parameter onStateChange: Called with the state of `loadingManager` when the view
+    ///   appears and whenever the state changes, also inside one phase.
+    package init(loadingManager: LM, onStateChange: @escaping @MainActor (DMLoadableType) -> Void = { _ in }) {
         self.loadingManager = loadingManager
-        self.onPhaseChange = onPhaseChange
+        self.onStateChange = onStateChange
     }
 
     package var body: some View {
@@ -26,8 +26,8 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
                     viewModel: DefaultHUDViewModel(loadingManager: loadingManager)
                 )
             }
-            .onChange(of: loadingManager.loadableState.phase, initial: true) { _, phase in
-                onPhaseChange(phase)
+            .onChange(of: loadingManager.loadableState, initial: true) { _, state in
+                onStateChange(state)
             }
     }
 }
