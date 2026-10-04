@@ -41,19 +41,22 @@ final class DMRootLoadingViewTests: XCTestCase {
         let evaluations = Managers()
         trackForMemoryLeaks(sceneDelegate)
         let sut = DMRootLoadingView { (manager: DMLoadingManagerMain) -> Color in
-            evaluations.values.append(manager)
+            evaluations.record(manager)
             return Color.clear
         }
         .environmentObject(sceneDelegate)
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        let evaluationsBefore = settledCount(of: evaluations)
+        XCTAssertTrue(
+            waitUntil { !evaluations.values.isEmpty },
+            "the content is evaluated once the view is hosted"
+        )
 
         evaluations.values.first?.showLoading(provider: DefaultDMLoadingViewProvider())
 
         XCTAssertTrue(
-            waitUntil { evaluations.values.count > evaluationsBefore },
-            "a change of the manager the view created evaluates the content again"
+            waitUntil { evaluations.lastSawLoading },
+            "the last evaluation of the content saw the loading state of its manager"
         )
     }
 
@@ -63,7 +66,7 @@ final class DMRootLoadingViewTests: XCTestCase {
         let injected = DMLoadingManagerMain()
         let evaluations = Managers()
         let sut = DMRootLoadingView(manager: injected) { (manager: DMLoadingManagerMain) -> Color in
-            evaluations.values.append(manager)
+            evaluations.record(manager)
             return Color.clear
         }
         ViewHosting.host(view: sut)
@@ -82,41 +85,41 @@ final class DMRootLoadingViewTests: XCTestCase {
         let injected = DMLoadingManagerMain()
         let evaluations = Managers()
         let sut = DMRootLoadingView(manager: injected) { (manager: DMLoadingManagerMain) -> Color in
-            evaluations.values.append(manager)
+            evaluations.record(manager)
             return Color.clear
         }
         ViewHosting.host(view: sut)
         defer { ViewHosting.expel() }
-        let evaluationsBefore = settledCount(of: evaluations)
+        XCTAssertTrue(
+            waitUntil { !evaluations.values.isEmpty },
+            "the content is evaluated once the view is hosted"
+        )
 
         injected.showLoading(provider: DefaultDMLoadingViewProvider())
 
         XCTAssertTrue(
-            waitUntil { evaluations.values.count > evaluationsBefore },
-            "a change of the injected manager evaluates the content again"
+            waitUntil { evaluations.lastSawLoading },
+            "the last evaluation of the content saw the loading state of the injected manager"
         )
     }
 
     // MARK: - Helpers
 
+    @MainActor
     private final class Managers {
         var values: [DMLoadingManagerMain] = []
-    }
+        /// Whether the last evaluation of the content found its manager in a loading state.
+        private(set) var lastSawLoading = false
 
-    /// The count once no evaluation came for a moment: SwiftUI evaluates a view it starts
-    /// to host more than once.
-    private func settledCount(of evaluations: Managers) -> Int {
-        _ = waitUntil { !evaluations.values.isEmpty }
-        let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
-        var count = evaluations.values.count
-        while Date() < deadline {
-            RunLoop.current.run(until: Date().addingTimeInterval(0.3))
-            guard evaluations.values.count != count else {
-                break
+        /// Called by the content on every evaluation, with the manager it was given.
+        func record(_ manager: DMLoadingManagerMain) {
+            values.append(manager)
+            if case .loading = manager.loadableState {
+                lastSawLoading = true
+            } else {
+                lastSawLoading = false
             }
-            count = evaluations.values.count
         }
-        return count
     }
 
     /// Turns the run loop until `condition` holds or the callback allowance passed.
