@@ -49,6 +49,45 @@ final class AccessibilityAdaptersTests: XCTestCase {
         XCTAssertTrue(windows.below.accessibilityElementsHidden, "a window the host had hidden stays hidden")
     }
 
+    func test_contentHider_hiddenTwice_restoredOnce_givesTheWindowsBack() {
+        let windows = SceneWindows()
+        let sut = makeHider(for: windows)
+        sut.hideContentUnderneath()
+        sut.hideContentUnderneath()
+
+        sut.restoreContentUnderneath()
+
+        XCTAssertFalse(windows.app.accessibilityElementsHidden, "one restore gives back what two hides of one HUD took")
+    }
+
+    func test_contentHider_twoHUDsOverlap_giveTheWindowBackWhenTheLastGoes() {
+        let windows = SceneWindows()
+        let secondHUD = UIWindow()
+        secondHUD.windowLevel = .normal
+        let first = makeHider(for: windows)
+        let second = SceneContentHider(hudWindow: secondHUD) { windows.all + [secondHUD] }
+        first.hideContentUnderneath()
+        second.hideContentUnderneath()
+
+        first.restoreContentUnderneath()
+        let hiddenWhileTheSecondIsShown = windows.app.accessibilityElementsHidden
+        second.restoreContentUnderneath()
+
+        XCTAssertTrue(hiddenWhileTheSecondIsShown, "the window stays hidden while another HUD still hides it")
+        XCTAssertFalse(windows.app.accessibilityElementsHidden, "the window comes back when the last HUD goes")
+    }
+
+    func test_contentHider_anotherHUDWindow_staysReachable() {
+        let windows = SceneWindows()
+        let otherHUD = DMPassThroughWindow(frame: .zero)
+        otherHUD.windowLevel = .normal
+        let sut = SceneContentHider(hudWindow: windows.hud) { windows.all + [otherHUD] }
+
+        sut.hideContentUnderneath()
+
+        XCTAssertFalse(otherHUD.accessibilityElementsHidden, "the window of another HUD is not content under this one")
+    }
+
     // MARK: - Remembered element
 
     func test_announcer_viewInAWindow_isOnScreen() {
