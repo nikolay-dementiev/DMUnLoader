@@ -7,6 +7,9 @@ A HUD for the loading, success and failure states of an iOS app, for SwiftUI and
 [![Platforms](https://img.shields.io/badge/Platforms-iOS_17%2B-yellowgreen?style=flat-square)](#requirements)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader?ref=badge_shield)
+[![Commit activity](https://img.shields.io/github/commit-activity/y/nikolay-dementiev/DMUnLoader)](https://github.com/nikolay-dementiev/DMUnLoader/graphs/commit-activity)
+[![Last commit](https://img.shields.io/github/last-commit/nikolay-dementiev/DMUnLoader)](https://github.com/nikolay-dementiev/DMUnLoader/commits/main/)
+[![DeepSource](https://app.deepsource.com/gh/nikolay-dementiev/DMUnLoader.svg/?label=active+issues&show_trend=true)](https://app.deepsource.com/gh/nikolay-dementiev/DMUnLoader/)
 
 <p align="center">
   <img src="./DocumentationAndBluePrints/Assets/DMUnLoader-main.svg?raw=true" alt="DMUnLoader: loading, success and failure for iOS, in SwiftUI and UIKit" style="max-height: 400px; aspect-ratio: 1536/1024; object-fit: scale-down;">
@@ -550,3 +553,5 @@ DMUnLoader is one of three packages that share their conventions:
   and [How to layer multiple windows in SwiftUI](https://www.fivestars.blog/articles/swiftui-windows/).
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fnikolay-dementiev%2FDMUnLoader?ref=badge_large)
+
+![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Fnikolay-dementiev%2FDMUnLoader)
