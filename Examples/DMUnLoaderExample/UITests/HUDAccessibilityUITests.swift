@@ -32,7 +32,9 @@ final class HUDAccessibilityUITests: XCTestCase {
         app.buttons[DemoIdentifier.showFailure].tap()
         XCTAssertTrue(app.buttons["Retry"].waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
 
-        try app.performAccessibilityAudit(for: Self.auditTypes)
+        try performAccessibilityAuditRetryingTimeouts {
+            try app.performAccessibilityAudit(for: Self.auditTypes)
+        }
     }
 
     func test_loadingHUD_accessibilityAudit_hasNoIssuesButTheLoadingText() throws {
@@ -41,9 +43,11 @@ final class HUDAccessibilityUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Loading..."].waitForExistence(timeout: Wait.screenChange), "the loading HUD is shown")
 
         // Text clipped: the default progress card clips "Loading..." at large text sizes; AccessibilitySnapshotTests records it.
-        try app.performAccessibilityAudit(for: Self.auditTypes.subtracting(.textClipped)) { issue in
-            // "Label not human-readable" on the default "Loading...": no documented criteria; VoiceOver reads it as shown.
-            issue.compactDescription == "Label not human-readable" && issue.element?.label == "Loading..."
+        try performAccessibilityAuditRetryingTimeouts {
+            try app.performAccessibilityAudit(for: Self.auditTypes.subtracting(.textClipped)) { issue in
+                // "Label not human-readable" on the default "Loading...": no documented criteria; VoiceOver reads it as shown.
+                issue.compactDescription == "Label not human-readable" && issue.element?.label == "Loading..."
+            }
         }
     }
 
