@@ -201,11 +201,15 @@ extension XCTestCase {
     }
 
     /// A point inside the content control, below the HUD card: only the backdrop covers it.
-    func backdropPoint(in app: XCUIApplication) -> XCUICoordinate {
+    func backdropPoint(
+        in app: XCUIApplication,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> XCUICoordinate {
         let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown")
+        XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown", file: file, line: line)
         let origin = app.coordinate(withNormalizedOffset: .zero)
-        guard let frame = settledContentFrame(of: content, covering: centreOfScreen(of: app)) else {
+        guard let frame = settledContentFrame(of: content, covering: centreOfScreen(of: app), file: file, line: line) else {
             return origin
         }
         return origin.withOffset(CGVector(dx: frame.midX, dy: frame.maxY - 20))
