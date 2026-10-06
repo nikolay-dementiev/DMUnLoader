@@ -51,7 +51,7 @@ PACKAGES="$ROOT/.build/example-packages"
 # (DMSceneDelegateTypeUIKit) and --uikit --custom-manager (DMSceneDelegateUIKit).
 # The tests of the UI test helpers launch no app, so they run in the first group.
 TEST_GROUPS=(
-    "swiftui|AccessibilityAuditRetryTests HUDAccessibilityUITests HUDAppearanceUITests HUDControlsUITests HUDLanguageUITests HUDTouchRoutingUITests InjectedManagerUITests"
+    "swiftui|AccessibilityAuditRetryTests HUDAccessibilityUITests HUDAppearanceUITests HUDControlsUITests HUDLanguageUITests HUDTouchRoutingUITests InjectedManagerUITests SettledFrameTests"
     "uikit|HUDTouchRoutingUIKitUITests"
     "uikit-custom-manager|HUDControlsUIKitCustomManagerUITests"
 )
