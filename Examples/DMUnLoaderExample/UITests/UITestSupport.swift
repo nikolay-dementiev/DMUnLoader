@@ -45,18 +45,19 @@ extension XCTestCase {
     /// HUD card covers because the card is centred, and a point near the bottom of the
     /// control, where only the backdrop is.
     ///
-    /// They are taken from the frames before any HUD is shown and resolved against the app,
-    /// so tapping them never depends on finding the control under a HUD.
+    /// They are taken from the frame once it has settled on one that covers the centre, before
+    /// any HUD is shown, and resolved against the app, so tapping them never depends on finding
+    /// the control under a HUD. A frame read during the launch animation misses the control.
     func contentTouchPoints(
         in app: XCUIApplication,
         content: XCUIElement,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> [XCUICoordinate] {
-        let frame = content.frame
-        let screen = app.frame
-        let centre = CGPoint(x: screen.midX, y: screen.midY)
-        XCTAssertTrue(frame.contains(centre), "the content control covers the centre of the screen", file: file, line: line)
+        let centre = centreOfScreen(of: app)
+        guard let frame = settledContentFrame(of: content, covering: centre, file: file, line: line) else {
+            return []
+        }
         let origin = app.coordinate(withNormalizedOffset: .zero)
         return [
             origin.withOffset(CGVector(dx: centre.x, dy: centre.y)),
@@ -203,9 +204,37 @@ extension XCTestCase {
     func backdropPoint(in app: XCUIApplication) -> XCUICoordinate {
         let content = app.buttons[DemoIdentifier.content]
         XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown")
-        let frame = content.frame
-        return app.coordinate(withNormalizedOffset: .zero)
-            .withOffset(CGVector(dx: frame.midX, dy: frame.maxY - 20))
+        let origin = app.coordinate(withNormalizedOffset: .zero)
+        guard let frame = settledContentFrame(of: content, covering: centreOfScreen(of: app)) else {
+            return origin
+        }
+        return origin.withOffset(CGVector(dx: frame.midX, dy: frame.maxY - 20))
+    }
+
+    /// The centre of the screen, which the HUD card covers.
+    func centreOfScreen(of app: XCUIApplication) -> CGPoint {
+        CGPoint(x: app.frame.midX, y: app.frame.midY)
+    }
+
+    /// The frame of the content control once it has settled on a frame that covers `centre`.
+    /// When none settles within `Wait.screenChange`, the test fails and names the frames read.
+    func settledContentFrame(
+        of content: XCUIElement,
+        covering centre: CGPoint,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> CGRect? {
+        switch settledFrame(from: .of(content), containing: centre, within: Wait.screenChange) {
+        case let .settled(frame):
+            return frame
+        case let .unsettled(reads):
+            XCTFail(
+                "the content control settles on no frame that covers the centre of the screen; frames read: \(reads)",
+                file: file,
+                line: line
+            )
+            return nil
+        }
     }
 
     func assertContentCountedNoTouch(in app: XCUIApplication, file: StaticString = #filePath, line: UInt = #line) {
