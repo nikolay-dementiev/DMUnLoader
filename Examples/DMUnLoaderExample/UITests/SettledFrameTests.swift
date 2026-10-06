@@ -6,35 +6,35 @@ import XCTest
 final class SettledFrameTests: XCTestCase {
 
     func test_settle_frameChangesTwiceThenHolds_givesTheFrameThatHolds() {
-        let frames = [covering(x: 0), covering(x: 10), covering(x: 20), covering(x: 20)]
-        let source = scriptedSource { frames[min($0, frames.count - 1)] }
+        let frames = [covering(shiftedBy: 0), covering(shiftedBy: 10), covering(shiftedBy: 20), covering(shiftedBy: 20)]
+        let source = makeSUT { frames[min($0, frames.count - 1)] }
 
         let result = settledFrame(from: source, containing: screenCentre, within: 15)
 
-        XCTAssertEqual(result, .settled(covering(x: 20)), "the frame that two reads agree on is the settled frame")
+        XCTAssertEqual(result, .settled(covering(shiftedBy: 20)), "the frame that two reads agree on is the settled frame")
         XCTAssertEqual(source.elapsed(), 0.75, "the frame settles at the read that agrees with the one before it")
     }
 
     func test_settle_twoEqualReads_settleAtTheSecondRead() {
-        let source = scriptedSource { _ in covering(x: 0) }
+        let source = makeSUT { _ in covering(shiftedBy: 0) }
 
         let result = settledFrame(from: source, containing: screenCentre, within: 15)
 
-        XCTAssertEqual(result, .settled(covering(x: 0)), "a frame that two consecutive reads agree on settles")
+        XCTAssertEqual(result, .settled(covering(shiftedBy: 0)), "a frame that two consecutive reads agree on settles")
         XCTAssertEqual(source.elapsed(), 0.25, "the second read comes 0.25 s after the first")
     }
 
     func test_settle_readsOneIntervalApart_settleAtThatInterval() {
-        let source = scriptedSource { _ in covering(x: 0) }
+        let source = makeSUT { _ in covering(shiftedBy: 0) }
 
         let result = settledFrame(from: source, containing: screenCentre, within: 15, every: 0.5)
 
-        XCTAssertEqual(result, .settled(covering(x: 0)), "the frame settles with a longer interval as well")
+        XCTAssertEqual(result, .settled(covering(shiftedBy: 0)), "the frame settles with a longer interval as well")
         XCTAssertEqual(source.elapsed(), 0.5, "the second read comes one interval after the first")
     }
 
     func test_settle_frameNeverCoversTheCentre_givesNoFrameAfterTheBudget() {
-        let source = scriptedSource { _ in outside }
+        let source = makeSUT { _ in outside }
 
         let result = settledFrame(from: source, containing: screenCentre, within: 15)
 
@@ -46,7 +46,7 @@ final class SettledFrameTests: XCTestCase {
     }
 
     func test_settle_frameKeepsChanging_givesNoFrameAfterTheBudget() {
-        let source = scriptedSource { covering(x: CGFloat($0)) }
+        let source = makeSUT { covering(shiftedBy: CGFloat($0)) }
 
         let result = settledFrame(from: source, containing: screenCentre, within: 15)
 
@@ -61,7 +61,7 @@ final class SettledFrameTests: XCTestCase {
     /// A source whose n-th read, counted from 0, is `frame(n)`. Each pause moves the clock on by
     /// its length, and `elapsed` reads the clock.
     @MainActor
-    private func scriptedSource(_ frame: @escaping (Int) -> CGRect) -> FrameSource {
+    private func makeSUT(_ frame: @escaping (Int) -> CGRect) -> FrameSource {
         var reads = 0
         var now: TimeInterval = 0
         return FrameSource(
@@ -78,9 +78,9 @@ final class SettledFrameTests: XCTestCase {
 /// The centre of a 402 by 874 point screen, where the example's touches are aimed.
 private let screenCentre = CGPoint(x: 201, y: 437)
 
-/// A frame of the full screen, moved to the right by `x`, so that it covers the centre.
-private func covering(x: CGFloat) -> CGRect {
-    CGRect(x: x, y: 0, width: 402, height: 874)
+/// A frame of the full screen, moved to the right by `shift`, so that it covers the centre.
+private func covering(shiftedBy shift: CGFloat) -> CGRect {
+    CGRect(x: shift, y: 0, width: 402, height: 874)
 }
 
 /// A frame below the screen, which does not cover the centre.
