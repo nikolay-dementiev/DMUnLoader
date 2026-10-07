@@ -118,7 +118,8 @@ else
         echo "check-manifest: warning: a version requirement on the package does not resolve until '$BLOCKER' is required by version."
     else
         echo "check-manifest: a version requirement on the package does not resolve:" >&2
-        grep -E "error:|cannot be used|unstable" "$WORK/version-resolution.log" | cut -c1-300 | head -5 >&2 || true
+        # Every line: the reason git gives follows SwiftPM's error line, on lines of its own.
+        cat "$WORK/version-resolution.log" >&2
         FAILED=1
     fi
 fi
