@@ -79,7 +79,7 @@ for MODE in $MODES; do
     # --no-clean keeps the consumer app that the lint built, and the log says where. The
     # backticks are characters of that message, not a command substitution.
     # shellcheck disable=SC2016
-    WORKSPACE="$(sed -n 's/^Pods workspace available at `\(.*\)` for inspection\.$/\1/p' "$LOG" | tail -1)"
+    WORKSPACE="$(sed -n 's/^Pods workspace available at `\(.*\)` for inspection\.$/\1/p' "$LOG" | tail -1)"  # The backticks are text of the CocoaPods log. skipcq: SH-2016
     CONSUMER="$(dirname "$WORKSPACE")"
     if [ -z "$WORKSPACE" ] || [ ! -d "$CONSUMER/Pods/Target Support Files" ]; then
         echo "check-podspec: the consumer app of the Swift $MODE lint was not found." >&2

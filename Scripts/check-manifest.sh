@@ -34,7 +34,7 @@ mkdir -p "$WORK"
 # The copy that the version probe tags lives in a folder this run creates, and leaves with it.
 PROBE=""
 # shellcheck disable=SC2329  # invoked by the trap below
-cleanup() {
+cleanup() {  # The EXIT trap below calls it. skipcq: SH-2329
     if [ -n "$PROBE" ]; then rm -rf "$PROBE"; fi
 }
 trap cleanup EXIT
