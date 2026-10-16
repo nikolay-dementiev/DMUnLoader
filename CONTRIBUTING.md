@@ -23,11 +23,11 @@ The checks are scripts in `Scripts/`, and CI runs them as you do, except
 | Script | What it checks |
 |---|---|
 | `Scripts/lint.sh` | SwiftLint, at the version pinned in `.swiftlint.yml` |
-| `Scripts/check-api.sh` | the public interface against `Fixtures/API/public-interface.txt`; `--self-test` runs the cases of its normalisation |
+| `Scripts/check-api.sh` | the public interface against `Fixtures/API/public-interface.txt`; `--self-test` runs the cases of its normalisation; `--since <ref>` prints, without a compiler, the lines the baseline lost, changed or gained since a git ref such as a release tag |
 | `Scripts/check-manifest.sh` | the manifest, installation by version, the consumer fixture, and every Swift block of `README.md` and of the documentation catalog, each on its own, in Swift 6 and Swift 5 mode: a manifest block is evaluated, every other block compiled. A warning in a compiled block fails it too; a manifest block is only evaluated, so a warning in it is not checked |
 | `Scripts/coverage-gate.sh <result bundle>` | the line coverage of the library against its floor |
 | `Scripts/check-podspec.sh` | `pod lib lint` in every Swift version of the podspec, that the pod makes its consumer link no test framework, and that the consumer app carries the pod's resource bundle with every key of the string catalog |
-| `Scripts/check-release.sh <version>` | that the newest heading of the changelog is that version with a real release date and has notes under it, and that the podspec still names the frozen 1.1.0; `--notes` prints the notes |
+| `Scripts/check-release.sh <version>` | that the newest heading of the changelog is that version with a real release date and has notes under it, and that the podspec still names the frozen 1.1.0; it also compares the release with the one below it in the changelog and refuses a version that keeps its major version after a removed or changed line of the interface, or after a `### Breaking changes` subsection; `--notes` prints the notes |
 | `Scripts/check-warnings.sh <build log>` | that no compiler warning points into this repository |
 | `Scripts/check-example-project.sh` | that the example's Xcode project matches its XcodeGen spec |
 | `Scripts/test-example.sh <simulator udid>` | the example's tests, below |
@@ -102,15 +102,28 @@ merge first, then tag. Before the tag is pushed:
 1. The newest heading of `CHANGELOG.md` is `## [<version>] -` with the release date and the notes
    under it. `Scripts/check-release.sh <version>` checks it. The podspec stays at 1.1.0, because
    the pod is frozen.
-2. The tests of the package and of the example app pass on iOS 17.5, the oldest version the
+2. Every change that is not purely additive needs a new major version, with no exception for a
+   small one. A removed or changed line of the interface is one:
+   `Scripts/check-api.sh --since <previous version>` lists them. A change of behaviour is another,
+   and the notes of the release declare it in a `### Breaking changes` subsection, because no
+   script can see behaviour: a change listed under `### Changed` alone does not count.
+   `Scripts/check-release.sh` refuses a version that keeps the major version of the previous one
+   when it finds either. Lines that were only added pass the script, and they are additive only
+   after a review that none adds a requirement to a protocol or an overload that makes an
+   existing call ambiguous: the script cannot see either, nor the order of the cases of an enum
+   or of the statements in the body of an inlinable function.
+   It cannot tell a line that a new compiler reworded from a line that the code changed, so both
+   count. Run `Scripts/check-api.sh` first, since the baseline is the interface of the library
+   only while that check passes.
+3. The tests of the package and of the example app pass on iOS 17.5, the oldest version the
    package supports, and on iOS 18.6. CI runs neither for the package and only iOS 18.6 for the
    example, so these runs are local:
    `xcodebuild test -scheme DMUnLoader -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 13 Pro,OS=17.5' -skipPackagePluginValidation`,
    the same with `name=iPhone 16 Pro,OS=18.6`, and `Scripts/test-example.sh` with the udid of
    each of those simulators.
-3. The example's tests pass on an iPad simulator, where two scenes run side by side:
+4. The example's tests pass on an iPad simulator, where two scenes run side by side:
    `Scripts/test-example.sh` with the udid of an iPad simulator. CI runs no iPad.
-4. The manual VoiceOver pass: the loading, success and failure HUDs of the example app, Retry,
+5. The manual VoiceOver pass: the loading, success and failure HUDs of the example app, Retry,
    Close and the escape gesture, and the focus that returns to the app when a HUD goes.
 
 On the tag, the release workflow runs the check, makes sure the tagged commit is on `main`, runs the
