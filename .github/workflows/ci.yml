@@ -228,7 +228,9 @@ jobs:
           path: .build/results/ci/thread-sanitizer.xcresult
 
   podspec:
-    # CocoaPods stays a channel until its trunk is frozen, so the spec has to pass its lint.
+    # The pod is frozen at 1.1.0 and nothing goes to the trunk again. The job lints the current
+    # sources as a pod against the frozen sibling pods (`~> 1.1` from the trunk), so it holds only
+    # while the sources use nothing the siblings added after 1.1.0.
     name: podspec
     runs-on: macos-26
     timeout-minutes: 45
