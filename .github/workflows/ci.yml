@@ -230,8 +230,7 @@ jobs:
   podspec:
     # The pod is frozen at 1.1.0 and nothing goes to the trunk again. The job lints the current
     # sources as a pod against the frozen sibling pods (`~> 1.1` from the trunk), so it holds only
-    # while the sources use nothing the siblings added after 1.1.0; the 2.0 design decides its
-    # future.
+    # while the sources use nothing the siblings added after 1.1.0.
     name: podspec
     runs-on: macos-26
     timeout-minutes: 45
