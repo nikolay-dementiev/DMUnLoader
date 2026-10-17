@@ -2,7 +2,8 @@
 #
 # Checks what a consumer of the package gets.
 #
-#   Scripts/check-manifest.sh
+#   Scripts/check-manifest.sh              run the checks below
+#   Scripts/check-manifest.sh --self-test  run the readers of item 2 on built-in texts
 #
 # 1. The manifest has no dependency by branch or revision, uses no plugin on any target
 #    and does not read the environment. SwiftPM refuses a version requirement on a package
@@ -17,11 +18,166 @@
 #    consumer's code stops building.
 # 4. Every Swift block of README.md and of the documentation catalog compiles as it is
 #    written, in Swift 6 and in Swift 5 language mode.
+#
+# --self-test needs no network, no build and no swift. A reader that never fails looks the
+# same as a clean tree, so it takes the python blocks of item 2 (marked readme-consumer and
+# resolved-inventory) out of this very file, the text that the check runs, and runs them on
+# texts that it carries: a README with no package manifest, two, exact: for from:, or two
+# requirements; a Package.resolved with an extra pin, one of the libraries the package brings
+# missing, no pin, the copy twice, a format other than 2 and 3, or that is not a resolution at
+# all. A reader changed to pass one of these fails the self-test. It does not run the shell
+# around the readers, the lines that set FAILED.
+#
+# Exit codes: 0 every check passed, 1 a check failed, 2 wrong usage, or the self-test could
+# not be made (python3 is missing, or a marked block is not where it expects).
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MODULE="DMUnLoader"
+
+# Takes the python block that follows the line "# <marker>" out of this script into <output file>:
+# the very text that the check runs. The marker must appear once, directly under the line that
+# opens the heredoc, so that a line added above it or a second marker cannot make the two differ.
+extract_block() {  # <marker> <output file>
+    local marker="$1" output="$2" found
+    found="$(awk -v marker="# $marker" '$0 == marker { count++; opener = prev } { prev = $0 } END { print count + 0 ":" opener }' "${BASH_SOURCE[0]}")"
+    case "$found" in
+        "1:"*"<<'PY'") ;;
+        *)
+            echo "check-manifest: self-test: the marker $marker must appear once, under the line that opens the heredoc of its step (found '$found')" >&2
+            exit 2
+            ;;
+    esac
+    awk -v marker="# $marker" '$0 == marker { found = 1 } found && /^PY$/ { exit } found' "${BASH_SOURCE[0]}" > "$output"
+    if [ ! -s "$output" ]; then
+        echo "check-manifest: self-test: the python block marked $marker is not in ${BASH_SOURCE[0]}" >&2
+        exit 2
+    fi
+}
+
+# Runs the readers of step 2 (the README and Package.resolved) on built-in texts, and exits.
+SELF_TEST_WORK=""
+self_test() {
+    local total=0 failures=0 got output fence app app_two copy action blur all
+    local libraries=(dmaction dmvariableblurview)
+    if ! command -v python3 > /dev/null; then
+        echo "check-manifest: self-test: python3 is not installed" >&2
+        exit 2
+    fi
+    SELF_TEST_WORK="$(mktemp -d "${TMPDIR:-/tmp}/check-manifest-self-test.XXXXXX")" || exit 2
+    trap 'rm -rf "$SELF_TEST_WORK"' EXIT
+    extract_block readme-consumer "$SELF_TEST_WORK/readme.py"
+    extract_block resolved-inventory "$SELF_TEST_WORK/inventory.py"
+    pin() {  # <identity> <version>
+        printf '{"identity":"%s","kind":"remoteSourceControl","location":"/x/%s","state":{"revision":"abc","version":"%s"}}' "$1" "$1" "$2"
+    }
+    judge() {  # <name> <expected status> <expected text> <status the reader gave> <its output>
+        total=$((total + 1))
+        if [ "$4" -eq "$2" ] && printf '%s\n' "$5" | grep -q -F -- "$3"; then
+            echo "check-manifest: self-test ok   $1"
+        else
+            failures=$((failures + 1))
+            echo "check-manifest: self-test FAIL $1: expected status $2 and '$3', got status $4:" >&2
+            printf '%s\n' "$5" | head -5 | sed 's/^/    /' >&2
+        fi
+    }
+    expect() {  # <name> <expected status> <expected text>: the reader on Package.resolved as it is
+        got=0
+        output="$(python3 "$SELF_TEST_WORK/inventory.py" "$SELF_TEST_WORK/Package.resolved" "$MODULE" "${libraries[@]}" 2>&1)" || got=$?
+        judge "$1" "$2" "$3" "$got" "$output"
+    }
+    check() {  # <name> <expected status> <expected text> <text of Package.resolved>
+        printf '%s\n' "$4" > "$SELF_TEST_WORK/Package.resolved"
+        expect "$1" "$2" "$3"
+    }
+    readme_case() {  # <name> <expected status> <expected text> <text of README.md>
+        got=0
+        mkdir -p "$SELF_TEST_WORK/probe/consumer"
+        printf '%s\n' "$4" > "$SELF_TEST_WORK/README.md"
+        output="$(python3 "$SELF_TEST_WORK/readme.py" "$SELF_TEST_WORK/README.md" "$SELF_TEST_WORK/probe" 2>&1)" || got=$?
+        judge "$1" "$2" "$3" "$got" "$output"
+    }
+    # The pins of a consumer of the package: the copy of the package and the two libraries it brings.
+    copy="$(pin dmunloader 1.1.0)"
+    action="$(pin dmaction 1.1.0)"
+    blur="$(pin dmvariableblurview 1.1.0)"
+    all="$copy,$action,$blur"
+    check "the copy and its two libraries, format 3" 0 "" "{\"version\":3,\"pins\":[$all]}"
+    check "the same, format 2" 0 "" "{\"version\":2,\"pins\":[$all]}"
+    check "an extra pin is named" 1 "viewinspector (remoteSourceControl, 0.10.5, /x/viewinspector)" "{\"version\":3,\"pins\":[$all,$(pin viewinspector 0.10.5)]}"
+    check "an extra pin before the copy is named" 1 "viewinspector (remoteSourceControl, 0.10.5, /x/viewinspector)" "{\"version\":3,\"pins\":[$(pin viewinspector 0.10.5),$all]}"
+    check "swift-snapshot-testing and what it brings are named" 1 "swift-syntax (remoteSourceControl, 600.0.1, /x/swift-syntax)" "{\"version\":3,\"pins\":[$all,$(pin swift-snapshot-testing 1.12.0),$(pin swift-syntax 600.0.1),$(pin swift-custom-dump 1.3.0),$(pin xctest-dynamic-overlay 1.5.0)]}"
+    check "a library of the package is missing" 1 "dmvariableblurview, a library that the package brings, is not among the resolved packages" "{\"version\":3,\"pins\":[$copy,$action]}"
+    check "the copy alone" 1 "dmaction, a library that the package brings, is not among the resolved packages" "{\"version\":3,\"pins\":[$copy]}"
+    check "the libraries without the copy" 1 "dmunloader, the tagged copy, is not among the resolved packages" "{\"version\":3,\"pins\":[$action,$blur]}"
+    check "no pin at all" 1 "is not among the resolved packages" '{"version":3,"pins":[]}'
+    check "the copy twice" 1 "dmunloader, the tagged copy, is pinned 2 times" "{\"version\":3,\"pins\":[$all,$(pin dmunloader 1.2.0)]}"
+    check "a library twice" 1 "dmaction, a library that the package brings, is pinned 2 times" "{\"version\":3,\"pins\":[$all,$(pin dmaction 1.2.0)]}"
+    check "format 1" 1 "not of format version 2 or 3" '{"object":{"pins":[{"package":"DMUnLoader"}]},"version":1}'
+    check "format 4" 1 "not of format version 2 or 3" "{\"version\":4,\"pins\":[$all]}"
+    check "no list of pins" 1 "not of format version 2 or 3" '{"version":3}'
+    check "not JSON" 1 "cannot be read" 'not json'
+    check "a pin that is not an object" 1 "not of format version 2 or 3" "{\"version\":3,\"pins\":[$all,\"text\"]}"
+    check "a null state" 1 "second (registry, None, None)" "{\"version\":3,\"pins\":[$all,{\"identity\":\"second\",\"kind\":\"registry\",\"state\":null}]}"
+    rm -f "$SELF_TEST_WORK/Package.resolved"
+    expect "a file that is not there" 1 "cannot be read"
+    # The README as step 2 reads it: one package manifest in a swift fence.
+    fence='```'
+    swift_block() {  # <text of the block>
+        printf '%s\n%s\n%s\n' "${fence}swift" "$1" "$fence"
+    }
+    app='// swift-tools-version: 6.0
+import PackageDescription
+let package = Package(
+    name: "App",
+    dependencies: [
+        .package(url: "https://github.com/x/Foo.git", from: "1.2.3")
+    ],
+    targets: [.target(name: "App", dependencies: [.product(name: "Foo", package: "Foo")])]
+)'
+    readme_case "one manifest: the version and the copy" 0 "1.2.3 Foo" "$(swift_block "$app")"
+    got=0
+    grep -q -F "url: \"file://$SELF_TEST_WORK/probe/Foo\"" "$SELF_TEST_WORK/probe/consumer/Package.swift" || got=$?
+    judge "the consumer points at the copy" 0 "" "$got" ""
+    got=0
+    grep -q -F "github.com" "$SELF_TEST_WORK/probe/consumer/Package.swift" || got=$?
+    judge "the consumer keeps nothing of the real URL" 1 "" "$got" ""
+    readme_case "a URL with a trailing slash and no .git" 0 "1.2.3 Foo" "$(swift_block "${app//Foo.git/Foo/}")"
+    readme_case "no package manifest" 1 "has 0 package manifests" "$(swift_block 'let answer = 42')"
+    readme_case "two package manifests" 1 "has 2 package manifests" "$(swift_block "$app")
+$(swift_block "$app")"
+    readme_case "a manifest in a fence that is not swift" 1 "has 0 package manifests" "~~~swift
+$app
+~~~"
+    readme_case "exact: instead of from:" 1 "does not ask for the package with url: and from:" "$(swift_block "${app//from:/exact:}")"
+    app_two='// swift-tools-version: 6.0
+import PackageDescription
+let package = Package(
+    name: "App",
+    dependencies: [
+        .package(url: "https://github.com/x/Foo.git", from: "1.2.3"),
+        .package(url: "https://github.com/x/Bar.git", from: "2.0.0")
+    ],
+    targets: [.target(name: "App")]
+)'
+    readme_case "two requirements with url: and from:" 1 "does not ask for the package with url: and from:" "$(swift_block "$app_two")"
+    if [ "$failures" -gt 0 ]; then
+        echo "check-manifest: self-test: $failures of $total checks failed" >&2
+        exit 1
+    fi
+    echo "check-manifest: self-test: $total checks of the readers of the README and of Package.resolved, all ok."
+    exit 0
+}
+
+if [ "$#" -gt 0 ]; then
+    if [ "$1" = "--self-test" ] && [ "$#" -eq 1 ]; then
+        self_test
+    fi
+    echo "usage: Scripts/check-manifest.sh [--self-test]" >&2
+    exit 2
+fi
+
 WORK="$ROOT/.build/check-manifest"
 FAILED=0
 # Dependencies that the checks below accept by branch, with a warning that the package
