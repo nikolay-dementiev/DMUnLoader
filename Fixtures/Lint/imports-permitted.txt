@@ -1,0 +1,18 @@
+import Foundation
+public import Foundation
+internal import Foundation
+@_exported import Foundation
+import Foundation.NSURL
+import struct Foundation.URL
+#if canImport(Foundation)
+import Foundation
+#endif
+// import UIKit
+/// import UIKit
+/*
+import UIKit
+*/
+let quoted = "import UIKit"
+let multiline = """
+import UIKit
+"""
