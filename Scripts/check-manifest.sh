@@ -352,7 +352,7 @@ else
                 > "$WORK/version-build.log" 2>&1; then
             # What the build resolved, as SwiftPM pinned it: the tagged copy and the libraries that the
             # package brings, and nothing else.
-            if EXTRA="$(python3 - "$PROBE/consumer/Package.resolved" "$COPY" "${RUNTIME_DEPENDENCIES[@]}" <<'PY'
+            if EXTRA="$(python3 - "$PROBE/consumer/Package.resolved" "$COPY" ${RUNTIME_DEPENDENCIES[@]+"${RUNTIME_DEPENDENCIES[@]}"} <<'PY'
 # resolved-inventory
 import json
 import sys
@@ -386,7 +386,7 @@ print("\n".join(problems))
 sys.exit(1 if problems else 0)
 PY
 )"; then
-                echo "check-manifest: the manifest of README.md, pointed at a copy tagged $VERSION, resolves and builds for the iOS $IOS_FLOOR simulator, and the consumer resolves this package and ${RUNTIME_DEPENDENCIES[*]} only."
+                echo "check-manifest: the manifest of README.md, pointed at a copy tagged $VERSION, resolves and builds for the iOS $IOS_FLOOR simulator, and the consumer resolves this package and the libraries it brings (${RUNTIME_DEPENDENCIES[*]-none}) only."
             else
                 echo "check-manifest: the consumer of README.md's manifest resolves more or less than this package and its libraries:" >&2
                 printf '%s\n' "$EXTRA" >&2
@@ -400,12 +400,13 @@ PY
                 echo "check-manifest: warning: a version requirement on the package does not resolve until '$BLOCKER' is required by version."
             else
                 echo "check-manifest: the manifest of README.md does not resolve or build by version. See ${WORK#"$ROOT"/}/version-build.log" >&2
-                ERRORS="$(grep -E "error:|cannot be used|unstable|unsafe" "$WORK/version-build.log" | cut -c1-300 | head -5 || true)"
-                if [ -n "$ERRORS" ]; then
-                    printf '%s\n' "$ERRORS" >&2
-                else
-                    tail -15 "$WORK/version-build.log" | sed 's/^/  /' >&2
+                # From the first error on, not only the lines that name one: the reason that git gives
+                # follows SwiftPM's error line, on lines of its own, and a CI run keeps no log file.
+                ERRORS="$(awk '/error:|cannot be used|unstable|unsafe/ { found = 1 } found' "$WORK/version-build.log" | cut -c1-300 | head -20 || true)"
+                if [ -z "$ERRORS" ]; then
+                    ERRORS="$(tail -15 "$WORK/version-build.log" | sed 's/^/  /' || true)"
                 fi
+                printf '%s\n' "$ERRORS" >&2
                 FAILED=1
             fi
         fi
