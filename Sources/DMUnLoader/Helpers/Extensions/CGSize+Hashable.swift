@@ -4,7 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
-import SwiftUI
+import CoreGraphics
 
 @available(iOS, obsoleted: 18.0, message: "CGSize conforms to Hashable in iOS 18 and later")
 extension CGSize: @retroactive Hashable {
