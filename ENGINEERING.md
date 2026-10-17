@@ -24,7 +24,7 @@ version.
 | Change | Class | Release |
 |---|---|---|
 | A changed default value | breaking | major |
-| A new case in a public enum that a consumer can switch over (`DMLoadableType`, `DMAppError` and its nested `NetworkError`) | breaking | major |
+| A new case in a public enum that a consumer can switch over (`DMLoadableType`, `DMAppError` and its nested `NetworkError` and `ResourceError`) | breaking | major |
 | A new protocol requirement without a default implementation | breaking | major |
 | A new protocol requirement with a default implementation, as the three settings of `DMLoadingManagerSettings` that 1.1.0 added | additive or breaking, see below | minor or major |
 | An added overload | additive, or breaking if an existing call now resolves to it or becomes ambiguous | minor or major |
@@ -64,9 +64,10 @@ with review. The other gates are `Scripts/lint.sh`, `Scripts/check-warnings.sh`,
 `Scripts/check-manifest.sh`, `Scripts/coverage-gate.sh` and the Thread Sanitizer job. The pull
 request template asks for the class, the changes of observable behaviour and the release the change
 needs. The reviewer applies the rest: that the baseline changes in the same commit as the
-declaration; whether an added line adds an overload that makes an existing call ambiguous, or a
-requirement to a protocol; every change of observable behaviour that the notes do not declare, which
-a test catches only where a test pins the behaviour; and the approval of a dependency.
+declaration; whether an added line adds an overload that makes an existing call ambiguous, a
+requirement to a protocol or a case to a public enum; every change of observable behaviour that the
+notes do not declare, which a test catches only where a test pins the behaviour; and the approval of
+a dependency.
 
 ## Deprecation
 
@@ -77,28 +78,31 @@ migration example say what to use. The next major version removes it.
 
 ## History
 
-Version 1.1.0 changed behaviour under a minor version (`CHANGELOG.md`, 1.1.0, "Changed"): settings
-and states compare what they show where they compared hash values, and a loading text or a success
-message of more than one line is centred where it was aligned to the leading edge. Under the rules
-above it would have needed a major version. The rules apply from the release after 1.1.0.
+Version 1.1.0 changed behaviour under a minor version (`CHANGELOG.md`, 1.1.0, "Changed"). Among the
+changes, settings and states compare what they show where they compared hash values, and a loading
+text or a success message of more than one line is centred where it was aligned to the leading edge.
+Under the rules above it would have needed a major version. The rules apply from the release after
+1.1.0.
 
 ## The package as it is
 
 - **Layers.** The folders of `Sources/DMUnLoader` follow the dependency rule: the inner layers know
   nothing of the outer ones.
   - `Domain/` holds the plain types and policies: the rules for dismissing and auto-hiding the HUD,
-    its phase and card style, and the accessibility transition. It imports nothing.
-    `Scripts/lint.sh` enforces this for the frameworks of the UI and the platform: the custom rule
-    `domain_imports_no_ui_or_platform` reports an import of UIKit, SwiftUI, AppKit, WatchKit or
-    DMVariableBlurView there.
+    its phase and card style, and the accessibility transition. It imports nothing today.
+    `Scripts/lint.sh` enforces part of that: the custom rule `domain_imports_no_ui_or_platform`
+    reports an `import` line of UIKit, SwiftUI, AppKit, WatchKit or DMVariableBlurView there. It
+    matches a plain `import`, not one with an attribute or an access level.
   - `Presentation/` holds the view model, the lifecycle of the HUD window and the accessibility
     coordinator. It imports Combine only, and reaches the system through protocols
     (`HUDOverlayPresenting`, `AutoHideScheduler`, `HUDScene`, `ContentUnderneathHiding`,
     `AccessibilityAnnouncer`, `HUDTexts`).
   - `Adapters/` implements those protocols with UIKit, SwiftUI and `os`: the overlay window, the
-    run-loop scheduler, the scene observer, the accessibility announcer and the bundle texts.
+    run-loop scheduler, the accessibility announcer and content hider, the bundle texts and
+    `UIWindowScene` as the HUD scene. It also holds the observer of scene disconnection.
   - `PresentationView/` holds the SwiftUI views and their settings types, and `Helpers/` the scene
-    delegates, the HUD window and the extensions they use.
+    delegates, the HUD window and scene view, the type-erased view provider and the extensions
+    they use.
   - The types of `Presentation/` and `Adapters/` are `package` or internal. The facade that a host
     uses is public: `DMRootLoadingView`, `DMLoadingManager` and `DMLoadingManagerMain`,
     `DMLoadingViewProvider` and `DefaultDMLoadingViewProvider`, `DMAppDelegate`,
@@ -108,10 +112,14 @@ above it would have needed a major version. The rules apply from the release aft
   library asks a view provider for its views on the main actor, and `DefaultDMLoadingViewProvider`
   conforms to `DMLoadingViewProvider` with an isolated conformance on the main actor. The dismissal
   rules, the backdrop and `DMLoadingManagerDefaultSettings` are `Sendable`.
-- **The library never stops its host.** The custom rule `no_process_termination` reports
-  `fatalError`, `preconditionFailure` and `assertionFailure` in `Sources/DMUnLoader`, and
-  SwiftLint's `force_unwrapping`, `force_try` and `force_cast` are on, so a force unwrap, a `try!`
-  and an `as!` are reported too. All of them run in `Scripts/lint.sh`.
+- **The library's own code does not terminate the process.** The custom rule
+  `no_process_termination` reports `fatalError`, `preconditionFailure` and `assertionFailure` in
+  `Sources/DMUnLoader`, and SwiftLint's `force_unwrapping`, `force_try` and `force_cast` are on, so
+  a force unwrap, a `try!` and an `as!` are reported too. All of them run in `Scripts/lint.sh`. One
+  documented case is outside them: `DMRootLoadingView(content:)` without the app delegate of
+  DMUnLoader stops the app when the view appears, because SwiftUI does when the object the view
+  needs is missing (README, "Failures"). `DMRootLoadingView(manager:content:)` needs no app
+  delegate.
 - **Documented limits.** What the library enforces and what it cannot promise are in the README,
   "Behaviour your app must know", and in the DocC catalog (`Sources/DMUnLoader/DMUnLoader.docc`).
   This file points to them and does not restate them. A change of one of those limits is a change of
