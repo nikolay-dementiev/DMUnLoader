@@ -127,9 +127,16 @@ Under the rules above it would have needed a major version. The rules apply from
 - **The rules are proved.** A rule that never matches reports nothing, so
   `Scripts/check-lint-contract.sh` lints the fixtures of `Fixtures/Lint` and proves that
   `domain_imports`, `force_unwrapping` and `no_process_termination` fire on the lines that expect
-  them and on no other line. The fixtures are linted as files of `Sources/DMUnLoader/Domain`, so the
-  contract proves the termination rule for that folder; the pattern that extends it to the rest of
-  the library is in `.swiftlint.yml`. CI runs it right after `Scripts/lint.sh`.
+  them and on no other line. Where a fixture lies decides where it is linted: in the root of
+  `Fixtures/Lint` as a file of the library, in `Domain/` or `Adapters/` as a file of that folder,
+  and under `Outside/` outside the library, where the fixture expects nothing. So the contract shows
+  that the termination rule reaches the root, `Domain/` and `Adapters/`, that the import rule
+  reaches `Domain/` and neither the root nor `Adapters/`, and that neither reaches a fixture package
+  or a second module, one whose name starts like the library's included. `force_unwrapping` has no
+  include and applies everywhere. The real tree is a second proof for the import rule: the library
+  imports UI frameworks outside `Domain/`, so `Scripts/lint.sh` fails when the rule is widened. The
+  termination rule has no such proof, since no source calls those functions. CI runs the contract
+  right after `Scripts/lint.sh`.
   `Scripts/check-lint-tool.sh` proves, with a fake archive, that two runs of the helper that fetches
   SwiftLint on one checkout do not disturb each other.
 - **The analyzer runs in CI.** `unused_import` is an analyzer rule, so the `lint` job builds the
