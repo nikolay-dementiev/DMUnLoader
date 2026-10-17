@@ -114,19 +114,22 @@ Under the rules above it would have needed a major version. The rules apply from
   conforms to `DMLoadingViewProvider` with an isolated conformance on the main actor. The dismissal
   rules, the backdrop and `DMLoadingManagerDefaultSettings` are `Sendable`.
 - **The library's own code does not terminate the process.** The custom rule
-  `no_process_termination` reports a call of `fatalError`, `preconditionFailure`,
-  `assertionFailure`, `precondition`, `assert`, `dispatchPrecondition`, `abort` or `exit` in
-  `Sources/DMUnLoader`, and SwiftLint's `force_unwrapping`, `force_try` and `force_cast` are on, so
-  a force unwrap, a `try!` and an `as!` are reported too. The force unwrap rule has no exemption for
-  a call with a literal argument, so `URL(string: "...")!` is reported as well. All of them run in
-  `Scripts/lint.sh`. One documented case is outside them: `DMRootLoadingView(content:)` without the
-  app delegate of DMUnLoader stops the app when the view appears, because SwiftUI does when the
-  object the view needs is missing (README, "Failures"). `DMRootLoadingView(manager:content:)` needs
-  no app delegate.
+  `no_process_termination` reports the names `fatalError`, `preconditionFailure`,
+  `assertionFailure`, `precondition`, `assert`, `dispatchPrecondition`, `abort` and `exit` when a
+  parenthesis follows, in `Sources/DMUnLoader`, so a method of that name is reported too, and
+  SwiftLint's `force_unwrapping`, `force_try` and `force_cast` are on, so a force unwrap, a `try!`
+  and an `as!` are reported too. The force unwrap rule has no exemption for a call with a literal
+  argument, so `URL(string: "...")!` is reported as well. All of them run in `Scripts/lint.sh`. One
+  documented case is outside them: `DMRootLoadingView(content:)` without the app delegate of
+  DMUnLoader stops the app when the view appears, because SwiftUI does when the object the view
+  needs is missing (README, "Failures"). `DMRootLoadingView(manager:content:)` needs no app
+  delegate.
 - **The rules are proved.** A rule that never matches reports nothing, so
   `Scripts/check-lint-contract.sh` lints the fixtures of `Fixtures/Lint` and proves that
   `domain_imports`, `force_unwrapping` and `no_process_termination` fire on the lines that expect
-  them and on no other line. CI runs it right after `Scripts/lint.sh`.
+  them and on no other line. The fixtures are linted as files of `Sources/DMUnLoader/Domain`, so the
+  contract proves the termination rule for that folder; the pattern that extends it to the rest of
+  the library is in `.swiftlint.yml`. CI runs it right after `Scripts/lint.sh`.
 - **Documented limits.** What the library enforces and what it cannot promise are in the README,
   "Behaviour your app must know", and in the DocC catalog (`Sources/DMUnLoader/DMUnLoader.docc`).
   This file points to them and does not restate them. A change of one of those limits is a change of
