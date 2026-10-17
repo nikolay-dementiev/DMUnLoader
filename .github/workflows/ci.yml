@@ -135,14 +135,20 @@ jobs:
         with:
           persist-credentials: false
       - name: Build the library in Release
-        # Tests run in Debug. Code inside "#if DEBUG" must not hide a broken release build.
+        # Tests run in Debug. Code inside "#if DEBUG" must not hide a broken release build, and
+        # a warning inside "#if !DEBUG" is not in the log of the test job, so the log is kept
+        # and scanned in the next step.
         run: |
+          mkdir -p .build/results/ci
           xcodebuild build \
             -scheme DMUnLoader \
             -configuration Release \
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
-            -skipPackagePluginValidation
+            -skipPackagePluginValidation \
+            2>&1 | tee .build/results/ci/release.log
+      - name: No warning from this repository (Release)
+        run: Scripts/check-warnings.sh .build/results/ci/release.log
       - name: Check what a consumer gets
         run: Scripts/check-manifest.sh
 
