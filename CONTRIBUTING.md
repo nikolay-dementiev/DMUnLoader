@@ -23,8 +23,9 @@ The checks are scripts in `Scripts/`, and CI runs them as you do, except
 
 | Script | What it checks |
 |---|---|
-| `Scripts/lint.sh` | SwiftLint, at the version pinned in `.swiftlint.yml`. The first run fetches that version into `.build/tools` and checks its checksum. `--analyze <xcodebuild log>` also runs the analyzer rules |
+| `Scripts/lint.sh` | SwiftLint, at the version pinned in `.swiftlint.yml`. The first run fetches that version into `.build/tools` and checks its checksum; runs at once on one checkout do not disturb each other. `--analyze <xcodebuild log>` also runs the analyzer rules, which CI does on the log of a build of the library |
 | `Scripts/check-lint-contract.sh` | that the lint rules fire: it lints the fixtures of `Fixtures/Lint` and compares the diagnostics of the import, force unwrap and termination rules with the ones each line expects |
+| `Scripts/check-lint-tool.sh` | that the helper which fetches SwiftLint (`Scripts/swiftlint-tool.sh`) is safe to run twice at once: with a fake archive and shims for `unzip`, `curl` and `mv` it checks that the tool stays whole while another run unpacks and is replaced by a rename, that two first-time runs both succeed, that a wrong checksum never reaches the unpack, and that a failed download or unpack leaves no part file and no unpack folder behind |
 | `Scripts/check-api.sh` | the public interface against `Fixtures/API/public-interface.txt`; `--self-test` runs the cases of its normalisation; `--since <ref>` prints, without a compiler, the lines the baseline lost, changed or gained since a git ref such as a release tag |
 | `Scripts/check-manifest.sh` | the manifest, installation by version, the consumer fixture, and every Swift block of `README.md` and of the documentation catalog, each on its own, in Swift 6 and Swift 5 mode: a manifest block is evaluated, every other block compiled. A warning in a compiled block fails it too; a manifest block is only evaluated, so a warning in it is not checked |
 | `Scripts/coverage-gate.sh <result bundle>` | the line coverage of the library against its floor |
