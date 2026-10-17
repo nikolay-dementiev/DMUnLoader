@@ -163,8 +163,8 @@ Under the rules above it would have needed a major version. The rules apply from
   else: the libraries that only the tests use are not fetched for it. `Scripts/check-manifest.sh`
   builds the manifest of README.md by version for the iOS simulator on a cache of its own and fails
   on any other package in the `Package.resolved` of that build. The list is `RUNTIME_DEPENDENCIES`
-  in the script, and a new dependency changes it in the same pull request. CI runs the check with
-  Xcode 26.6 only; an older toolchain could resolve differently.
+  in the script, and a new dependency changes it in the same pull request. The check proves this
+  for the toolchain of the `consumer` job; another toolchain could resolve differently.
 - No third-party dependency without the maintainer's approval. `Scripts/check-manifest.sh` rejects a
   dependency required by branch or revision, a plugin on any target, an unsafe flag and a manifest
   that reads the environment. The approval itself is a rule the reviewer applies.
