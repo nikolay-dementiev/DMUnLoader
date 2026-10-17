@@ -23,7 +23,8 @@ The checks are scripts in `Scripts/`, and CI runs them as you do, except
 
 | Script | What it checks |
 |---|---|
-| `Scripts/lint.sh` | SwiftLint, at the version pinned in `.swiftlint.yml` |
+| `Scripts/lint.sh` | SwiftLint, at the version pinned in `.swiftlint.yml`. The first run fetches that version into `.build/tools` and checks its checksum. `--analyze <xcodebuild log>` also runs the analyzer rules |
+| `Scripts/check-lint-contract.sh` | that the lint rules fire: it lints the fixtures of `Fixtures/Lint` and compares the diagnostics of the import, force unwrap and termination rules with the ones each line expects |
 | `Scripts/check-api.sh` | the public interface against `Fixtures/API/public-interface.txt`; `--self-test` runs the cases of its normalisation; `--since <ref>` prints, without a compiler, the lines the baseline lost, changed or gained since a git ref such as a release tag |
 | `Scripts/check-manifest.sh` | the manifest, installation by version, the consumer fixture, and every Swift block of `README.md` and of the documentation catalog, each on its own, in Swift 6 and Swift 5 mode: a manifest block is evaluated, every other block compiled. A warning in a compiled block fails it too; a manifest block is only evaluated, so a warning in it is not checked |
 | `Scripts/coverage-gate.sh <result bundle>` | the line coverage of the library against its floor |

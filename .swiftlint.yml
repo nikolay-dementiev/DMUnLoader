@@ -19,6 +19,11 @@ opt_in_rules:
 analyzer_rules:
   - unused_import
 
+# By default the rule lets a few calls with a literal argument be force unwrapped, such as
+# URL(string: "https://example.com")!. ENGINEERING.md states no exception, so the list is empty.
+force_unwrapping:
+  ignored_literal_argument_functions: []
+
 identifier_name:
   min_length: 2
   allowed_symbols: [_]
@@ -50,16 +55,21 @@ custom_rules:
     name: "No process termination"
     # The library only: the consumer fixture compiles the README samples as they are.
     included: ".*/Sources/DMUnLoader/.*\\.swift"
-    regex: '\b(fatalError|preconditionFailure|assertionFailure)\b'
+    regex: '\b(fatalError|preconditionFailure|assertionFailure|precondition|assert|dispatchPrecondition|abort|exit)\s*\('
     match_kinds:
       - identifier
     message: "A library never terminates its host. Report the failure to the caller."
     severity: error
-  domain_imports_no_ui_or_platform:
-    name: "Domain imports no UI or platform framework"
+  domain_imports:
+    name: "Domain imports"
     # The Domain layer holds the plain types and policies. A framework of the UI or of the
-    # platform comes in through a protocol that an adapter implements.
+    # platform comes in through a protocol that an adapter implements. The pattern is matched
+    # against the absolute path, so only the Domain folder of the library is meant.
     included: ".*/Sources/DMUnLoader/Domain/.*\\.swift"
-    regex: '^\s*import\s+(UIKit|SwiftUI|AppKit|WatchKit|DMVariableBlurView)\b'
-    message: "The Domain layer imports no UI or platform framework. Declare a protocol and let an adapter implement it."
+    # Any attribute, access level and import kind; a second import after a semicolon; a submodule
+    # of Foundation is allowed. Comments and strings never match. An import that follows a block
+    # comment on the same line is not seen.
+    regex: '(?:^|;)\s*(@\w+(\([^)]*\))?\s+)*((public|package|internal|fileprivate|private)\s+)?import\s+(?:(?:struct|class|enum|protocol|typealias|func|var|let)\s+)?+(?!(?:Foundation)\b)\w+'
+    match_kinds: [keyword, identifier, attribute.builtin, attribute.id]
+    message: "The Domain folder imports Foundation only: no UI and no platform framework."
     severity: error
