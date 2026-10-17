@@ -10,6 +10,7 @@ details are in [ENGINEERING.md](ENGINEERING.md) and [CONTRIBUTING.md](CONTRIBUTI
   fail: name the change to the code that it fails on.
 - Keep the build free of warnings, and run `Scripts/lint.sh` and `Scripts/check-api.sh` before a
   pull request.
-- The library never stops its host: no `fatalError`, no force unwrap, no `try!` and no `as!`.
+- The library's own code never terminates the process: no `fatalError`, no force unwrap, no
+  `try!` and no `as!`.
 - One topic per commit, with a conventional prefix: `test:`, `fix:`, `feat:`, `refactor:`,
   `docs:`, `chore:`, `ci:` or `perf:`.
