@@ -12,36 +12,10 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-VERSION="$(sed -n 's/^swiftlint_version: *//p' "$ROOT/.swiftlint.yml")"
-# SHA-256 of portable_swiftlint.zip of that release. It changes together with the version.
-CHECKSUM="c1e429b0599cf1b516f369a2d9ec04eaf0e436f3c12b637df8851fa52ff694d0"
-TOOLS="$ROOT/.build/tools/swiftlint-$VERSION"
-SWIFTLINT="$TOOLS/swiftlint"
-
-if [ -z "$VERSION" ]; then
-    echo "lint: .swiftlint.yml does not pin swiftlint_version" >&2
-    exit 2
-fi
-
-if [ ! -x "$SWIFTLINT" ]; then
-    mkdir -p "$TOOLS"
-    ARCHIVE="$TOOLS/portable_swiftlint.zip"
-    if [ ! -f "$ARCHIVE" ]; then
-        # Fetched under another name, so an interrupted transfer never passes for the archive.
-        curl --fail --silent --show-error --location --retry 3 \
-            "https://github.com/realm/SwiftLint/releases/download/$VERSION/portable_swiftlint.zip" \
-            --output "$ARCHIVE.part"
-        mv "$ARCHIVE.part" "$ARCHIVE"
-    fi
-    ACTUAL="$(shasum -a 256 "$ARCHIVE" | cut -d ' ' -f 1)"
-    if [ "$ACTUAL" != "$CHECKSUM" ]; then
-        # A wrong archive must not block every later run: the next one fetches it again.
-        rm -f "$ARCHIVE"
-        echo "lint: the SwiftLint $VERSION archive had checksum $ACTUAL, expected $CHECKSUM. It was removed." >&2
-        exit 2
-    fi
-    unzip -q -o "$ARCHIVE" swiftlint -d "$TOOLS"
-fi
+# shellcheck source=SCRIPTDIR/swiftlint-tool.sh
+. "$ROOT/Scripts/swiftlint-tool.sh"
+VERSION="$(swiftlint_version "$ROOT" lint)"
+SWIFTLINT="$(swiftlint_fetch "$ROOT" "$VERSION" lint)"
 
 cd "$ROOT"
 "$SWIFTLINT" lint --strict --quiet
