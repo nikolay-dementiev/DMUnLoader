@@ -135,8 +135,9 @@ Under the rules above it would have needed a major version. The rules apply from
   or a second module, one whose name starts like the library's included. `force_unwrapping` has no
   include and applies everywhere. The real tree is a second proof for the import rule: the library
   imports UI frameworks outside `Domain/`, so `Scripts/lint.sh` fails when the rule is widened. The
-  termination rule has no such proof, since no source calls those functions. CI runs the contract
-  right after `Scripts/lint.sh`.
+  termination rule has no lasting proof of that kind: no source of the library calls those
+  functions, so only the fixtures show its scope. CI runs the contract right after
+  `Scripts/lint.sh`.
   `Scripts/check-lint-tool.sh` proves, with a fake archive, that two runs of the helper that fetches
   SwiftLint on one checkout do not disturb each other.
 - **The analyzer runs in CI.** `unused_import` is an analyzer rule, so the `lint` job builds the
