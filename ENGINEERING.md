@@ -60,14 +60,14 @@ version have a `### Breaking changes` subsection, in any letter case. A comparis
 is an error, never a pass. The baseline holds the interface as the compiler prints it. A changed
 default argument is a changed line of it. The body of a method or of a property is not in it, and so
 is not a default that a protocol extension supplies, nor the resolution of an overload; those stay
-with review. The other gates are `Scripts/lint.sh`, `Scripts/check-warnings.sh`,
-`Scripts/check-manifest.sh`, `Scripts/coverage-gate.sh` and the Thread Sanitizer job. The pull
-request template asks for the class, the changes of observable behaviour and the release the change
-needs. The reviewer applies the rest: that the baseline changes in the same commit as the
-declaration; whether an added line adds an overload that makes an existing call ambiguous, a
-requirement to a protocol or a case to a public enum; every change of observable behaviour that the
-notes do not declare, which a test catches only where a test pins the behaviour; and the approval of
-a dependency.
+with review. The other gates are `Scripts/lint.sh`, `Scripts/check-lint-contract.sh`,
+`Scripts/check-warnings.sh`, `Scripts/check-manifest.sh`, `Scripts/coverage-gate.sh` and the Thread
+Sanitizer job. The pull request template asks for the class, the changes of observable behaviour and
+the release the change needs. The reviewer applies the rest: that the baseline changes in the same
+commit as the declaration; whether an added line adds an overload that makes an existing call
+ambiguous, a requirement to a protocol or a case to a public enum; every change of observable
+behaviour that the notes do not declare, which a test catches only where a test pins the behaviour;
+and the approval of a dependency.
 
 ## Deprecation
 
@@ -89,10 +89,11 @@ Under the rules above it would have needed a major version. The rules apply from
 - **Layers.** The folders of `Sources/DMUnLoader` follow the dependency rule: the inner layers know
   nothing of the outer ones.
   - `Domain/` holds the plain types and policies: the rules for dismissing and auto-hiding the HUD,
-    its phase and card style, and the accessibility transition. It imports nothing today.
-    `Scripts/lint.sh` enforces part of that: the custom rule `domain_imports_no_ui_or_platform`
-    reports an `import` line of UIKit, SwiftUI, AppKit, WatchKit or DMVariableBlurView there. It
-    matches a plain `import`, not one with an attribute or an access level.
+    its phase and card style, and the accessibility transition. It imports nothing today, and may
+    import Foundation only. `Scripts/lint.sh` enforces that: the custom rule `domain_imports`
+    reports any import in that folder except Foundation, whatever its attribute, access level or
+    kind, and a second import after a semicolon too. An import in a comment or a string is not
+    one. An import that follows a block comment on the same line is not seen.
   - `Presentation/` holds the view model, the lifecycle of the HUD window and the accessibility
     coordinator. It imports Combine only, and reaches the system through protocols
     (`HUDOverlayPresenting`, `AutoHideScheduler`, `HUDScene`, `ContentUnderneathHiding`,
@@ -113,13 +114,19 @@ Under the rules above it would have needed a major version. The rules apply from
   conforms to `DMLoadingViewProvider` with an isolated conformance on the main actor. The dismissal
   rules, the backdrop and `DMLoadingManagerDefaultSettings` are `Sendable`.
 - **The library's own code does not terminate the process.** The custom rule
-  `no_process_termination` reports `fatalError`, `preconditionFailure` and `assertionFailure` in
+  `no_process_termination` reports a call of `fatalError`, `preconditionFailure`,
+  `assertionFailure`, `precondition`, `assert`, `dispatchPrecondition`, `abort` or `exit` in
   `Sources/DMUnLoader`, and SwiftLint's `force_unwrapping`, `force_try` and `force_cast` are on, so
-  a force unwrap, a `try!` and an `as!` are reported too. All of them run in `Scripts/lint.sh`. One
-  documented case is outside them: `DMRootLoadingView(content:)` without the app delegate of
-  DMUnLoader stops the app when the view appears, because SwiftUI does when the object the view
-  needs is missing (README, "Failures"). `DMRootLoadingView(manager:content:)` needs no app
-  delegate.
+  a force unwrap, a `try!` and an `as!` are reported too. The force unwrap rule has no exemption for
+  a call with a literal argument, so `URL(string: "...")!` is reported as well. All of them run in
+  `Scripts/lint.sh`. One documented case is outside them: `DMRootLoadingView(content:)` without the
+  app delegate of DMUnLoader stops the app when the view appears, because SwiftUI does when the
+  object the view needs is missing (README, "Failures"). `DMRootLoadingView(manager:content:)` needs
+  no app delegate.
+- **The rules are proved.** A rule that never matches reports nothing, so
+  `Scripts/check-lint-contract.sh` lints the fixtures of `Fixtures/Lint` and proves that
+  `domain_imports`, `force_unwrapping` and `no_process_termination` fire on the lines that expect
+  them and on no other line. CI runs it right after `Scripts/lint.sh`.
 - **Documented limits.** What the library enforces and what it cannot promise are in the README,
   "Behaviour your app must know", and in the DocC catalog (`Sources/DMUnLoader/DMUnLoader.docc`).
   This file points to them and does not restate them. A change of one of those limits is a change of
