@@ -1,4 +1,4 @@
-import SwiftUI
+import UIKit
 
 /// The app delegate of the SwiftUI integration, for `DMLoadingManagerMain`.
 public typealias DMAppDelegateType = DMAppDelegate<DMLoadingManagerMain>

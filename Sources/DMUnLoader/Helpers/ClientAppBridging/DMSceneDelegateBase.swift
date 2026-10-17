@@ -1,4 +1,4 @@
-import SwiftUI
+import UIKit
 
 /// The scene delegate of the UIKit integration, for `DMLoadingManagerMain` and the root view
 /// controller of `Helper`.

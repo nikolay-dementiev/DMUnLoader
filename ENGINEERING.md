@@ -61,13 +61,13 @@ is an error, never a pass. The baseline holds the interface as the compiler prin
 default argument is a changed line of it. The body of a method or of a property is not in it, and so
 is not a default that a protocol extension supplies, nor the resolution of an overload; those stay
 with review. The other gates are `Scripts/lint.sh`, `Scripts/check-lint-contract.sh`,
-`Scripts/check-warnings.sh`, `Scripts/check-manifest.sh`, `Scripts/coverage-gate.sh` and the Thread
-Sanitizer job. The pull request template asks for the class, the changes of observable behaviour and
-the release the change needs. The reviewer applies the rest: that the baseline changes in the same
-commit as the declaration; whether an added line adds an overload that makes an existing call
-ambiguous, a requirement to a protocol or a case to a public enum; every change of observable
-behaviour that the notes do not declare, which a test catches only where a test pins the behaviour;
-and the approval of a dependency.
+`Scripts/check-lint-tool.sh`, `Scripts/check-warnings.sh`, `Scripts/check-manifest.sh`,
+`Scripts/coverage-gate.sh` and the Thread Sanitizer job. The pull request template asks for the
+class, the changes of observable behaviour and the release the change needs. The reviewer applies
+the rest: that the baseline changes in the same commit as the declaration; whether an added line
+adds an overload that makes an existing call ambiguous, a requirement to a protocol or a case to a
+public enum; every change of observable behaviour that the notes do not declare, which a test
+catches only where a test pins the behaviour; and the approval of a dependency.
 
 ## Deprecation
 
@@ -130,6 +130,13 @@ Under the rules above it would have needed a major version. The rules apply from
   them and on no other line. The fixtures are linted as files of `Sources/DMUnLoader/Domain`, so the
   contract proves the termination rule for that folder; the pattern that extends it to the rest of
   the library is in `.swiftlint.yml`. CI runs it right after `Scripts/lint.sh`.
+  `Scripts/check-lint-tool.sh` proves, with a fake archive, that two runs of the helper that fetches
+  SwiftLint on one checkout do not disturb each other.
+- **The analyzer runs in CI.** `unused_import` is an analyzer rule, so the `lint` job builds the
+  library and runs `Scripts/lint.sh --analyze` on the log of that build. The analyzer reads the
+  files of the library that the log names; `Tests/` and `Examples/` are not in the log. The settings
+  of the rule in `.swiftlint.yml` keep two imports that it does not see used, `Combine` and
+  `CoreGraphics`, and say why.
 - **Documented limits.** What the library enforces and what it cannot promise are in the README,
   "Behaviour your app must know", and in the DocC catalog (`Sources/DMUnLoader/DMUnLoader.docc`).
   This file points to them and does not restate them. A change of one of those limits is a change of
