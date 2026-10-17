@@ -135,12 +135,12 @@ whole CI workflow, makes sure the tag still points at the commit CI tested, and 
 release from the changelog section. Publishing the release stays a manual step: publish the draft.
 Nothing goes to the CocoaPods trunk.
 
-Once the tag is pushed, and when the package is listed in the Swift Package Index, open its page
-there and check that the documentation build of the new version is green: on the page of build
-results, the build that carries the mark for generated documentation shows Succeeded, and the
-Documentation link of the package page opens. The package page links the documentation of the
-latest release, so this step cannot come before the tag. Until the package is listed, the step is
-skipped.
+When the package is listed in the Swift Package Index, open its page there once the tag is pushed
+and the index has built the new version, and check that the documentation build is green: on the
+page of build results, the build that carries the mark for generated documentation shows
+Succeeded, and the Documentation link of the package page opens. The package page links the
+documentation of the latest release, so this step cannot come before the tag. Until the package
+is listed, the step is skipped.
 
 ## Security
 
