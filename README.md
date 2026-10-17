@@ -509,7 +509,9 @@ How the package is tested:
 
 ## Versions and migration
 
-DMUnLoader follows semantic versioning. [CHANGELOG.md](CHANGELOG.md) records every release.
+DMUnLoader follows semantic versioning. [CHANGELOG.md](CHANGELOG.md) records every release. From
+the release after 1.1.0 on, every breaking change, as [ENGINEERING.md](ENGINEERING.md) defines it,
+needs a major version.
 
 Coming from 1.0.x: no declaration was removed, and the new settings default to the released
 behaviour. Building needs Xcode 26, the Swift 6.2 compiler that the sources already needed. Some
@@ -548,6 +550,8 @@ DMUnLoader is one of three packages that share their conventions:
 ## Contributing, security, licence
 
 - [CONTRIBUTING.md](CONTRIBUTING.md): how to build, test and propose a change.
+- [ENGINEERING.md](ENGINEERING.md): the compatibility and release policy, and what the package is
+  made of.
 - [SECURITY.md](SECURITY.md): how to report a vulnerability. Not in a public issue.
 - DMUnLoader is available under the MIT License. See [LICENSE](LICENSE).
 - The HUD window was inspired by [Custom HUDs in SwiftUI](https://www.fivestars.blog/articles/swiftui-hud/)

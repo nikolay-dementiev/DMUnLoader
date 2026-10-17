@@ -1,7 +1,8 @@
 # Contributing to DMUnLoader
 
 Thank you for helping. This guide says how to build and test the package and its example
-app, what a test must do, and how to propose a change.
+app, what a test must do, and how to propose a change. [ENGINEERING.md](ENGINEERING.md) has the
+compatibility and release policy, and what the package is made of.
 
 ## Build and test
 
@@ -102,8 +103,8 @@ merge first, then tag. Before the tag is pushed:
 1. The newest heading of `CHANGELOG.md` is `## [<version>] -` with the release date and the notes
    under it. `Scripts/check-release.sh <version>` checks it. The podspec stays at 1.1.0, because
    the pod is frozen.
-2. Every change that is not purely additive needs a new major version, with no exception for a
-   small one. A removed or changed line of the interface is one:
+2. Every breaking change, as ENGINEERING.md defines it, needs a new major version, with no
+   exception for a small one. A removed or changed line of the interface is one:
    `Scripts/check-api.sh --since <previous version>` lists them. A change of behaviour is another,
    and the notes of the release declare it in a `### Breaking changes` subsection, in any letter
    case, because no script can see behaviour: a change listed under `### Changed` alone does not
@@ -116,9 +117,9 @@ merge first, then tag. Before the tag is pushed:
    It cannot tell a line that a new compiler reworded from a line that the code changed, so both
    count. Run `Scripts/check-api.sh` first, since the baseline is the interface of the library
    only while that check passes.
-3. The tests of the package and of the example app pass on iOS 17.5, the oldest version the
-   package supports, and on iOS 18.6. CI runs neither for the package and only iOS 18.6 for the
-   example, so these runs are local:
+3. The tests of the package and of the example app pass on iOS 17.5, the oldest runtime a test
+   runs on (the package supports iOS 17.0), and on iOS 18.6. CI runs neither for the package and
+   only iOS 18.6 for the example, so these runs are local:
    `xcodebuild test -scheme DMUnLoader -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 13 Pro,OS=17.5' -skipPackagePluginValidation`,
    the same with `name=iPhone 16 Pro,OS=18.6`, and `Scripts/test-example.sh` with the udid of
    each of those simulators.
