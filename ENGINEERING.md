@@ -156,13 +156,16 @@ Under the rules above it would have needed a major version. The rules apply from
   example app; the tests of the package run on iOS 26.5 and 26.2. iOS 17.5 runs locally before a
   release (CONTRIBUTING.md, "Releases"). The `floor` job builds the library with Xcode 26.0.1, the
   oldest compiler line the manifest allows, for iOS 17.0, and runs no test.
+- A release is verified with the newest Xcode that the CI runners offer, and the floor, Xcode 26.0
+  with Swift 6.2, stays where it is.
 - "Oldest tested runtime" and "oldest supported version" are different statements. The supported
   version is a promise: the platform the manifest declares. The tested runtime is evidence: the
   oldest runtime a test has run on. That is iOS 17.5 against a promise of iOS 17.0.
 - No third-party dependency without the maintainer's approval. `Scripts/check-manifest.sh` rejects a
   dependency required by branch or revision, a plugin on any target, an unsafe flag and a manifest
   that reads the environment. The approval itself is a rule the reviewer applies.
-- XCTest is the test framework. Another one comes only by the maintainer's decision.
+- XCTest is the test framework and stays so. A pilot of Swift Testing, like any other framework,
+  is an exception that only the maintainer grants.
 - The manifest sets no `defaultIsolation`: it would change the inferred isolation of public
   declarations, which is observable behaviour.
 
