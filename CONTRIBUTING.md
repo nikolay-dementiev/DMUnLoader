@@ -30,7 +30,7 @@ The checks are scripts in `Scripts/`, and CI runs them as you do, except
 | `Scripts/coverage-gate.sh <result bundle>` | the line coverage of the library against its floor |
 | `Scripts/check-podspec.sh` | `pod lib lint` in every Swift version of the podspec, that the pod makes its consumer link no test framework, and that the consumer app carries the pod's resource bundle with every key of the string catalog |
 | `Scripts/check-release.sh <version>` | that the newest heading of the changelog is that version with a real release date and has notes under it, and that the podspec still names the frozen 1.1.0; it also compares the release with the one below it in the changelog and refuses a version that keeps its major version after a removed or changed line of the interface, or after a `### Breaking changes` subsection; `--notes` prints the notes |
-| `Scripts/check-warnings.sh <build log>` | that no compiler warning points into this repository |
+| `Scripts/check-warnings.sh <build log>` | that no compiler warning points into this repository; CI runs it on the logs of the package tests, of the example's build, of the Release build and of the floor build |
 | `Scripts/check-example-project.sh` | that the example's Xcode project matches its XcodeGen spec |
 | `Scripts/test-example.sh <simulator udid>` | the example's tests, below |
 

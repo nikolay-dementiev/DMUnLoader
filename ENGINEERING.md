@@ -130,6 +130,15 @@ Under the rules above it would have needed a major version. The rules apply from
   them and on no other line. The fixtures are linted as files of `Sources/DMUnLoader/Domain`, so the
   contract proves the termination rule for that folder; the pattern that extends it to the rest of
   the library is in `.swiftlint.yml`. CI runs it right after `Scripts/lint.sh`.
+- **The sanitizer and the scans fail when they should.** The `thread-sanitizer` job sets no
+  `TSAN_OPTIONS`, and a race fails it: a test that wrote one variable from many threads failed with
+  the job's own command on Xcode 26.6 and the iOS 26.5 simulator, and passed without the sanitizer.
+  `Scripts/check-warnings.sh` runs on the logs of the `test` job, of the build of the `example` job,
+  of the Release build of the `consumer` job and of the `floor` build, so a warning in this
+  repository's files fails the job, and so does one that only a Release build compiles. The floor
+  build is verbose (`swift build -v`), because the log of a clean build names no path of the
+  checkout, and the scan rejects such a log as the log of another build. These canaries were run
+  once in scratch copies; none is in the repository.
 - **Documented limits.** What the library enforces and what it cannot promise are in the README,
   "Behaviour your app must know", and in the DocC catalog (`Sources/DMUnLoader/DMUnLoader.docc`).
   This file points to them and does not restate them. A change of one of those limits is a change of
@@ -148,7 +157,8 @@ Under the rules above it would have needed a major version. The rules apply from
   policy needs four facts. The oldest iOS runtime that CI runs a test on is iOS 18.6, for the
   example app; the tests of the package run on iOS 26.5 and 26.2. iOS 17.5 runs locally before a
   release (CONTRIBUTING.md, "Releases"). The `floor` job builds the library with Xcode 26.0.1, the
-  oldest compiler line the manifest allows, for iOS 17.0, and runs no test.
+  oldest compiler line the manifest allows, for iOS 17.0, and runs no test; its log is scanned for
+  warnings in this repository's files.
 - "Oldest tested runtime" and "oldest supported version" are different statements. The supported
   version is a promise: the platform the manifest declares. The tested runtime is evidence: the
   oldest runtime a test has run on. That is iOS 17.5 against a promise of iOS 17.0.
