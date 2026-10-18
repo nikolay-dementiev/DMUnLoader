@@ -92,18 +92,23 @@ total_cases = 0
 failures = 0
 
 
-def bundle(name, results, **summary_overrides):
+def bundle(name, results, listed=True, parens=True, **summary_overrides):
     """The three arguments of a bundle: its name and the paths of its summary and its tests.
 
-    results lists (test name, result). The summary counts follow it, unless overridden."""
+    results lists (test name, result). The summary counts follow it, unless overridden. The list
+    of tests nests as xcresulttool prints it: a test plan, a bundle, a suite, the test cases. With
+    listed false the list holds the nodes down to the suite and no test case."""
     counts = {"Passed": 0, "Skipped": 0, "Failed": 0}
     for _, result in results:
         counts[result] = counts.get(result, 0) + 1
     summary = {"totalTestCount": len(results), "passedTests": counts["Passed"],
                "failedTests": counts["Failed"], "skippedTests": counts["Skipped"]}
     summary.update(summary_overrides)
-    cases = [{"nodeType": "Test Case", "name": test + "()", "result": result} for test, result in results]
-    tests = {"testNodes": [{"nodeType": "Unit test bundle", "name": "Bundle", "children": cases}]}
+    cases = [{"nodeType": "Test Case", "name": test + "()" if parens else test, "result": result}
+             for test, result in results]
+    suite = {"nodeType": "Test Suite", "name": "Suite", "children": cases if listed else []}
+    unit = {"nodeType": "Unit test bundle", "name": "Bundle", "children": [suite]}
+    tests = {"testNodes": [{"nodeType": "Test Plan", "name": "Plan", "children": [unit]}]}
     summary_path = os.path.join(work, name + ".summary.json")
     tests_path = os.path.join(work, name + ".tests.json")
     with open(summary_path, "w", encoding="utf-8") as handle:
@@ -159,6 +164,27 @@ check("a test that neither passed nor skipped", "pad", 6,
       [bundle("odd", ordinary + [(first, "Passed"), (second, "Passed")], passedTests=5)], 1, "1 tests neither passed nor skipped")
 check("a family that is neither phone nor pad", "tablet", 6,
       [bundle("tablet", ordinary + [(first, "Passed"), (second, "Passed")])], 2, "the family must be phone or pad")
+check("a phone: the summary counts skipped tests, the list of tests shows none", "phone", 6,
+      [bundle("unlisted", ordinary + [(first, "Skipped"), (second, "Skipped")], listed=False)], 1,
+      "unlisted: the list of tests holds 0 tests, the summary 6")
+check("a phone: a skip in each of two bundles, both of tests that may skip", "phone", 6,
+      [bundle("left", ordinary[:2] + [(first, "Skipped")]), bundle("right", ordinary[2:] + [(second, "Skipped")])], 0,
+      "6 tests in 2 bundles, 2 skipped")
+check("a phone: another test skipped in the first of two bundles", "phone", 6,
+      [bundle("left", ordinary[:1] + [("test_ordinary9", "Skipped")]),
+       bundle("right", ordinary[1:3] + [(first, "Skipped"), (second, "Skipped")])], 1,
+      "skipped, and may not skip on a phone: test_ordinary9")
+check("a test failed in the first of two bundles", "pad", 7,
+      [bundle("left", ordinary[:1] + [("test_broken", "Failed")]),
+       bundle("right", ordinary[1:] + [(first, "Passed"), (second, "Passed")])], 1, "1 failed")
+check("an iPad: the second two-scene test failed, the first passed", "pad", 6,
+      [bundle("pad-second", ordinary + [(first, "Passed"), (second, "Failed")])], 1,
+      f"{second} did not run and pass on the iPad")
+check("a summary that can be read and a list of tests that cannot", "pad", 6,
+      [bundle("summary-only", ordinary + [(first, "Passed"), (second, "Passed")])[:2] + [os.path.join(work, "no-such-file.json")]], 1,
+      "summary-only: the result bundle cannot be read")
+check("test names without parentheses", "pad", 6,
+      [bundle("bare", ordinary + [(first, "Passed"), (second, "Passed")], parens=False)], 0, "6 tests")
 
 if failures > 0:
     print(f"check-example-results: self-test: {failures} of {total_cases} checks failed", file=sys.stderr)
