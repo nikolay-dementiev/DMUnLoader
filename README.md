@@ -256,7 +256,7 @@ final class LoadingViewController<LM: DMLoadingManager>: UIViewController {
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) is unavailable")
+        return nil
     }
 
     override func loadView() {
