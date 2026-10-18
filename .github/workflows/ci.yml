@@ -151,6 +151,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      # A check that never fails looks the same as a clean tree, so its readers are tried on texts
+      # that must fail before they are trusted with the real ones. It needs no build: run it first.
+      - name: Check the readers of the README and of Package.resolved
+        run: Scripts/check-manifest.sh --self-test
       - name: Build the library in Release
         # Tests run in Debug. Code inside "#if DEBUG" must not hide a broken release build, and
         # a warning inside "#if !DEBUG" is not in the log of the test job, so the log is kept
