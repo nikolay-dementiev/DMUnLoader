@@ -385,6 +385,10 @@ jobs:
         run: |
           udid="$(Scripts/prepare-simulator.sh "$DEVICE" "$OS")"
           echo "UDID=$udid" >> "$GITHUB_ENV"
+      # A check that never fails looks the same as a clean run, so its reader is tried on texts that
+      # must fail before it is trusted with the real ones. It needs no simulator.
+      - name: Check the reader of the example's results
+        run: Scripts/check-example-results.sh --self-test
       - name: Build the example and run its tests, one launch mode at a time
         run: Scripts/test-example.sh "$UDID" .build/results/ci/example
       - name: No warning from this repository
