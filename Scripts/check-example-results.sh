@@ -167,6 +167,9 @@ check("a family that is neither phone nor pad", "tablet", 6,
 check("a phone: the summary counts skipped tests, the list of tests shows none", "phone", 6,
       [bundle("unlisted", ordinary + [(first, "Skipped"), (second, "Skipped")], listed=False)], 1,
       "unlisted: the list of tests holds 0 tests, the summary 6")
+check("a phone: the summary counts two skips, the list shows those tests as passed", "phone", 6,
+      [bundle("renamed", ordinary + [(first, "Passed"), (second, "Passed")], passedTests=4, skippedTests=2)], 1,
+      "renamed: the list of tests holds 0 skipped tests, the summary 2")
 check("a phone: a skip in each of two bundles, both of tests that may skip", "phone", 6,
       [bundle("left", ordinary[:2] + [(first, "Skipped")]), bundle("right", ordinary[2:] + [(second, "Skipped")])], 0,
       "6 tests in 2 bundles, 2 skipped")
@@ -278,8 +281,16 @@ for name, summary_path, tests_path in bundles:
         continue
     if counts[0] == 0:
         problems.append(f"  {name}: the result bundle holds no test")
+    # The skips are decided by the names in the list of tests, so the list must hold the tests that
+    # the summary counts: a list without its test cases would hide every skip.
+    listed = list(cases(tests.get("testNodes") or []))
+    listed_skipped = sum(1 for case in listed if case.get("result") == "Skipped")
+    if len(listed) != counts[0]:
+        problems.append(f"  {name}: the list of tests holds {len(listed)} tests, the summary {counts[0]}")
+    if listed_skipped != counts[3]:
+        problems.append(f"  {name}: the list of tests holds {listed_skipped} skipped tests, the summary {counts[3]}")
     total, passed, failed, skipped = total + counts[0], passed + counts[1], failed + counts[2], skipped + counts[3]
-    for case in cases(tests.get("testNodes") or []):
+    for case in listed:
         test = str(case.get("name", ""))
         test = test[:-2] if test.endswith("()") else test
         if case.get("result") == "Passed":

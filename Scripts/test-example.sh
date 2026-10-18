@@ -98,7 +98,7 @@ import json, sys
 for devices in json.load(sys.stdin)["devices"].values():
     for device in devices:
         if device["udid"] == sys.argv[1]:
-            print("pad" if "iPad" in device.get("deviceTypeIdentifier", "") else "phone")
+            print("pad" if "iPad" in device["deviceTypeIdentifier"] else "phone")
 ' "$UDID"
 }
 
