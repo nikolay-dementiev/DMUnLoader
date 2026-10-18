@@ -166,10 +166,10 @@ Under the rules above it would have needed a major version. The rules apply from
   scene may skip, on an iPad none, and both ran and passed by name. Only the iPad run of the
   release steps, on iOS 26.2, can show that, since CI runs no iPad, and the iPadOS 18.6 simulator
   declines a second scene, so that run fails there. The check compares counts with the sources,
-  not the names of the tests with their methods. A missing snapshot reference fails in CI and is never
-  written, in the package tests and in the example's UI tests; that was tried by removing the
-  reference of the iOS 26.5 cell. A deleted test lowers the count in the sources and in the bundle
-  alike, and only the review of the diff sees it. No canary is in the repository.
+  not the names of the tests with their methods. A missing snapshot reference fails in CI and is
+  never written, in the package tests and in the example's UI tests; that was tried by removing
+  the reference of the iOS 26.5 cell. A deleted test lowers the count in the sources and in the
+  bundle alike, and only the review of the diff sees it. No canary is in the repository.
 - **Documented limits.** What the library enforces and what it cannot promise are in the README,
   "Behaviour your app must know", and in the DocC catalog (`Sources/DMUnLoader/DMUnLoader.docc`).
   This file points to them and does not restate them. A change of one of those limits is a change of
