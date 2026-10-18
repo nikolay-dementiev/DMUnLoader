@@ -71,6 +71,12 @@ self_test() {
     check "a warning in a dependency under .build" 0 "no warning" "$script" "$(compile_xcode "$real"; echo "$real/.build/checkouts/Dep/Sources/D.swift:1:1: warning: x")"
     check "a compile line that names no Swift file of the checkout" 2 "compiled nothing" "$script" "$(echo "SwiftCompile normal arm64 Compiling\\ nothing $real/Sources/Lib (in target 'Lib' from project 'Lib')"; names_only "$real")"
     check "only a dependency under .build compiled" 2 "compiled nothing" "$script" "$(echo "SwiftCompile normal arm64 $real/.build/checkouts/Dep/Sources/D.swift (in target 'Dep' from project 'Dep')"; names_only "$real")"
+    check "a compile line that also names .build/ for its output" 0 "no warning" "$script" "/usr/bin/swift-frontend -frontend -c $real/Sources/Lib/A.swift -primary-file $real/Sources/Lib/A.swift -o $real/.build/debug/Lib.build/A.swift.o"
+    check "a compile line with an include path under .build/ before the source" 0 "no warning" "$script" "/usr/bin/swift-frontend -frontend -c -I $real/.build/debug/Modules -primary-file $real/Sources/Lib/A.swift -module-name Lib"
+    check "a note that quotes a warning" 0 "no warning" "$script" "$(compile_xcode "$real"; echo "$real/Sources/Lib/A.swift:9:1: note: the warning: is silenced here")"
+    check "a warning that does not start the line" 0 "no warning" "$script" "$(compile_xcode "$real"; echo "see $real/Sources/Lib/A.swift:3:5: warning: variable was never used")"
+    check "a compile line that names a folder of the checkout and a Swift file elsewhere" 2 "compiled nothing" "$script" "$(echo "SwiftCompile normal arm64 $real/Sources/Lib /somewhere/else/B.swift (in target 'Lib' from project 'Lib')"; names_only "$real")"
+    check "a line that mentions SwiftCompile without starting with it" 2 "compiled nothing" "$script" "$(echo "echo SwiftCompile normal arm64 $real/Sources/Lib/A.swift"; names_only "$real")"
     check "a log that never names the checkout" 2 "not a build of this checkout" "$script" "Build succeeded"
     total=$((total + 1))
     local got=0 output
