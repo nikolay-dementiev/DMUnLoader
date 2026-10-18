@@ -100,10 +100,30 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # line of the log can start with either, so both are roots. They are the same when no link is in
 # the way.
 REAL_ROOT="$(cd "$ROOT" && pwd -P)"
-ROOTS="$ROOT/"
-if [ "$REAL_ROOT" != "$ROOT" ]; then
-    ROOTS="$ROOTS"$'\n'"$REAL_ROOT/"
-fi
+# A third form: the links of macOS itself (/tmp, /var and /etc point into /private), which a
+# build run from a real path still prints as the link.
+SYSTEM_LINK_ROOT="$REAL_ROOT"
+case "$REAL_ROOT" in
+    /private/*) SYSTEM_LINK_ROOT="${REAL_ROOT#/private}" ;;
+esac
+ROOT_LIST=("$ROOT")
+for candidate in "$REAL_ROOT" "$SYSTEM_LINK_ROOT"; do
+    known=0
+    for root in "${ROOT_LIST[@]}"; do
+        if [ "$root" = "$candidate" ]; then
+            known=1
+        fi
+    done
+    if [ "$known" -eq 0 ]; then
+        ROOT_LIST+=("$candidate")
+    fi
+done
+ROOTS=""
+ROOT_PATTERNS=()
+for candidate in "${ROOT_LIST[@]}"; do
+    ROOTS="${ROOTS:+$ROOTS$'\n'}$candidate/"
+    ROOT_PATTERNS+=(-e "$candidate/")
+done
 
 if [ ! -f "$LOG" ]; then
     echo "check-warnings: there is no log at $LOG" >&2
@@ -112,7 +132,7 @@ fi
 
 # A build of this checkout names its files. A log that never does is the wrong log, or
 # a build that stopped before it compiled anything, and proves nothing.
-if ! grep -q -F -e "$ROOT/" -e "$REAL_ROOT/" "$LOG"; then
+if ! grep -q -F "${ROOT_PATTERNS[@]}" "$LOG"; then
     echo "check-warnings: ${LOG} never mentions $ROOT; it is not a build of this checkout." >&2
     exit 2
 fi
