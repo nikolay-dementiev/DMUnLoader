@@ -63,7 +63,8 @@ version that keeps the major version of the previous release when the baseline l
 line since that release, or when the notes of the version have a breaking-changes heading (a
 heading of any level, or a line in bold, whose first word is "breaking", in any letter case;
 `No breaking changes` does not count). A comparison that cannot run is an error, never a pass,
-and so is a shallow clone, which cannot say which release is below.
+and so is a shallow clone when the newest heading is for the version, since it cannot say
+which release is below.
 `Scripts/check-release.sh --self-test`, which the `api` job runs, tries these decisions on
 scratch repositories. The baseline holds the interface as the compiler prints it. A changed
 default argument is a changed line of it. The body of a method or of a property is not in it, and so
