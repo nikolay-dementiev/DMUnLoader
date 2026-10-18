@@ -5,13 +5,93 @@
 #   Scripts/check-warnings.sh <xcodebuild log>    exit 0 with no such warning, 1 with one,
 #                                                 2 when the log is not a build of this
 #                                                 checkout
+#   Scripts/check-warnings.sh --self-test         run the script on canned logs
 #
 # The build setting that turns warnings into errors cannot be used for this package:
 # Xcode builds the dependencies with warnings suppressed, and the compiler refuses the two
 # flags together. So the log of the build is checked instead. A warning inside a
 # dependency's checkout is not this repository's to fix and does not count.
+#
+# --self-test needs no build. It copies this script into a scratch checkout and runs the copy on
+# canned logs, by the path the system gave the checkout, which on macOS lies behind a link (/var
+# is /private/var), and through a link of its own, against logs that print the one path or the
+# other: xcodebuild prints the link, SwiftPM the real path, and the script has to find a warning
+# whichever it prints. It also tries a log of a build that compiled nothing.
 
 set -euo pipefail
+
+# Runs the copy of this script on canned logs, and exits.
+self_test() {
+    local work real link physical total=0 failures=0 index script prefix label
+    work="$(mktemp -d "${TMPDIR:-/tmp}/check-warnings-self-test.XXXXXX")" || exit 2
+    trap 'rm -rf "$work"' EXIT
+    # The path as the script prints it for its own root: a TMPDIR that ends in a slash would
+    # leave a double slash here, which the root of the copy does not have.
+    work="$(cd "$work" && pwd)"
+    real="$work/checkout"
+    link="$work/link"
+    mkdir -p "$real/Scripts" "$real/Sources/Lib" "$real/.build/checkouts/Dep"
+    cp "${BASH_SOURCE[0]}" "$real/Scripts/check-warnings.sh"
+    ln -s "$real" "$link"
+    physical="$(cd "$real" && pwd -P)"
+
+    compile_xcode() { echo "SwiftCompile normal arm64 $1/Sources/Lib/A.swift (in target 'Lib' from project 'Lib')"; }
+    compile_swiftpm() { echo "/usr/bin/swift-frontend -frontend -c -primary-file $1/Sources/Lib/A.swift -module-name Lib"; }
+    names_only() { printf '%s\n' "cd $1/.swiftpm/xcode" "-I $1/.build/debug/Modules"; }
+    warning() { echo "$1/Sources/Lib/A.swift:3:5: warning: variable was never used"; }
+    check() {  # <name> <expected status> <expected text> <script> <text of the log>
+        local got=0 output
+        printf '%s\n' "$5" > "$work/log.txt"
+        output="$("$4" "$work/log.txt" 2>&1)" || got=$?
+        total=$((total + 1))
+        if [ "$got" -eq "$2" ] && printf '%s\n' "$output" | grep -q -F -- "$3"; then
+            echo "check-warnings: self-test ok   $1"
+        else
+            failures=$((failures + 1))
+            echo "check-warnings: self-test FAIL $1: expected status $2 and '$3', got status $got:" >&2
+            printf '%s\n' "$output" | head -3 | sed 's/^/    /' >&2
+        fi
+    }
+
+    # Script path and the path that the log prints: the checkout by the path the system gave it,
+    # and by its real path; the link, and the real path again.
+    local scripts=("$real/Scripts/check-warnings.sh" "$real/Scripts/check-warnings.sh" "$link/Scripts/check-warnings.sh" "$link/Scripts/check-warnings.sh")
+    local prefixes=("$real" "$physical" "$link" "$physical")
+    local labels=("run by its path, the log prints that path" "run by its path, the log prints the real path" "run through a link, the log prints the link" "run through a link, the log prints the real path")
+    for index in 0 1 2 3; do
+        script="${scripts[$index]}"
+        prefix="${prefixes[$index]}"
+        label="${labels[$index]}"
+        check "$label: a warning in the checkout" 1 "Sources/Lib/A.swift:3:5: warning" "$script" "$(compile_xcode "$prefix"; warning "$prefix")"
+        check "$label: a clean build" 0 "no warning" "$script" "$(compile_swiftpm "$prefix")"
+        check "$label: a build that compiled nothing" 2 "compiled nothing" "$script" "$(names_only "$prefix")"
+    done
+    script="$real/Scripts/check-warnings.sh"
+    check "a warning outside the checkout" 0 "no warning" "$script" "$(compile_xcode "$real"; echo '/somewhere/else/Sources/X.swift:1:1: warning: x')"
+    check "a warning in a dependency under .build" 0 "no warning" "$script" "$(compile_xcode "$real"; echo "$real/.build/checkouts/Dep/Sources/D.swift:1:1: warning: x")"
+    check "a log that never names the checkout" 2 "not a build of this checkout" "$script" "Build succeeded"
+    total=$((total + 1))
+    local got=0 output
+    output="$("$script" "$work/no-such-log.txt" 2>&1)" || got=$?
+    if [ "$got" -eq 2 ] && printf '%s\n' "$output" | grep -q -F -- "there is no log"; then
+        echo "check-warnings: self-test ok   no log at all"
+    else
+        failures=$((failures + 1))
+        echo "check-warnings: self-test FAIL no log at all: expected status 2 and 'there is no log', got status $got:" >&2
+        printf '%s\n' "$output" | head -3 | sed 's/^/    /' >&2
+    fi
+
+    if [ "$failures" -gt 0 ]; then
+        echo "check-warnings: self-test: $failures of $total checks failed" >&2
+        exit 1
+    fi
+    echo "check-warnings: self-test: $total checks of the scan, all ok."
+    exit 0
+}
+
+if [ "$#" -eq 1 ] && [ "$1" = "--self-test" ]; then
+    self_test
+fi
 
 LOG="${1:?give the path of an xcodebuild log}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
