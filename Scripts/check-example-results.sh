@@ -222,8 +222,10 @@ for test in "${TWO_SCENE_TESTS[@]}"; do
         exit 2
     fi
 done
-# The test methods of the sources, with an attribute allowed before func, such as @MainActor.
-EXPECTED="$(grep -rhE --include='*.swift' '^[[:space:]]*(@[[:alnum:]_]+[[:space:]]+)*func test[[:alnum:]_]*\(\)' "${SOURCE_PATHS[@]}" | wc -l | tr -d ' ')"
+# The test methods of the sources. The pattern is the one of the test count in ci.yml: attributes
+# (also with arguments) and the modifiers public, open, internal, final, override and nonisolated
+# before func, and a test that returns nothing.
+EXPECTED="$(grep -rhE --include='*.swift' '^[[:space:]]*((@[[:alnum:]_]+(\([^)]*\))?|public|open|internal|final|override|nonisolated)[[:space:]]+)*func[[:space:]]+test[[:alnum:]_]*[[:space:]]*\(\)[[:space:]]*(async[[:space:]]*)?(throws[[:space:]]*)?(\{.*|//.*)?$' "${SOURCE_PATHS[@]}" | wc -l | tr -d ' ')"
 ALLOWED="$(IFS=,; echo "${TWO_SCENE_TESTS[*]}")"
 
 WORK="$(mktemp -d "${TMPDIR:-/tmp}/check-example-results.XXXXXX")"

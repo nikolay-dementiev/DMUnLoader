@@ -113,11 +113,13 @@ jobs:
             -skipPackagePluginValidation \
             2>&1 | tee .build/results/ci/package.log
       # A run that lost tests, or skipped them, passes the coverage floor too. So every test method
-      # of the package tests must be in the result bundle, run and passed. The pattern allows an
-      # attribute before func, such as @MainActor.
+      # of the package tests must be in the result bundle, run and passed. The pattern allows
+      # attributes (also with arguments, such as @available(iOS 18, *)) and the modifiers public,
+      # open, internal, final, override and nonisolated before func, and a test that returns
+      # nothing.
       - name: Check the test count
         run: |
-          EXPECTED="$(git grep -hcE '^[[:space:]]*(@[[:alnum:]_]+[[:space:]]+)*func test[[:alnum:]_]*\(\)' -- 'Tests/*.swift' \
+          EXPECTED="$(git grep -hcE '^[[:space:]]*((@[[:alnum:]_]+(\([^)]*\))?|public|open|internal|final|override|nonisolated)[[:space:]]+)*func[[:space:]]+test[[:alnum:]_]*[[:space:]]*\(\)[[:space:]]*(async[[:space:]]*)?(throws[[:space:]]*)?(\{.*|//.*)?$' -- 'Tests/*.swift' \
             | awk '{ total += $1 } END { print total + 0 }')"
           xcrun xcresulttool get test-results summary --path .build/results/ci/package.xcresult > "$RUNNER_TEMP/summary.json"
           if ! jq -e --argjson expected "$EXPECTED" \
