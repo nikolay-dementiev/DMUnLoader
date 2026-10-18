@@ -4,7 +4,7 @@
 #
 #   Scripts/check-warnings.sh <xcodebuild log>    exit 0 with no such warning, 1 with one,
 #                                                 2 when the log is not a build of this
-#                                                 checkout
+#                                                 checkout, or the build compiled nothing
 #   Scripts/check-warnings.sh --self-test         run the script on canned logs
 #
 # The build setting that turns warnings into errors cannot be used for this package:
@@ -114,6 +114,31 @@ fi
 # a build that stopped before it compiled anything, and proves nothing.
 if ! grep -q -F -e "$ROOT/" -e "$REAL_ROOT/" "$LOG"; then
     echo "check-warnings: ${LOG} never mentions $ROOT; it is not a build of this checkout." >&2
+    exit 2
+fi
+
+# A log can name the checkout in lines that compile nothing: the include paths and the folders
+# of a build that found everything up to date. The log of such a build, a second run on a built
+# tree, holds no warning and proves nothing. A compile line names a Swift file of the checkout
+# outside .build/ and is a line of xcodebuild's that starts with SwiftCompile, or one of the
+# compiler's invocations that SwiftPM prints with -v, which holds -primary-file.
+COMPILED="$(CHECK_WARNINGS_ROOTS="$ROOTS" awk '
+    BEGIN { count = split(ENVIRON["CHECK_WARNINGS_ROOTS"], roots, "\n") }
+    index($0, "SwiftCompile ") == 1 || index($0, " -primary-file ") > 0 {
+        for (i = 1; i <= count; i++) {
+            rest = $0
+            while ((position = index(rest, roots[i])) > 0) {
+                rest = substr(rest, position + length(roots[i]))
+                if (index(rest, ".build/") != 1 && match(rest, /^[^ \t]*\.swift/)) {
+                    print "yes"
+                    exit
+                }
+            }
+        }
+    }' "$LOG")"
+if [ -z "$COMPILED" ]; then
+    echo "check-warnings: ${LOG} shows no Swift file of this checkout compiled: the build compiled nothing" >&2
+    echo "  (a second run on a built tree?) and proves nothing. Build clean." >&2
     exit 2
 fi
 
