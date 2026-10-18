@@ -95,6 +95,15 @@ fi
 
 LOG="${1:?give the path of an xcodebuild log}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# The checkout may be reached through a link, and the tools print it differently: xcodebuild by
+# the path it was reached through, SwiftPM by the real path (/tmp is /private/tmp on macOS). A
+# line of the log can start with either, so both are roots. They are the same when no link is in
+# the way.
+REAL_ROOT="$(cd "$ROOT" && pwd -P)"
+ROOTS="$ROOT/"
+if [ "$REAL_ROOT" != "$ROOT" ]; then
+    ROOTS="$ROOTS"$'\n'"$REAL_ROOT/"
+fi
 
 if [ ! -f "$LOG" ]; then
     echo "check-warnings: there is no log at $LOG" >&2
@@ -103,7 +112,7 @@ fi
 
 # A build of this checkout names its files. A log that never does is the wrong log, or
 # a build that stopped before it compiled anything, and proves nothing.
-if ! grep -q -F "$ROOT/" "$LOG"; then
+if ! grep -q -F -e "$ROOT/" -e "$REAL_ROOT/" "$LOG"; then
     echo "check-warnings: ${LOG} never mentions $ROOT; it is not a build of this checkout." >&2
     exit 2
 fi
@@ -113,11 +122,17 @@ fi
 # It reaches awk through the environment: -v would turn a backslash in it into an escape.
 # The build folder inside the checkout holds dependency checkouts and generated files,
 # so it is left out.
-WARNINGS="$(CHECK_WARNINGS_ROOT="$ROOT/" awk '
-    BEGIN { root = ENVIRON["CHECK_WARNINGS_ROOT"] }
-    index($0, root) == 1 && index($0, root ".build/") != 1 {
-        rest = substr($0, length(root) + 1)
-        if (rest ~ /^[^:]+:[0-9]+:[0-9]+: warning:/) print rest
+WARNINGS="$(CHECK_WARNINGS_ROOTS="$ROOTS" awk '
+    BEGIN { count = split(ENVIRON["CHECK_WARNINGS_ROOTS"], roots, "\n") }
+    {
+        for (i = 1; i <= count; i++) {
+            root = roots[i]
+            if (index($0, root) == 1 && index($0, root ".build/") != 1) {
+                rest = substr($0, length(root) + 1)
+                if (rest ~ /^[^:]+:[0-9]+:[0-9]+: warning:/) print rest
+                break
+            }
+        }
     }' "$LOG" | LC_ALL=C sort -u)"
 
 if [ -z "$WARNINGS" ]; then
