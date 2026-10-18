@@ -30,7 +30,7 @@ The checks are scripts in `Scripts/`, and CI runs them as you do, except
 | `Scripts/check-manifest.sh` | the manifest, installation by version, the consumer fixture, and every Swift block of `README.md` and of the documentation catalog, each on its own, in Swift 6 and Swift 5 mode: a manifest block is evaluated, every other block compiled. A warning in a compiled block fails it too; a manifest block is only evaluated, so a warning in it is not checked. Installation by version is the manifest block of `README.md`, pointed at a tagged copy and built for the iOS simulator on a cache of its own; its `Package.resolved` must hold this package, DMAction and DMVariableBlurView and nothing else, so a library that only the tests use is not fetched for a consumer. `--self-test` runs the cases of the readers of the README and of `Package.resolved` |
 | `Scripts/coverage-gate.sh <result bundle>` | the line coverage of the library against its floor |
 | `Scripts/check-podspec.sh` | `pod lib lint` in every Swift version of the podspec, that the pod makes its consumer link no test framework, and that the consumer app carries the pod's resource bundle with every key of the string catalog |
-| `Scripts/check-release.sh <version>` | that the newest heading of the changelog is that version with a real release date and has notes under it, and that the podspec still names the frozen 1.1.0; it also compares the release with the one below it in the changelog and refuses a version that keeps its major version after a removed or changed line of the interface, or after a `### Breaking changes` subsection; `--notes` prints the notes |
+| `Scripts/check-release.sh <version>` | that the newest heading of the changelog is that version with a real release date and has notes under it, and that the podspec still names the frozen 1.1.0; it also takes the previous release from the tags (the highest release tag below the version that the commit reaches) and refuses a changelog whose heading below the newest does not name it, is not lower than the version or skips a reachable tag; it compares the release with it and refuses a version that keeps its major version after a removed or changed line of the interface, or after a breaking-changes heading in the notes (a heading of any level, or a bold line, whose first word is "breaking"); it refuses a release whose previous release is not an ancestor of the commit, and stops with exit 2 in a shallow clone. Under GitHub Actions the reminder for added lines is also a warning annotation. `--notes` prints the notes; `--self-test` runs these decisions on scratch repositories, and the `api` job runs it |
 | `Scripts/check-warnings.sh <build log>` | that no compiler warning points into this repository; CI runs it on the logs of the package tests, of the example's build, of the Release build and of the floor build |
 | `Scripts/check-example-project.sh` | that the example's Xcode project matches its XcodeGen spec |
 | `Scripts/test-example.sh <simulator udid>` | the example's tests, below |
@@ -109,17 +109,25 @@ merge first, then tag. Before the tag is pushed:
 2. Every breaking change, as ENGINEERING.md defines it, needs a new major version, with no
    exception for a small one. A removed or changed line of the interface is one:
    `Scripts/check-api.sh --since <previous version>` lists them. A change of behaviour is another,
-   and the notes of the release declare it in a `### Breaking changes` subsection, in any letter
-   case, because no script can see behaviour: a change listed under `### Changed` alone does not
-   count.
-   `Scripts/check-release.sh` refuses a version that keeps the major version of the previous one
-   when it finds either. Lines that were only added pass the script, and they are additive only
-   after a review that none adds a requirement to a protocol, a case to a public enum or an
-   overload that makes an existing call ambiguous: the script cannot see any of them, nor the
-   order of the cases of an enum or of the statements in the body of an inlinable function.
-   It cannot tell a line that a new compiler reworded from a line that the code changed, so both
-   count. Run `Scripts/check-api.sh` first, since the baseline is the interface of the library
-   only while that check passes.
+   and the notes of the release declare it in a `### Breaking changes` heading, because no script
+   can see behaviour: a heading of any level, or a line in bold, in any letter case, whose first
+   word is "breaking" (`#### Breaking changes (API)` counts, `### No breaking changes` does not). A
+   change listed under `### Changed` alone does not count.
+   `Scripts/check-release.sh` takes the previous release from the tags, not from the changelog: the
+   heading below the newest one has to name the highest release tag below the version that the
+   commit reaches, so a release that the changelog skips is named. A run before the tag needs the
+   whole history and the tags: in a shallow clone it stops (`git fetch --unshallow --tags`). The
+   script refuses a version that keeps the major version of the previous one when the baseline
+   lost or changed a line, or when the notes have a breaking-changes heading. Lines that were only
+   added pass the script, with a reminder that is also a warning annotation in the log of the
+   release run. A new case of a public enum, a protocol requirement without a default
+   implementation and an overload that makes an existing call ambiguous are breaking and need a
+   new major version; a requirement with a default implementation is additive only when its name
+   is new to the protocol and to its extensions. The script cannot see which of them an added line
+   is, nor the order of the cases of an enum or of the statements in the body of an inlinable
+   function. It cannot tell a line that a new compiler reworded from a line that the code changed,
+   so both count. Run `Scripts/check-api.sh` first, since the baseline is the interface of the
+   library only while that check passes.
 3. The tests of the package and of the example app pass on iOS 17.5, the oldest runtime a test
    runs on (the package supports iOS 17.0), and on iOS 18.6. CI runs neither for the package and
    only iOS 18.6 for the example, so these runs are local:
