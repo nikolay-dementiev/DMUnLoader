@@ -112,6 +112,22 @@ jobs:
             -resultBundlePath .build/results/ci/package.xcresult \
             -skipPackagePluginValidation \
             2>&1 | tee .build/results/ci/package.log
+      # A run that lost tests, or skipped them, passes the coverage floor too. So every test method
+      # of the package tests must be in the result bundle, run and passed. The pattern allows an
+      # attribute before func, such as @MainActor.
+      - name: Check the test count
+        run: |
+          EXPECTED="$(git grep -hcE '^[[:space:]]*(@[[:alnum:]_]+[[:space:]]+)*func test[[:alnum:]_]*\(\)' -- 'Tests/*.swift' \
+            | awk '{ total += $1 } END { print total + 0 }')"
+          xcrun xcresulttool get test-results summary --path .build/results/ci/package.xcresult > "$RUNNER_TEMP/summary.json"
+          if ! jq -e --argjson expected "$EXPECTED" \
+              '$expected > 0 and .totalTestCount == $expected and .passedTests == $expected and .failedTests == 0 and .skippedTests == 0' \
+              "$RUNNER_TEMP/summary.json" > /dev/null; then
+            echo "Expected $EXPECTED tests of the package to run and pass:"
+            jq '{totalTestCount, passedTests, failedTests, skippedTests}' "$RUNNER_TEMP/summary.json"
+            exit 1
+          fi
+          echo "All $EXPECTED tests of the package ran and passed."
       - name: No warning from this repository
         run: Scripts/check-warnings.sh .build/results/ci/package.log
       - name: Coverage floor
@@ -369,6 +385,10 @@ jobs:
         run: |
           udid="$(Scripts/prepare-simulator.sh "$DEVICE" "$OS")"
           echo "UDID=$udid" >> "$GITHUB_ENV"
+      # A check that never fails looks the same as a clean run, so its reader is tried on texts that
+      # must fail before it is trusted with the real ones. It needs no simulator.
+      - name: Check the reader of the example's results
+        run: Scripts/check-example-results.sh --self-test
       - name: Build the example and run its tests, one launch mode at a time
         run: Scripts/test-example.sh "$UDID" .build/results/ci/example
       - name: No warning from this repository

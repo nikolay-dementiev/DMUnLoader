@@ -34,6 +34,7 @@ The checks are scripts in `Scripts/`, and CI runs them as you do, except
 | `Scripts/check-warnings.sh <build log>` | that no compiler warning points into this repository; CI runs it on the logs of the package tests, of the example's build, of the Release build and of the floor build |
 | `Scripts/check-example-project.sh` | that the example's Xcode project matches its XcodeGen spec |
 | `Scripts/test-example.sh <simulator udid>` | the example's tests, below |
+| `Scripts/check-example-results.sh <family> <bundle>...` | that the runs of the example held as many tests as its sources have test methods and skipped only what may skip on that device (family `phone`: the two tests that need a second scene; `pad`: nothing, and both ran and passed); `Scripts/test-example.sh` runs it after its last group, and `--self-test` runs the cases of its reader |
 
 CI also builds the documentation, with DocC's warnings as errors:
 
@@ -125,8 +126,13 @@ merge first, then tag. Before the tag is pushed:
    `xcodebuild test -scheme DMUnLoader -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 13 Pro,OS=17.5' -skipPackagePluginValidation`,
    the same with `name=iPhone 16 Pro,OS=18.6`, and `Scripts/test-example.sh` with the udid of
    each of those simulators.
-4. The example's tests pass on an iPad simulator, where two scenes run side by side:
-   `Scripts/test-example.sh` with the udid of an iPad simulator. CI runs no iPad.
+4. The example's tests pass on an iPad simulator on iOS 26.2, where two scenes run side by side:
+   `Scripts/test-example.sh` with the udid of an iPad Pro 11-inch simulator on iOS 26.2, the one
+   whose snapshot references are in the repository. The script fails when any test skipped on an
+   iPad, so a run that passes has run the two-scene tests. The iPadOS 18.6 simulator declines a
+   second scene, they skip there, and that run fails; on iOS 26.5 the UI tests have no reference
+   for an iPad, and fail in CI, while a run without `CI` writes them and fails once. CI runs no
+   iPad.
 5. The manual VoiceOver pass: the loading, success and failure HUDs of the example app, Retry,
    Close and the escape gesture, and the focus that returns to the app when a HUD goes.
 
