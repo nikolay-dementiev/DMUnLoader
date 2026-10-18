@@ -157,10 +157,14 @@ Under the rules above it would have needed a major version. The rules apply from
   prints one and SwiftPM the other, and it refuses a log in which no Swift file of the checkout was
   compiled, such as a second run on a built tree, which names the checkout and holds no warning for
   that reason alone. Its `--self-test`, run by the `test` job, tries all of that on canned logs.
-  Both scans were tried with
-  a warning planted in a scratch copy (in a block that only a Release build compiles, and in any
-  block of the floor build) and failed as they should, with Xcode 26.6; the floor job itself runs
-  Xcode 26.0.1, which was not available for that try. No planted warning is in the repository.
+  The scan of the Release build and the scan of the floor build were tried with a warning planted
+  in a scratch copy (in a block that only a Release build compiles, and in any block of the floor
+  build) and failed as they should, with Xcode 26.6. Since the roots were added, it also finds a
+  warning planted in a file of the library in the log of an xcodebuild build and in the log of the
+  floor build of a copy under /tmp, through /tmp and through /private/tmp. The floor job itself
+  runs Xcode 26.0.1, which was not available for those tries: the `-primary-file` lines that the
+  scan reads in its log are measured with 26.6 only, and another form of them would fail that job
+  with exit 2, not pass it. No planted warning is in the repository.
 - **Documented limits.** What the library enforces and what it cannot promise are in the README,
   "Behaviour your app must know", and in the DocC catalog (`Sources/DMUnLoader/DMUnLoader.docc`).
   This file points to them and does not restate them. A change of one of those limits is a change of

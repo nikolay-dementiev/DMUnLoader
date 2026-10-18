@@ -20,7 +20,8 @@
 
 set -euo pipefail
 
-# Runs the copy of this script on canned logs, and exits.
+# It lives in this script and runs a copy of it, so that the script CI runs is the one that is
+# tried, and a change to the scan cannot leave the test behind.
 self_test() {
     local work real link physical total=0 failures=0 index script prefix label base="${TMPDIR:-/tmp}" tmp_real
     # The scratch folder lies under /tmp wherever that is a link (macOS): the third root of the
