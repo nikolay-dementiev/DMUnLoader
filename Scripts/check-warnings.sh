@@ -22,8 +22,15 @@ set -euo pipefail
 
 # Runs the copy of this script on canned logs, and exits.
 self_test() {
-    local work real link physical total=0 failures=0 index script prefix label
-    work="$(mktemp -d "${TMPDIR:-/tmp}/check-warnings-self-test.XXXXXX")" || exit 2
+    local work real link physical total=0 failures=0 index script prefix label base="${TMPDIR:-/tmp}" tmp_real
+    # The scratch folder lies under /tmp wherever that is a link (macOS): the third root of the
+    # script is for that link, and a TMPDIR with a real path would leave the cases that print the
+    # link with no link to try.
+    tmp_real="$(cd /tmp 2>/dev/null && pwd -P || true)"
+    if [ -n "$tmp_real" ] && [ "$tmp_real" != /tmp ]; then
+        base=/tmp
+    fi
+    work="$(mktemp -d "$base/check-warnings-self-test.XXXXXX")" || exit 2
     trap 'rm -rf "$work"' EXIT
     # The path as the script prints it for its own root: a TMPDIR that ends in a slash would
     # leave a double slash here, which the root of the copy does not have.
