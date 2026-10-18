@@ -165,6 +165,20 @@ Under the rules above it would have needed a major version. The rules apply from
   runs Xcode 26.0.1, which was not available for those tries: the `-primary-file` lines that the
   scan reads in its log are measured with 26.6 only, and another form of them would fail that job
   with exit 2, not pass it. No planted warning is in the repository.
+- **The test runs are counted.** The coverage floor sits under the measured coverage, so a run that
+  drops a test class, or has a test that skips itself, passes it: with a class dropped by a flag
+  and one skipped test, the `test` job ran 321 tests and kept 92.21 percent against a floor of
+  92.00. The `test` job now compares its bundle with the test methods of `Tests`, an attribute
+  such as `@MainActor` allowed before `func`, and fails unless all of them ran and passed.
+  `Scripts/check-example-results.sh` does the same for the example, over the bundles of all its
+  groups, and decides the skips by the device: on a phone only the two tests that need a second
+  scene may skip, on an iPad none, and both ran and passed by name. Only the iPad run of the
+  release steps, on iOS 26.2, can show that, since CI runs no iPad, and the iPadOS 18.6 simulator
+  declines a second scene, so that run fails there. The check compares counts with the sources,
+  not the names of the tests with their methods. A missing snapshot reference fails in CI and is
+  never written, in the package tests and in the example's UI tests; that was tried by removing
+  the reference of the iOS 26.5 cell. A deleted test lowers the count in the sources and in the
+  bundle alike, and only the review of the diff sees it. No canary is in the repository.
 - **Documented limits.** What the library enforces and what it cannot promise are in the README,
   "Behaviour your app must know", and in the DocC catalog (`Sources/DMUnLoader/DMUnLoader.docc`).
   This file points to them and does not restate them. A change of one of those limits is a change of
