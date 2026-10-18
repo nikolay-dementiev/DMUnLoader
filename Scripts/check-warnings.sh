@@ -55,10 +55,10 @@ self_test() {
 
     # Script path and the path that the log prints: the checkout by the path the system gave it,
     # and by its real path; the link, and the real path again.
-    local scripts=("$real/Scripts/check-warnings.sh" "$real/Scripts/check-warnings.sh" "$link/Scripts/check-warnings.sh" "$link/Scripts/check-warnings.sh")
-    local prefixes=("$real" "$physical" "$link" "$physical")
-    local labels=("run by its path, the log prints that path" "run by its path, the log prints the real path" "run through a link, the log prints the link" "run through a link, the log prints the real path")
-    for index in 0 1 2 3; do
+    local scripts=("$real/Scripts/check-warnings.sh" "$real/Scripts/check-warnings.sh" "$link/Scripts/check-warnings.sh" "$link/Scripts/check-warnings.sh" "$physical/Scripts/check-warnings.sh")
+    local prefixes=("$real" "$physical" "$link" "$physical" "$real")
+    local labels=("run by its path, the log prints that path" "run by its path, the log prints the real path" "run through a link, the log prints the link" "run through a link, the log prints the real path" "run by its real path, the log prints the path the system gave")
+    for index in 0 1 2 3 4; do
         script="${scripts[$index]}"
         prefix="${prefixes[$index]}"
         label="${labels[$index]}"
