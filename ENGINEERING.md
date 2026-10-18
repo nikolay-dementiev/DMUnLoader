@@ -164,8 +164,9 @@ Under the rules above it would have needed a major version. The rules apply from
   `Scripts/check-example-results.sh` does the same for the example, over the bundles of all its
   groups, and decides the skips by the device: on a phone only the two tests that need a second
   scene may skip, on an iPad none, and both ran and passed by name. Only the iPad run of the
-  release steps can show that, since CI runs no iPad, and the iPadOS 18.6 simulator declines a
-  second scene, so that run fails there. A missing snapshot reference fails in CI and is never
+  release steps, on iOS 26.2, can show that, since CI runs no iPad, and the iPadOS 18.6 simulator
+  declines a second scene, so that run fails there. The check compares counts with the sources,
+  not the names of the tests with their methods. A missing snapshot reference fails in CI and is never
   written, in the package tests and in the example's UI tests; that was tried by removing the
   reference of the iOS 26.5 cell. A deleted test lowers the count in the sources and in the bundle
   alike, and only the review of the diff sees it. No canary is in the repository.

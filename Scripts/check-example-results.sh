@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Checks that the runs of the example's tests held every test of its sources, and skipped only
-# the tests that may skip on that device.
+# Checks that the runs of the example's tests held as many tests as its sources have test
+# methods, and skipped only the tests that may skip on that device.
 #
 #   Scripts/check-example-results.sh <phone|pad> <bundle>...   check the runs of one device family
 #   Scripts/check-example-results.sh --self-test                run the reader on built-in texts
