@@ -69,6 +69,8 @@ self_test() {
     script="$real/Scripts/check-warnings.sh"
     check "a warning outside the checkout" 0 "no warning" "$script" "$(compile_xcode "$real"; echo '/somewhere/else/Sources/X.swift:1:1: warning: x')"
     check "a warning in a dependency under .build" 0 "no warning" "$script" "$(compile_xcode "$real"; echo "$real/.build/checkouts/Dep/Sources/D.swift:1:1: warning: x")"
+    check "a compile line that names no Swift file of the checkout" 2 "compiled nothing" "$script" "$(echo "SwiftCompile normal arm64 Compiling\\ nothing $real/Sources/Lib (in target 'Lib' from project 'Lib')"; names_only "$real")"
+    check "only a dependency under .build compiled" 2 "compiled nothing" "$script" "$(echo "SwiftCompile normal arm64 $real/.build/checkouts/Dep/Sources/D.swift (in target 'Dep' from project 'Dep')"; names_only "$real")"
     check "a log that never names the checkout" 2 "not a build of this checkout" "$script" "Build succeeded"
     total=$((total + 1))
     local got=0 output
