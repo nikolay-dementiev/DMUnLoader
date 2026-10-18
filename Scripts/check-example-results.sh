@@ -3,8 +3,11 @@
 # Checks that the runs of the example's tests held every test of its sources, and skipped only
 # the tests that may skip on that device.
 #
-#   Scripts/check-example-results.sh <results dir> <phone|pad>   check the .xcresult bundles in a folder
-#   Scripts/check-example-results.sh --self-test                 run the reader on built-in texts
+#   Scripts/check-example-results.sh <phone|pad> <bundle>...   check the runs of one device family
+#   Scripts/check-example-results.sh --self-test                run the reader on built-in texts
+#
+# Scripts/test-example.sh calls it after its last group with the bundles it made, so the example
+# job and the run of the release checklist on an iPad use the same check.
 #
 # A run that lost a test class, or skipped tests, passes the build and the runs of the example
 # as they are: Scripts/test-example.sh fails a group only for a bundle that cannot be read or
@@ -27,11 +30,18 @@
 # fails the self-test. It does not run the shell around the reader.
 #
 # Exit codes: 0 every check passed, 1 a check failed, 2 wrong usage, or the check could not be
-# made (python3 is missing, a name in TWO_SCENE_TESTS is not a test of the sources, or the
-# folder holds no bundle).
+# made (python3 is missing, no bundle is given, or a name in TWO_SCENE_TESTS is not a test of
+# the sources).
 
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# The folders of the example's test sources, relative to the repository root.
+EXAMPLE_SOURCES=(
+    "Examples/DMUnLoaderExample/AppTests"
+    "Examples/DMUnLoaderExample/UITests"
+)
 # The tests that skip on a device that gives an app one scene. They need a second scene, which
 # an iPad opens: they run there, and the run must show it.
 TWO_SCENE_TESTS=(
@@ -161,5 +171,115 @@ PY
 if [ "$#" -eq 1 ] && [ "$1" = "--self-test" ]; then
     self_test
 fi
-echo "usage: Scripts/check-example-results.sh <results dir> <phone|pad> | --self-test" >&2
-exit 2
+if [ "$#" -lt 2 ]; then
+    echo "usage: Scripts/check-example-results.sh <phone|pad> <bundle>... | --self-test" >&2
+    exit 2
+fi
+if ! command -v python3 > /dev/null; then
+    echo "check-example-results: python3 is not installed" >&2
+    exit 2
+fi
+FAMILY="$1"
+shift
+
+# A name that is not a test of the sources would let a two-scene test vanish unnoticed.
+SOURCE_PATHS=()
+for source in "${EXAMPLE_SOURCES[@]}"; do
+    SOURCE_PATHS+=("$ROOT/$source")
+done
+for test in "${TWO_SCENE_TESTS[@]}"; do
+    if ! grep -rqE --include='*.swift' "func $test\(\)" "${SOURCE_PATHS[@]}"; then
+        echo "check-example-results: $test is in TWO_SCENE_TESTS and is not a test of ${EXAMPLE_SOURCES[*]}" >&2
+        exit 2
+    fi
+done
+# The test methods of the sources, with an attribute allowed before func, such as @MainActor.
+EXPECTED="$(grep -rhE --include='*.swift' '^[[:space:]]*(@[[:alnum:]_]+[[:space:]]+)*func test[[:alnum:]_]*\(\)' "${SOURCE_PATHS[@]}" | wc -l | tr -d ' ')"
+ALLOWED="$(IFS=,; echo "${TWO_SCENE_TESTS[*]}")"
+
+WORK="$(mktemp -d "${TMPDIR:-/tmp}/check-example-results.XXXXXX")"
+trap 'rm -rf "$WORK"' EXIT
+ARGUMENTS=()
+INDEX=0
+for bundle in "$@"; do
+    INDEX=$((INDEX + 1))
+    # A bundle that cannot be read leaves an empty file, which the reader reports by name.
+    xcrun xcresulttool get test-results summary --path "$bundle" > "$WORK/$INDEX.summary.json" 2> /dev/null || : > "$WORK/$INDEX.summary.json"
+    xcrun xcresulttool get test-results tests --path "$bundle" > "$WORK/$INDEX.tests.json" 2> /dev/null || : > "$WORK/$INDEX.tests.json"
+    ARGUMENTS+=("$(basename "$bundle" .xcresult)" "$WORK/$INDEX.summary.json" "$WORK/$INDEX.tests.json")
+done
+
+python3 - "$FAMILY" "$EXPECTED" "$ALLOWED" "${ARGUMENTS[@]}" <<'PY'
+# example-results
+import json
+import sys
+
+family, expected_text, allowed_text = sys.argv[1:4]
+if family not in ("phone", "pad"):
+    print("check-example-results: the family must be phone or pad", file=sys.stderr)
+    sys.exit(2)
+expected = int(expected_text)
+allowed = [name for name in allowed_text.split(",") if name]
+arguments = sys.argv[4:]
+bundles = [arguments[index:index + 3] for index in range(0, len(arguments), 3)]
+
+
+def load(path):
+    try:
+        with open(path, encoding="utf-8") as handle:
+            return json.load(handle)
+    except (OSError, ValueError):
+        return None
+
+
+def cases(nodes):
+    for node in nodes:
+        if node.get("nodeType") == "Test Case":
+            yield node
+        yield from cases(node.get("children") or [])
+
+
+problems = []
+total = passed = failed = skipped = 0
+passed_names = set()
+skipped_names = []
+for name, summary_path, tests_path in bundles:
+    summary, tests = load(summary_path), load(tests_path)
+    counts = [summary.get(key) if isinstance(summary, dict) else None
+              for key in ("totalTestCount", "passedTests", "failedTests", "skippedTests")]
+    if not isinstance(tests, dict) or not all(isinstance(count, int) for count in counts):
+        problems.append(f"  {name}: the result bundle cannot be read")
+        continue
+    if counts[0] == 0:
+        problems.append(f"  {name}: the result bundle holds no test")
+    total, passed, failed, skipped = total + counts[0], passed + counts[1], failed + counts[2], skipped + counts[3]
+    for case in cases(tests.get("testNodes") or []):
+        test = str(case.get("name", ""))
+        test = test[:-2] if test.endswith("()") else test
+        if case.get("result") == "Passed":
+            passed_names.add(test)
+        elif case.get("result") == "Skipped":
+            skipped_names.append(test)
+if total != expected:
+    problems.append(f"  the runs hold {total} tests, the sources of the example hold {expected}")
+if failed:
+    problems.append(f"  {failed} failed")
+if passed + skipped + failed != total:
+    problems.append(f"  {total - passed - skipped - failed} tests neither passed nor skipped")
+if family == "pad":
+    for test in skipped_names:
+        problems.append(f"  skipped on an iPad: {test}")
+    for test in allowed:
+        if test not in passed_names:
+            problems.append(f"  {test} did not run and pass on the iPad")
+else:
+    for test in skipped_names:
+        if test not in allowed:
+            problems.append(f"  skipped, and may not skip on a phone: {test}")
+if problems:
+    print("check-example-results: the runs of the example do not hold what its sources promise:", file=sys.stderr)
+    print("\n".join(problems), file=sys.stderr)
+    sys.exit(1)
+noun = "bundle" if len(bundles) == 1 else "bundles"
+print(f"check-example-results: {total} tests in {len(bundles)} {noun}, {skipped} skipped ({family}).")
+PY

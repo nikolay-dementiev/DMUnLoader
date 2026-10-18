@@ -13,9 +13,14 @@
 # scenes"), so a UIKit launch after a SwiftUI one can show no screen at all. Uninstalling the
 # app removes the saved session. Each group launches the modes of one scene-delegate class.
 #
-# Exit codes: 0 every run passed, 1 a build or a test run failed, or a run left no readable
-# result with a test in it, 2 the runs could not be set up (an unknown simulator, a UI test
-# class outside the groups, a grouped class that does not exist, an uninstall that fails).
+# When the last group has run, Scripts/check-example-results.sh checks that the runs together hold
+# every test of the example's sources and skipped only the tests that may skip on that device:
+# on an iPad none, so an iPad whose system declines a second scene fails here.
+#
+# Exit codes: 0 every run passed, 1 a build or a test run failed, a run left no readable
+# result with a test in it, or the check of the results failed, 2 the runs could not be set up
+# (an unknown simulator, a UI test class outside the groups, a grouped class that does not
+# exist, an uninstall that fails).
 
 set -euo pipefail
 
@@ -83,6 +88,19 @@ fi
 
 mkdir -p "$RESULTS"
 FAILED=0
+# The bundles of the groups that ran, for the check of the results at the end.
+RAN_BUNDLES=()
+
+# phone or pad: the family of the simulator with the udid, from its device type.
+device_family() {
+    xcrun simctl list devices -j | python3 -c '
+import json, sys
+for devices in json.load(sys.stdin)["devices"].values():
+    for device in devices:
+        if device["udid"] == sys.argv[1]:
+            print("pad" if "iPad" in device.get("deviceTypeIdentifier", "") else "phone")
+' "$UDID"
+}
 
 # The summary line of a result bundle. It fails when the bundle cannot be read or holds no test.
 summary() {
@@ -101,6 +119,7 @@ run_tests() {
     shift
     local bundle="$RESULTS/$name.xcresult"
     rm -rf "$bundle"
+    RAN_BUNDLES+=("$bundle")
     local status=0
     xcodebuild test-without-building \
         -project "$PROJECT" \
@@ -168,5 +187,10 @@ for group in "${TEST_GROUPS[@]}"; do
     done
     run_tests "ui-$name" "${arguments[@]}"
 done
+
+# Every test of the sources ran, and only the tests that may skip on this device skipped.
+if ! "$ROOT/Scripts/check-example-results.sh" "$(device_family)" "${RAN_BUNDLES[@]}"; then
+    FAILED=1
+fi
 
 exit "$FAILED"
