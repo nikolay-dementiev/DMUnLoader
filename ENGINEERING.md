@@ -152,7 +152,12 @@ Under the rules above it would have needed a major version. The rules apply from
   of the Release build of the `consumer` job and of the `floor` build, so a warning in this
   repository's files fails the job, and so does one that only a Release build compiles. The floor
   build is verbose (`swift build -v`), because the log of a clean build names no path of the
-  checkout, and the scan rejects such a log as the log of another build. Both scans were tried with
+  checkout, and the scan rejects such a log as the log of another build. The scan finds the
+  checkout under the path it is run through, its real path and the links of macOS, since xcodebuild
+  prints one and SwiftPM the other, and it refuses a log in which no Swift file of the checkout was
+  compiled, such as a second run on a built tree, which names the checkout and holds no warning for
+  that reason alone. Its `--self-test`, run by the `test` job, tries all of that on canned logs.
+  Both scans were tried with
   a warning planted in a scratch copy (in a block that only a Release build compiles, and in any
   block of the floor build) and failed as they should, with Xcode 26.6; the floor job itself runs
   Xcode 26.0.1, which was not available for that try. No planted warning is in the repository.
