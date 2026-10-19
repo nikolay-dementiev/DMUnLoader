@@ -131,8 +131,8 @@ private struct Receipt: DMLoadableTypeSuccess, Equatable {
     var description: String { "receipt \(number)" }
 }
 
-/// A provider whose settings change after it was erased, and which records the views it
-/// is asked for.
+/// A provider whose settings change after it was erased, and which records what it is asked
+/// for: the views, the error and the actions of an error view, and the payload of a success view.
 @MainActor
 private final class MutableProvider: @MainActor DMLoadingViewProvider {
     var loadingManagerSettings: any DMLoadingManagerSettings = StubDMLoadingManagerSettings(autoHideDelay: .seconds(1))
