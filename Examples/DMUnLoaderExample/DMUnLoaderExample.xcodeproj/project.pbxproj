@@ -32,6 +32,7 @@
 		9E3BFB15656BE4154A25E6F1 /* LibraryBundleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8848AD66D41950CD17DE081A /* LibraryBundleTests.swift */; };
 		AF8A9A31FA229BAD75C24860 /* HUDControlsUIKitCustomManagerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185C906F02DF8D113AC35EC5 /* HUDControlsUIKitCustomManagerUITests.swift */; };
 		B7D74AE858DBCAB2C0FCB04A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F0F2E466438E4E7C6FBC83 /* main.swift */; };
+		C12FF692F4250EEA4CFE0E1D /* HostedHUDSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A3E4A5207775AD6F3F2DAD /* HostedHUDSupport.swift */; };
 		C75C7CD56B9F8FF615D4FFB4 /* CustomManagerExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8726532E8540580DC7456156 /* CustomManagerExampleApp.swift */; };
 		CAB33BBAF16686B4DBCC6D27 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 885EB784DC42C7282B890B8F /* InfoPlist.strings */; };
 		D199BCEF28B89A92761152D7 /* HUDAppearanceUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 084A1B87BBCDBE6666F23F34 /* HUDAppearanceUITests.swift */; };
@@ -63,6 +64,7 @@
 /* Begin PBXFileReference section */
 		084A1B87BBCDBE6666F23F34 /* HUDAppearanceUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDAppearanceUITests.swift; sourceTree = "<group>"; };
 		10F0F2E466438E4E7C6FBC83 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		14A3E4A5207775AD6F3F2DAD /* HostedHUDSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostedHUDSupport.swift; sourceTree = "<group>"; };
 		16660AEC2BF9535391B9CAEA /* ExampleLoadingSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleLoadingSettings.swift; sourceTree = "<group>"; };
 		1794EC4D7112736F12563E80 /* HUDTouchRoutingUIKitUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDTouchRoutingUIKitUITests.swift; sourceTree = "<group>"; };
 		185C906F02DF8D113AC35EC5 /* HUDControlsUIKitCustomManagerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDControlsUIKitCustomManagerUITests.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 		2BF55163DEB9B2C5883A7DEA /* AppTests */ = {
 			isa = PBXGroup;
 			children = (
+				14A3E4A5207775AD6F3F2DAD /* HostedHUDSupport.swift */,
 				D2482A4DC1A35C039F0A97EB /* HUDWindowTests.swift */,
 				8848AD66D41950CD17DE081A /* LibraryBundleTests.swift */,
 			);
@@ -376,6 +379,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				816E04951EA9B6498AF767B1 /* HUDWindowTests.swift in Sources */,
+				C12FF692F4250EEA4CFE0E1D /* HostedHUDSupport.swift in Sources */,
 				9E3BFB15656BE4154A25E6F1 /* LibraryBundleTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
