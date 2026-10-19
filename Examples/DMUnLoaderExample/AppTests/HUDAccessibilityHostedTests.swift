@@ -3,7 +3,7 @@ import UIKit
 import XCTest
 
 /// What the HUD hides from assistive technology while it stays on the screen and its manager is
-/// replaced by one at another window level. Each test here pins defect C-8.1 as it is today: it
+/// replaced by one at another window level. Each test here pins a known defect as it is today: it
 /// asserts what the code does now, so it is green now and fails the day the defect is fixed. The
 /// fix changes behaviour; it flips the last assertion of each test.
 ///
@@ -14,11 +14,11 @@ import XCTest
 @MainActor
 final class HUDAccessibilityHostedTests: XCTestCase {
 
-    // MARK: - C-8.1
+    // MARK: - The windows hidden after a replacement at another level
 
-    /// Pins C-8.1: a window that was above the HUD and is under it once the new manager raises the
-    /// level stays reachable. A fix hides it, and this test then fails.
-    func test_shownManagerReplaced_atHigherLevel_coverUnderTheHUDStaysReachable_pinsC81() throws {
+    /// Pins the known defect: a window that was above the HUD and is under it once the new manager
+    /// raises the level stays reachable. A fix hides it, and this test then fails.
+    func test_shownManagerReplaced_atHigherLevel_coverUnderTheHUDStaysReachable_knownDefect() throws {
         let (scene, sceneDelegate) = try connectedSceneDelegate()
         let appWindow = try findAppWindow(in: scene)
         let cover = makeCover(in: scene, level: .normal + 1)
@@ -48,13 +48,13 @@ final class HUDAccessibilityHostedTests: XCTestCase {
         )
         XCTAssertFalse(
             coverHiddenUnderTheNewHUD,
-            "C-8.1 as it is today: the cover is under the HUD of the new manager and stays reachable; a fix hides it"
+            "known defect as it is today: the cover is under the HUD of the new manager and stays reachable; a fix hides it"
         )
     }
 
-    /// Pins C-8.1 the other way: a window that was under the HUD and is above it once the new
-    /// manager lowers the level stays hidden. A fix gives it back, and this test then fails.
-    func test_shownManagerReplaced_atLowerLevel_coverAboveTheHUDStaysHidden_pinsC81() throws {
+    /// Pins the known defect the other way: a window that was under the HUD and is above it once the
+    /// new manager lowers the level stays hidden. A fix gives it back, and this test then fails.
+    func test_shownManagerReplaced_atLowerLevel_coverAboveTheHUDStaysHidden_knownDefect() throws {
         let (scene, sceneDelegate) = try connectedSceneDelegate()
         let appWindow = try findAppWindow(in: scene)
         let cover = makeCover(in: scene, level: .normal + 1)
@@ -82,7 +82,7 @@ final class HUDAccessibilityHostedTests: XCTestCase {
         )
         XCTAssertTrue(
             coverHiddenAboveTheNewHUD,
-            "C-8.1 as it is today: the cover is above the HUD of the new manager and stays hidden; a fix gives it back"
+            "known defect as it is today: the cover is above the HUD of the new manager and stays hidden; a fix gives it back"
         )
     }
 

@@ -113,12 +113,12 @@ final class HUDAccessibilityCoordinatorTests: XCTestCase {
         XCTAssertEqual(spy.events, eventsAfterTheFirst, "the same state again tells nothing")
     }
 
-    // MARK: - Remembered element that nobody can see (C-8.2)
+    // MARK: - Remembered element that nobody can see (known defect)
 
-    /// Pins C-8.2 as it is today, with the answer of the adapter that the HUD uses: that adapter takes a
+    /// Pins a known defect as it is today, with the answer of the adapter that the HUD uses: that adapter takes a
     /// hidden view for a view on screen, so the focus returns to a view that nobody can reach. The test
     /// is green now and fails the day the defect is fixed; a fix flips its assertion.
-    func test_hudGoes_rememberedViewIsHidden_focusStillReturnsToIt_pinsC82() {
+    func test_hudGoes_rememberedViewIsHidden_focusStillReturnsToIt_knownDefect() {
         let (sut, spy) = makeSUT()
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         window.isHidden = false
@@ -136,7 +136,7 @@ final class HUDAccessibilityCoordinatorTests: XCTestCase {
         XCTAssertEqual(
             spy.events.last,
             .screenChanged(focusing: ObjectIdentifier(view)),
-            "C-8.2 as it is today: the focus returns to the hidden view; a fix posts the change with no element"
+            "known defect as it is today: the focus returns to the hidden view; a fix posts the change with no element"
         )
     }
 
