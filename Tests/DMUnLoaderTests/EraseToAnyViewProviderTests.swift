@@ -75,6 +75,16 @@ final class EraseToAnyViewProviderTests: XCTestCase {
         XCTAssertEqual(request.closeID, close.id, "the Close action reaches the original as the Close action")
     }
 
+    func test_erasedProvider_successRequest_forwardsThePayload() throws {
+        let (sut, provider) = makeSUT()
+
+        _ = sut.getSuccessView(object: Receipt(number: 7))
+
+        XCTAssertEqual(provider.successPayloads.count, 1, "the original provider is asked for the success view once")
+        let payload = try XCTUnwrap(provider.successPayloads.first, "the original provider is asked for the success view")
+        XCTAssertEqual(payload as? Receipt, Receipt(number: 7), "the original gets the payload that was asked about")
+    }
+
     func test_changeOfTheOriginalProvider_isNotPassedOn() {
         let (sut, provider) = makeSUT()
         let notifications = Counter()
@@ -115,6 +125,12 @@ private struct MarkerError: Error, Equatable {
     let code: Int
 }
 
+/// A success payload of its own type, so that a test can tell it from a string made of its description.
+private struct Receipt: DMLoadableTypeSuccess, Equatable {
+    let number: Int
+    var description: String { "receipt \(number)" }
+}
+
 /// A provider whose settings change after it was erased, and which records the views it
 /// is asked for.
 @MainActor
@@ -125,6 +141,7 @@ private final class MutableProvider: @MainActor DMLoadingViewProvider {
     var successViewSettings: any DMSuccessViewSettings = DMSuccessDefaultViewSettings()
     private(set) var viewRequests: [String] = []
     private(set) var errorRequests: [ErrorRequest] = []
+    private(set) var successPayloads: [any DMLoadableTypeSuccess] = []
 
     /// What the original was asked for an error view: the error, and the identity of each action.
     struct ErrorRequest {
@@ -146,6 +163,7 @@ private final class MutableProvider: @MainActor DMLoadingViewProvider {
 
     func getSuccessView(object: any DMLoadableTypeSuccess) -> some View {
         viewRequests.append("success")
+        successPayloads.append(object)
         return EmptyView()
     }
 
