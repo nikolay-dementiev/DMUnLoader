@@ -4,8 +4,8 @@ import UIKit
 import XCTest
 
 /// What the hosted tests of the HUD share: the scene of the running example app, the scene delegate
-/// that takes the managers they give it, the HUD window, and the turning of the run loop until a
-/// condition holds.
+/// that takes the managers they give it, the HUD window, the app's own window, and the turning of
+/// the run loop until a condition holds.
 @MainActor
 extension XCTestCase {
     /// Takes the root view out of its window, and the window out of its scene.
@@ -32,6 +32,14 @@ extension XCTestCase {
     /// The HUD window is the window of the library's own window class in the scene.
     func hudWindows(in scene: UIWindowScene) -> [UIWindow] {
         scene.windows.filter { NSStringFromClass(type(of: $0)).hasSuffix("DMPassThroughWindow") }
+    }
+
+    /// The app's own window: the one at the normal level that is no HUD window.
+    func findAppWindow(in scene: UIWindowScene) throws -> UIWindow {
+        try XCTUnwrap(
+            scene.windows.first { !hudWindows(in: scene).contains($0) && $0.windowLevel == .normal },
+            "the app's own window"
+        )
     }
 
     /// The scene delegate gets its manager when the root view appears, which can be after

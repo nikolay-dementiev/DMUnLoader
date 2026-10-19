@@ -1,12 +1,11 @@
 import DMUnLoader
-import DMUnLoaderExample
 import UIKit
 import XCTest
 
 /// What the HUD hides from assistive technology while it stays on the screen and its manager is
 /// replaced by one at another window level. Each test here pins defect C-8.1 as it is today: it
 /// asserts what the code does now, so it is green now and fails the day the defect is fixed. The
-/// fix changes behaviour and belongs to DMUnLoader 2.0; it flips the last assertion of each test.
+/// fix changes behaviour; it flips the last assertion of each test.
 ///
 /// The defect: a loading manager replaced by another loading manager is a change of content for
 /// the accessibility coordinator. It tells VoiceOver that the screen changed and does not recompute
@@ -18,50 +17,72 @@ final class HUDAccessibilityHostedTests: XCTestCase {
     // MARK: - C-8.1
 
     /// Pins C-8.1: a window that was above the HUD and is under it once the new manager raises the
-    /// level stays reachable. The fix hides it, and this test then fails.
-    func test_replacingAShownManager_withOneAtAHigherLevel_pinsC81_theCoverNowUnderTheHUDStaysReachable() throws {
+    /// level stays reachable. A fix hides it, and this test then fails.
+    func test_shownManagerReplaced_atHigherLevel_coverUnderTheHUDStaysReachable_pinsC81() throws {
         let (scene, sceneDelegate) = try connectedSceneDelegate()
+        let appWindow = try findAppWindow(in: scene)
         let cover = makeCover(in: scene, level: .normal + 1)
-        let appWindow = try appWindow(in: scene)
         defer { restoreTheScreen(sceneDelegate, appWindow: appWindow, thenRemove: cover) }
-        giveTheScreenBack(sceneDelegate, appWindow: appWindow)
+        giveTheScreenBack(
+            sceneDelegate,
+            appWindow: appWindow,
+            because: "precondition: the test starts with the app window reachable"
+        )
+        let newLevel = UIWindow.Level.normal + 2
 
         sceneDelegate.loadingManager = loadingManager(atLevel: .normal)
         let appWindowHiddenByTheFirstHUD = waitUntil(appWindow.accessibilityElementsHidden)
         let coverReachableAboveTheFirstHUD = !cover.accessibilityElementsHidden
 
-        sceneDelegate.loadingManager = loadingManager(atLevel: .normal + 2)
+        sceneDelegate.loadingManager = loadingManager(atLevel: newLevel)
+        let levelOfTheHUDWindow = hudWindows(in: scene).first?.windowLevel
         turnTheRunLoop(for: 1)
         let coverHiddenUnderTheNewHUD = cover.accessibilityElementsHidden
 
         XCTAssertTrue(appWindowHiddenByTheFirstHUD, "precondition: the first HUD hides the app window, which is under it")
         XCTAssertTrue(coverReachableAboveTheFirstHUD, "precondition: the cover is above the first HUD and reachable")
+        XCTAssertEqual(
+            levelOfTheHUDWindow,
+            newLevel,
+            "precondition: the HUD window is at the level of the new manager, above the cover"
+        )
         XCTAssertFalse(
             coverHiddenUnderTheNewHUD,
-            "C-8.1 as it is today: the cover is under the HUD of the new manager and stays reachable; the 2.0 fix hides it"
+            "C-8.1 as it is today: the cover is under the HUD of the new manager and stays reachable; a fix hides it"
         )
     }
 
     /// Pins C-8.1 the other way: a window that was under the HUD and is above it once the new
-    /// manager lowers the level stays hidden. The fix gives it back, and this test then fails.
-    func test_replacingAShownManager_withOneAtALowerLevel_pinsC81_theCoverNowAboveTheHUDStaysHidden() throws {
+    /// manager lowers the level stays hidden. A fix gives it back, and this test then fails.
+    func test_shownManagerReplaced_atLowerLevel_coverAboveTheHUDStaysHidden_pinsC81() throws {
         let (scene, sceneDelegate) = try connectedSceneDelegate()
+        let appWindow = try findAppWindow(in: scene)
         let cover = makeCover(in: scene, level: .normal + 1)
-        let appWindow = try appWindow(in: scene)
         defer { restoreTheScreen(sceneDelegate, appWindow: appWindow, thenRemove: cover) }
-        giveTheScreenBack(sceneDelegate, appWindow: appWindow)
+        giveTheScreenBack(
+            sceneDelegate,
+            appWindow: appWindow,
+            because: "precondition: the test starts with the app window reachable"
+        )
+        let newLevel = UIWindow.Level.normal
 
         sceneDelegate.loadingManager = loadingManager(atLevel: .normal + 2)
         let coverHiddenUnderTheFirstHUD = waitUntil(cover.accessibilityElementsHidden)
 
-        sceneDelegate.loadingManager = loadingManager(atLevel: .normal)
+        sceneDelegate.loadingManager = loadingManager(atLevel: newLevel)
+        let levelOfTheHUDWindow = hudWindows(in: scene).first?.windowLevel
         turnTheRunLoop(for: 1)
         let coverHiddenAboveTheNewHUD = cover.accessibilityElementsHidden
 
         XCTAssertTrue(coverHiddenUnderTheFirstHUD, "precondition: the first HUD hides the cover, which is under it")
+        XCTAssertEqual(
+            levelOfTheHUDWindow,
+            newLevel,
+            "precondition: the HUD window is at the level of the new manager, under the cover"
+        )
         XCTAssertTrue(
             coverHiddenAboveTheNewHUD,
-            "C-8.1 as it is today: the cover is above the HUD of the new manager and stays hidden; the 2.0 fix gives it back"
+            "C-8.1 as it is today: the cover is above the HUD of the new manager and stays hidden; a fix gives it back"
         )
     }
 
@@ -76,13 +97,8 @@ final class HUDAccessibilityHostedTests: XCTestCase {
         return cover
     }
 
-    private func appWindow(in scene: UIWindowScene) throws -> UIWindow {
-        try XCTUnwrap(
-            scene.windows.first { !hudWindows(in: scene).contains($0) && $0.windowLevel == .normal },
-            "the app's own window"
-        )
-    }
-
+    /// A manager that shows a loading, with a provider of its own: two providers are two states, so
+    /// a manager replaced by another one reaches the accessibility coordinator as a change of content.
     private func loadingManager(atLevel level: UIWindow.Level) -> DMLoadingManagerMain {
         DMLoadingManagerMain(
             state: .loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
@@ -91,12 +107,14 @@ final class HUDAccessibilityHostedTests: XCTestCase {
     }
 
     /// An idle manager, and the wait until the HUD has reported it and given the app window back.
-    /// A test that starts before that can meet windows that the test before it left in the wrong
-    /// state: a first version of these tests, which removed the cover before it set the idle manager,
-    /// failed the precondition of its second test.
-    private func giveTheScreenBack(_ sceneDelegate: DMSceneDelegateBase<DMLoadingManagerMain>, appWindow: UIWindow) {
+    /// A test that starts before that meets the windows in the state that the test before it left them in.
+    private func giveTheScreenBack(
+        _ sceneDelegate: DMSceneDelegateBase<DMLoadingManagerMain>,
+        appWindow: UIWindow,
+        because reason: String
+    ) {
         sceneDelegate.loadingManager = DMLoadingManagerMain()
-        _ = waitUntil(!appWindow.accessibilityElementsHidden)
+        XCTAssertTrue(waitUntil(!appWindow.accessibilityElementsHidden), reason)
     }
 
     /// The end of a test: the screen is given back while the cover is still in the scene, so that
@@ -106,7 +124,11 @@ final class HUDAccessibilityHostedTests: XCTestCase {
         appWindow: UIWindow,
         thenRemove cover: UIWindow
     ) {
-        giveTheScreenBack(sceneDelegate, appWindow: appWindow)
+        giveTheScreenBack(
+            sceneDelegate,
+            appWindow: appWindow,
+            because: "the idle manager gives the app window back before the cover goes"
+        )
         remove(cover)
     }
 
