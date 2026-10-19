@@ -51,13 +51,22 @@ enters this package only in a major version of this package. The module re-expor
 consumer of DMUnLoader sees. ViewInspector and swift-snapshot-testing are required by the test
 target only. The library product is dynamic.
 
-Who checks. The `api` job of CI runs `Scripts/check-api.sh` on every pull request and fails it when
-the public interface differs from the baseline; on a pull request it also writes to the job summary
-the delta against the base of the pull request. `Scripts/check-release.sh` runs on the version tag,
-and before it by whoever releases: it refuses a version that keeps the major version of the previous
-release when the baseline lost or changed a line since that release, or when the notes of the
-version have a `### Breaking changes` subsection, in any letter case. A comparison that cannot run
-is an error, never a pass. The baseline holds the interface as the compiler prints it. A changed
+Who checks. The `api` job of CI runs `Scripts/check-api.sh --self-test` and `Scripts/check-api.sh`
+on every pull request and fails it when the public interface differs from the baseline; on a pull
+request it also writes to the job summary the delta against the base of the pull request.
+`Scripts/check-release.sh` runs on the version tag, and before it by whoever releases. The previous
+release comes from the tags: it is the highest release tag below the version that the commit
+reaches, and the heading right below the newest one in `CHANGELOG.md` has to name it. A heading of
+another form, one that is not lower than the version, one that skips a reachable release tag, and
+no heading below although a release tag is reachable are each a problem. The script refuses a
+version that keeps the major version of the previous release when the baseline lost or changed a
+line since that release, or when the notes of the version have a breaking-changes heading (a
+heading of any level, or a line in bold, whose first word is "breaking", in any letter case;
+`No breaking changes` does not count). A comparison that cannot run is an error, never a pass,
+and so is a shallow clone when the newest heading is for the version, since it cannot say
+which release is below.
+`Scripts/check-release.sh --self-test`, which the `api` job runs, tries these decisions on
+scratch repositories. The baseline holds the interface as the compiler prints it. A changed
 default argument is a changed line of it. The body of a method or of a property is not in it, and so
 is not a default that a protocol extension supplies, nor the resolution of an overload; those stay
 with review. The other gates are `Scripts/lint.sh`, `Scripts/check-lint-contract.sh`,
@@ -168,8 +177,9 @@ Under the rules above it would have needed a major version. The rules apply from
 - **The test runs are counted.** The coverage floor sits under the measured coverage, so a run that
   drops a test class, or has a test that skips itself, passes it: with a class dropped by a flag
   and one skipped test, the `test` job ran 321 tests and kept 92.21 percent against a floor of
-  92.00. The `test` job now compares its bundle with the test methods of `Tests`, an attribute
-  such as `@MainActor` allowed before `func`, and fails unless all of them ran and passed.
+  92.00. The `test` job now compares its bundle with the test methods of `Tests`, attributes
+  (also with arguments) and the modifiers `public`, `open`, `internal`, `final`, `override` and
+  `nonisolated` allowed before `func`, and fails unless all of them ran and passed.
   `Scripts/check-example-results.sh` does the same for the example, over the bundles of all its
   groups, and decides the skips by the device: on a phone only the two tests that need a second
   scene may skip, on an iPad none, and both ran and passed by name. Only the iPad run of the
