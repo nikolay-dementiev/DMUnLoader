@@ -92,6 +92,8 @@ final class AccessibilityAdaptersTests: XCTestCase {
 
     func test_announcer_viewInAWindow_isOnScreen() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        window.isHidden = false
+        defer { window.isHidden = true }
         let view = UIView()
         window.addSubview(view)
 
@@ -111,25 +113,30 @@ final class AccessibilityAdaptersTests: XCTestCase {
 
     // MARK: - Remembered element that nobody can see (C-8.2)
 
-    // The four tests below pin C-8.2 as it is today: `isOnScreen` tells whether a view is attached to a
-    // window, not whether anyone can see it. Each asserts what the code does now, so each is green now
-    // and fails the day the defect is fixed. The fix changes behaviour and belongs to DMUnLoader 2.0;
-    // it flips the last assertion of each test.
+    // The three tests below pin C-8.2 as it is today: `isOnScreen` tells whether a view is attached to a
+    // window, not whether anyone can see it. Each shows its window and hides one thing, so that each
+    // varies one factor, and each asserts what the code does now: it is green now and fails the day the
+    // defect is fixed, and a fix flips its assertion. The same answer, met by the coordinator, is pinned
+    // in HUDAccessibilityCoordinatorTests.
 
-    func test_announcer_hiddenView_pinsC82_isStillOnScreen() {
+    func test_announcer_hiddenView_isStillOnScreen_pinsC82() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        window.isHidden = false
+        defer { window.isHidden = true }
         let view = UIView()
         window.addSubview(view)
         view.isHidden = true
 
         XCTAssertTrue(
             SystemAccessibilityAnnouncer().isOnScreen(view),
-            "C-8.2 as it is today: a hidden view counts as on screen; the 2.0 fix makes it not"
+            "C-8.2 as it is today: a hidden view in a shown window counts as on screen; a fix makes it not"
         )
     }
 
-    func test_announcer_childOfAHiddenView_pinsC82_isStillOnScreen() {
+    func test_announcer_childOfHiddenView_isStillOnScreen_pinsC82() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        window.isHidden = false
+        defer { window.isHidden = true }
         let parent = UIView()
         let child = UIView()
         window.addSubview(parent)
@@ -138,36 +145,22 @@ final class AccessibilityAdaptersTests: XCTestCase {
 
         XCTAssertTrue(
             SystemAccessibilityAnnouncer().isOnScreen(child),
-            "C-8.2 as it is today: the child of a hidden view counts as on screen; the 2.0 fix makes it not"
+            "C-8.2 as it is today: the child of a hidden view counts as on screen; a fix makes it not"
         )
     }
 
-    func test_announcer_viewInAHiddenWindow_pinsC82_isStillOnScreen() {
+    func test_announcer_viewInHiddenWindow_isStillOnScreen_pinsC82() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        // A new window is hidden by itself. The test shows it and hides it again, so that the hiding
+        // of the window is the one thing that makes the view invisible.
+        window.isHidden = false
         let view = UIView()
         window.addSubview(view)
         window.isHidden = true
 
         XCTAssertTrue(
             SystemAccessibilityAnnouncer().isOnScreen(view),
-            "C-8.2 as it is today: a view in a hidden window counts as on screen; the 2.0 fix makes it not"
-        )
-    }
-
-    func test_coordinator_hudGoes_theRememberedViewIsHidden_pinsC82_theFocusStillReturnsToIt() {
-        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
-        let view = UIView()
-        window.addSubview(view)
-        let (sut, announcer) = makeCoordinator(focusing: view)
-        sut.stateDidChange(to: .loading, identifiedBy: "loading")
-        view.isHidden = true
-
-        sut.stateDidChange(to: .none, identifiedBy: "none")
-
-        XCTAssertEqual(
-            announcer.screenChanges,
-            [nil, ObjectIdentifier(view)],
-            "C-8.2 as it is today: the focus returns to the hidden view; the 2.0 fix posts the change with no element"
+            "C-8.2 as it is today: a visible view in a hidden window counts as on screen; a fix makes it not"
         )
     }
 
@@ -218,43 +211,6 @@ final class AccessibilityAdaptersTests: XCTestCase {
 
     private func makeHider(for windows: SceneWindows) -> SceneContentHider {
         SceneContentHider(hudWindow: windows.hud) { windows.all }
-    }
-
-    private func makeCoordinator(
-        focusing view: UIView,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) -> (sut: HUDAccessibilityCoordinator, announcer: FocusHoldingAnnouncer) {
-        let announcer = FocusHoldingAnnouncer(focusing: view)
-        let sut = HUDAccessibilityCoordinator(announcer: announcer, contentHider: AccessibilitySpy())
-        trackForMemoryLeaks(sut, file: file, line: line)
-        return (sut, announcer)
-    }
-}
-
-/// An announcer for a coordinator that is to meet the real `isOnScreen`: assistive technology
-/// holds its focus on a view of the test, the question whether that view is on screen goes to the
-/// adapter that the HUD uses, and the screen changes are recorded with the element they focus.
-@MainActor
-private final class FocusHoldingAnnouncer: AccessibilityAnnouncer {
-    private let focus: AnyObject
-    private let adapter = SystemAccessibilityAnnouncer { _, _ in }
-    private(set) var screenChanges: [ObjectIdentifier?] = []
-
-    init(focusing element: AnyObject) {
-        self.focus = element
-    }
-
-    var focusedElement: AnyObject? {
-        focus
-    }
-
-    func isOnScreen(_ element: AnyObject) -> Bool {
-        adapter.isOnScreen(element)
-    }
-
-    func screenChanged(focusing element: AnyObject?) {
-        screenChanges.append(element.map(ObjectIdentifier.init))
     }
 }
 
