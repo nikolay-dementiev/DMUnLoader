@@ -152,6 +152,32 @@ final class HUDWindowTests: XCTestCase {
         XCTAssertTrue(letsTouchesThroughAgain, "the same manager hides the HUD: the window lets the touch through again")
     }
 
+    /// The mutation it is for: the presenter does not set `interceptsTouches` from the state of the new
+    /// manager before the window becomes visible (`OverlayWindowPresenter`, the line before the root view
+    /// is made). The view reports the state too, but only when SwiftUI has rendered it, so until then the
+    /// window would still have the answer of the manager it replaced.
+    func test_managerSetInTheShownState_takesTouchesBeforeTheFirstRendering() throws {
+        let (scene, sceneDelegate) = try connectedSceneDelegate()
+        defer { sceneDelegate.loadingManager = DMLoadingManagerMain() }
+        sceneDelegate.loadingManager = DMLoadingManagerMain()
+        let hudWindow = try XCTUnwrap(waitForHUDWindows(in: scene).first, "a HUD window")
+        let centre = CGPoint(x: hudWindow.bounds.midX, y: hudWindow.bounds.midY)
+        let letsTouchesThroughWhileIdle = waitUntil(hudWindow.hitTest(centre, with: nil) == nil)
+
+        sceneDelegate.loadingManager = DMLoadingManagerMain(
+            state: .loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
+            settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
+        )
+        // No turn of the run loop between the two lines: SwiftUI has not rendered the new root view yet.
+        let takesTouchesAtOnce = hudWindow.hitTest(centre, with: nil) != nil
+
+        XCTAssertTrue(letsTouchesThroughWhileIdle, "an idle manager shows no HUD: the window lets the touch through to the app")
+        XCTAssertTrue(
+            takesTouchesAtOnce,
+            "a manager that already shows a loading: the window takes the touch from the moment it is set"
+        )
+    }
+
     // MARK: - Assistive technology
 
     func test_hudRemovedWhileShown_givesTheAppWindowBackToAssistiveTechnology() throws {
