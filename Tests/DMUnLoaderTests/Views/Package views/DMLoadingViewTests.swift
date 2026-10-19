@@ -91,8 +91,8 @@ final class DMLoadingViewTests: XCTestCase {
         )
     }
     
-    func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Loading() {
-        testLoadingView_TheOverlayAnimatesSmoothly_IntoView(state:
+    func testLoadingView_BeforeAndAfterTheFadeIn_forState_Loading() {
+        assertHUDBeforeAndAfterFadeIn(state:
                 .loading(
                     provider: StubDMLoadingViewProvider()
                         .eraseToAnyViewProvider()
@@ -143,9 +143,9 @@ final class DMLoadingViewTests: XCTestCase {
         )
     }
     
-    func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Failure() {
+    func testLoadingView_BeforeAndAfterTheFadeIn_forState_Failure() {
         let provider = StubDMLoadingViewProvider()
-        testLoadingView_TheOverlayAnimatesSmoothly_IntoView(
+        assertHUDBeforeAndAfterFadeIn(
             state:
                     .failure(
                         error: DMUnLoader.DMAppError.custom("Test Error"),
@@ -197,9 +197,9 @@ final class DMLoadingViewTests: XCTestCase {
         )
     }
     
-    func testLoadingView_TheOverlayAnimatesSmoothly_IntoView_forState_Success() {
+    func testLoadingView_BeforeAndAfterTheFadeIn_forState_Success() {
         let provider = StubDMLoadingViewProvider()
-        testLoadingView_TheOverlayAnimatesSmoothly_IntoView(
+        assertHUDBeforeAndAfterFadeIn(
             state:
                     .success(
                         "Test Success",
@@ -298,7 +298,7 @@ final class DMLoadingViewTests: XCTestCase {
         return controller
     }
 
-    private func testLoadingView_TheOverlayAnimatesSmoothly_IntoView(
+    private func assertHUDBeforeAndAfterFadeIn(
         state: DMLoadableType,
         file: StaticString = #filePath,
         line: UInt = #line
