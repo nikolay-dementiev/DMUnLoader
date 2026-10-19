@@ -3,6 +3,15 @@
 All notable changes to DMUnLoader are recorded in this file. The format follows Keep a
 Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
 
+## [Unreleased]
+
+### Changed
+
+- Documentation only: `DMLoadingManager.hide()` states its contract. A conforming manager resets
+  its state to `.none` in the call. When a tap or the escape gesture hides the HUD, the HUD reads
+  the state back after the call and treats a manager that keeps its state as not hidden. No
+  behaviour changes.
+
 ## [1.1.0] - 2026-10-04
 
 ### Added
@@ -127,6 +136,7 @@ Behaviour changes. None of them removes a declaration; each one is pinned by a t
   own, for SwiftUI and UIKit, with default views and views of the app's own through
   `DMLoadingViewProvider`.
 
+[Unreleased]: https://github.com/nikolay-dementiev/DMUnLoader/compare/1.1.0...HEAD
 [1.1.0]: https://github.com/nikolay-dementiev/DMUnLoader/compare/1.0.3...1.1.0
 [1.0.3]: https://github.com/nikolay-dementiev/DMUnLoader/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/nikolay-dementiev/DMUnLoader/compare/1.0.1...1.0.2
