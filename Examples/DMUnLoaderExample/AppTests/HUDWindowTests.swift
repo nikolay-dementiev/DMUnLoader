@@ -45,6 +45,25 @@ final class HUDWindowTests: XCTestCase {
         XCTAssertEqual(hudWindows(in: scene).count, 1, "a new manager brings one HUD window back")
     }
 
+    /// The mutations it is for, all in `OverlayWindowPresenter.dismiss()`: the window is not hidden, it keeps its
+    /// root view controller, and it stays in the scene. The scene's list of windows says only whether the window
+    /// has left it, so the test keeps the window and looks at the window itself: the presenter takes the view
+    /// out, hides the window and removes it from the scene, because hidden alone leaves it in the scene.
+    func test_settingNil_leavesNoUsableWindowBehind() throws {
+        let (scene, sceneDelegate) = try connectedSceneDelegate()
+        _ = waitForHUDWindows(in: scene)
+        let removed = try XCTUnwrap(hudWindows(in: scene).first, "a HUD window")
+
+        sceneDelegate.loadingManager = nil
+        let leftTheScene = waitUntil(hudWindows(in: scene).isEmpty)
+        sceneDelegate.loadingManager = DMLoadingManagerMain()
+
+        XCTAssertTrue(leftTheScene, "without a manager the scene has no HUD window")
+        XCTAssertTrue(removed.isHidden, "the window that was removed is hidden, not only left out of the list")
+        XCTAssertNil(removed.rootViewController, "the window that was removed shows no view controller")
+        XCTAssertNil(removed.windowScene, "the window that was removed belongs to no scene")
+    }
+
     func test_replacedManager_afterANewManagerIsSet_isReleased() throws {
         let (_, sceneDelegate) = try connectedSceneDelegate()
         var first: DMLoadingManagerMain? = DMLoadingManagerMain()
