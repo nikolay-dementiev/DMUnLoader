@@ -98,6 +98,47 @@ final class RunLoopAutoHideSchedulerTests: XCTestCase {
         XCTAssertFalse(hiddenRan, "a cancelled hide never runs, even once its deadline has passed")
     }
 
+    func test_scheduler_releasedToken_doesNotDeliver() {
+        let sut = makeSUT()
+        var hiddenRan = false
+        let witness = expectation(description: "a later hide runs, so the released deadline has passed")
+
+        // The token is dropped at once, without a cancel: the owner that goes away stops the hide.
+        _ = sut.schedule(after: .milliseconds(50)) {
+            hiddenRan = true
+        }
+        let later = sut.schedule(after: .milliseconds(150)) {
+            witness.fulfill()
+        }
+
+        wait(for: [witness], timeout: TestTiming.callbackAllowance)
+        later.cancel()
+        XCTAssertFalse(hiddenRan, "a hide whose token was released never runs, even once its deadline has passed")
+    }
+
+    func test_scheduler_tokenKeptAlive_runsHideExactlyOnce() {
+        let sut = makeSUT()
+        let first = expectation(description: "hide runs once the delay has passed")
+        let again = expectation(description: "hide runs a second time")
+        again.isInverted = true
+        var runs = 0
+
+        let subscription = sut.schedule(after: .milliseconds(20)) {
+            runs += 1
+            if runs == 1 {
+                first.fulfill()
+            } else {
+                again.fulfill()
+            }
+        }
+
+        wait(for: [first], timeout: TestTiming.callbackAllowance)
+        // The token is still alive here: a scheduler that repeats would deliver again within this window.
+        wait(for: [again], timeout: 0.5)
+        subscription.cancel()
+        XCTAssertEqual(runs, 1, "the hide runs exactly once while its token is kept, with no repetition")
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> RunLoopAutoHideScheduler {
