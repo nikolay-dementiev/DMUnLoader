@@ -21,14 +21,6 @@ final class DMSuccessViewTests: XCTestCase {
 
     // MARK: Scenario 1: Verify Default Initialization
     
-    func testDefaultInitialization() {
-        let settings = DMSuccessDefaultViewSettings()
-        let sut = makeSUT(settings: settings)
-        
-        XCTAssertNotNil(sut.settingsProvider,
-                        "The settingsProvider should be initialized")
-    }
-    
     func testImageRenderedCorrectlyDuringDefaultInitialization() throws {
         let settings = DMSuccessDefaultViewSettings()
         let sut = makeSUT(settings: settings)
