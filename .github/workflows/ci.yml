@@ -101,6 +101,11 @@ jobs:
         run: |
           udid="$(Scripts/prepare-simulator.sh "$DEVICE" "$OS")"
           echo "SIMULATOR=$udid" >> "$GITHUB_ENV"
+      # A scan that never fails looks the same as a clean build, so it is tried on canned logs
+      # first: a warning through every path the checkout is printed by, and a build that compiled
+      # nothing. It needs no build.
+      - name: Check the warning scan
+        run: Scripts/check-warnings.sh --self-test
       - name: Build and test
         run: |
           mkdir -p .build/results/ci
@@ -208,7 +213,8 @@ jobs:
         # not installed"), so SwiftPM builds against its simulator SDK directly.
         # -v prints the compiler invocations with the paths of this checkout. A log of a clean
         # build names none, and the scan of the next step takes such a log for the log of
-        # another build.
+        # another build. The invocations are also where the scan sees that a Swift file of the
+        # checkout was compiled, by -primary-file.
         run: |
           mkdir -p .build/results/ci
           swift build -v \

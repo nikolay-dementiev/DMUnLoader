@@ -161,10 +161,19 @@ Under the rules above it would have needed a major version. The rules apply from
   of the Release build of the `consumer` job and of the `floor` build, so a warning in this
   repository's files fails the job, and so does one that only a Release build compiles. The floor
   build is verbose (`swift build -v`), because the log of a clean build names no path of the
-  checkout, and the scan rejects such a log as the log of another build. Both scans were tried with
-  a warning planted in a scratch copy (in a block that only a Release build compiles, and in any
-  block of the floor build) and failed as they should, with Xcode 26.6; the floor job itself runs
-  Xcode 26.0.1, which was not available for that try. No planted warning is in the repository.
+  checkout, and the scan rejects such a log as the log of another build. The scan finds the
+  checkout under the path it is run through, its real path and the links of macOS, since xcodebuild
+  prints one and SwiftPM the other, and it refuses a log in which no Swift file of the checkout was
+  compiled, such as a second run on a built tree, which names the checkout and holds no warning for
+  that reason alone. Its `--self-test`, run by the `test` job, tries all of that on canned logs.
+  The scan of the Release build and the scan of the floor build were tried with a warning planted
+  in a scratch copy (in a block that only a Release build compiles, and in any block of the floor
+  build) and failed as they should, with Xcode 26.6. Since the roots were added, it also finds a
+  warning planted in a file of the library in the log of an xcodebuild build and in the log of the
+  floor build of a copy under /tmp, through /tmp and through /private/tmp. The floor job itself
+  runs Xcode 26.0.1, which was not available for those tries: the `-primary-file` lines that the
+  scan reads in its log are measured with 26.6 only, and another form of them would fail that job
+  with exit 2, not pass it. No planted warning is in the repository.
 - **The test runs are counted.** The coverage floor sits under the measured coverage, so a run that
   drops a test class, or has a test that skips itself, passes it: with a class dropped by a flag
   and one skipped test, the `test` job ran 321 tests and kept 92.21 percent against a floor of
