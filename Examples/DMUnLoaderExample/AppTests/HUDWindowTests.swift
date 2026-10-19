@@ -47,8 +47,8 @@ final class HUDWindowTests: XCTestCase {
 
     /// The mutations it is for, all in `OverlayWindowPresenter.dismiss()`: the window is not hidden, it keeps its
     /// root view controller, and it stays in the scene. The scene's list of windows says only whether the window
-    /// has left it, so the test keeps the window and looks at the window itself: the presenter takes the view
-    /// out, hides the window and removes it from the scene, because hidden alone leaves it in the scene.
+    /// has left it, so the test keeps the window and looks at the window itself. The presenter takes the view
+    /// out, hides the window and removes it from the scene, since hidden alone leaves a window in the scene.
     func test_settingNil_leavesNoUsableWindowBehind() throws {
         let (scene, sceneDelegate) = try connectedSceneDelegate()
         _ = waitForHUDWindows(in: scene)
@@ -172,9 +172,10 @@ final class HUDWindowTests: XCTestCase {
     }
 
     /// The mutation it is for: the presenter does not set `interceptsTouches` from the state of the new
-    /// manager before the window becomes visible (`OverlayWindowPresenter`, the line before the root view
-    /// is made). The view reports the state too, but only when SwiftUI has rendered it, so until then the
-    /// window would still have the answer of the manager it replaced.
+    /// manager when it presents it (`OverlayWindowPresenter`, the line before the root view is made). The
+    /// view reports the state too, but only once SwiftUI has rendered it; until then the window, which is
+    /// already visible here, would still have the answer of the manager it replaced. The test hit-tests
+    /// with no turn of the run loop in between, so it pins the moment before that rendering.
     func test_managerSetInTheShownState_takesTouchesBeforeTheFirstRendering() throws {
         let (scene, sceneDelegate) = try connectedSceneDelegate()
         defer { sceneDelegate.loadingManager = DMLoadingManagerMain() }
