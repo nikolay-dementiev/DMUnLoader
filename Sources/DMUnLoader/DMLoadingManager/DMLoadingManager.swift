@@ -64,6 +64,11 @@ public protocol DMLoadingManager: ObservableObject {
     func showFailure<PR: DMLoadingViewProvider>(_ error: any Error, provider: PR, onRetry: (any DMAction)?)
     
     /// Hides the loading state, resetting it to `.none`.
+    ///
+    /// A conforming manager must reset its state to `.none` in this call. When a tap on the card or
+    /// outside it, or the escape gesture, hides the HUD, the HUD reads the state back after the call,
+    /// and the escape gesture reports that it hid the HUD only when the state shows no HUD
+    /// afterwards. A manager that keeps its state is not hidden, and the HUD stays.
     /// - Example:
     ///   ```swift
     ///   loadingManager.hide()
