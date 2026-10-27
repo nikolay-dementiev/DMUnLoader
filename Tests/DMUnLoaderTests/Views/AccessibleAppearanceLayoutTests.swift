@@ -4,6 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
+import DMAction
 import SwiftUI
 import UIKit
 import XCTest
@@ -79,7 +80,54 @@ final class AccessibleAppearanceLayoutTests: XCTestCase {
         XCTAssertLessThan(fitted.height, neededHeight(of: text, size: size), "and so cuts the text, which stays as it is")
     }
 
+    // MARK: - Close and Retry
+
+    func test_accessibleAppearance_accessibilityTextSizes_stacksCloseAndRetry() {
+        for size in Self.accessibilitySizes {
+            let gain = heightRetryAdds(.accessible, at: size.dynamicType)
+
+            XCTAssertGreaterThanOrEqual(
+                gain,
+                Self.buttonHeight,
+                "\(size.dynamicType): Retry stands under Close, so it adds the height of a button: \(gain)"
+            )
+        }
+    }
+
+    func test_accessibleAppearance_defaultTextSize_keepsCloseAndRetrySideBySide() {
+        let gain = heightRetryAdds(.accessible, at: .large)
+
+        XCTAssertLessThan(gain, Self.buttonHeight, "at the default size the two buttons share a row: \(gain)")
+    }
+
+    func test_standardAppearance_accessibilityTextSizes_keepsCloseAndRetrySideBySide() {
+        let gain = heightRetryAdds(.standard, at: .accessibility3)
+
+        XCTAssertLessThan(gain, Self.buttonHeight, "the released look keeps the two buttons in a row: \(gain)")
+    }
+
     // MARK: - Helpers
+
+    /// The height of the button of the HUD, which its style gives as a minimum.
+    private static let buttonHeight: CGFloat = 44
+
+    /// How much taller the error view gets when it has a Retry button next to its Close button.
+    private func heightRetryAdds(_ appearance: DMHUDAppearance, at size: DynamicTypeSize) -> CGFloat {
+        let withRetry = fittedSize(of: errorView(appearance, retry: true, size: size)).height
+        let withoutRetry = fittedSize(of: errorView(appearance, retry: false, size: size)).height
+        return withRetry - withoutRetry
+    }
+
+    private func errorView(_ appearance: DMHUDAppearance, retry: Bool, size: DynamicTypeSize) -> some View {
+        DefaultDMLoadingViewProvider(appearance: appearance)
+            .getErrorView(
+                error: DMAppError.custom("The server did not answer."),
+                onRetry: retry ? DMButtonAction {} : nil,
+                onClose: DMButtonAction {}
+            )
+            .environment(\.hudAppearance, appearance)
+            .dynamicTypeSize(size)
+    }
 
     private func loadingView(_ appearance: DMHUDAppearance, text: String, size: Size) -> some View {
         DefaultDMLoadingViewProvider(appearance: appearance)

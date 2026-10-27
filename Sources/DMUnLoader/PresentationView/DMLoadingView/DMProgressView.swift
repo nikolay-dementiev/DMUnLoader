@@ -13,12 +13,49 @@ struct DMProgressView: View {
     let settingsProvider: any DMProgressViewSettings
 
     @Environment(\.hudTexts) private var hudTexts
+    @Environment(\.hudAppearance) private var appearance
 
     init(settings settingsProvider: any DMProgressViewSettings) {
         self.settingsProvider = settingsProvider
     }
-    
+
     var body: some View {
+        switch appearance.kind {
+        case .standard:
+            standardBody
+        case .accessible:
+            accessibleBody
+        }
+    }
+
+    /// The accessible look has no cap: the text wraps at the width the card offers and shows in full,
+    /// whatever the text size and the language, and the view is as tall as the text needs.
+    private var accessibleBody: some View {
+        let loadingTextProperties = settingsProvider.loadingTextProperties
+        let progressIndicatorProperties = settingsProvider.progressIndicatorProperties
+
+        return VStack {
+            Text(HUDDefaultText.loadingText.displayed(loadingTextProperties.text, using: hudTexts))
+                .multilineTextAlignment(loadingTextProperties.alignment)
+                .foregroundColor(loadingTextProperties.foregroundColor)
+                .font(loadingTextProperties.font)
+                .lineLimit(loadingTextProperties.lineLimit)
+                .padding(loadingTextProperties.linePadding)
+                .fixedSize(horizontal: false, vertical: true)
+
+            ProgressView()
+                .controlSize(progressIndicatorProperties.size)
+                .progressViewStyle(progressIndicatorProperties.style)
+                .tint(progressIndicatorProperties.tintColor)
+                .layoutPriority(1)
+        }
+        .frame(minWidth: 30, minHeight: 30)
+        .background(settingsProvider.loadingContainerBackgroundColor)
+    }
+
+    /// The look of every release so far: at most half of the frame geometry in each direction.
+    @ViewBuilder
+    private var standardBody: some View {
         let geometry = settingsProvider.frameGeometrySize
         let loadingTextProperties = settingsProvider.loadingTextProperties
         let progressIndicatorProperties = settingsProvider.progressIndicatorProperties

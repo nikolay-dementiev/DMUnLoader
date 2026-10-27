@@ -115,11 +115,28 @@ struct HUDCard: View {
     let content: AnyView
 
     var body: some View {
-        content
-            .padding(15)
+        paddedContent
             .background(appearance.cardBackground(isShown: isShown, reducesTransparency: reducesTransparency))
             .cornerRadius(10)
             .contentShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    /// The content with the padding of the card. In the accessible look a card taller than the screen
+    /// scrolls, so that no line of it is cut off at the largest text sizes.
+    @ViewBuilder
+    private var paddedContent: some View {
+        switch appearance.kind {
+        case .standard:
+            content.padding(15)
+        case .accessible:
+            ViewThatFits(in: .vertical) {
+                content.padding(15)
+                ScrollView {
+                    content.padding(15)
+                }
+                .scrollBounceBehavior(.basedOnSize)
+            }
+        }
     }
 }
 
