@@ -51,6 +51,11 @@ enters this package only in a major version of this package. The module re-expor
 consumer of DMUnLoader sees. ViewInspector and swift-snapshot-testing are required by the test
 target only. The library product is dynamic.
 
+`Tools/Package.swift` depends on DMDevKit, the development tooling that the lint scripts and
+`Scripts/prepare-simulator.sh` forward to, but it is a package of its own: SwiftPM reads the
+manifest at the root of a dependency only, so a consumer of DMUnLoader does not fetch DMDevKit,
+and the root manifest that this policy and `Scripts/check-manifest.sh` govern does not change.
+
 Who checks. The `api` job of CI runs `Scripts/check-api.sh --self-test` and `Scripts/check-api.sh`
 on every pull request and fails it when the public interface differs from the baseline; on a pull
 request it also writes to the job summary the delta against the base of the pull request.
@@ -70,9 +75,10 @@ scratch repositories. The baseline holds the interface as the compiler prints it
 default argument is a changed line of it. The body of a method or of a property is not in it, and so
 is not a default that a protocol extension supplies, nor the resolution of an overload; those stay
 with review. The other gates are `Scripts/lint.sh`, `Scripts/check-lint-contract.sh`,
-`Scripts/check-lint-tool.sh`, `Scripts/check-warnings.sh`, `Scripts/check-manifest.sh`,
-`Scripts/coverage-gate.sh` and the Thread Sanitizer job. The pull request template asks for the
-class, the changes of observable behaviour and the release the change needs. The reviewer applies
+`Scripts/check-lint-tool.sh`, `Scripts/check-wrappers.sh`, `Scripts/check-warnings.sh`,
+`Scripts/check-manifest.sh`, `Scripts/coverage-gate.sh` and the Thread Sanitizer job. The pull
+request template asks for the class, the changes of observable behaviour and the release the
+change needs. The reviewer applies
 the rest: that the baseline changes in the same commit as the declaration; whether an added line
 adds an overload that makes an existing call ambiguous, a requirement to a protocol or a case to a
 public enum; every change of observable behaviour that the notes do not declare, which a test
