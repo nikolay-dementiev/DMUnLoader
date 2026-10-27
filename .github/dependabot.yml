@@ -1,5 +1,7 @@
 # The actions of the workflows are pinned to commits, and the package's dependencies are
-# resolved in the committed Package.resolved. Dependabot proposes the newer ones.
+# resolved in the committed Package.resolved. Dependabot proposes the newer ones. The tools
+# manifest in Tools/ pins DMDevKit and keeps a lockfile of its own, and Dependabot proposes its
+# newer releases too.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -13,5 +15,12 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+  - package-ecosystem: swift
+    directory: /Tools
+    schedule:
+      interval: weekly
+    # A release of DMDevKit is proposed a week after it appears, as for an action.
     cooldown:
       default-days: 7
