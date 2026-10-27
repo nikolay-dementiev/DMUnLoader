@@ -103,6 +103,17 @@ struct DescribedValue: Hashable {
 }
 
 extension DMLoadableType {
+    /// The look of the HUD for the state: that of the provider the state holds, and the standard
+    /// look where it holds none.
+    package var hudAppearance: DMHUDAppearance {
+        switch self {
+        case let .loading(provider), let .failure(_, provider, _), let .success(_, provider):
+            return provider.hudAppearance
+        case .none:
+            return .standard
+        }
+    }
+
     /// The phase of the state: what the policies of the HUD decide on.
     package var phase: HUDPhase {
         switch self {

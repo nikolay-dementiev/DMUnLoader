@@ -81,7 +81,11 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
                             _ = viewModel.backdropTapped()
                         }
                     
-                    HUDCard(isShown: animateTheAppearance, content: AnyView(overlayView))
+                    HUDCard(
+                        appearance: loadingManager.loadableState.hudAppearance,
+                        isShown: animateTheAppearance,
+                        content: AnyView(overlayView)
+                    )
                         .onTapGesture {
                             viewModel.cardTapped()
                         }
@@ -105,20 +109,16 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
 /// the card is a tap on the card, between the lines of its text too.
 struct HUDCard: View {
     @Environment(\.hudReducesTransparency) private var reducesTransparency
+    let appearance: DMHUDAppearance
     let isShown: Bool
     let content: AnyView
-    
+
     var body: some View {
         content
             .padding(15)
-            .background(Color.gray.opacity(backgroundOpacity))
+            .background(appearance.cardBackground(isShown: isShown, reducesTransparency: reducesTransparency))
             .cornerRadius(10)
             .contentShape(RoundedRectangle(cornerRadius: 10))
-    }
-
-    /// The gray of the card, decided by `HUDCardStyle`.
-    private var backgroundOpacity: Double {
-        HUDCardStyle.backgroundOpacity(isShown: isShown, reducesTransparency: reducesTransparency)
     }
 }
 
