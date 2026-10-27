@@ -74,9 +74,13 @@ paths that CI and this file name stay as they were. The other scripts of `Script
   The file also repeats the settings blocks of `Scripts/check-api.sh` and
   `Scripts/check-release.sh`, which have not moved: change both until they do.
 - The first run builds `devkit`, takes several seconds and prints the lines that SwiftPM writes
-  while it fetches DMDevKit; each next run adds under a second to the script. If `swift run`
-  itself fails, a fetch or a build, the script ends with its status, which can be 1, the status
-  that the scripts also use for findings.
+  while it fetches DMDevKit; each next run adds a second or two to the script, the cost of
+  `swift run` itself. If `swift run` itself fails, a fetch or a build, the script ends with its
+  status, which can be 1, the status that the scripts also use for findings.
+- `devkit` ends with 64 when it is started outside a git repository, or with no command or an
+  unknown one, and with 70 when it fails before it runs a script. Any other status is the
+  script's: 1 for a finding, 2 for a usage or configuration error. The README of DMDevKit lists
+  them.
 - A clean checkout gets SwiftLint, at the version that `.swiftlint.yml` pins, by running
   `Scripts/lint.sh`, or alone with
   `swift run --quiet --package-path Tools devkit swiftlint-fetch 0.65.1`.
