@@ -78,8 +78,9 @@ self_test() {
         check "$label: a build that compiled nothing" 2 "compiled nothing" "$script" "$(names_only "$prefix")"
     done
     script="$real/Scripts/check-warnings.sh"
-    # Swift 6.4 writes colour codes into the log of `swift build` when the log is a file, between the
-    # position and the word warning, and the scan has to see through them.
+    # Swift 6.4 writes colour codes into the log of `swift build` when its output does not go to a
+    # terminal, a file or a pipe, between the position and the word warning, and the scan has to see
+    # through them.
     check "a warning in a coloured log" 1 "Sources/Lib/A.swift:3:5: warning" "$script" "$(compile_swiftpm "$real"; printf '%s/Sources/Lib/A.swift:3:5: \033[1;33mwarning: \033[1;39mvariable was never used\033[0;0m\n' "$real")"
     # A byte that is not UTF-8 must not hide what follows it, whatever the locale of the caller is.
     check "a warning after a byte that is not UTF-8" 1 "Sources/Lib/A.swift:3:5: warning" "$script" "$(compile_swiftpm "$real"; printf 'a byte \377 in the log\n%s/Sources/Lib/A.swift:3:5: \033[1;33mwarning: \033[1;39mvariable was never used\033[0;0m\n' "$real")" en_US.UTF-8
@@ -191,7 +192,8 @@ fi
 # It reaches awk through the environment: -v would turn a backslash in it into an escape.
 # The build folder inside the checkout holds dependency checkouts and generated files,
 # so it is left out. The colour codes are taken out of the log first: Swift 6.4 puts them into the
-# log of `swift build` between the position and the word warning.
+# log of `swift build` between the position and the word warning. sed reads bytes (LC_ALL=C), because
+# in a UTF-8 locale it stops at a byte that is not UTF-8 and the pipe would not say so.
 WARNINGS="$(CHECK_WARNINGS_ROOTS="$ROOTS" awk '
     BEGIN { count = split(ENVIRON["CHECK_WARNINGS_ROOTS"], roots, "\n") }
     {
@@ -203,7 +205,7 @@ WARNINGS="$(CHECK_WARNINGS_ROOTS="$ROOTS" awk '
                 break
             }
         }
-    }' <(sed "s/$(printf '\033')\[[0-9;]*m//g" "$LOG") | LC_ALL=C sort -u)"
+    }' <(LC_ALL=C sed "s/$(printf '\033')\[[0-9;]*m//g" "$LOG") | LC_ALL=C sort -u)"
 
 if [ -z "$WARNINGS" ]; then
     echo "check-warnings: no warning from this repository's files in ${LOG#"$ROOT"/}."
