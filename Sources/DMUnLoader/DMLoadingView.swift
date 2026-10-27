@@ -102,6 +102,7 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
         }
         .animation(Animation.spring(duration: 0.2),
                    value: animateTheAppearance)
+        .environment(\.hudAppearance, loadingManager.loadableState.hudAppearance)
     }
 }
 
