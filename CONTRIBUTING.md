@@ -16,6 +16,10 @@ xcodebuild test -scheme DMUnLoader -sdk iphonesimulator -destination 'platform=i
 CI runs them on iOS 26.5 and 26.2. The oldest supported version is iOS 17.0, and iOS 17.5 is the
 oldest runtime that is run locally. Before a release they also run locally on iOS 17.5 and 18.6.
 
+`Scripts/prepare-simulator.sh "<device type name>" <version>` boots the simulator that a CI job
+uses, creates its device when the image has none, and prints the udid. It is one of the scripts
+that DMDevKit provides (see "The tools").
+
 ## The checks
 
 The checks are scripts in `Scripts/`, and CI runs them as you do, except
@@ -24,8 +28,9 @@ The checks are scripts in `Scripts/`, and CI runs them as you do, except
 | Script | What it checks |
 |---|---|
 | `Scripts/lint.sh` | SwiftLint, at the version pinned in `.swiftlint.yml`. The first run fetches that version into `.build/tools` and checks its checksum; runs at once on one checkout do not disturb each other. `--analyze <xcodebuild log>` also runs the analyzer rules, which CI does on the log of a build of the library |
-| `Scripts/check-lint-contract.sh` | that the lint rules fire where they should: it lints the fixtures of `Fixtures/Lint` where their folder says (the root as files of the library, `Domain/` and `Adapters/` as files of that folder, `Outside/` outside the library) and compares the diagnostics of the import, force unwrap and termination rules with the ones each line expects |
-| `Scripts/check-lint-tool.sh` | that the helper which fetches SwiftLint (`Scripts/swiftlint-tool.sh`) is safe to run twice at once: with a fake archive and shims for `unzip`, `curl` and `mv` it checks that the tool stays whole while another run unpacks and is replaced by a rename, that two first-time runs both succeed, that a wrong checksum never reaches the unpack, and that a failed download or unpack leaves no part file and no unpack folder behind |
+| `Scripts/check-lint-contract.sh` | that the lint rules fire where they should: it lints the fixtures of `Fixtures/Lint` where their folder says (the root as files of the library, `Domain/` and `Adapters/` as files of that folder, `Outside/` outside the library) and compares the diagnostics of the rules named in `devkit.conf` with the ones each line expects |
+| `Scripts/check-lint-tool.sh` | that the helper which fetches SwiftLint (DMDevKit's `swiftlint-tool.sh`) is safe to run twice at once: with a fake archive and shims for `unzip`, `curl` and `mv` it checks that the tool stays whole while another run unpacks and is replaced by a rename, that two first-time runs both succeed, that a wrong checksum never reaches the unpack, and that a failed download or unpack leaves no part file and no unpack folder behind |
+| `Scripts/check-wrappers.sh` | that the four scripts which forward to `devkit` forward faithfully: with a shim in place of `swift` it checks the command and the arguments that reach `devkit`, the directory, the exit status and both standard streams, and that each script works from any directory |
 | `Scripts/check-api.sh` | the public interface against `Fixtures/API/public-interface.txt`; `--self-test` runs the cases of its normalisation; `--since <ref>` prints, without a compiler, the lines the baseline lost, changed or gained since a git ref such as a release tag |
 | `Scripts/check-manifest.sh` | the manifest, installation by version, the consumer fixture, and every Swift block of `README.md` and of the documentation catalog, each on its own, in Swift 6 and Swift 5 mode: a manifest block is evaluated, every other block compiled. A warning in a compiled block fails it too; a manifest block is only evaluated, so a warning in it is not checked. Installation by version is the manifest block of `README.md`, pointed at a tagged copy and built for the iOS simulator on a cache of its own; its `Package.resolved` must hold this package, DMAction and DMVariableBlurView and nothing else, so a library that only the tests use is not fetched for a consumer. `--self-test` runs the cases of the readers of the README and of `Package.resolved` |
 | `Scripts/coverage-gate.sh <result bundle>` | the line coverage of the library against its floor |
@@ -42,12 +47,47 @@ CI also builds the documentation, with DocC's warnings as errors:
 xcodebuild docbuild -scheme DMUnLoader -destination 'generic/platform=iOS Simulator' -skipPackagePluginValidation OTHER_DOCC_FLAGS=--warnings-as-errors
 ```
 
-The checks and the tests run code that the branch contains: the scripts in `Scripts/`, the tests
-and the example app, `Package.swift`, `Package.resolved` and the manifest blocks of the README
-through Swift Package Manager, the podspec through CocoaPods, and `project.yml` through XcodeGen.
+The checks and the tests run code that the branch contains: the scripts in `Scripts/`, `devkit.conf`,
+which is shell code that runs with your rights, the tests and the example app, `Package.swift`,
+`Tools/Package.swift`, `Package.resolved` and the manifest blocks of the README through Swift
+Package Manager, the podspec through CocoaPods, and `project.yml` through XcodeGen.
 Tests in a simulator run as your macOS user. Before you run anything of someone else's branch,
 read what it changes in those files; the CI run of a pull request, with its read-only token, is
 the safer place to see it work.
+
+## The tools
+
+`Scripts/lint.sh`, `Scripts/check-lint-contract.sh`, `Scripts/check-lint-tool.sh` and
+`Scripts/prepare-simulator.sh` are wrappers of
+[DMDevKit](https://github.com/nikolay-dementiev/DMDevKit), the tooling that DMAction,
+DMVariableBlurView and DMUnLoader are to share. Each goes to the repository root, which `devkit`
+finds with git, so run them in a clone, and runs
+`swift run --quiet --package-path Tools devkit <command>` with the arguments it was given, so the
+paths that CI and this file name stay as they were. The other scripts of `Scripts/` have not moved.
+
+- `Tools/Package.swift` is a package of its own. It pins a release of DMDevKit, and
+  `Tools/Package.resolved` pins its commit; Dependabot proposes the newer releases. SwiftPM reads
+  only the manifest at the root of a dependency, so a package that depends on DMUnLoader does not
+  fetch DMDevKit.
+- `devkit.conf` holds the settings of this repository that the commands read: the library folder,
+  the lint rules and the folder of their fixtures. A change to a command is a change to DMDevKit.
+  The file also repeats the settings blocks of `Scripts/check-api.sh` and
+  `Scripts/check-release.sh`, which have not moved: change both until they do.
+- The first run builds `devkit`, takes several seconds and prints the lines that SwiftPM writes
+  while it fetches DMDevKit; each next run adds a second or two to the script, the cost of
+  `swift run` itself. If `swift run` itself fails, a fetch or a build, the script ends with its
+  status, which can be 1, the status that the scripts also use for findings.
+- `devkit` ends with 64 when it is started outside a git repository, or with no command or an
+  unknown one, and with 70 when it fails before it runs a script. Any other status is the
+  script's: 1 for a finding, 2 for a usage or configuration error. The README of DMDevKit lists
+  them.
+- A clean checkout gets SwiftLint, at the version that `.swiftlint.yml` pins, by running
+  `Scripts/lint.sh`, or alone with
+  `swift run --quiet --package-path Tools devkit swiftlint-fetch 0.65.1`.
+  Both need `curl`, `unzip` and `shasum`. `.swiftlint.yml` can pin only a version that DMDevKit
+  has a checksum for: for another one `Scripts/lint.sh` ends with status 2 and says so, so a
+  bump of SwiftLint waits for a DMDevKit release that knows the version.
+- `swift run --quiet --package-path Tools devkit --help` lists the commands.
 
 ## The example app
 

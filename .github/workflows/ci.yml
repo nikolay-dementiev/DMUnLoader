@@ -45,6 +45,10 @@ jobs:
       # Two runs at once on one checkout must not break each other while the tool is fetched.
       - name: Check that the lint tool is fetched safely
         run: Scripts/check-lint-tool.sh
+      # The scripts that forward to devkit are code that nothing else tests: one that dropped its
+      # arguments or its status would pass every other check.
+      - name: Check that the wrappers forward to devkit
+        run: Scripts/check-wrappers.sh
       # The analyzer rules, unused_import among them, read the compiler invocations of a full build.
       - name: Build the library for the analyzer
         run: |
@@ -208,6 +212,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      # Tools/Package.swift has to build with the oldest Xcode that this workflow runs. The other
+      # jobs that call the scripts run the tools on newer Xcode versions.
+      - name: Build the tools with Xcode 26.0.1
+        run: swift run --quiet --package-path Tools devkit --version
       - name: Build the library with Xcode 26.0.1
         # xcodebuild accepts no iOS destination with this Xcode on the image ("iOS 26.0 is
         # not installed"), so SwiftPM builds against its simulator SDK directly.
