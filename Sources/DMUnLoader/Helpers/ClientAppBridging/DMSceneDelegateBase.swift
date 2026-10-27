@@ -63,11 +63,10 @@ public final class DMSceneDelegateUIKit<
 
     /// Creates the delegate; UIKit does it for the scene, and the loading manager follows when the
     /// scene connects.
-    ///
-    /// The delegate it wraps is made here and not as the default value of the property: Swift 6.4
-    /// refuses a default value that passes the generic `LM` to a main-actor initializer. The
-    /// initializer stays last in the class, where the interface lists the inherited one.
     public override init() {
+        // Made here and not as the default value of the property: Swift 6.4 warns about a default
+        // value that passes the generic `LM` to a main-actor initializer. The initializer stays last
+        // in the class, where the interface lists the inherited one.
         decoratee = DMSceneDelegateBase<LM>()
         super.init()
     }
