@@ -75,6 +75,9 @@ self_test() {
         check "$label: a build that compiled nothing" 2 "compiled nothing" "$script" "$(names_only "$prefix")"
     done
     script="$real/Scripts/check-warnings.sh"
+    # Swift 6.4 writes colour codes into the log of `swift build` when the log is a file, between the
+    # position and the word warning, and the scan has to see through them.
+    check "a warning in a coloured log" 1 "Sources/Lib/A.swift:3:5: warning" "$script" "$(compile_swiftpm "$real"; printf '%s/Sources/Lib/A.swift:3:5: \033[1;33mwarning: \033[1;39mvariable was never used\033[0;0m\n' "$real")"
     check "a warning outside the checkout" 0 "no warning" "$script" "$(compile_xcode "$real"; echo '/somewhere/else/Sources/X.swift:1:1: warning: x')"
     check "a warning in a dependency under .build" 0 "no warning" "$script" "$(compile_xcode "$real"; echo "$real/.build/checkouts/Dep/Sources/D.swift:1:1: warning: x")"
     check "a compile line that names no Swift file of the checkout" 2 "compiled nothing" "$script" "$(echo "SwiftCompile normal arm64 Compiling\\ nothing $real/Sources/Lib (in target 'Lib' from project 'Lib')"; names_only "$real")"
