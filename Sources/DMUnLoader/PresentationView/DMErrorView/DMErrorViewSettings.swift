@@ -185,8 +185,8 @@ public struct AnyButtonStyle: ButtonStyle {
 public struct ErrorTextSettings {
     
     /// The foreground color of the error text.
-    let foregroundColor: Color?
-    
+    package let foregroundColor: Color?
+
     /// The alignment of the error text.
     let multilineTextAlignment: TextAlignment
     
@@ -239,8 +239,8 @@ public struct ErrorImageSettings {
     let image: Image
     
     /// The foreground color of the image.
-    let foregroundColor: Color?
-    
+    package let foregroundColor: Color?
+
     /// The size of the image frame.
     let frameSize: CustomViewSize
     

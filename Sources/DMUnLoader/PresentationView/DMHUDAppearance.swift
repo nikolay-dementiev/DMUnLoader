@@ -55,7 +55,27 @@ extension DMHUDAppearance {
 
     /// The settings of the library's error view in this look.
     package var errorViewSettings: any DMErrorViewSettings {
-        DMErrorDefaultViewSettings()
+        switch kind {
+        case .standard:
+            return DMErrorDefaultViewSettings()
+        case .accessible:
+            return DMErrorDefaultViewSettings(
+                actionButtonCloseSettings: buttonSettings(text: "Close"),
+                actionButtonRetrySettings: buttonSettings(text: "Retry")
+            )
+        }
+    }
+
+    /// The colour of the label and of the outline of the Close and Retry buttons.
+    package var buttonColor: Color {
+        .white
+    }
+
+    private func buttonSettings(text: String) -> ActionButtonSettings {
+        let color = buttonColor
+        return ActionButtonSettings(text: text) { @MainActor in
+            AnyButtonStyle(DMHudButtonStyle(color: color))
+        }
     }
 
     /// The settings of the library's success view in this look.
