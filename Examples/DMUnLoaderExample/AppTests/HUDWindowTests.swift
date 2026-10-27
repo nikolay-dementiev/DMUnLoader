@@ -483,27 +483,6 @@ final class HUDWindowTests: XCTestCase {
         return window
     }
 
-    /// Takes the root view out of its window, and the window out of its scene.
-    private func remove(_ window: UIWindow) {
-        window.rootViewController = nil
-        window.isHidden = true
-        window.windowScene = nil
-    }
-
-    private func windowScene() -> UIWindowScene? {
-        UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
-    }
-
-    private func connectedSceneDelegate() throws -> (UIWindowScene, DMSceneDelegateBase<DMLoadingManagerMain>) {
-        let scene = try XCTUnwrap(windowScene(), "the example app has a connected window scene")
-        _ = waitUntil(ExampleSceneDelegate.current != nil)
-        let sceneDelegate = try XCTUnwrap(
-            ExampleSceneDelegate.current,
-            "the SwiftUI path installs DMSceneDelegateBase and the root view registers it"
-        )
-        return (scene, sceneDelegate)
-    }
-
     /// Opens another scene of the app. The system may decline, as the iPadOS 18.6 simulator
     /// does; the test is then skipped with the system's reason.
     private func openScene(besides scene: UIWindowScene) throws -> UIWindowScene {
@@ -517,11 +496,6 @@ final class HUDWindowTests: XCTestCase {
             .compactMap { $0 as? UIWindowScene }
             .first { $0 !== scene }
         return try XCTUnwrap(otherScene, "the second scene connects")
-    }
-
-    /// The HUD window is the window of the library's own window class in the scene.
-    private func hudWindows(in scene: UIWindowScene) -> [UIWindow] {
-        scene.windows.filter { NSStringFromClass(type(of: $0)).hasSuffix("DMPassThroughWindow") }
     }
 
     /// Whether `view` or a view inside it is the UIKit view of the variable blur.
@@ -570,21 +544,5 @@ final class HUDWindowTests: XCTestCase {
 
     private func containsBlur(_ view: UIView) -> Bool {
         NSStringFromClass(type(of: view)).hasSuffix("DMVariableBlurUIView") || view.subviews.contains { containsBlur($0) }
-    }
-
-    /// The scene delegate gets its manager when the root view appears, which can be after
-    /// the test starts, so the run loop turns until the window exists or time runs out.
-    private func waitForHUDWindows(in scene: UIWindowScene) -> [UIWindow] {
-        _ = waitUntil(!hudWindows(in: scene).isEmpty)
-        return hudWindows(in: scene)
-    }
-
-    /// Turns the run loop until `condition` holds or ten seconds pass.
-    private func waitUntil(_ condition: @autoclosure () -> Bool) -> Bool {
-        let deadline = Date().addingTimeInterval(10)
-        while !condition(), Date() < deadline {
-            RunLoop.current.run(until: Date().addingTimeInterval(0.05))
-        }
-        return condition()
     }
 }

@@ -24,13 +24,17 @@ final class AccessibilitySpy: AccessibilityAnnouncer, ContentUnderneathHiding {
     var focused: AnyObject?
     var focusedElementIsOnScreen = true
 
+    /// When set, answers whether an element is on screen in place of `focusedElementIsOnScreen`,
+    /// so that a test can give the answer of the adapter that the HUD uses.
+    var onScreenAnswer: (@MainActor (AnyObject) -> Bool)?
+
     var focusedElement: AnyObject? {
         events.append(.readFocus)
         return focused
     }
 
     func isOnScreen(_ element: AnyObject) -> Bool {
-        focusedElementIsOnScreen
+        onScreenAnswer?(element) ?? focusedElementIsOnScreen
     }
 
     func screenChanged(focusing element: AnyObject?) {
