@@ -5,6 +5,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 /// How the HUD looks: the card it draws and the colours and layout of the library's own views.
 ///
@@ -50,7 +51,15 @@ public struct DMHUDAppearance: Hashable, Sendable {
 extension DMHUDAppearance {
     /// The settings of the library's loading view in this look.
     package var loadingViewSettings: any DMProgressViewSettings {
-        DMProgressViewDefaultSettings()
+        switch kind {
+        case .standard:
+            return DMProgressViewDefaultSettings()
+        case .accessible:
+            return DMProgressViewDefaultSettings(
+                loadingTextProperties: ProgressTextProperties(foregroundColor: Palette.ink, lineLimit: nil),
+                progressIndicatorProperties: ProgressIndicatorProperties(size: .large, tintColor: Palette.ink)
+            )
+        }
     }
 
     /// The settings of the library's error view in this look.
@@ -61,14 +70,24 @@ extension DMHUDAppearance {
         case .accessible:
             return DMErrorDefaultViewSettings(
                 actionButtonCloseSettings: buttonSettings(text: "Close"),
-                actionButtonRetrySettings: buttonSettings(text: "Retry")
+                actionButtonRetrySettings: buttonSettings(text: "Retry"),
+                errorTextSettings: ErrorTextSettings(foregroundColor: Palette.ink),
+                errorImageSettings: ErrorImageSettings(
+                    image: Image(systemName: "exclamationmark.triangle"),
+                    foregroundColor: Palette.errorIcon
+                )
             )
         }
     }
 
     /// The colour of the label and of the outline of the Close and Retry buttons.
     package var buttonColor: Color {
-        .white
+        switch kind {
+        case .standard:
+            return .white
+        case .accessible:
+            return Palette.ink
+        }
     }
 
     private func buttonSettings(text: String) -> ActionButtonSettings {
@@ -80,13 +99,54 @@ extension DMHUDAppearance {
 
     /// The settings of the library's success view in this look.
     package var successViewSettings: any DMSuccessViewSettings {
-        DMSuccessDefaultViewSettings()
+        switch kind {
+        case .standard:
+            return DMSuccessDefaultViewSettings()
+        case .accessible:
+            return DMSuccessDefaultViewSettings(
+                successImageProperties: SuccessImageProperties(foregroundColor: Palette.successIcon),
+                successTextProperties: SuccessTextProperties(foregroundColor: Palette.ink)
+            )
+        }
     }
 
-    /// The fill of the card: the gray of every release so far, decided by `HUDCardStyle`.
+    /// The fill of the card. The standard look keeps the gray of every release so far, decided by
+    /// `HUDCardStyle`. The accessible look is opaque whether the card is shown or fading in.
     package func cardBackground(isShown: Bool, reducesTransparency: Bool) -> Color {
-        Color.gray.opacity(
-            HUDCardStyle.backgroundOpacity(isShown: isShown, reducesTransparency: reducesTransparency)
-        )
+        switch kind {
+        case .standard:
+            return Color.gray.opacity(
+                HUDCardStyle.backgroundOpacity(isShown: isShown, reducesTransparency: reducesTransparency)
+            )
+        case .accessible:
+            return Palette.card
+        }
+    }
+}
+
+/// The colours of the accessible look, all of the system or dynamic in light and in dark mode. Their
+/// ratios are measured by the tests, not argued here: every text reaches 4.5 to 1 against the card
+/// and every icon, indicator and outline 3 to 1.
+private enum Palette {
+    /// Text, indicator and button: the label colour, black on white or white on black.
+    static let ink = Color(UIColor.label)
+
+    /// The card: the secondary background of the system, opaque.
+    static let card = Color(UIColor.secondarySystemBackground)
+
+    /// A red darker than the system red where the card is light, so that it reaches 3 to 1 on it.
+    static let errorIcon = dynamic(
+        light: UIColor(red: 215.0 / 255, green: 0, blue: 21.0 / 255, alpha: 1),
+        dark: UIColor(red: 1, green: 69.0 / 255, blue: 58.0 / 255, alpha: 1)
+    )
+
+    /// A green darker than the system green where the card is light, for the same reason.
+    static let successIcon = dynamic(
+        light: UIColor(red: 36.0 / 255, green: 138.0 / 255, blue: 61.0 / 255, alpha: 1),
+        dark: UIColor(red: 48.0 / 255, green: 209.0 / 255, blue: 88.0 / 255, alpha: 1)
+    )
+
+    private static func dynamic(light: UIColor, dark: UIColor) -> Color {
+        Color(UIColor { $0.userInterfaceStyle == .dark ? dark : light })
     }
 }
