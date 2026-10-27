@@ -185,7 +185,8 @@ fi
 # folder name with characters that mean something in a pattern cannot change the match.
 # It reaches awk through the environment: -v would turn a backslash in it into an escape.
 # The build folder inside the checkout holds dependency checkouts and generated files,
-# so it is left out.
+# so it is left out. The colour codes are taken out of the log first: Swift 6.4 puts them into the
+# log of `swift build` between the position and the word warning.
 WARNINGS="$(CHECK_WARNINGS_ROOTS="$ROOTS" awk '
     BEGIN { count = split(ENVIRON["CHECK_WARNINGS_ROOTS"], roots, "\n") }
     {
@@ -197,7 +198,7 @@ WARNINGS="$(CHECK_WARNINGS_ROOTS="$ROOTS" awk '
                 break
             }
         }
-    }' "$LOG" | LC_ALL=C sort -u)"
+    }' <(sed "s/$(printf '\033')\[[0-9;]*m//g" "$LOG") | LC_ALL=C sort -u)"
 
 if [ -z "$WARNINGS" ]; then
     echo "check-warnings: no warning from this repository's files in ${LOG#"$ROOT"/}."
