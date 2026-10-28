@@ -86,6 +86,63 @@ final class HUDAppearanceTests: XCTestCase {
         )
     }
 
+    func test_providerThatOnlyOptsIn_givesTheLibraryViewsTheSettingsOfTheAccessibleLook() {
+        let sut = ProviderThatOnlyOptsIn()
+        let accessible = DMHUDAppearance.accessible
+
+        XCTAssertEqual(
+            sut.loadingViewSettings.loadingTextProperties,
+            accessible.loadingViewSettings.loadingTextProperties,
+            "the loading text is that of the accessible look, not the white of the released one"
+        )
+        XCTAssertEqual(
+            sut.loadingViewSettings.progressIndicatorProperties,
+            accessible.loadingViewSettings.progressIndicatorProperties,
+            "the indicator is that of the accessible look"
+        )
+        XCTAssertEqual(
+            sut.errorViewSettings.errorTextSettings,
+            accessible.errorViewSettings.errorTextSettings,
+            "the error text is that of the accessible look"
+        )
+        XCTAssertEqual(
+            sut.errorViewSettings.errorImageSettings,
+            accessible.errorViewSettings.errorImageSettings,
+            "the error image is that of the accessible look"
+        )
+        XCTAssertEqual(
+            sut.successViewSettings.successTextProperties,
+            accessible.successViewSettings.successTextProperties,
+            "the success text is that of the accessible look"
+        )
+        XCTAssertEqual(
+            sut.successViewSettings.successImageProperties.foregroundColor,
+            accessible.successViewSettings.successImageProperties.foregroundColor,
+            "the success image has the colour of the accessible look"
+        )
+    }
+
+    func test_providerThatImplementsNothing_keepsTheDefaultViewSettings() {
+        let sut = ProviderThatImplementsNothing()
+
+        XCTAssertEqual(sut.hudAppearance, .standard, "a provider that implements nothing is standard")
+        XCTAssertEqual(
+            sut.loadingViewSettings.loadingTextProperties,
+            DMProgressViewDefaultSettings().loadingTextProperties,
+            "the loading text is that of the released look"
+        )
+        XCTAssertEqual(
+            sut.errorViewSettings.errorTextSettings,
+            DMErrorDefaultViewSettings().errorTextSettings,
+            "the error text is that of the released look"
+        )
+        XCTAssertEqual(
+            sut.successViewSettings.successTextProperties,
+            DMSuccessDefaultViewSettings().successTextProperties,
+            "the success text is that of the released look"
+        )
+    }
+
     // MARK: - Type erasure
 
     func test_erasedProvider_forwardsTheAppearanceOfTheDefaultProvider() {
@@ -105,7 +162,7 @@ final class HUDAppearanceTests: XCTestCase {
     func test_erasedProvider_erasedAgain_keepsTheAppearance() {
         let once = DefaultDMLoadingViewProvider(appearance: .accessible).eraseToAnyViewProvider()
 
-        XCTAssertEqual(once.eraseToAnyViewProvider().hudAppearance, .accessible, "an erased provider is returned as it is")
+        XCTAssertEqual(once.eraseToAnyViewProvider().hudAppearance, .accessible, "erasing an erased provider keeps the opt-in")
     }
 
     // MARK: - State
@@ -208,6 +265,17 @@ private final class ConformerOfVersion110: @MainActor DMLoadingViewProvider {
         Text("A success of the host")
     }
 }
+
+/// A provider that opts in and keeps the library's views: it implements the requirement and nothing
+/// else, as the documentation of the protocol invites.
+@MainActor
+private final class ProviderThatOnlyOptsIn: @MainActor DMLoadingViewProvider {
+    var hudAppearance: DMHUDAppearance { .accessible }
+}
+
+/// A provider that implements nothing: every requirement has its default.
+@MainActor
+private final class ProviderThatImplementsNothing: @MainActor DMLoadingViewProvider {}
 
 /// A provider of a host that opts in: it implements the requirement, and its loading view reports what
 /// it finds in its environment.
