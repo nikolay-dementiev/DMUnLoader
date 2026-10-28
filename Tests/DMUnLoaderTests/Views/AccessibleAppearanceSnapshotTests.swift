@@ -87,12 +87,3 @@ private struct AccessibleHUDContainer<Content: View>: View {
         .environment(\.hudAppearance, .accessible)
     }
 }
-
-/// The default texts of the HUD with a loading text of the test.
-private struct FixedHUDTexts: HUDTexts {
-    let loading: String
-
-    func text(for role: HUDDefaultText) -> String {
-        role == .loadingText ? loading : role.english
-    }
-}

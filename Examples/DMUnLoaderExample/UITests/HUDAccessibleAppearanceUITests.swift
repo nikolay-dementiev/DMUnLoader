@@ -14,15 +14,15 @@ final class HUDAccessibleAppearanceUITests: XCTestCase {
     // MARK: - Default text size
 
     func test_loadingHUD_defaultTextSize_accessibilityAudit_hasNoIssues() throws {
-        try assertAuditHasNoIssues(at: .standard, after: DemoIdentifier.showLoading) { $0.staticTexts["Loading..."] }
+        try assertAuditHasNoIssues(at: .regular, after: DemoIdentifier.showLoading) { $0.staticTexts["Loading..."] }
     }
 
     func test_failureHUD_defaultTextSize_accessibilityAudit_hasNoIssues() throws {
-        try assertAuditHasNoIssues(at: .standard, after: DemoIdentifier.showFailure) { $0.buttons["Retry"] }
+        try assertAuditHasNoIssues(at: .regular, after: DemoIdentifier.showFailure) { $0.buttons["Retry"] }
     }
 
     func test_successHUD_defaultTextSize_accessibilityAudit_hasNoIssues() throws {
-        try assertAuditHasNoIssues(at: .standard, after: DemoIdentifier.showSuccess) { $0.staticTexts["Loaded"] }
+        try assertAuditHasNoIssues(at: .regular, after: DemoIdentifier.showSuccess) { $0.staticTexts["Loaded"] }
     }
 
     // MARK: - Largest text size
@@ -76,7 +76,7 @@ final class HUDAccessibleAppearanceUITests: XCTestCase {
     }
 
     private enum TextSize: String {
-        case standard = "UICTContentSizeCategoryL"
+        case regular = "UICTContentSizeCategoryL"
         case largest = "UICTContentSizeCategoryAccessibilityXXXL"
     }
 
