@@ -479,6 +479,36 @@ with VoiceOver or Switch Control. An app whose users need more time keeps a fail
 with `DMHUDDismissal(autoHide: .never)`, or gives it a longer delay; see
 [The loading manager's settings](#the-loading-managers-settings).
 
+#### The accessible appearance
+
+The default look of the HUD, white text on a gray card, does not reach a contrast of 4.5:1, and its
+loading view cuts a long text at large accessibility text sizes. It stays the default so that no
+screen of your app changes with an update. `DMHUDAppearance.accessible` is an opt-in look of the
+library's own views: pass it to the provider that you show a state with.
+
+```swift
+import DMUnLoader
+
+@MainActor
+func showAccessibleLoading(on manager: some DMLoadingManager) {
+    manager.showLoading(provider: DefaultDMLoadingViewProvider(appearance: .accessible))
+}
+```
+
+It guarantees, and the tests of the package measure:
+
+- every text at a contrast of 4.5:1 or more against its card, in light and in dark mode;
+- every icon, progress indicator and button outline at 3:1 or more;
+- an opaque card in the colours of the system, which follows light and dark mode and Increase
+  Contrast;
+- a loading text that wraps at the width of the screen and shows in full at every text size, and a
+  card taller than the screen that scrolls;
+- Close and Retry one above the other at accessibility text sizes.
+
+`DMHUDAppearance.standard`, the look of every release so far, is what every provider gives unless it
+says otherwise. A provider of your own opts in by returning `.accessible` from `hudAppearance`: the
+HUD then draws the accessible card around your views, but your views keep the colours they have.
+
 ## Example app and tests
 
 `Examples/DMUnLoaderExample` is an app that shows each state. Open
@@ -528,12 +558,13 @@ behaviour changed, and the changelog lists each change. The ones most likely to 
 ## Known issues
 
 The default card of the HUD, white text on gray at opacity 0.8, does not reach the contrast of
-4.5:1; an app that needs it sets its own colours through the settings types, or supplies its own
-views through `DMLoadingViewProvider`.
+4.5:1; an app that needs it passes `DMHUDAppearance.accessible` to its provider, see
+[The accessible appearance](#the-accessible-appearance), or sets its own colours through the
+settings types, or supplies its own views through `DMLoadingViewProvider`.
 
 At large accessibility text sizes the default loading view, at most 150 points wide, cuts its
-text; an app that needs those sizes gives `DMProgressViewDefaultSettings` a larger
-`frameGeometrySize`, or supplies its own loading view.
+text; an app that needs those sizes passes `DMHUDAppearance.accessible` as well, or supplies its
+own loading view. Changing the default look is a decision for the next major version.
 
 A success or a failure hides after 2 seconds by default. With VoiceOver or Switch Control that can be
 too short to reach Retry; the Accessibility section names the settings that give more time.
