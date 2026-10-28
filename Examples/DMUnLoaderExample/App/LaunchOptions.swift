@@ -53,6 +53,10 @@ struct LaunchOptions: Sendable {
     /// `--backdrop dim|dim-clear|material|clear`, with `--auto-hide`, chooses the backdrop of the
     /// HUD, `dim-clear` being a dim of a clear colour; without it the HUD keeps the variable blur.
     let backdrop: String?
+    /// `--appearance accessible` gives the HUD of the demo `DMHUDAppearance.accessible`; without
+    /// it the HUD keeps `.standard`. It does not combine with `--host-texts` or `--host-image`,
+    /// which build the provider from settings.
+    let usesAccessibleAppearance: Bool
 
     init(arguments: [String]) {
         integration = arguments.contains("--uikit") ? .uiKit : .swiftUI
@@ -72,6 +76,9 @@ struct LaunchOptions: Sendable {
         backdrop = arguments.firstIndex(of: "--backdrop").flatMap { index in
             arguments.indices.contains(index + 1) ? arguments[index + 1] : nil
         }
+        usesAccessibleAppearance = arguments.firstIndex(of: "--appearance").map { index in
+            arguments.indices.contains(index + 1) && arguments[index + 1] == "accessible"
+        } ?? false
     }
 
     private static func seconds(after flag: String, in arguments: [String]) -> Duration? {
