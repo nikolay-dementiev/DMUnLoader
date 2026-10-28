@@ -149,8 +149,11 @@ package struct HUDCard: View {
 // MARK: - Previews
 
 @MainActor
-private func loadingViewPreview(_ state: (AnyDMLoadingViewProvider) -> DMLoadableType) -> some View {
-    let state = state(DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
+private func loadingViewPreview(
+    appearance: DMHUDAppearance = .standard,
+    _ state: (AnyDMLoadingViewProvider) -> DMLoadableType
+) -> some View {
+    let state = state(DefaultDMLoadingViewProvider(appearance: appearance).eraseToAnyViewProvider())
     let manager = DMLoadingManagerMain(state: state, settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600)))
     return DMLoadingView(loadingManager: manager, viewModel: DefaultHUDViewModel(loadingManager: manager))
 }
@@ -179,4 +182,37 @@ private func loadingViewPreview(_ state: (AnyDMLoadingViewProvider) -> DMLoadabl
 
 #Preview("Failure with Retry") {
     loadingViewPreview { .failure(error: DMAppError.custom("Failed"), provider: $0, onRetry: DMButtonAction {}) }
+}
+
+#Preview("Loading, accessible look") {
+    loadingViewPreview(appearance: .accessible) { .loading(provider: $0) }
+}
+
+#Preview("Loading, accessible look, accessibility 5") {
+    loadingViewPreview(appearance: .accessible) { .loading(provider: $0) }
+        .dynamicTypeSize(.accessibility5)
+}
+
+#Preview("Success, accessible look") {
+    loadingViewPreview(appearance: .accessible) { .success("Saved", provider: $0) }
+}
+
+#Preview("Failure with Retry, accessible look") {
+    loadingViewPreview(appearance: .accessible) {
+        .failure(error: DMAppError.custom("Failed"), provider: $0, onRetry: DMButtonAction {})
+    }
+}
+
+#Preview("Failure with Retry, accessible look, accessibility 3") {
+    loadingViewPreview(appearance: .accessible) {
+        .failure(error: DMAppError.custom("Failed"), provider: $0, onRetry: DMButtonAction {})
+    }
+    .dynamicTypeSize(.accessibility3)
+}
+
+#Preview("Failure with Retry, accessible look, dark") {
+    loadingViewPreview(appearance: .accessible) {
+        .failure(error: DMAppError.custom("Failed"), provider: $0, onRetry: DMButtonAction {})
+    }
+    .preferredColorScheme(.dark)
 }
