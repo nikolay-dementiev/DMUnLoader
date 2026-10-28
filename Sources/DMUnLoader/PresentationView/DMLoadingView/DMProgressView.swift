@@ -49,7 +49,9 @@ struct DMProgressView: View {
                 .tint(progressIndicatorProperties.tintColor)
                 .layoutPriority(1)
         }
-        .frame(minWidth: 30, minHeight: 30)
+        // No flexible frame: one with a minimum size reports the height it is offered when the content
+        // is taller, so the card could not tell that the text does not fit and would draw it past
+        // itself instead of scrolling it. The content is taller than 30 points anyway.
         .background(settingsProvider.loadingContainerBackgroundColor)
     }
 
