@@ -12,12 +12,13 @@ extension View {
         loadingManager: LM,
         backdropLayer: HUDBackdropDrawing.Layer,
         blur: HUDBlurValues = .hud,
+        onBackdropFailure: (@MainActor @Sendable (DMHUDBackdropFailure) -> Void)? = nil,
         @ViewBuilder content: () -> Content
     ) -> some View {
         overlay(alignment: .center) {
             ZStack {
                 if loadingManager.loadableState.showsHUD {
-                    HUDBackdropLayer(layer: backdropLayer, blur: blur)
+                    HUDBackdropLayer(layer: backdropLayer, blur: blur, onFailure: onBackdropFailure)
 
                     content()
                 } else {
@@ -47,14 +48,14 @@ package struct HUDBlurValues: Sendable {
 struct HUDBackdropLayer: View {
     let layer: HUDBackdropDrawing.Layer
     let blur: HUDBlurValues
+    /// Told when the variable blur could not be drawn. `nil` leaves the blur view without a handler,
+    /// so that it keeps writing its failure to the log.
+    let onFailure: (@MainActor @Sendable (DMHUDBackdropFailure) -> Void)?
 
     var body: some View {
         switch layer {
         case .variableBlur:
-            DMVariableBlurView(
-                maxBlurRadius: blur.maxBlurRadius,
-                direction: .blurredCenterClearTopBottom(centerBandProportion: blur.centerBandProportion)
-            )
+            variableBlur
         case let .material(material):
             Rectangle()
                 .fill(material)
@@ -62,5 +63,16 @@ struct HUDBackdropLayer: View {
         case .none:
             EmptyView()
         }
+    }
+
+    private var variableBlur: DMVariableBlurView {
+        let view = DMVariableBlurView(
+            maxBlurRadius: blur.maxBlurRadius,
+            direction: .blurredCenterClearTopBottom(centerBandProportion: blur.centerBandProportion)
+        )
+        guard let handler = HUDBackdropFailureForwarder.leafHandler(for: onFailure) else {
+            return view
+        }
+        return view.onFailure(handler)
     }
 }

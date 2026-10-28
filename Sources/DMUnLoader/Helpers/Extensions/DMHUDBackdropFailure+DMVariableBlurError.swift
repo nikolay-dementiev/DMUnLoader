@@ -8,8 +8,17 @@ import DMVariableBlurView
 
 extension DMHUDBackdropFailure {
     /// The failure that stands for a reason of DMVariableBlurView.
+    ///
+    /// The switch has no `default`: a reason that a new major version of DMVariableBlurView adds
+    /// stops the build here instead of being taken for another.
     package init(_ error: DMVariableBlurError) {
-        // A placeholder for the commit that maps each reason: every reason is taken for this one.
-        self = .effectUnavailable
+        switch error {
+        case .effectUnavailable:
+            self = .effectUnavailable
+        case .maskCreationFailed:
+            self = .maskCreationFailed
+        case .invalidMaxBlurRadius, .invalidCenterBandProportion, .invalidStartOffset:
+            self = .invalidConfiguration
+        }
     }
 }

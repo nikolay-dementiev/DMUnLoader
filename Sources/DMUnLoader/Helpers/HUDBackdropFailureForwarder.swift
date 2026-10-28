@@ -14,7 +14,11 @@ package enum HUDBackdropFailureForwarder {
     package static func leafHandler(
         for host: (@MainActor @Sendable (DMHUDBackdropFailure) -> Void)?
     ) -> (@MainActor (DMVariableBlurError) -> Void)? {
-        // A placeholder for the commit that forwards: no handler for the blur view, whatever the host set.
-        nil
+        guard let host else {
+            return nil
+        }
+        return { error in
+            host(DMHUDBackdropFailure(error))
+        }
     }
 }
