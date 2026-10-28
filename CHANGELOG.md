@@ -19,7 +19,10 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   `.standard`.
 - `DMLoadingViewProvider.hudAppearance`, a requirement with the default `.standard`, so a provider
   written before it keeps its look and a provider of your own can return `.accessible` to get the
-  accessible card around its views. `AnyDMLoadingViewProviderTypeErasurer.hudAppearance` forwards it.
+  accessible card around its views, and the library's views in the accessible colours when it leaves
+  them to the library: the default settings of the three library views follow the look, and for
+  `.standard` they are the settings of every release so far.
+  `AnyDMLoadingViewProviderTypeErasurer.hudAppearance` forwards it.
 
 ### Changed
 

@@ -498,16 +498,20 @@ func showAccessibleLoading(on manager: some DMLoadingManager) {
 It guarantees, and the tests of the package measure:
 
 - every text at a contrast of 4.5:1 or more against its card, in light and in dark mode;
-- every icon, progress indicator and button outline at 3:1 or more;
-- an opaque card in the colours of the system, which follows light and dark mode and Increase
-  Contrast;
+- the colour of every icon, progress indicator and button outline at 3:1 or more against the card,
+  and that of the failure sign and the success mark at 4.5:1;
+- an opaque card in the secondary background colour of the system, which follows light and dark
+  mode;
 - a loading text that wraps at the width of the screen and shows in full at every text size, and a
   card taller than the screen that scrolls;
 - Close and Retry one above the other at accessibility text sizes.
 
 `DMHUDAppearance.standard`, the look of every release so far, is what every provider gives unless it
-says otherwise. A provider of your own opts in by returning `.accessible` from `hudAppearance`: the
-HUD then draws the accessible card around your views, but your views keep the colours they have.
+says otherwise. A provider of your own opts in by returning `.accessible` from `hudAppearance`. If it
+leaves the views to the library, they take the accessible colours too; views of your own get the
+accessible card and keep the colours they have, so keeping them legible on it is yours to do. A card
+that grows past the screen, or shrinks back, switches between a plain card and a scrolling one,
+which builds the views inside it again.
 
 ## Example app and tests
 
@@ -530,8 +534,9 @@ How the package is tested:
 - UI tests: Retry, Close and taps on and outside the card, the touches that reach the app with
   and without a HUD in the four integrations, the texts in other languages and right to left,
   the failure HUD over content compared with reference pictures, and accessibility audits of the
-  HUD, which leave out contrast and, for the loading HUD, clipped text and the readability of
-  its "Loading..." label.
+  HUD: the audit of the standard look leaves out contrast and, for the loading HUD, clipped text
+  and the readability of its "Loading..." label; the audit of the accessible look runs every audit
+  type, at the default text size and at the largest one, and leaves out only that label.
 - CI also lints, compares the public interface with a committed baseline, builds a consumer
   package and every Swift block of this README and of the documentation catalog, builds the
   documentation, lints the podspec, runs the tests under the Thread Sanitizer, and fails below a

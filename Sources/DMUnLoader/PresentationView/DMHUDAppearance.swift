@@ -36,15 +36,21 @@ public struct DMHUDAppearance: Hashable, Sendable {
     /// An opt-in look of the library's own views that reaches the contrast of the Web Content
     /// Accessibility Guidelines and keeps its text visible at the largest text sizes:
     /// - every text against its background at 4.5:1 or more, in light and in dark mode;
-    /// - every icon, progress indicator and button outline against its background at 3:1 or more;
-    /// - an opaque card, in the colours of the system, that follows light and dark mode and the
-    ///   system's Increase Contrast;
+    /// - the colour of every icon, progress indicator and button outline against its background at
+    ///   3:1 or more, and that of the two default images, the failure sign and the success mark, at
+    ///   4.5:1;
+    /// - an opaque card in the secondary background colour of the system, which follows light and
+    ///   dark mode;
     /// - no cap on the size of the loading view: its text wraps at the width of the screen and
     ///   shows in full at every text size, and a card taller than the screen scrolls;
     /// - the Close and Retry buttons stack at accessibility text sizes.
     ///
-    /// These guarantees cover the library's own views. A provider of your own that returns this
-    /// look from `hudAppearance` gets the card; its own views keep the colours they have.
+    /// These guarantees cover the library's own views. A provider that returns this look from
+    /// `hudAppearance` and leaves the views to the library gets them, because the default settings of
+    /// the library's views follow the look. Views of your own get the card and keep the colours they
+    /// have, so keeping them legible on it is up to you. A card that grows past the screen, or
+    /// shrinks back, switches between a plain card and a scrolling one, which builds the views inside
+    /// it again.
     public static let accessible = DMHUDAppearance(kind: .accessible)
 }
 
