@@ -38,6 +38,15 @@ final class AccessibleAppearanceContrastTests: XCTestCase {
         assertRatios(of: pairs, atLeast: 3)
     }
 
+    /// The accessibility audit of Xcode holds the card of a state, its image included, to 4.5 to 1: the
+    /// glyph of the default images is the card showing through the coloured disc.
+    func test_accessibleAppearance_defaultImages_reachContrast4point5() {
+        let pairs = contrastPairs(of: .accessible).graphics.filter { ["error icon", "success icon"].contains($0.name) }
+
+        XCTAssertEqual(pairs.count, 2, "the error icon and the success icon are measured")
+        assertRatios(of: pairs, atLeast: 4.5)
+    }
+
     func test_accessibleAppearance_card_isOpaque() {
         for isShown in [true, false] {
             for reducesTransparency in [true, false] {
