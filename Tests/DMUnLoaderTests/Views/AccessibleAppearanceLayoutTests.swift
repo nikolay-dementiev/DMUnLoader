@@ -70,6 +70,24 @@ final class AccessibleAppearanceLayoutTests: XCTestCase {
         }
     }
 
+    /// A card that cannot hold the text has to find that out from the view: a view that gives way to the
+    /// height it is offered looks as if it fits, and its text is cut instead of scrolled.
+    func test_accessibleAppearance_loadingView_offeredLessHeightThanItsTextNeeds_keepsTheHeightTheTextNeeds() throws {
+        let size = try XCTUnwrap(Self.accessibilitySizes.last, "the largest accessibility size")
+        let text = String(repeating: Self.loadingTexts[0] + " ", count: 6)
+        let offered: CGFloat = 200
+
+        let fitted = fittedSize(of: loadingView(.accessible, text: text, size: size), height: offered)
+        let needed = neededHeight(of: text, size: size)
+
+        XCTAssertGreaterThan(needed, offered, "precondition: the text needs more than the height it is offered")
+        XCTAssertGreaterThanOrEqual(
+            fitted.height,
+            needed,
+            "offered \(offered) pt for a text that needs \(needed) pt, the view reports \(fitted.height) pt"
+        )
+    }
+
     func test_standardAppearance_accessibilityTextSizes_recordsTheCutText() {
         let size = Self.accessibilitySizes[4]
         let text = Self.loadingTexts[0]
@@ -137,10 +155,11 @@ final class AccessibleAppearanceLayoutTests: XCTestCase {
             .dynamicTypeSize(size.dynamicType)
     }
 
-    /// The size the view takes when the card offers it the width of a phone and as much height as it wants.
-    private func fittedSize(of view: some View) -> CGSize {
+    /// The size the view takes when the card offers it the width of a phone and `height`, by default as
+    /// much as it wants.
+    private func fittedSize(of view: some View, height: CGFloat = .greatestFiniteMagnitude) -> CGSize {
         let host = UIHostingController(rootView: view)
-        return host.sizeThatFits(in: CGSize(width: Self.phoneContentWidth, height: .greatestFiniteMagnitude))
+        return host.sizeThatFits(in: CGSize(width: Self.phoneContentWidth, height: height))
     }
 
     /// The height that the text takes in the body font at the size, in the width left by the view's padding.
