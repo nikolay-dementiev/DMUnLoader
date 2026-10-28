@@ -231,6 +231,30 @@ final class DMLoadingViewTests: XCTestCase {
         try checktLoadingView_RespondToTapGestures_ForStates(currentStateConditions)
     }
     
+    func test_card_takesTheLookOfTheProviderOfTheState() throws {
+        let accessibleProvider = DefaultDMLoadingViewProvider(appearance: .accessible).eraseToAnyViewProvider()
+        let standardProvider = DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+        let accessible = DMLoadingView(
+            loadingManager: StubDMLoadingManager(loadableState: .success("Done", provider: accessibleProvider)),
+            viewModel: HUDViewModelSpy(showsHUD: true)
+        )
+        let standard = DMLoadingView(
+            loadingManager: StubDMLoadingManager(loadableState: .success("Done", provider: standardProvider)),
+            viewModel: HUDViewModelSpy(showsHUD: true)
+        )
+
+        XCTAssertEqual(
+            try cardOf(accessible).actualView().appearance,
+            .accessible,
+            "a state of a provider that opts in gets the accessible card"
+        )
+        XCTAssertEqual(
+            try cardOf(standard).actualView().appearance,
+            .standard,
+            "a state of any other provider keeps the released card"
+        )
+    }
+
     func test_tapOnTheCard_isReportedToItsViewModel() throws {
         let viewModel = HUDViewModelSpy(showsHUD: true)
         let success = DMLoadableType.success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
