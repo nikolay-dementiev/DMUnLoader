@@ -69,8 +69,8 @@ extension DMHUDAppearance {
             return DMErrorDefaultViewSettings()
         case .accessible:
             return DMErrorDefaultViewSettings(
-                actionButtonCloseSettings: buttonSettings(text: "Close"),
-                actionButtonRetrySettings: buttonSettings(text: "Retry"),
+                actionButtonCloseSettings: buttonSettings(text: HUDDefaultText.failureClose.english),
+                actionButtonRetrySettings: buttonSettings(text: HUDDefaultText.failureRetry.english),
                 errorTextSettings: ErrorTextSettings(foregroundColor: Palette.ink),
                 errorImageSettings: ErrorImageSettings(
                     image: Image(systemName: "exclamationmark.triangle"),
