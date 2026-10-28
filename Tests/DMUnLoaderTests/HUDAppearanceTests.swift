@@ -86,6 +86,58 @@ final class HUDAppearanceTests: XCTestCase {
         )
     }
 
+    func test_defaultProvider_initWithAccessible_hasTheViewSettingsOfTheAccessibleLook() {
+        let sut = DefaultDMLoadingViewProvider(appearance: .accessible)
+        let accessible = DMHUDAppearance.accessible
+
+        XCTAssertEqual(
+            sut.loadingViewSettings.loadingTextProperties,
+            accessible.loadingViewSettings.loadingTextProperties,
+            "the loading text is that of the accessible look"
+        )
+        XCTAssertEqual(
+            sut.loadingViewSettings.progressIndicatorProperties,
+            accessible.loadingViewSettings.progressIndicatorProperties,
+            "the indicator is that of the accessible look"
+        )
+        XCTAssertEqual(
+            sut.errorViewSettings.errorTextSettings,
+            accessible.errorViewSettings.errorTextSettings,
+            "the error text is that of the accessible look"
+        )
+        XCTAssertEqual(
+            sut.errorViewSettings.errorImageSettings,
+            accessible.errorViewSettings.errorImageSettings,
+            "the error image is that of the accessible look"
+        )
+        XCTAssertEqual(
+            sut.errorViewSettings.actionButtonCloseSettings.text,
+            accessible.errorViewSettings.actionButtonCloseSettings.text,
+            "the Close button has the text of the accessible look"
+        )
+        XCTAssertEqual(
+            sut.errorViewSettings.actionButtonRetrySettings.text,
+            accessible.errorViewSettings.actionButtonRetrySettings.text,
+            "the Retry button has the text of the accessible look"
+        )
+        XCTAssertEqual(
+            sut.successViewSettings.successTextProperties,
+            accessible.successViewSettings.successTextProperties,
+            "the success text is that of the accessible look"
+        )
+        // The identifier of the image properties differs from one value to the next, so the fields
+        // that draw are compared.
+        let image = sut.successViewSettings.successImageProperties
+        let accessibleImage = accessible.successViewSettings.successImageProperties
+        XCTAssertEqual(image.image, accessibleImage.image, "the success image is the mark of the accessible look")
+        XCTAssertEqual(image.frame, accessibleImage.frame, "the success image has the size of the accessible look")
+        XCTAssertEqual(
+            image.foregroundColor,
+            accessibleImage.foregroundColor,
+            "the success image has the colour of the accessible look"
+        )
+    }
+
     func test_providerThatOnlyOptsIn_givesTheLibraryViewsTheSettingsOfTheAccessibleLook() {
         let sut = ProviderThatOnlyOptsIn()
         let accessible = DMHUDAppearance.accessible
