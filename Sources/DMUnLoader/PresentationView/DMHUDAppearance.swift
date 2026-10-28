@@ -134,7 +134,8 @@ private enum Palette {
     /// The card: the secondary background of the system, opaque.
     static let card = Color(UIColor.secondarySystemBackground)
 
-    /// A red darker than the system red where the card is light, so that it reaches 3 to 1 on it.
+    /// A red darker than the system red where the card is light, so that it reaches 4.5 to 1 on it, which
+    /// the accessibility audit of Xcode asks of the default image.
     static let errorIcon = dynamic(
         light: UIColor(red: 215.0 / 255, green: 0, blue: 21.0 / 255, alpha: 1),
         dark: UIColor(red: 1, green: 69.0 / 255, blue: 58.0 / 255, alpha: 1)
@@ -142,7 +143,7 @@ private enum Palette {
 
     /// A green darker than the system green where the card is light, for the same reason.
     static let successIcon = dynamic(
-        light: UIColor(red: 36.0 / 255, green: 138.0 / 255, blue: 61.0 / 255, alpha: 1),
+        light: UIColor(red: 28.0 / 255, green: 120.0 / 255, blue: 50.0 / 255, alpha: 1),
         dark: UIColor(red: 48.0 / 255, green: 209.0 / 255, blue: 88.0 / 255, alpha: 1)
     )
 
