@@ -64,6 +64,26 @@ final class HUDAccessibleAppearanceUITests: XCTestCase {
         )
     }
 
+    // MARK: - The scrolling card
+
+    /// A card taller than the screen scrolls, and a tap on its text, where no button lies, still reaches the
+    /// handler of the card, which hides a failure by default.
+    func test_failureHUD_scrollingCard_tapOnItsText_hidesTheFailure() {
+        let app = launchAccessible(at: .largest, extraArguments: ["--long-messages"])
+        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: Wait.launch), "the demo screen is shown")
+        app.buttons[DemoIdentifier.showFailure].tap()
+        let retry = app.buttons["Retry"]
+        XCTAssertTrue(retry.waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
+        XCTAssertFalse(retry.isHittable, "precondition: the card is taller than the screen, so Retry lies below the fold")
+
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
+
+        XCTAssertTrue(
+            retry.waitForNonExistence(timeout: Wait.screenChange),
+            "a tap on the text of the scrolling card reaches the handler of the card, which hides the failure"
+        )
+    }
+
     // MARK: - Helpers
 
     /// The one finding of the audit that the loading HUD carries in every look: the default text
@@ -80,6 +100,19 @@ final class HUDAccessibleAppearanceUITests: XCTestCase {
         case largest = "UICTContentSizeCategoryAccessibilityXXXL"
     }
 
+    /// The example in the accessible appearance at a text size, with a loading that outlasts the test.
+    /// The counters window is not launched: it lies above the HUD.
+    private func launchAccessible(at size: TextSize, extraArguments: [String] = []) -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments = Launch.swiftUI + [
+            "--appearance", "accessible",
+            "--loading-duration", "600",
+            "-UIPreferredContentSizeCategoryName", size.rawValue
+        ] + extraArguments
+        app.launch()
+        return app
+    }
+
     /// Shows the HUD that `button` asks for, in the accessible appearance, and audits it with every
     /// audit type once `shown` finds its element. The counters window is not launched: it lies
     /// above the HUD, so the audit would take its texts for part of the screen.
@@ -90,13 +123,7 @@ final class HUDAccessibleAppearanceUITests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
-        let app = XCUIApplication()
-        app.launchArguments = Launch.swiftUI + [
-            "--appearance", "accessible",
-            "--loading-duration", "600",
-            "-UIPreferredContentSizeCategoryName", size.rawValue
-        ]
-        app.launch()
+        let app = launchAccessible(at: size)
         let trigger = app.buttons[button]
         XCTAssertTrue(trigger.waitForExistence(timeout: Wait.launch), "the demo screen is shown", file: file, line: line)
         trigger.tap()
