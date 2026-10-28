@@ -56,9 +56,13 @@ public protocol DMLoadingViewProvider: ObservableObject, Hashable {
     /// The default implementation returns ``DMHUDAppearance/standard``, the look of every release
     /// so far, so a provider written before this requirement keeps its look. Return
     /// ``DMHUDAppearance/accessible`` to opt in; see there for what it guarantees and for what it
-    /// leaves to the views of your own.
+    /// leaves to the views of your own. The default settings of the three library views follow
+    /// this look, so a provider that implements only this requirement gets the library's views in
+    /// it.
     ///
-    /// Read each time the HUD draws a state of the provider.
+    /// Read once for a state, when the loading manager takes the provider and erases it with
+    /// `eraseToAnyViewProvider()`. A provider that answers differently later does not change the
+    /// look of a state that is already shown.
     var hudAppearance: DMHUDAppearance { get }
 }
 
@@ -111,19 +115,22 @@ public extension DMLoadingViewProvider {
         DMLoadingManagerDefaultSettings()
     }
     
-    /// `DMProgressViewDefaultSettings()`.
+    /// The settings of the library's loading view in the look of ``hudAppearance``:
+    /// `DMProgressViewDefaultSettings()` for ``DMHUDAppearance/standard``.
     var loadingViewSettings: any DMProgressViewSettings {
-        DMProgressViewDefaultSettings()
+        hudAppearance.loadingViewSettings
     }
-    
-    /// `DMErrorDefaultViewSettings()`.
+
+    /// The settings of the library's error view in the look of ``hudAppearance``:
+    /// `DMErrorDefaultViewSettings()` for ``DMHUDAppearance/standard``.
     var errorViewSettings: any DMErrorViewSettings {
-        DMErrorDefaultViewSettings()
+        hudAppearance.errorViewSettings
     }
-    
-    /// `DMSuccessDefaultViewSettings()`.
+
+    /// The settings of the library's success view in the look of ``hudAppearance``:
+    /// `DMSuccessDefaultViewSettings()` for ``DMHUDAppearance/standard``.
     var successViewSettings: any DMSuccessViewSettings {
-        DMSuccessDefaultViewSettings()
+        hudAppearance.successViewSettings
     }
 
     /// ``DMHUDAppearance/standard``: the look of every release so far.
