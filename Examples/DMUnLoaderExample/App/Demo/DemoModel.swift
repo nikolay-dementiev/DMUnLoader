@@ -86,7 +86,10 @@ enum DemoError: LocalizedError {
     case serverDidNotAnswer
 
     var errorDescription: String? {
-        "The server did not answer."
+        guard LaunchOptions.current.usesLongMessages else {
+            return "The server did not answer."
+        }
+        return String(repeating: "The server did not answer the request in time. ", count: 14)
     }
 }
 

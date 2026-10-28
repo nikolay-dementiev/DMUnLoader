@@ -57,6 +57,9 @@ struct LaunchOptions: Sendable {
     /// it the HUD keeps `.standard`. It does not combine with `--host-texts` or `--host-image`,
     /// which build the provider from settings.
     let usesAccessibleAppearance: Bool
+    /// `--long-messages` gives the failure HUD an error message far taller than the screen at large
+    /// text sizes, so that its card has to scroll.
+    let usesLongMessages: Bool
 
     init(arguments: [String]) {
         integration = arguments.contains("--uikit") ? .uiKit : .swiftUI
@@ -79,6 +82,7 @@ struct LaunchOptions: Sendable {
         usesAccessibleAppearance = arguments.firstIndex(of: "--appearance").map { index in
             arguments.indices.contains(index + 1) && arguments[index + 1] == "accessible"
         } ?? false
+        usesLongMessages = arguments.contains("--long-messages")
     }
 
     private static func seconds(after flag: String, in arguments: [String]) -> Duration? {
