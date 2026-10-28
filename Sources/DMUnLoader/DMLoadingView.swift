@@ -110,7 +110,7 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
 /// the card is a tap on the card, between the lines of its text too.
 package struct HUDCard: View {
     @Environment(\.hudReducesTransparency) private var reducesTransparency
-    let appearance: DMHUDAppearance
+    package let appearance: DMHUDAppearance
     let isShown: Bool
     let content: AnyView
 
