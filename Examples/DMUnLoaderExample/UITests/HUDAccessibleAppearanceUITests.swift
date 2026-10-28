@@ -39,7 +39,41 @@ final class HUDAccessibleAppearanceUITests: XCTestCase {
         try assertAuditHasNoIssues(at: .largest, after: DemoIdentifier.showSuccess) { $0.staticTexts["Loaded"] }
     }
 
+    // MARK: - The known finding of the loading HUD
+
+    func test_knownLoadingLabelFinding_matchesOnlyTheLoadingTextWithThatDescription() {
+        XCTAssertTrue(
+            Self.isKnownLoadingLabelFinding(compactDescription: "Label not human-readable", label: "Loading..."),
+            "that description on the label of the loading text is the known finding"
+        )
+        XCTAssertFalse(
+            Self.isKnownLoadingLabelFinding(compactDescription: "Label not human-readable", label: "Loaded"),
+            "that description on another label still fails the audit"
+        )
+        XCTAssertFalse(
+            Self.isKnownLoadingLabelFinding(compactDescription: "Label not human-readable", label: nil),
+            "that description on no element still fails the audit"
+        )
+        XCTAssertFalse(
+            Self.isKnownLoadingLabelFinding(compactDescription: "Contrast failed", label: "Loading..."),
+            "another finding on the label of the loading text still fails the audit"
+        )
+        XCTAssertFalse(
+            Self.isKnownLoadingLabelFinding(compactDescription: "Text clipped", label: "Loading..."),
+            "clipped text on the label of the loading text still fails the audit"
+        )
+    }
+
     // MARK: - Helpers
+
+    /// The one finding of the audit that the loading HUD carries in every look: the default text
+    /// "Loading..." is not a word to it. The label does not depend on the appearance, VoiceOver reads
+    /// it as shown, and no documented criterion asks for another one; `HUDAccessibilityUITests`
+    /// filters the same pair for the standard look. Nothing wider is filtered: another description,
+    /// or the same description on another label, fails the audit.
+    nonisolated static func isKnownLoadingLabelFinding(compactDescription: String, label: String?) -> Bool {
+        compactDescription == "Label not human-readable" && label == "Loading..."
+    }
 
     private enum TextSize: String {
         case standard = "UICTContentSizeCategoryL"
@@ -69,7 +103,9 @@ final class HUDAccessibleAppearanceUITests: XCTestCase {
         XCTAssertTrue(shown(app).waitForExistence(timeout: Wait.screenChange), "the HUD is shown", file: file, line: line)
 
         try performAccessibilityAuditRetryingTimeouts {
-            try app.performAccessibilityAudit(for: .all)
+            try app.performAccessibilityAudit(for: .all) { issue in
+                Self.isKnownLoadingLabelFinding(compactDescription: issue.compactDescription, label: issue.element?.label)
+            }
         }
     }
 }
