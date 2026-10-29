@@ -53,6 +53,9 @@ final class HUDBackdropFailureTests: XCTestCase {
         let leafHandler = try XCTUnwrap(sut, "a host that has a handler gives the blur view one")
         leafHandler(.effectUnavailable)
         XCTAssertEqual(spy.received, [.effectUnavailable], "the host receives the failure once, as the type of the library")
+    }
+
+    func test_backdropFailure_forwarderOfAHostWithoutHandler_givesTheBlurViewNoHandler() {
         XCTAssertNil(
             makeSUT(host: nil),
             "no handler of the host, no handler of the blur view: it keeps writing its line to the log"
