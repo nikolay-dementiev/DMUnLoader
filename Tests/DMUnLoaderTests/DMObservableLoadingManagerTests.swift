@@ -51,6 +51,8 @@ final class DMObservableLoadingManagerTests: XCTestCase {
         subscription.cancel()
     }
 
+    /// The first assertion is the premise of the facade: it fails when a system publishes the new value
+    /// of `@Published` after the property has changed, and then the facade may read the manager instead.
     func test_observationBridge_publishedWillSet_usesEmittedState() {
         let (sut, manager) = makeSUT()
         var managerWhilePublishing: [DMLoadableType] = []
@@ -77,12 +79,12 @@ final class DMObservableLoadingManagerTests: XCTestCase {
         XCTAssertEqual(sut.loadableState, loading, "a facade made over a manager that shows a state shows it too")
     }
 
-    func test_observableFacade_autoHide_followsTheManager() {
+    func test_observableFacade_autoHide_followsTheManager() throws {
         let scheduler = AutoHideSchedulerSpy()
         let (sut, _) = makeSUT(state: success, scheduler: scheduler)
         XCTAssertEqual(sut.loadableState, success, "the facade starts with the success of the manager")
 
-        scheduler.scheduled[0].runHide()
+        try XCTUnwrap(scheduler.scheduled.first, "the manager scheduled the hide of its success").runHide()
 
         XCTAssertEqual(sut.loadableState, DMLoadableType.none, "the auto-hide of the manager reaches the facade")
     }
@@ -96,6 +98,21 @@ final class DMObservableLoadingManagerTests: XCTestCase {
 
         XCTAssertEqual(first.loadableState, loading, "the first facade shows the state of the manager")
         XCTAssertEqual(second.loadableState, loading, "the second facade shows it too")
+    }
+
+    func test_observableFacade_equalStateOfAnotherInstance_holdsTheNewInstance() throws {
+        let (sut, manager) = makeSUT()
+        manager.showFailure(InstanceError(id: 1), provider: provider)
+        let first = manager.loadableState
+
+        manager.showFailure(InstanceError(id: 2), provider: provider)
+
+        XCTAssertEqual(first, manager.loadableState, "premise: the two failures compare equal, they differ in the instance")
+        guard case let .failure(error, _, _) = sut.loadableState else {
+            return XCTFail("the facade shows a failure: \(sut.loadableState)")
+        }
+        let held = try XCTUnwrap(error as? InstanceError, "the facade holds the error that was given")
+        XCTAssertEqual(held.id, 2, "the facade holds the instance that the manager has, not the equal one it had")
     }
 
     // MARK: - Forwarding
@@ -187,5 +204,19 @@ final class DMObservableLoadingManagerTests: XCTestCase {
         trackForMemoryLeaks(manager, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, manager)
+    }
+}
+
+/// An error whose description is the same for every instance, so two failures made with it compare equal
+/// by `DMLoadableType` and differ only in the instance.
+private final class InstanceError: Error, CustomStringConvertible {
+    let id: Int
+
+    init(id: Int) {
+        self.id = id
+    }
+
+    var description: String {
+        "Lost"
     }
 }
