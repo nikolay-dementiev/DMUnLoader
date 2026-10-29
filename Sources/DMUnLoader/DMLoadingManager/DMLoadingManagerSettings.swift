@@ -62,7 +62,10 @@ public protocol DMLoadingManagerSettings {
     /// With a handler set, DMVariableBlurView writes no line to the unified log for the failure:
     /// the handler replaces it. Write the line yourself if you want it.
     ///
-    /// Read at each render of the HUD.
+    /// Read at each render of the HUD. A handler that you set later is used for the failures that
+    /// follow; a failure that happened while there was none went to the log and is not reported
+    /// afterwards. The settings live as long as the loading manager, so a handler that holds the
+    /// manager, or an object that holds it, strongly makes a reference cycle: capture it weakly.
     var onBackdropFailure: (@MainActor @Sendable (DMHUDBackdropFailure) -> Void)? { get }
 }
 
