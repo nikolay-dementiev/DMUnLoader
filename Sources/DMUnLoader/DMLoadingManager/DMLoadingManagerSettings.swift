@@ -131,11 +131,13 @@ public struct DMLoadingManagerDefaultSettings: DMLoadingManagerSettings, Sendabl
         hudWindowLevel: UIWindow.Level = .normal,
         backdrop: DMHUDBackdrop = .variableBlur
     ) {
-        self.autoHideDelay = autoHideDelay
-        self.hudDismissal = hudDismissal
-        self.hudWindowLevel = hudWindowLevel
-        self.backdrop = backdrop
-        self.onBackdropFailure = nil
+        self.init(
+            autoHideDelay: autoHideDelay,
+            hudDismissal: hudDismissal,
+            hudWindowLevel: hudWindowLevel,
+            backdrop: backdrop,
+            onBackdropFailure: nil
+        )
     }
 
     /// - Parameters:

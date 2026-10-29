@@ -11,8 +11,8 @@ extension View {
     func hudCenter<Content: View, LM: DMLoadingManager>(
         loadingManager: LM,
         backdropLayer: HUDBackdropDrawing.Layer,
-        blur: HUDBlurValues = .hud,
-        onBackdropFailure: (@MainActor @Sendable (DMHUDBackdropFailure) -> Void)? = nil,
+        blur: HUDBlurValues,
+        onBackdropFailure: (@MainActor @Sendable (DMHUDBackdropFailure) -> Void)?,
         @ViewBuilder content: () -> Content
     ) -> some View {
         overlay(alignment: .center) {

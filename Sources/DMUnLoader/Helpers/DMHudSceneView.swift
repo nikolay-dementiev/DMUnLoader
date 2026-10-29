@@ -29,8 +29,9 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
 
     package var body: some View {
         // Read once per render: the views below draw what this decides.
-        let backdrop = loadingManager.settings.backdrop.drawing(reducesTransparency: reducesTransparency)
-        let onBackdropFailure = loadingManager.settings.onBackdropFailure
+        let settings = loadingManager.settings
+        let backdrop = settings.backdrop.drawing(reducesTransparency: reducesTransparency)
+        let onBackdropFailure = settings.onBackdropFailure
         Color.clear
             .ignoresSafeArea(.all)
             .hudCenter(
