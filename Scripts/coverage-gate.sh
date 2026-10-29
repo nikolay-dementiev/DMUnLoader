@@ -31,7 +31,8 @@ ERRORS="$(mktemp)"
 trap 'rm -f "$REPORT" "$ERRORS"' EXIT
 if ! xcrun xccov view --report --json "$BUNDLE" > "$REPORT" 2> "$ERRORS"; then
     echo "coverage-gate: xccov could not read a coverage report from the bundle." >&2
-    echo "  A bundle of a run without -enableCodeCoverage YES has none. xccov said:" >&2
+    echo "  A bundle of a run without -enableCodeCoverage YES has none, and the bundle of Xcode 27.1 holds no" >&2
+    echo "  coverage archive for xccov to read, so this gate needs an Xcode 26. xccov said:" >&2
     tail -5 "$ERRORS" >&2
     exit 2
 fi

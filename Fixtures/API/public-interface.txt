@@ -53,6 +53,9 @@
   final public var successViewSettings: any DMUnLoader.DMSuccessViewSettings {
     get
   }
+  final public var hudAppearance: DMUnLoader.DMHUDAppearance {
+    get
+  }
   @_Concurrency.MainActor final public func getLoadingView() -> LoadingViewType
   @_Concurrency.MainActor final public func getErrorView(error: any Swift.Error, onRetry: (any DMAction.DMAction)?, onClose: any DMAction.DMAction) -> ErrorViewType
   @_Concurrency.MainActor final public func getSuccessView(object: any DMUnLoader.DMLoadableTypeSuccess) -> SuccessViewType
@@ -195,6 +198,9 @@ extension DMUnLoader.DMLoadingViewProvider {
   public var successViewSettings: any DMUnLoader.DMSuccessViewSettings {
     get
   }
+  public var hudAppearance: DMUnLoader.DMHUDAppearance {
+    get
+  }
 }
 extension DMUnLoader.DMLoadingViewProvider {
   public static func == (lhs: Self, rhs: Self) -> Swift.Bool
@@ -285,7 +291,9 @@ public class DefaultDMLoadingViewProvider : @_Concurrency.MainActor DMUnLoader.D
   final public let loadingViewSettings: any DMUnLoader.DMProgressViewSettings
   final public let errorViewSettings: any DMUnLoader.DMErrorViewSettings
   final public let successViewSettings: any DMUnLoader.DMSuccessViewSettings
+  final public let hudAppearance: DMUnLoader.DMHUDAppearance
   public init(loadingManagerSettings: (any DMUnLoader.DMLoadingManagerSettings)? = nil, loadingViewSettings: (any DMUnLoader.DMProgressViewSettings)? = nil, errorViewSettings: (any DMUnLoader.DMErrorViewSettings)? = nil, successViewSettings: (any DMUnLoader.DMSuccessViewSettings)? = nil)
+  public init(appearance: DMUnLoader.DMHUDAppearance)
   public typealias ErrorViewType = @_opaqueReturnTypeOf("$s10DMUnLoader21DMLoadingViewProviderPAAE08getErrorD05error7onRetry0I5CloseQrs0G0_p_8DMActionAI_pSgA2I_ptF", 0) __<DMUnLoader.DefaultDMLoadingViewProvider>
   public typealias LoadingViewType = @_opaqueReturnTypeOf("$s10DMUnLoader21DMLoadingViewProviderPAAE010getLoadingD0QryF", 0) __<DMUnLoader.DefaultDMLoadingViewProvider>
   public typealias ObjectWillChangePublisher = Combine.ObservableObjectPublisher
@@ -353,6 +361,7 @@ public protocol DMLoadingViewProvider : Combine.ObservableObject, Swift.Hashable
   var loadingViewSettings: any DMUnLoader.DMProgressViewSettings { get }
   var errorViewSettings: any DMUnLoader.DMErrorViewSettings { get }
   var successViewSettings: any DMUnLoader.DMSuccessViewSettings { get }
+  var hudAppearance: DMUnLoader.DMHUDAppearance { get }
 }
 public protocol DMProgressViewSettings {
   var loadingTextProperties: DMUnLoader.ProgressTextProperties { get }
@@ -389,6 +398,15 @@ public struct DMErrorDefaultViewSettings : DMUnLoader.DMErrorViewSettings {
   public let errorTextSettings: DMUnLoader.ErrorTextSettings
   public let errorImageSettings: DMUnLoader.ErrorImageSettings
   public init(errorText: Swift.String? = "An error has occurred!", actionButtonCloseSettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Close"), actionButtonRetrySettings: DMUnLoader.ActionButtonSettings = ActionButtonSettings(text: "Retry"), errorTextSettings: DMUnLoader.ErrorTextSettings = ErrorTextSettings(), errorImageSettings: DMUnLoader.ErrorImageSettings = ErrorImageSettings(image: Image(systemName: "exclamationmark.triangle")))
+}
+public struct DMHUDAppearance : Swift.Hashable, Swift.Sendable {
+  @_hasInitialValue public static let standard: DMUnLoader.DMHUDAppearance
+  @_hasInitialValue public static let accessible: DMUnLoader.DMHUDAppearance
+  @_implements(Swift.Equatable, ==(_:_:)) public static func __derived_struct_equals(_ a: DMUnLoader.DMHUDAppearance, _ b: DMUnLoader.DMHUDAppearance) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
 }
 public struct DMHUDAutoHide : Swift.Hashable, Swift.Sendable {
   @_hasInitialValue public static let afterAutoHideDelay: DMUnLoader.DMHUDAutoHide

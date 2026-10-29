@@ -12,8 +12,8 @@ public final class DMSceneDelegateUIKit<
     Helper: DMSceneDelegateHelper
 >: UIResponder, UIWindowSceneDelegate, ObservableObject {
     
-    private let decoratee = DMSceneDelegateBase<LM>()
-    
+    private let decoratee: DMSceneDelegateBase<LM>
+
     /// The loading manager of the scene, created when the scene connects. It is set before
     /// `Helper` builds the root view controller, which receives the same manager as its
     /// argument, so the root view controller finds it here. Setting it works as
@@ -59,6 +59,16 @@ public final class DMSceneDelegateUIKit<
         window.rootViewController = rootVC
         self.keyWindow = window
         window.makeKeyAndVisible()
+    }
+
+    /// Creates the delegate; UIKit does it for the scene, and the loading manager follows when the
+    /// scene connects.
+    public override init() {
+        // Made here and not as the default value of the property: Swift 6.4 warns about a default
+        // value that passes the generic `LM` to a main-actor initializer. The initializer stays last
+        // in the class, where the interface lists the inherited one.
+        decoratee = DMSceneDelegateBase<LM>()
+        super.init()
     }
 }
 

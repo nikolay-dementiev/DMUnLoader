@@ -23,6 +23,7 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
     private let _loadingViewSettings: () -> any DMProgressViewSettings
     private let _errorViewSettings: () -> any DMErrorViewSettings
     private let _successViewSettings: () -> any DMSuccessViewSettings
+    private let _hudAppearance: () -> DMHUDAppearance
 
     /// The provider this one was made from. Its views keep that provider alive, so the
     /// identifier cannot belong to another object while this one exists.
@@ -37,7 +38,10 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
     public var errorViewSettings: any DMErrorViewSettings { _errorViewSettings() }
     /// The `successViewSettings` of the erased provider at the moment it was erased.
     public var successViewSettings: any DMSuccessViewSettings { _successViewSettings() }
-    
+    /// The `hudAppearance` of the erased provider at the moment it was erased: the look the HUD
+    /// takes while it shows a state of this provider.
+    public var hudAppearance: DMHUDAppearance { _hudAppearance() }
+
     @MainActor
     init(
         getLoadingView: @escaping () -> LoadingViewType,
@@ -47,6 +51,7 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
         loadingViewSettings: any DMProgressViewSettings,
         errorViewSettings: any DMErrorViewSettings,
         successViewSettings: any DMSuccessViewSettings,
+        hudAppearance: DMHUDAppearance,
         wrappedProviderID: ObjectIdentifier
     ) {
         self.wrappedProviderID = wrappedProviderID
@@ -57,6 +62,7 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
         self._loadingViewSettings = { loadingViewSettings }
         self._errorViewSettings = { errorViewSettings }
         self._successViewSettings = { successViewSettings }
+        self._hudAppearance = { hudAppearance }
     }
     
     /// The loading view of the erased provider, asked for now.
@@ -118,6 +124,7 @@ public extension DMLoadingViewProvider {
             loadingViewSettings: self.loadingViewSettings,
             errorViewSettings: self.errorViewSettings,
             successViewSettings: self.successViewSettings,
+            hudAppearance: self.hudAppearance,
             wrappedProviderID: ObjectIdentifier(self)
         )
     }

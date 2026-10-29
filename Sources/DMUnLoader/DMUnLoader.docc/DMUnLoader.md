@@ -73,6 +73,7 @@ The loading HUD stays until the next state; the success hides by itself after 2 
 
 ### The Views of the States
 
+- ``DMHUDAppearance``
 - ``DMLoadingViewProvider``
 - ``DefaultDMLoadingViewProvider``
 - ``AnyDMLoadingViewProvider``
