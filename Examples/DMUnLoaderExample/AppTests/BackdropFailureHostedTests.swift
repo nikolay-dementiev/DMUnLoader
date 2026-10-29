@@ -32,6 +32,10 @@ final class BackdropFailureHostedTests: XCTestCase {
         }
 
         XCTAssertTrue(takesTouches, "the HUD is shown in the real window and takes the touch")
+        XCTAssertTrue(
+            hudWindow.hitTest(centre, with: nil) != nil,
+            "the HUD is still shown and takes the touch once the blur had time to be drawn"
+        )
         XCTAssertEqual(spy.received, [], "the blur of this system works, so the host is told nothing")
         guard case .loading = manager.loadableState else {
             return XCTFail("the state of the manager is the loading it was given: \(manager.loadableState)")

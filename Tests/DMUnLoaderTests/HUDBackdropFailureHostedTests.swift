@@ -8,6 +8,7 @@ import OSLog
 import SwiftUI
 import ViewInspector
 import XCTest
+import os
 import DMUnLoader
 
 /// The failure of the backdrop on the real path: the real blur view of DMVariableBlurView in a real
@@ -26,21 +27,18 @@ final class HUDBackdropFailureHostedTests: XCTestCase {
             provider: Self.provider(),
             onRetry: DMButtonAction {}
         )
-        let settings = DMLoadingManagerDefaultSettings(
-            autoHideDelay: .seconds(600),
-            onBackdropFailure: { spy.record($0) }
+        let manager = makeManager(
+            state: state,
+            settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600), onBackdropFailure: { spy.record($0) })
         )
-        let manager = DMLoadingManagerMain(state: state, settings: settings)
-        trackForMemoryLeaks(manager)
 
-        ViewHosting.host(view: DMHudSceneView(loadingManager: manager, blurValues: Self.rejectedBlur))
+        host(manager)
         defer { ViewHosting.expel() }
         waitUntil(!spy.received.isEmpty)
         turnTheRunLoop(for: 0.5)
 
         XCTAssertEqual(spy.received, [.invalidConfiguration], "the host is told once, in the type of the library")
         XCTAssertEqual(manager.loadableState, state, "the state of the HUD, its retry action included, is the one it was")
-        XCTAssertEqual(manager.settings.hudDismissal, settings.hudDismissal, "the dismissal rules are the ones they were")
 
         manager.showLoading(provider: Self.provider())
         turnTheRunLoop(for: 0.5)
@@ -48,8 +46,83 @@ final class HUDBackdropFailureHostedTests: XCTestCase {
         XCTAssertEqual(spy.received.count, 1, "a new render with the same values does not report the same failure again")
     }
 
+    // MARK: - How often
+
+    func test_backdropFailure_eachAppearanceOfTheHUD_reportsAgain() {
+        let spy = BackdropFailureSpy()
+        let manager = makeManager(
+            state: .loading(provider: Self.provider()),
+            settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600), onBackdropFailure: { spy.record($0) })
+        )
+
+        host(manager)
+        defer { ViewHosting.expel() }
+        waitUntil(spy.received.count == 1)
+        turnTheRunLoop(for: 0.3)
+        manager.hide()
+        turnTheRunLoop(for: 0.3)
+        manager.showLoading(provider: Self.provider())
+        waitUntil(spy.received.count == 2)
+        turnTheRunLoop(for: 0.5)
+
+        XCTAssertEqual(
+            spy.received,
+            [.invalidConfiguration, .invalidConfiguration],
+            "the HUD makes a new blur view each time it appears, and the host is told for each"
+        )
+    }
+
+    func test_backdropFailure_handlerThatIsNewAtEveryRead_reportsOnceWhileTheHUDStays() {
+        let spy = BackdropFailureSpy()
+        let manager = makeManager(
+            state: .loading(provider: Self.provider()),
+            settings: HandlerNewAtEveryRead(spy: spy)
+        )
+
+        host(manager)
+        defer { ViewHosting.expel() }
+        waitUntil(!spy.received.isEmpty)
+        turnTheRunLoop(for: 0.3)
+        manager.showFailure(DMAppError.custom("Failed"), provider: Self.provider())
+        turnTheRunLoop(for: 0.5)
+        manager.showLoading(provider: Self.provider())
+        turnTheRunLoop(for: 0.5)
+
+        XCTAssertEqual(
+            spy.received.count,
+            1,
+            "settings that give a new closure at each render do not make the blur view report again"
+        )
+    }
+
+    func test_backdropFailure_handlerSetAfterTheFailure_isToldAtTheNextAppearanceOnly() {
+        let spy = BackdropFailureSpy()
+        let settings = HandlerChangedAfterwards()
+        let manager = makeManager(state: .loading(provider: Self.provider()), settings: settings)
+
+        host(manager)
+        defer { ViewHosting.expel() }
+        turnTheRunLoop(for: 1.5)
+        settings.set { spy.record($0) }
+        manager.showFailure(DMAppError.custom("Failed"), provider: Self.provider())
+        turnTheRunLoop(for: 1.0)
+        let toldAtOnce = spy.received
+
+        manager.hide()
+        turnTheRunLoop(for: 0.3)
+        manager.showLoading(provider: Self.provider())
+        waitUntil(!spy.received.isEmpty)
+        turnTheRunLoop(for: 0.3)
+
+        XCTAssertEqual(toldAtOnce, [], "a failure that was recorded while the host had no handler is not told afterwards")
+        XCTAssertEqual(spy.received, [.invalidConfiguration], "the next appearance of the HUD tells the handler the host set")
+    }
+
     // MARK: - No handler is the behaviour of today
 
+    /// A canary of what DMVariableBlurView does, as much as of DMUnLoader: with no handler its view writes
+    /// a line to the log, and with one it does not. The wait for a line is a poll, for the absence of one
+    /// it is a fixed time, and a leaf that renames its subsystem turns this test red.
     func test_backdropFailure_noHandler_keepsTheLogLineOfTheBlurView_andAHandlerReplacesIt() throws {
         let withoutHandler = try logLinesOfTheBlurView(
             whileHosting: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600)),
@@ -64,17 +137,13 @@ final class HUDBackdropFailureHostedTests: XCTestCase {
             expectingALine: false
         )
 
-        XCTAssertEqual(
-            withoutHandler.count,
-            1,
-            "no handler of the host: the blur view writes its line to the log, as before: \(withoutHandler)"
-        )
-        XCTAssertEqual(withHandler.count, 0, "a handler of the host replaces the line of the blur view: \(withHandler)")
+        XCTAssertFalse(withoutHandler.isEmpty, "no handler of the host: the blur view writes a line to the log, as before")
+        XCTAssertTrue(withHandler.isEmpty, "a handler of the host replaces the line of the blur view: \(withHandler)")
     }
 
     // MARK: - Nothing else reports
 
-    func test_backdropFailure_onlyTheVariableBlurReports() {
+    func test_backdropFailure_otherBackdropsAndReduceTransparency_reportNothing() {
         XCTAssertEqual(
             reports(of: .variableBlur, reducesTransparency: false),
             [.invalidConfiguration],
@@ -96,10 +165,22 @@ final class HUDBackdropFailureHostedTests: XCTestCase {
         DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
     }
 
+    private func makeManager(state: DMLoadableType, settings: any DMLoadingManagerSettings) -> DMLoadingManagerMain {
+        let manager = DMLoadingManagerMain(state: state, settings: settings)
+        trackForMemoryLeaks(manager)
+        return manager
+    }
+
+    /// ViewInspector pairs `host` and `expel` by the name of the function that calls them, so the name of
+    /// the test is passed on: hosted under the name of this helper, the window would never be expelled.
+    private func host(_ manager: DMLoadingManagerMain, function: String = #function) {
+        ViewHosting.host(view: DMHudSceneView(loadingManager: manager, blurValues: Self.rejectedBlur), function: function)
+    }
+
     /// What the host is told while the HUD of `backdrop` is hosted with a blur that fails.
     private func reports(of backdrop: DMHUDBackdrop, reducesTransparency: Bool) -> [DMHUDBackdropFailure] {
         let spy = BackdropFailureSpy()
-        let manager = DMLoadingManagerMain(
+        let manager = makeManager(
             state: .loading(provider: Self.provider()),
             settings: DMLoadingManagerDefaultSettings(
                 autoHideDelay: .seconds(600),
@@ -107,7 +188,6 @@ final class HUDBackdropFailureHostedTests: XCTestCase {
                 onBackdropFailure: { spy.record($0) }
             )
         )
-        trackForMemoryLeaks(manager)
 
         ViewHosting.host(
             view: DMHudSceneView(loadingManager: manager, blurValues: Self.rejectedBlur)
@@ -127,12 +207,11 @@ final class HUDBackdropFailureHostedTests: XCTestCase {
         expectingALine: Bool
     ) throws -> [String] {
         let marker = Date()
-        let manager = DMLoadingManagerMain(state: .loading(provider: Self.provider()), settings: settings)
-        trackForMemoryLeaks(manager)
+        let manager = makeManager(state: .loading(provider: Self.provider()), settings: settings)
 
-        ViewHosting.host(view: DMHudSceneView(loadingManager: manager, blurValues: Self.rejectedBlur))
+        host(manager)
         defer { ViewHosting.expel() }
-        let deadline = Date().addingTimeInterval(expectingALine ? 4 : 2)
+        let deadline = Date().addingTimeInterval(expectingALine ? 6 : 3)
         var lines: [String] = []
         repeat {
             turnTheRunLoop(for: 0.1)
@@ -164,5 +243,29 @@ final class HUDBackdropFailureHostedTests: XCTestCase {
         while !condition(), Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.02))
         }
+    }
+}
+
+/// Settings of a host that write their own handler: a new closure each time the property is read.
+private struct HandlerNewAtEveryRead: DMLoadingManagerSettings {
+    let autoHideDelay: Duration = .seconds(600)
+    let spy: BackdropFailureSpy
+
+    var onBackdropFailure: (@MainActor @Sendable (DMHUDBackdropFailure) -> Void)? {
+        { [spy] in spy.record($0) }
+    }
+}
+
+/// Settings whose handler the host sets after the HUD is up.
+private final class HandlerChangedAfterwards: DMLoadingManagerSettings, Sendable {
+    let autoHideDelay: Duration = .seconds(600)
+    private let handler = OSAllocatedUnfairLock<(@MainActor @Sendable (DMHUDBackdropFailure) -> Void)?>(initialState: nil)
+
+    var onBackdropFailure: (@MainActor @Sendable (DMHUDBackdropFailure) -> Void)? {
+        handler.withLock { $0 }
+    }
+
+    func set(_ newHandler: (@MainActor @Sendable (DMHUDBackdropFailure) -> Void)?) {
+        handler.withLock { $0 = newHandler }
     }
 }

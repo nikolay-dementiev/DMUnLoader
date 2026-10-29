@@ -15,7 +15,7 @@ final class HUDBackdropFailureTests: XCTestCase {
 
     // MARK: - The mapping
 
-    func test_backdropFailure_mapsEachReasonOfTheLeaf() {
+    func test_backdropFailure_eachReasonOfTheLeaf_mapsToAFailureOfTheLibrary() {
         XCTAssertEqual(
             DMHUDBackdropFailure(DMVariableBlurError.effectUnavailable),
             .effectUnavailable,
@@ -48,14 +48,23 @@ final class HUDBackdropFailureTests: XCTestCase {
     func test_backdropFailure_effectUnavailable_reportsToTheHostOnce() throws {
         let spy = BackdropFailureSpy()
 
-        let sut = HUDBackdropFailureForwarder.leafHandler(for: { spy.record($0) })
+        let sut = makeSUT(host: { spy.record($0) })
 
         let leafHandler = try XCTUnwrap(sut, "a host that has a handler gives the blur view one")
         leafHandler(.effectUnavailable)
         XCTAssertEqual(spy.received, [.effectUnavailable], "the host receives the failure once, as the type of the library")
         XCTAssertNil(
-            HUDBackdropFailureForwarder.leafHandler(for: nil),
+            makeSUT(host: nil),
             "no handler of the host, no handler of the blur view: it keeps writing its line to the log"
         )
+    }
+
+    // MARK: - Helpers
+
+    /// The handler that the HUD gives the blur view for a host with `host` for its handler.
+    private func makeSUT(
+        host: (@MainActor @Sendable (DMHUDBackdropFailure) -> Void)?
+    ) -> (@MainActor (DMVariableBlurError) -> Void)? {
+        HUDBackdropFailureForwarder.leafHandler(for: host)
     }
 }
