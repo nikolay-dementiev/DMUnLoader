@@ -125,10 +125,11 @@ final class DMObservableLoadingManagerTests: XCTestCase {
 
     func test_observableFacade_released_isDeallocatedAndLeavesTheManagerWorking() {
         let (_, manager) = makeSUT()
-        var sut: DMObservableLoadingManager? = DMObservableLoadingManager(manager: manager)
-        weak var weakSUT = sut
-
-        sut = nil
+        weak var weakSUT: DMObservableLoadingManager?
+        do {
+            let sut = DMObservableLoadingManager(manager: manager)
+            weakSUT = sut
+        }
 
         XCTAssertNil(weakSUT, "nothing keeps the facade alive once its owner lets it go")
         manager.showLoading(provider: provider)
@@ -144,7 +145,9 @@ final class DMObservableLoadingManagerTests: XCTestCase {
             sut = DMObservableLoadingManager(manager: manager)
         }
 
-        XCTAssertNotNil(weakManager, "the facade keeps the manager it wraps alive")
+        withExtendedLifetime(sut) {
+            XCTAssertNotNil(weakManager, "the facade keeps the manager it wraps alive")
+        }
         sut = nil
         XCTAssertNil(weakManager, "the manager goes away with the last one that holds it")
     }
