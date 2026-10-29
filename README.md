@@ -171,6 +171,71 @@ scene: the HUD of each view joins the scene of that view. Another manager given 
 takes over the HUD. When the view moves to another window, its HUD moves with it; a window that the
 host moves to another scene is not followed.
 
+### Observation
+
+`DMObservableLoadingManager` is for an app that keeps its state with Observation (`@State`, the
+environment) and not with `ObservableObject`. It wraps a `DMLoadingManagerMain`. The manager stays the
+one owner of the state: the HUD still observes it as an `ObservableObject`, its `$loadableState`
+publisher is unchanged, and a manager of your own still conforms to `DMLoadingManager`. The facade
+holds the manager, shows its `loadableState` as a property that Observation tracks and that you cannot
+set, and forwards `showLoading(provider:)`, `showSuccess(_:provider:)`,
+`showFailure(_:provider:onRetry:)` and `hide()` to it. Give `facade.manager` to
+`DMRootLoadingView(manager:content:)`.
+
+```swift
+import DMUnLoader
+import SwiftUI
+
+@main
+struct ObservationApp: App {
+    @State private var loading = DMObservableLoadingManager(manager: DMLoadingManagerMain())
+
+    var body: some Scene {
+        WindowGroup {
+            DMRootLoadingView(manager: loading.manager) { _ in
+                ObservationContent(loading: loading)
+            }
+        }
+    }
+}
+
+struct ObservationContent: View {
+    let loading: DMObservableLoadingManager
+
+    var body: some View {
+        VStack {
+            Text(verbatim: loading.loadableState.rawValue)
+
+            Button("Load") {
+                loading.showLoading(provider: DefaultDMLoadingViewProvider())
+            }
+        }
+    }
+}
+```
+
+A view that reads `loadableState` is evaluated again when the state changes, wherever the change comes
+from: the operations of the facade, those of the manager, or its auto-hide. Several facades may wrap
+one manager, and each follows it. Everything runs on the main actor.
+
+- Observation is not synchronisation and not a lossless stream of events. Measured with Xcode 27.1:
+  showing a state that equals the current one again (the loading state of the same provider twice, or
+  `hide()` when nothing is shown) did not notify, while the loading state of another provider and the
+  `hide()` of a shown HUD did. If you need to see every change, subscribe to the `$loadableState`
+  publisher of the manager, which is unchanged.
+- Where to make the facade. Measured with an app built by Xcode 27.1 on iOS 17.5, 18.6 and 26.5: a
+  parent view that was rebuilt six times made one facade, one manager and one subscription for a child
+  view with `@State private var loading = DMObservableLoadingManager(manager: DMLoadingManagerMain())`.
+  The SDK decides how often the initial value of `@State` is evaluated, and no other SDK was measured.
+  To not depend on it, make the facade once, in your `App` or in the view that owns it, and pass it
+  down, as the example above does.
+- UIKit. A view controller that read `loadableState` in `viewWillLayoutSubviews()` was laid out again,
+  with no call to `setNeedsLayout()`, when the state changed: on iOS 26.5 always; on iOS 18.6 only when
+  the Info.plist of the app has `UIObservationTrackingEnabled` set to YES; on iOS 17.5 never, with the
+  key or without it. Nothing else of UIKit is promised. Where UIKit does not track, call
+  `withObservationTracking` yourself, which fired on all three systems and fires once for each call, so
+  call it again after each change, or keep using the `$loadableState` publisher.
+
 ### SwiftUI with the app delegate of DMUnLoader
 
 `DMRootLoadingView(content:)` creates the loading manager itself and passes it to your content.

@@ -52,6 +52,10 @@ The loading HUD stays until the next state; the success hides by itself after 2 
 - ``DMLoadingManagerMain``
 - ``DMLoadableType``
 
+### Observation
+
+- ``DMObservableLoadingManager``
+
 ### The App and Scene Delegates
 
 - ``DMAppDelegate``

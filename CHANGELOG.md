@@ -23,6 +23,14 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   them to the library: the default settings of the three library views follow the look, and for
   `.standard` they are the settings of every release so far.
   `AnyDMLoadingViewProviderTypeErasurer.hudAppearance` forwards it.
+- `DMObservableLoadingManager`: a main-actor `@Observable` view of a `DMLoadingManagerMain` for an app
+  that keeps its state with Observation (`@State`, the environment). It holds the manager, shows
+  its `loadableState` as a property that Observation tracks and that cannot be set from outside, and
+  forwards `showLoading(provider:)`, `showSuccess(_:provider:)`, `showFailure(_:provider:onRetry:)`
+  and `hide()` to it. The manager stays the one owner of the state, `DMLoadingManager:
+  ObservableObject` and `$loadableState` are unchanged, and `manager` is the manager to give to
+  `DMRootLoadingView(manager:content:)`. Observation is not synchronisation and not a lossless stream of
+  events, which the README says with what was measured, UIKit included.
 
 ### Changed
 
