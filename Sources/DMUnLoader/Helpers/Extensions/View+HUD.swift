@@ -65,6 +65,9 @@ struct HUDBackdropLayer: View {
         }
     }
 
+    /// On the main actor like `body`: the Swift 5 mode of the pod isolates only `body`, and reads the
+    /// handler in here as a function value that is not `Sendable`.
+    @MainActor
     private var variableBlur: DMVariableBlurView {
         let view = DMVariableBlurView(
             maxBlurRadius: blur.maxBlurRadius,
