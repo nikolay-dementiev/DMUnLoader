@@ -81,7 +81,11 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
                             _ = viewModel.backdropTapped()
                         }
                     
-                    HUDCard(isShown: animateTheAppearance, content: AnyView(overlayView))
+                    HUDCard(
+                        appearance: loadingManager.loadableState.hudAppearance,
+                        isShown: animateTheAppearance,
+                        content: AnyView(overlayView)
+                    )
                         .onTapGesture {
                             viewModel.cardTapped()
                         }
@@ -98,35 +102,58 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
         }
         .animation(Animation.spring(duration: 0.2),
                    value: animateTheAppearance)
+        .environment(\.hudAppearance, loadingManager.loadableState.hudAppearance)
     }
 }
 
 /// The card of a shown HUD: the view of the state on a rounded background. A tap anywhere on
 /// the card is a tap on the card, between the lines of its text too.
-struct HUDCard: View {
+package struct HUDCard: View {
     @Environment(\.hudReducesTransparency) private var reducesTransparency
+    package let appearance: DMHUDAppearance
     let isShown: Bool
     let content: AnyView
-    
-    var body: some View {
-        content
-            .padding(15)
-            .background(Color.gray.opacity(backgroundOpacity))
+
+    package init(appearance: DMHUDAppearance, isShown: Bool, content: AnyView) {
+        self.appearance = appearance
+        self.isShown = isShown
+        self.content = content
+    }
+
+    package var body: some View {
+        paddedContent
+            .background(appearance.cardBackground(isShown: isShown, reducesTransparency: reducesTransparency))
             .cornerRadius(10)
             .contentShape(RoundedRectangle(cornerRadius: 10))
     }
 
-    /// The gray of the card, decided by `HUDCardStyle`.
-    private var backgroundOpacity: Double {
-        HUDCardStyle.backgroundOpacity(isShown: isShown, reducesTransparency: reducesTransparency)
+    /// The content with the padding of the card. In the accessible look a card taller than the screen
+    /// scrolls, so that no line of it is cut off at the largest text sizes.
+    @ViewBuilder
+    private var paddedContent: some View {
+        switch appearance.kind {
+        case .standard:
+            content.padding(15)
+        case .accessible:
+            ViewThatFits(in: .vertical) {
+                content.padding(15)
+                ScrollView {
+                    content.padding(15)
+                }
+                .scrollBounceBehavior(.basedOnSize)
+            }
+        }
     }
 }
 
 // MARK: - Previews
 
 @MainActor
-private func loadingViewPreview(_ state: (AnyDMLoadingViewProvider) -> DMLoadableType) -> some View {
-    let state = state(DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
+private func loadingViewPreview(
+    appearance: DMHUDAppearance = .standard,
+    _ state: (AnyDMLoadingViewProvider) -> DMLoadableType
+) -> some View {
+    let state = state(DefaultDMLoadingViewProvider(appearance: appearance).eraseToAnyViewProvider())
     let manager = DMLoadingManagerMain(state: state, settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600)))
     return DMLoadingView(loadingManager: manager, viewModel: DefaultHUDViewModel(loadingManager: manager))
 }
@@ -155,4 +182,37 @@ private func loadingViewPreview(_ state: (AnyDMLoadingViewProvider) -> DMLoadabl
 
 #Preview("Failure with Retry") {
     loadingViewPreview { .failure(error: DMAppError.custom("Failed"), provider: $0, onRetry: DMButtonAction {}) }
+}
+
+#Preview("Loading, accessible look") {
+    loadingViewPreview(appearance: .accessible) { .loading(provider: $0) }
+}
+
+#Preview("Loading, accessible look, accessibility 5") {
+    loadingViewPreview(appearance: .accessible) { .loading(provider: $0) }
+        .dynamicTypeSize(.accessibility5)
+}
+
+#Preview("Success, accessible look") {
+    loadingViewPreview(appearance: .accessible) { .success("Saved", provider: $0) }
+}
+
+#Preview("Failure with Retry, accessible look") {
+    loadingViewPreview(appearance: .accessible) {
+        .failure(error: DMAppError.custom("Failed"), provider: $0, onRetry: DMButtonAction {})
+    }
+}
+
+#Preview("Failure with Retry, accessible look, accessibility 3") {
+    loadingViewPreview(appearance: .accessible) {
+        .failure(error: DMAppError.custom("Failed"), provider: $0, onRetry: DMButtonAction {})
+    }
+    .dynamicTypeSize(.accessibility3)
+}
+
+#Preview("Failure with Retry, accessible look, dark") {
+    loadingViewPreview(appearance: .accessible) {
+        .failure(error: DMAppError.custom("Failed"), provider: $0, onRetry: DMButtonAction {})
+    }
+    .preferredColorScheme(.dark)
 }

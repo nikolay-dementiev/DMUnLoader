@@ -49,6 +49,21 @@ public protocol DMLoadingViewProvider: ObservableObject, Hashable {
     var errorViewSettings: any DMErrorViewSettings { get }
     /// The settings that the default `getSuccessView(object:)` gives the success view.
     var successViewSettings: any DMSuccessViewSettings { get }
+
+    /// The look the HUD takes while it shows a state of this provider: the card it draws around
+    /// the views, and, for the library's own views, their colours and layout.
+    ///
+    /// The default implementation returns ``DMHUDAppearance/standard``, the look of every release
+    /// so far, so a provider written before this requirement keeps its look. Return
+    /// ``DMHUDAppearance/accessible`` to opt in; see there for what it guarantees and for what it
+    /// leaves to the views of your own. The default settings of the three library views follow
+    /// this look, so a provider that implements only this requirement gets the library's views in
+    /// it.
+    ///
+    /// Read once for a state, when the loading manager takes the provider and erases it with
+    /// `eraseToAnyViewProvider()`. A provider that answers differently later does not change the
+    /// look of a state that is already shown.
+    var hudAppearance: DMHUDAppearance { get }
 }
 
 extension DMLoadingViewProvider {
@@ -100,19 +115,27 @@ public extension DMLoadingViewProvider {
         DMLoadingManagerDefaultSettings()
     }
     
-    /// `DMProgressViewDefaultSettings()`.
+    /// The settings of the library's loading view in the look of ``hudAppearance``:
+    /// `DMProgressViewDefaultSettings()` for ``DMHUDAppearance/standard``.
     var loadingViewSettings: any DMProgressViewSettings {
-        DMProgressViewDefaultSettings()
+        hudAppearance.loadingViewSettings
     }
-    
-    /// `DMErrorDefaultViewSettings()`.
+
+    /// The settings of the library's error view in the look of ``hudAppearance``:
+    /// `DMErrorDefaultViewSettings()` for ``DMHUDAppearance/standard``.
     var errorViewSettings: any DMErrorViewSettings {
-        DMErrorDefaultViewSettings()
+        hudAppearance.errorViewSettings
     }
-    
-    /// `DMSuccessDefaultViewSettings()`.
+
+    /// The settings of the library's success view in the look of ``hudAppearance``:
+    /// `DMSuccessDefaultViewSettings()` for ``DMHUDAppearance/standard``.
     var successViewSettings: any DMSuccessViewSettings {
-        DMSuccessDefaultViewSettings()
+        hudAppearance.successViewSettings
+    }
+
+    /// ``DMHUDAppearance/standard``: the look of every release so far.
+    var hudAppearance: DMHUDAppearance {
+        .standard
     }
 }
 
@@ -128,6 +151,9 @@ public class DefaultDMLoadingViewProvider: @MainActor DMLoadingViewProvider {
     public let errorViewSettings: any DMErrorViewSettings
     /// The settings passed to the initializer, or `DMSuccessDefaultViewSettings()`.
     public let successViewSettings: any DMSuccessViewSettings
+    /// The look passed to `init(appearance:)`, or ``DMHUDAppearance/standard`` for the other
+    /// initializer.
+    public let hudAppearance: DMHUDAppearance
 
     /// Creates a provider of the default loading, error and success views.
     /// - Parameters:
@@ -147,5 +173,20 @@ public class DefaultDMLoadingViewProvider: @MainActor DMLoadingViewProvider {
         self.loadingViewSettings = loadingViewSettings ?? DMProgressViewDefaultSettings()
         self.errorViewSettings = errorViewSettings ?? DMErrorDefaultViewSettings()
         self.successViewSettings = successViewSettings ?? DMSuccessDefaultViewSettings()
+        self.hudAppearance = .standard
+    }
+
+    /// Creates a provider of the library's loading, error and success views in a look of the HUD.
+    ///
+    /// The three view settings are those of the look: with ``DMHUDAppearance/standard`` the
+    /// default settings, as the other initializer gives them, and with
+    /// ``DMHUDAppearance/accessible`` the settings that reach its guarantees.
+    /// - Parameter appearance: The look of the HUD while it shows a state of this provider.
+    public init(appearance: DMHUDAppearance) {
+        self.loadingManagerSettings = DMLoadingManagerDefaultSettings()
+        self.loadingViewSettings = appearance.loadingViewSettings
+        self.errorViewSettings = appearance.errorViewSettings
+        self.successViewSettings = appearance.successViewSettings
+        self.hudAppearance = appearance
     }
 }

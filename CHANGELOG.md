@@ -5,6 +5,25 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `DMHUDAppearance`: how the HUD looks, with `.standard`, the look of every release so far and
+  the default everywhere, and `.accessible`, an opt-in. `.accessible` draws an opaque card in the
+  colours of the system and the text, the progress indicator and the buttons in the label colour
+  of the system, every text at a contrast of 4.5:1 or more and every icon, indicator and outline
+  at 3:1 or more, in light and in dark mode; the loading text wraps at the width of the screen and
+  shows in full at every text size, a card taller than the screen scrolls, and Close and Retry
+  stand one above the other at accessibility text sizes.
+- `DefaultDMLoadingViewProvider(appearance:)` and `DefaultDMLoadingViewProvider.hudAppearance`:
+  the provider of the library's views in a look of the HUD. The existing initializer gives
+  `.standard`.
+- `DMLoadingViewProvider.hudAppearance`, a requirement with the default `.standard`, so a provider
+  written before it keeps its look and a provider of your own can return `.accessible` to get the
+  accessible card around its views, and the library's views in the accessible colours when it leaves
+  them to the library: the default settings of the three library views follow the look, and for
+  `.standard` they are the settings of every release so far.
+  `AnyDMLoadingViewProviderTypeErasurer.hudAppearance` forwards it.
+
 ### Changed
 
 - Documentation only: `DMLoadingManager.hide()` states its contract. A conforming manager resets

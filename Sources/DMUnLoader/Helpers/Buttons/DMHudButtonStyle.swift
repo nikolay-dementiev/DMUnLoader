@@ -7,10 +7,17 @@
 import SwiftUI
 
 struct DMHudButtonStyle: ButtonStyle {
-    private func getMainColor(_ isPressed: Bool) -> Color {
-        isPressed ? .white.opacity(0.8) : .white
+    /// The colour of the label and of the outline: white, as in every release so far.
+    let color: Color
+
+    init(color: Color = .white) {
+        self.color = color
     }
-    /// The label in white, in the white outline of a capsule, with the press scale of the HUD.
+
+    private func getMainColor(_ isPressed: Bool) -> Color {
+        isPressed ? color.opacity(0.8) : color
+    }
+    /// The label in its colour, in the outline of a capsule of that colour, with the press scale of the HUD.
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .frame(maxWidth: .infinity, minHeight: 44)

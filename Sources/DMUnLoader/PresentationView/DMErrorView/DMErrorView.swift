@@ -15,6 +15,14 @@ struct DMErrorView: View {
     let onClose: any DMAction
 
     @Environment(\.hudTexts) private var hudTexts
+    @Environment(\.hudAppearance) private var appearance
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    /// Whether Close and Retry stand one above the other: in the accessible look at accessibility text
+    /// sizes, where two buttons side by side do not hold their labels. Otherwise they stand side by side.
+    private var stacksButtons: Bool {
+        appearance.kind == .accessible && dynamicTypeSize.isAccessibilitySize
+    }
 
     init(settings settingsProvider: any DMErrorViewSettings,
          error: any Error,
@@ -49,7 +57,8 @@ struct DMErrorView: View {
                       settings: settingsProvider.errorTextSettings)
 
             let closeButtonSettings = settingsProvider.actionButtonCloseSettings
-            HStack {
+            let layout = stacksButtons ? AnyLayout(VStackLayout()) : AnyLayout(HStackLayout())
+            layout {
                 ActionButton(settings: closeButtonSettings,
                              title: HUDDefaultText.failureClose.displayed(closeButtonSettings.text, using: hudTexts),
                              action: onClose)

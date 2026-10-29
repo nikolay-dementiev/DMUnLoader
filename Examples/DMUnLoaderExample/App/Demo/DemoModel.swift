@@ -14,7 +14,8 @@ final class DemoModel<LM: DMLoadingManager>: ObservableObject {
     private let loadingManager: LM
     private let provider = DemoProvider.make(
         hostTexts: LaunchOptions.current.usesHostTexts,
-        hostImage: LaunchOptions.current.usesHostImage
+        hostImage: LaunchOptions.current.usesHostImage,
+        accessibleAppearance: LaunchOptions.current.usesAccessibleAppearance
     )
     private let loadingDuration: Duration
     private let retryCountsOnly: Bool
@@ -85,15 +86,18 @@ enum DemoError: LocalizedError {
     case serverDidNotAnswer
 
     var errorDescription: String? {
-        "The server did not answer."
+        guard LaunchOptions.current.usesLongMessages else {
+            return "The server did not answer."
+        }
+        return String(repeating: "The server did not answer the request in time. ", count: 14)
     }
 }
 
-/// The view provider of the demo: the library's defaults, the host's own texts, or the host's
-/// own failure image.
+/// The view provider of the demo: the library's defaults, the library's defaults in the accessible
+/// appearance, the host's own texts, or the host's own failure image.
 enum DemoProvider {
     @MainActor
-    static func make(hostTexts: Bool, hostImage: Bool) -> DefaultDMLoadingViewProvider {
+    static func make(hostTexts: Bool, hostImage: Bool, accessibleAppearance: Bool) -> DefaultDMLoadingViewProvider {
         if hostImage {
             return DefaultDMLoadingViewProvider(
                 errorViewSettings: DMErrorDefaultViewSettings(
@@ -102,7 +106,9 @@ enum DemoProvider {
             )
         }
         guard hostTexts else {
-            return DefaultDMLoadingViewProvider()
+            return accessibleAppearance
+                ? DefaultDMLoadingViewProvider(appearance: .accessible)
+                : DefaultDMLoadingViewProvider()
         }
         return DefaultDMLoadingViewProvider(
             loadingViewSettings: DMProgressViewDefaultSettings(
