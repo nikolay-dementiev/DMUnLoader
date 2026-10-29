@@ -18,7 +18,7 @@
   @_Concurrency.MainActor @_hasInitialValue final public var loadableState: DMUnLoader.DMLoadableType {
     get
   }
-  @_Concurrency.MainActor public init(manager: DMUnLoader.DMLoadingManagerMain = DMLoadingManagerMain(state: .none, settings: DMLoadingManagerDefaultSettings()))
+  @_Concurrency.MainActor public init(manager: DMUnLoader.DMLoadingManagerMain)
   @_Concurrency.MainActor final public func showLoading<PR>(provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
   @_Concurrency.MainActor final public func showSuccess<PR>(_ message: any DMUnLoader.DMLoadableTypeSuccess, provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
   @_Concurrency.MainActor final public func showFailure<PR>(_ error: any Swift.Error, provider: PR, onRetry: (any DMAction.DMAction)? = nil) where PR : DMUnLoader.DMLoadingViewProvider

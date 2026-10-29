@@ -4,6 +4,7 @@
 //  Created by Mykola Dementiev
 //
 
+import Combine
 import Observation
 
 /// A loading manager for a host that keeps its state with Observation (`@State`, the typed
@@ -35,11 +36,20 @@ public final class DMObservableLoadingManager {
     /// `.failure`. It is read only here; the operations of this type, or of the manager, change it.
     public private(set) var loadableState: DMLoadableType = .none
 
+    /// Follows the state of the manager. Observation does not track it, and it ends with this type.
+    @ObservationIgnored
+    private var subscription: AnyCancellable?
+
     /// Wraps `manager`.
-    /// - Parameter manager: The manager whose state this type shows. The default is a new manager
-    ///   with no state shown and the default settings.
-    public init(manager: DMLoadingManagerMain = DMLoadingManagerMain(state: .none, settings: DMLoadingManagerDefaultSettings())) {
+    /// - Parameter manager: The manager whose state this type shows.
+    public init(manager: DMLoadingManagerMain) {
         self.manager = manager
+        // The publisher of a `@Published` property sends the new value while the property is still
+        // changing, so the state is taken from the value it sends: the manager itself still has the
+        // previous one at that moment. The publisher sends the current value when it is subscribed.
+        subscription = manager.$loadableState.sink { [weak self] state in
+            self?.loadableState = state
+        }
     }
 
     /// Shows the loading state: the same as the method of the manager.
