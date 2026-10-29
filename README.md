@@ -176,11 +176,12 @@ host moves to another scene is not followed.
 `DMObservableLoadingManager` is for an app that keeps its state with Observation (`@State`, the
 environment) and not with `ObservableObject`. It wraps a `DMLoadingManagerMain`. The manager stays the
 one owner of the state: the HUD still observes it as an `ObservableObject`, its `$loadableState`
-publisher is unchanged, and a manager of your own still conforms to `DMLoadingManager`. The facade
-holds the manager, shows its `loadableState` as a property that Observation tracks and that you cannot
-set, and forwards `showLoading(provider:)`, `showSuccess(_:provider:)`,
-`showFailure(_:provider:onRetry:)` and `hide()` to it. Give `facade.manager` to
-`DMRootLoadingView(manager:content:)`.
+publisher is unchanged, and a manager of your own is untouched, because the facade wraps
+`DMLoadingManagerMain` only. The facade holds the manager, shows its `loadableState` as a property that
+Observation tracks and that you cannot set, and forwards `showLoading(provider:)`,
+`showSuccess(_:provider:)`, `showFailure(_:provider:onRetry:)` and `hide()` to it. Give
+`facade.manager` to `DMRootLoadingView(manager:content:)`, and read `loadableState` on the facade: a
+view that reads it on the manager is not updated, because Observation does not track the manager.
 
 ```swift
 import DMUnLoader
@@ -227,14 +228,35 @@ one manager, and each follows it. Everything runs on the main actor.
   parent view that was rebuilt six times made one facade, one manager and one subscription for a child
   view with `@State private var loading = DMObservableLoadingManager(manager: DMLoadingManagerMain())`.
   The SDK decides how often the initial value of `@State` is evaluated, and no other SDK was measured.
-  To not depend on it, make the facade once, in your `App` or in the view that owns it, and pass it
-  down, as the example above does.
+  To not depend on it, make the facade once, in your `App` struct, which SwiftUI creates once, and pass
+  it down, as the example above does.
 - UIKit. A view controller that read `loadableState` in `viewWillLayoutSubviews()` was laid out again,
   with no call to `setNeedsLayout()`, when the state changed: on iOS 26.5 always; on iOS 18.6 only when
   the Info.plist of the app has `UIObservationTrackingEnabled` set to YES; on iOS 17.5 never, with the
   key or without it. Nothing else of UIKit is promised. Where UIKit does not track, call
-  `withObservationTracking` yourself, which fired on all three systems and fires once for each call, so
-  call it again after each change, or keep using the `$loadableState` publisher.
+  `withObservationTracking` yourself, which fired on all three systems, or keep using the
+  `$loadableState` publisher.
+- `withObservationTracking` runs its `onChange` before the state changes. Measured on iOS 17.5, 18.6 and
+  26.5: a read of `loadableState` inside `onChange` still gave the previous state, and a read after the
+  call that changed it gave the new one. So do not render from inside `onChange`: register again, and
+  read, in a later turn of the main actor, as the snippet below does. Do not change the manager from
+  inside `onChange` either, because the change is still in progress.
+
+```swift
+import DMUnLoader
+import Observation
+
+@MainActor
+func followLoadableState(of loading: DMObservableLoadingManager, render: @escaping @MainActor (DMLoadableType) -> Void) {
+    withObservationTracking {
+        render(loading.loadableState)
+    } onChange: {
+        Task { @MainActor in
+            followLoadableState(of: loading, render: render)
+        }
+    }
+}
+```
 
 ### SwiftUI with the app delegate of DMUnLoader
 

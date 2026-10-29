@@ -53,11 +53,15 @@ struct ObservableFacadeContent: View {
 }
 
 /// A host that follows the state by hand, as a UIKit host does where UIKit tracks nothing by itself.
+/// `onChange` runs before the state changes, so the host registers again and renders in a later turn
+/// of the main actor.
 @MainActor
-func followLoadableState(of loading: DMObservableLoadingManager, onChange: @escaping @Sendable () -> Void) {
+func followLoadableState(of loading: DMObservableLoadingManager, render: @escaping @MainActor (DMLoadableType) -> Void) {
     withObservationTracking {
-        _ = loading.loadableState
+        render(loading.loadableState)
     } onChange: {
-        onChange()
+        Task { @MainActor in
+            followLoadableState(of: loading, render: render)
+        }
     }
 }

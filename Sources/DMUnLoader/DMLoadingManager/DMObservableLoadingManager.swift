@@ -12,18 +12,22 @@ import Observation
 ///
 /// The ``DMLoadingManagerMain`` that it wraps stays the one owner of the state: this type holds the
 /// manager, shows its ``loadableState`` as a property that Observation tracks, and forwards the
-/// operations of the manager to it. It has no state of its own that the manager does not have, so the
-/// HUD, which observes the manager as an `ObservableObject`, and a view that reads this type always
-/// agree. ``manager`` is the manager to give to `DMRootLoadingView(manager:content:)`.
+/// operations of the manager to it. It has no state of its own that the manager does not have, so once a
+/// call returns, the HUD, which observes the manager as an `ObservableObject`, and a view that reads
+/// this type agree. ``manager`` is the manager to give to `DMRootLoadingView(manager:content:)`; read
+/// ``loadableState`` on this type and not on the manager, because Observation does not track the manager.
 ///
-/// Everything runs on the main actor. This type holds the manager strongly, and the manager knows
-/// nothing of this type, so any number of these types may wrap one manager and none of them keeps it
-/// from going away once nothing else holds it. When this type goes away, it stops following the
-/// manager.
+/// Everything runs on the main actor. This type keeps the manager alive for as long as it lives. The
+/// manager knows nothing of this type, so there is no cycle, and any number of these types may wrap one
+/// manager. When the last owner of this type lets it go, it stops following the manager.
 ///
 /// Observation tracks the properties that a view reads. It is not synchronisation, and it is not a
-/// lossless stream of events: a state that is equal to the one before may not notify. A host that
-/// has to see every change keeps using the `loadableState` publisher of the manager.
+/// lossless stream of events: a state that is equal to the one before may not notify, though this type
+/// then still holds the new instance. A host that has to see every change keeps using the
+/// `loadableState` publisher of the manager. This type takes the new state while the manager is still
+/// changing, so code that runs when Observation reports a change, such as the `onChange` of
+/// `withObservationTracking`, still sees the previous state. Read ``loadableState`` in a later turn of
+/// the main actor, and do not change the manager from inside that code.
 @MainActor
 @Observable
 public final class DMObservableLoadingManager {
