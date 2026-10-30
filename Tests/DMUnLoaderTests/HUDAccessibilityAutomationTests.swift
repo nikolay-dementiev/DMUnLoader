@@ -12,6 +12,16 @@ import XCTest
 @MainActor
 final class HUDAccessibilityAutomationTests: XCTestCase {
 
+    func test_automation_turnedOn_givesAHostedHUDItsAccessibilityTree() {
+        guard let hud = makeHostedHUD(showing: .failureWithRetry) else { return }
+
+        XCTAssertEqual(
+            hud.elements.compactMap(\.label),
+            ["An error has occurred!", "The server did not answer.", "Close", "Retry"],
+            "with the automation on, the HUD window hands out its elements; without it the tree stays empty"
+        )
+    }
+
     func test_automation_turnedOffAgain_isReportedOffBySystem() {
         XCTAssertNil(AccessibilityAutomation.turnOn(), "the automation is switched on")
         XCTAssertEqual(AccessibilityAutomation.isOn(), true, "the system reports it on after the switch")
