@@ -41,7 +41,8 @@ public struct DMHUDBackdrop: Sendable {
     /// private API of the system: read the README of DMVariableBlurView before you ship it. Where
     /// the system does not offer or accept that API, DMVariableBlurView draws the plain blur of
     /// the system over the whole screen instead and writes the reason to the unified log, under
-    /// its subsystem `DMVariableBlurView`.
+    /// its subsystem `DMVariableBlurView`, unless the settings have a handler: see
+    /// ``DMLoadingManagerSettings/onBackdropFailure``.
     public static let variableBlur = DMHUDBackdrop(kind: .variableBlur)
 
     /// A colour over the whole screen, faded in with the card. Draws no blur.

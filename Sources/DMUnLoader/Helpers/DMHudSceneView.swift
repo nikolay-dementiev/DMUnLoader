@@ -10,20 +10,36 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
     @ObservedObject var loadingManager: LM
     @Environment(\.hudReducesTransparency) private var reducesTransparency
     private let onStateChange: @MainActor (DMLoadableType) -> Void
+    private let blurValues: HUDBlurValues
 
-    /// - Parameter onStateChange: Called with the state of `loadingManager` when the view
-    ///   appears and whenever the state changes, also inside one phase.
-    package init(loadingManager: LM, onStateChange: @escaping @MainActor (DMLoadableType) -> Void = { _ in }) {
+    /// - Parameters:
+    ///   - blurValues: The values of the variable blur. The HUD gives its own; a test gives
+    ///     others, to make the blur fail.
+    ///   - onStateChange: Called with the state of `loadingManager` when the view
+    ///     appears and whenever the state changes, also inside one phase.
+    package init(
+        loadingManager: LM,
+        blurValues: HUDBlurValues = .hud,
+        onStateChange: @escaping @MainActor (DMLoadableType) -> Void = { _ in }
+    ) {
         self.loadingManager = loadingManager
+        self.blurValues = blurValues
         self.onStateChange = onStateChange
     }
 
     package var body: some View {
         // Read once per render: the views below draw what this decides.
-        let backdrop = loadingManager.settings.backdrop.drawing(reducesTransparency: reducesTransparency)
+        let settings = loadingManager.settings
+        let backdrop = settings.backdrop.drawing(reducesTransparency: reducesTransparency)
+        let onBackdropFailure = settings.onBackdropFailure
         Color.clear
             .ignoresSafeArea(.all)
-            .hudCenter(loadingManager: loadingManager, backdropLayer: backdrop.layer) {
+            .hudCenter(
+                loadingManager: loadingManager,
+                backdropLayer: backdrop.layer,
+                blur: blurValues,
+                onBackdropFailure: onBackdropFailure
+            ) {
                 DMLoadingView(
                     loadingManager: loadingManager,
                     viewModel: DefaultHUDViewModel(loadingManager: loadingManager),

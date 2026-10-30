@@ -41,6 +41,7 @@
 		D3BAD6C4AF673E283E587635 /* CountersWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED647F35734F9EC21B9762B7 /* CountersWindow.swift */; };
 		D538838F036253A456B9E781 /* HUDLanguageUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAA4EF9E96D147B517729718 /* HUDLanguageUITests.swift */; };
 		D93C24BB41B50E126F13CB4B /* HUDControlsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995DF0E1B6C2877B33ECA9CE /* HUDControlsUITests.swift */; };
+		DC1DF2397E5E21633E5B7C6A /* BackdropFailureHostedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAB20B968E81244A1A69247 /* BackdropFailureHostedTests.swift */; };
 		E10233402F3D22D3CFB205F6 /* DemoIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E16D65638614EA3C956C2F8 /* DemoIdentifier.swift */; };
 		E2003A8662AC3B283755D74D /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B9B045F96927479CD97C592 /* DemoViewController.swift */; };
 		F3B080725223097F0133E281 /* AccessibleCardHostedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 729528208B9E9423D163D647 /* AccessibleCardHostedTests.swift */; };
@@ -82,6 +83,7 @@
 		5B9B045F96927479CD97C592 /* DemoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewController.swift; sourceTree = "<group>"; };
 		601106646E46D6EE6E59B843 /* AccessibilityAuditRetry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityAuditRetry.swift; sourceTree = "<group>"; };
 		6117800B5E50CBBC568746F8 /* DemoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoModel.swift; sourceTree = "<group>"; };
+		6DAB20B968E81244A1A69247 /* BackdropFailureHostedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackdropFailureHostedTests.swift; sourceTree = "<group>"; };
 		711B968FD60CC3CA5C010DD3 /* DMUnLoaderExample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DMUnLoaderExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		729528208B9E9423D163D647 /* AccessibleCardHostedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibleCardHostedTests.swift; sourceTree = "<group>"; };
 		7E16D65638614EA3C956C2F8 /* DemoIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoIdentifier.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				729528208B9E9423D163D647 /* AccessibleCardHostedTests.swift */,
+				6DAB20B968E81244A1A69247 /* BackdropFailureHostedTests.swift */,
 				14A3E4A5207775AD6F3F2DAD /* HostedHUDSupport.swift */,
 				3C1C38A73B0734DD2592F3F2 /* HUDAccessibilityHostedTests.swift */,
 				D2482A4DC1A35C039F0A97EB /* HUDWindowTests.swift */,
@@ -389,6 +392,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3B080725223097F0133E281 /* AccessibleCardHostedTests.swift in Sources */,
+				DC1DF2397E5E21633E5B7C6A /* BackdropFailureHostedTests.swift in Sources */,
 				CA1C2008B8C5BC4F4BF159D6 /* HUDAccessibilityHostedTests.swift in Sources */,
 				816E04951EA9B6498AF767B1 /* HUDWindowTests.swift in Sources */,
 				C12FF692F4250EEA4CFE0E1D /* HostedHUDSupport.swift in Sources */,
