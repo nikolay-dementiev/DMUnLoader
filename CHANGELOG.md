@@ -23,6 +23,16 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   them to the library: the default settings of the three library views follow the look, and for
   `.standard` they are the settings of every release so far.
   `AnyDMLoadingViewProviderTypeErasurer.hudAppearance` forwards it.
+- `DMHUDBackdropFailure`: why the backdrop of the HUD could not draw the variable blur,
+  `effectUnavailable`, `maskCreationFailed` or `invalidConfiguration`. A new case arrives only in a
+  major version.
+- `DMLoadingManagerSettings.onBackdropFailure`, a requirement with the default `nil`, and its member
+  and initializer `init(autoHideDelay:hudDismissal:hudWindowLevel:backdrop:onBackdropFailure:)` in
+  `DMLoadingManagerDefaultSettings`: a handler that is told, on the main actor, when the variable blur
+  could not be drawn and the plain blur shows instead, once for each failure that DMVariableBlurView
+  reports, which is once for each appearance of a HUD on a device that cannot draw it. The HUD does
+  not change because of it. With a handler set DMVariableBlurView writes no line to the log for the
+  failure; settings that set none behave as before.
 
 ### Changed
 

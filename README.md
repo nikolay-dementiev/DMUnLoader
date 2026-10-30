@@ -337,6 +337,8 @@ defaults to the behaviour of every release before 1.1.0:
   nothing.
 - `hudWindowLevel`: the level of the HUD window. `.normal`.
 - `backdrop`: what the HUD draws behind its card. `.variableBlur`; see [Backdrop](#backdrop).
+- `onBackdropFailure`: told when the variable blur of the backdrop could not be drawn. None; see
+  [Backdrop](#backdrop).
 
 ```swift
 import DMUnLoader
@@ -368,15 +370,53 @@ is the backdrop of every release so far: the variable blur of
 [DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView) under a black dim.
 That blur runs a private filter of the system, `variableBlur` of the `CAFilter` class, which the
 README of DMVariableBlurView names; read that README before you ship it. Where the system does not
-offer that filter, DMVariableBlurView draws the plain blur of the system
-over the whole screen instead and logs the reason under its own subsystem. `.dim()`, `.material()`
-and `.clear` draw with public API only. Under the system's Reduce
-Transparency the HUD draws neither the blur nor a material: `.variableBlur` keeps its dim,
-`.material()` gives way to that dim, and the card of the HUD is opaque.
+offer that filter, DMVariableBlurView draws the plain blur of the system over the whole screen
+instead and logs the reason under its own subsystem, unless you set a handler, see below. `.dim()`,
+`.material()` and `.clear` draw with public API only. Under the system's Reduce Transparency the HUD
+draws neither the blur nor a material: `.variableBlur` keeps its dim, `.material()` gives way to that
+dim, and the card of the HUD is opaque.
 
 Choosing another backdrop only stops DMUnLoader from creating the variable blur while your app
 runs. DMUnLoader still depends on DMVariableBlurView, so its code, with the private names a scan
 of your binary finds, stays in your app. No setting of DMUnLoader 1.1.0 removes it.
+
+To learn that the blur could not be drawn, give the settings a handler: the argument
+`onBackdropFailure` of `DMLoadingManagerDefaultSettings`, or the property of that name of settings
+of your own.
+
+```swift
+import DMUnLoader
+import OSLog
+
+@MainActor
+func makeLoadingManager() -> DMLoadingManagerMain {
+    DMLoadingManagerMain(
+        state: .none,
+        settings: DMLoadingManagerDefaultSettings(
+            onBackdropFailure: { failure in
+                Logger(subsystem: "com.example.app", category: "hud")
+                    .error("The backdrop of the HUD lost its blur: \(String(describing: failure), privacy: .public)")
+            }
+        )
+    )
+}
+```
+
+The handler runs on the main actor, with a `DMHUDBackdropFailure`: `effectUnavailable` or
+`maskCreationFailed`; `invalidConfiguration` stands for a value of the blur that was not valid, which
+the HUD, with its own values, does not cause. It is told for each failure that DMVariableBlurView
+reports. The HUD makes a new blur view each time it appears, so a device that cannot draw the blur
+reports once for each appearance of a HUD, and DMVariableBlurView can report again when the system
+rebuilds the effect, for example on a change between light and dark appearance. The handler is read at
+each render of the HUD, and one that you set later is used for the failures that follow: a failure that
+happened while the settings had none is not reported afterwards, it went to the log. The handler
+replaces the line that DMVariableBlurView writes to the log, so write one yourself if you want it. The
+HUD does not change because of a failure: its state, its buttons and the way it leaves the screen stay
+as they are. The handler is not called for another backdrop, nor under Reduce Transparency, where no
+blur is drawn. Settings that do not set one behave as before.
+
+The settings live as long as the loading manager, and so does the handler. A handler that holds the
+manager, or an object that holds it, strongly makes a reference cycle: capture such an object weakly.
 
 ### Custom views
 

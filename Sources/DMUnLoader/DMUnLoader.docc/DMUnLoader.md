@@ -69,6 +69,7 @@ The loading HUD stays until the next state; the success hides by itself after 2 
 - ``DMHUDDismissal``
 - ``DMHUDAutoHide``
 - ``DMHUDBackdrop``
+- ``DMHUDBackdropFailure``
 
 ### The Views of the States
 

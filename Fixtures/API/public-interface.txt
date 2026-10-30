@@ -150,6 +150,7 @@ extension DMUnLoader.DMErrorDefaultViewSettings : Swift.Hashable {
     get
   }
 }
+extension DMUnLoader.DMHUDBackdropFailure : Swift.Hashable {}
 extension DMUnLoader.DMLoadingManager {
   @_Concurrency.MainActor public func showFailure<PR>(_ error: any Swift.Error, provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
 }
@@ -169,6 +170,9 @@ extension DMUnLoader.DMLoadingManagerSettings {
     get
   }
   public var backdrop: DMUnLoader.DMHUDBackdrop {
+    get
+  }
+  public var onBackdropFailure: (@_Concurrency.MainActor @Sendable (DMUnLoader.DMHUDBackdropFailure) -> Swift.Void)? {
     get
   }
 }
@@ -305,6 +309,16 @@ public enum DMAppError : DMUnLoader.DMError {
   case custom(_: Swift.String?)
   case generalError(any DMUnLoader.DMError)
 }
+public enum DMHUDBackdropFailure : Swift.Error, Swift.Sendable, Swift.Equatable {
+  case effectUnavailable
+  case maskCreationFailed
+  case invalidConfiguration
+  @_semantics("derived_enum_equals") @_implements(Swift.Equatable, ==(_:_:)) public static func __derived_enum_equals(_ a: DMUnLoader.DMHUDBackdropFailure, _ b: DMUnLoader.DMHUDBackdropFailure) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
 public enum DMLoadableType : Swift.Hashable, Swift.RawRepresentable {
   public typealias RawValue = Swift.String
   case loading(provider: DMUnLoader.AnyDMLoadingViewProvider)
@@ -334,6 +348,7 @@ public protocol DMLoadingManagerSettings {
   var hudDismissal: DMUnLoader.DMHUDDismissalRules { get }
   var hudWindowLevel: UIKit.UIWindow.Level { get }
   var backdrop: DMUnLoader.DMHUDBackdrop { get }
+  var onBackdropFailure: (@_Concurrency.MainActor @Sendable (DMUnLoader.DMHUDBackdropFailure) -> Swift.Void)? { get }
 }
 public protocol DMLoadingViewProvider : Combine.ObservableObject, Swift.Hashable {
   associatedtype LoadingViewType : SwiftUICore.View
@@ -436,7 +451,9 @@ public struct DMLoadingManagerDefaultSettings : DMUnLoader.DMLoadingManagerSetti
   public let hudDismissal: DMUnLoader.DMHUDDismissalRules
   public let hudWindowLevel: UIKit.UIWindow.Level
   public let backdrop: DMUnLoader.DMHUDBackdrop
+  public let onBackdropFailure: (@_Concurrency.MainActor @Sendable (DMUnLoader.DMHUDBackdropFailure) -> Swift.Void)?
   public init(autoHideDelay: Swift.Duration = .seconds(2), hudDismissal: DMUnLoader.DMHUDDismissalRules = DMHUDDismissalRules(), hudWindowLevel: UIKit.UIWindow.Level = .normal, backdrop: DMUnLoader.DMHUDBackdrop = .variableBlur)
+  public init(autoHideDelay: Swift.Duration = .seconds(2), hudDismissal: DMUnLoader.DMHUDDismissalRules = DMHUDDismissalRules(), hudWindowLevel: UIKit.UIWindow.Level = .normal, backdrop: DMUnLoader.DMHUDBackdrop = .variableBlur, onBackdropFailure: (@_Concurrency.MainActor @Sendable (DMUnLoader.DMHUDBackdropFailure) -> Swift.Void)?)
 }
 public struct DMProgressViewDefaultSettings : DMUnLoader.DMProgressViewSettings {
   public let loadingTextProperties: DMUnLoader.ProgressTextProperties
