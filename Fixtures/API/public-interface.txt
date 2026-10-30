@@ -13,6 +13,18 @@
   }
   public typealias Body = @_opaqueReturnTypeOf("$s10DMUnLoader17DMRootLoadingViewV4bodyQrvp", 0) __<LM, Content>
 }
+@_Concurrency.MainActor final public class DMObservableLoadingManager {
+  @_Concurrency.MainActor final public let manager: DMUnLoader.DMLoadingManagerMain
+  @_Concurrency.MainActor @_hasInitialValue final public var loadableState: DMUnLoader.DMLoadableType {
+    get
+  }
+  @_Concurrency.MainActor public init(manager: DMUnLoader.DMLoadingManagerMain)
+  @_Concurrency.MainActor final public func showLoading<PR>(provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor final public func showSuccess<PR>(_ message: any DMUnLoader.DMLoadableTypeSuccess, provider: PR) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor final public func showFailure<PR>(_ error: any Swift.Error, provider: PR, onRetry: (any DMAction.DMAction)? = nil) where PR : DMUnLoader.DMLoadingViewProvider
+  @_Concurrency.MainActor final public func hide()
+  @objc deinit
+}
 @_Concurrency.MainActor public protocol DMLoadingManager : Combine.ObservableObject {
   @_Concurrency.MainActor var loadableState: DMUnLoader.DMLoadableType { get }
   @_Concurrency.MainActor var settings: any DMUnLoader.DMLoadingManagerSettings { get }
@@ -205,6 +217,9 @@ extension DMUnLoader.DMLoadingViewProvider {
 extension DMUnLoader.DMLoadingViewProvider {
   public static func == (lhs: Self, rhs: Self) -> Swift.Bool
   public func hash(into hasher: inout Swift.Hasher)
+}
+extension DMUnLoader.DMObservableLoadingManager : Swift.Sendable {}
+extension DMUnLoader.DMObservableLoadingManager : nonisolated Observation.Observable {
 }
 extension DMUnLoader.DMProgressViewDefaultSettings : Swift.Hashable {
   public static func == (lhs: DMUnLoader.DMProgressViewDefaultSettings, rhs: DMUnLoader.DMProgressViewDefaultSettings) -> Swift.Bool

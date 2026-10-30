@@ -65,8 +65,8 @@ What each version is verified with:
 |---|---|
 | iOS 26.5 and 26.2 (Xcode 26.6) | the tests of the package run on simulators in CI |
 | iOS 26.5 (Xcode 26.6) and 18.6 (Xcode 26.3) | the tests of the example app, hosted and UI tests, run on simulators in CI |
-| iOS 17.5, 18.6 and 26.5 (Xcode 26.6) | the tests of the package and of the example app ran on simulators for 1.1.0; before each release the package suite runs locally on iOS 17.5 and 18.6, and the example app on iOS 17.5 |
-| iPadOS 26.2 (Xcode 26.6) | the tests of the example app, two scenes included, run on an iPad simulator before each release |
+| iOS 17.5, 18.6 and 26.5 (Xcode 27.2) | the tests of the package and of the example app ran on simulators for 1.2.0; before each release the package suite runs locally on iOS 17.5 and 18.6, and the example app on iOS 17.5 |
+| iPadOS 26.2 (Xcode 27.2) | the tests of the example app, two scenes included, run on an iPad simulator before each release |
 | Swift 6.2 (Xcode 26.0.1) | CI compiles the library with that compiler; no test runs with it |
 
 Several windows on an iPad, beyond the two scenes that the tests of the example app use, are not tested.
@@ -86,7 +86,7 @@ let package = Package(
     name: "MyApp",
     platforms: [.iOS(.v17)],
     dependencies: [
-        .package(url: "https://github.com/nikolay-dementiev/DMUnLoader.git", from: "1.1.0")
+        .package(url: "https://github.com/nikolay-dementiev/DMUnLoader.git", from: "1.2.0")
     ],
     targets: [
         .target(
@@ -170,6 +170,93 @@ Keep the manager alive outside the view, as the `@StateObject` does, and use one
 scene: the HUD of each view joins the scene of that view. Another manager given in a later update
 takes over the HUD. When the view moves to another window, its HUD moves with it; a window that the
 host moves to another scene is not followed.
+
+### Observation
+
+`DMObservableLoadingManager` is for an app that keeps its state with Observation (`@State`, the
+environment) and not with `ObservableObject`. It wraps a `DMLoadingManagerMain`. The manager stays the
+one owner of the state: the HUD still observes it as an `ObservableObject`, its `$loadableState`
+publisher is unchanged, and a manager of your own is untouched, because the facade wraps
+`DMLoadingManagerMain` only. The facade holds the manager, shows its `loadableState` as a property that
+Observation tracks and that you cannot set, and forwards `showLoading(provider:)`,
+`showSuccess(_:provider:)`, `showFailure(_:provider:onRetry:)` and `hide()` to it. Give
+`facade.manager` to `DMRootLoadingView(manager:content:)`, and read `loadableState` on the facade: a
+view that reads it on the manager is not updated, because Observation does not track the manager.
+
+```swift
+import DMUnLoader
+import SwiftUI
+
+@main
+struct ObservationApp: App {
+    @State private var loading = DMObservableLoadingManager(manager: DMLoadingManagerMain())
+
+    var body: some Scene {
+        WindowGroup {
+            DMRootLoadingView(manager: loading.manager) { _ in
+                ObservationContent(loading: loading)
+            }
+        }
+    }
+}
+
+struct ObservationContent: View {
+    let loading: DMObservableLoadingManager
+
+    var body: some View {
+        VStack {
+            Text(verbatim: loading.loadableState.rawValue)
+
+            Button("Load") {
+                loading.showLoading(provider: DefaultDMLoadingViewProvider())
+            }
+        }
+    }
+}
+```
+
+A view that reads `loadableState` is evaluated again when the state changes, wherever the change comes
+from: the operations of the facade, those of the manager, or its auto-hide. Several facades may wrap
+one manager, and each follows it. Everything runs on the main actor.
+
+- Observation is not synchronisation and not a lossless stream of events. Measured with Xcode 27.1:
+  showing a state that equals the current one again (the loading state of the same provider twice, or
+  `hide()` when nothing is shown) did not notify, while the loading state of another provider and the
+  `hide()` of a shown HUD did. If you need to see every change, subscribe to the `$loadableState`
+  publisher of the manager, which is unchanged.
+- Where to make the facade. Measured with an app built by Xcode 27.1 on iOS 17.5, 18.6 and 26.5: a
+  parent view that was rebuilt six times made one facade, one manager and one subscription for a child
+  view with `@State private var loading = DMObservableLoadingManager(manager: DMLoadingManagerMain())`.
+  The SDK decides how often the initial value of `@State` is evaluated, and no other SDK was measured.
+  To not depend on it, make the facade once, in your `App` struct, which SwiftUI creates once, and pass
+  it down, as the example above does.
+- UIKit. A view controller that read `loadableState` in `viewWillLayoutSubviews()` was laid out again,
+  with no call to `setNeedsLayout()`, when the state changed: on iOS 26.5 always; on iOS 18.6 only when
+  the Info.plist of the app has `UIObservationTrackingEnabled` set to YES; on iOS 17.5 never, with the
+  key or without it. Nothing else of UIKit is promised. Where UIKit does not track, call
+  `withObservationTracking` yourself, which fired on all three systems, or keep using the
+  `$loadableState` publisher.
+- `withObservationTracking` runs its `onChange` before the state changes. Measured on iOS 17.5, 18.6 and
+  26.5: a read of `loadableState` inside `onChange` still gave the previous state, and a read after the
+  call that changed it gave the new one. So do not render from inside `onChange`: register again, and
+  read, in a later turn of the main actor, as the snippet below does. Do not change the manager from
+  inside `onChange` either, because the change is still in progress.
+
+```swift
+import DMUnLoader
+import Observation
+
+@MainActor
+func followLoadableState(of loading: DMObservableLoadingManager, render: @escaping @MainActor (DMLoadableType) -> Void) {
+    withObservationTracking {
+        render(loading.loadableState)
+    } onChange: {
+        Task { @MainActor in
+            followLoadableState(of: loading, render: render)
+        }
+    }
+}
+```
 
 ### SwiftUI with the app delegate of DMUnLoader
 
