@@ -105,17 +105,26 @@ private enum WindowHiding {
 @MainActor
 package final class SystemAccessibilityAnnouncer: AccessibilityAnnouncer {
     private let post: @MainActor (UIAccessibility.Notification, Any?) -> Void
+    private let readFocusedElement: @MainActor () -> AnyObject?
 
-    /// - Parameter post: Posts a notification with its argument. The default calls
-    ///   `UIAccessibility.post`.
-    package init(post: @escaping @MainActor (UIAccessibility.Notification, Any?) -> Void = { notification, argument in
-        UIAccessibility.post(notification: notification, argument: argument)
-    }) {
+    /// - Parameters:
+    ///   - post: Posts a notification with its argument. The default calls `UIAccessibility.post`.
+    ///   - focusedElement: Reads the element that assistive technology focuses. The default asks
+    ///     VoiceOver, and answers `nil` while it does not run.
+    package init(
+        post: @escaping @MainActor (UIAccessibility.Notification, Any?) -> Void = { notification, argument in
+            UIAccessibility.post(notification: notification, argument: argument)
+        },
+        focusedElement: @escaping @MainActor () -> AnyObject? = {
+            UIAccessibility.focusedElement(using: .notificationVoiceOver) as AnyObject?
+        }
+    ) {
         self.post = post
+        self.readFocusedElement = focusedElement
     }
 
     package var focusedElement: AnyObject? {
-        UIAccessibility.focusedElement(using: .notificationVoiceOver) as AnyObject?
+        readFocusedElement()
     }
 
     package func isOnScreen(_ element: AnyObject) -> Bool {
