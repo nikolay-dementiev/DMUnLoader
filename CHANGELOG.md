@@ -3,7 +3,7 @@
 All notable changes to DMUnLoader are recorded in this file. The format follows Keep a
 Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
 
-## [Unreleased]
+## [1.2.0] - 2026-10-30
 
 ### Added
 
@@ -33,6 +33,14 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   reports, which is once for each appearance of a HUD on a device that cannot draw it. The HUD does
   not change because of it. With a handler set DMVariableBlurView writes no line to the log for the
   failure; settings that set none behave as before.
+- `DMObservableLoadingManager`: a main-actor `@Observable` view of a `DMLoadingManagerMain` for an app
+  that keeps its state with Observation (`@State`, the environment). It holds the manager, shows
+  its `loadableState` as a property that Observation tracks and that cannot be set from outside, and
+  forwards `showLoading(provider:)`, `showSuccess(_:provider:)`, `showFailure(_:provider:onRetry:)`
+  and `hide()` to it. The manager stays the one owner of the state, `DMLoadingManager:
+  ObservableObject` and `$loadableState` are unchanged, and `manager` is the manager to give to
+  `DMRootLoadingView(manager:content:)`. Observation is not synchronisation and not a lossless stream of
+  events, which the README says with what was measured, UIKit included.
 
 ### Changed
 
