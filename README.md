@@ -66,7 +66,7 @@ What each version is verified with:
 | iOS 26.5 and 26.2 (Xcode 26.6) | the tests of the package run on simulators in CI |
 | iOS 26.5 (Xcode 26.6) and 18.6 (Xcode 26.3) | the tests of the example app, hosted and UI tests, run on simulators in CI |
 | iOS 17.5, 18.6 and 26.5 (Xcode 27.2) | the tests of the package and of the example app ran on simulators for 1.2.0; before each release the package suite runs locally on iOS 17.5 and 18.6, and the example app on iOS 17.5 |
-| iPadOS 26.2 (Xcode 26.6) | the tests of the example app, two scenes included, run on an iPad simulator before each release |
+| iPadOS 26.2 (Xcode 27.2) | the tests of the example app, two scenes included, run on an iPad simulator before each release |
 | Swift 6.2 (Xcode 26.0.1) | CI compiles the library with that compiler; no test runs with it |
 
 Several windows on an iPad, beyond the two scenes that the tests of the example app use, are not tested.
