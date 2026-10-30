@@ -124,6 +124,10 @@ project, and run `Scripts/check-example-project.sh` before you commit.
 - A test must be able to fail. Show it red against the code before your change, or, for a test of
   behaviour that already holds, with a temporary change of the code it covers.
 - A fix starts with a test that reproduces the defect.
+- The tests that read the accessibility tree of the HUD (`HUDAccessibility*Tests`) switch the
+  accessibility automation service on inside the test process, because SwiftUI builds the tree only
+  while it is on; the switch is test code only, in `AccessibilityAutomation.swift`, and a system that
+  drops it fails those tests with a message.
 - A snapshot reference is named for its iOS version, `<name>_ios<major>_<minor>`. A local run
   records a missing reference and fails once; CI never records one. Look at a new picture before
   you commit it.
