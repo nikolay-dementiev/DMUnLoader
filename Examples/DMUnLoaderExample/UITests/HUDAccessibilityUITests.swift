@@ -51,6 +51,18 @@ final class HUDAccessibilityUITests: XCTestCase {
         }
     }
 
+    // MARK: - The loading HUD
+
+    func test_loadingHUD_isOneElementNamedByItsTextAndWithoutAValue() {
+        let elements = accessibilityElementsOfTheHUD(after: DemoIdentifier.showLoading, showing: "Loading...")
+
+        XCTAssertEqual(
+            elements,
+            ["Loading..."],
+            "the loading HUD is one element named by its text; the value of the progress indicator does not reach it"
+        )
+    }
+
     // MARK: - Images
 
     func test_successHUD_defaultImage_isNotRead() {
