@@ -167,7 +167,7 @@ enum HUDAccessibilityLayout {
         }
     }
 
-    var appearance: DMHUDAppearance {
+    private var appearance: DMHUDAppearance {
         switch self {
         case .standard: .standard
         case .accessible: .accessible
@@ -177,8 +177,8 @@ enum HUDAccessibilityLayout {
     /// A provider whose loading view shows `loadingText`, in the look of this layout. It leaves the views to
     /// the library, as a host does that sets only the settings and the look.
     @MainActor
-    func provider(loadingText: String) -> AnyDMLoadingViewProvider {
-        LoadingTextProvider(loadingText: loadingText, appearance: appearance).eraseToAnyViewProvider()
+    func makeProvider(loadingText: String) -> AnyDMLoadingViewProvider {
+        ProviderWithLoadingText(loadingText: loadingText, appearance: appearance).eraseToAnyViewProvider()
     }
 
     var sizeCategory: UIContentSizeCategory {
@@ -212,7 +212,7 @@ enum HUDShownState {
         retries: RetryCounter,
         loadingText: String? = nil
     ) -> DMLoadableType {
-        let provider = loadingText.map { layout.provider(loadingText: $0) } ?? layout.provider
+        let provider = loadingText.map { layout.makeProvider(loadingText: $0) } ?? layout.provider
         let error = DMAppError.custom("The server did not answer.")
         switch self {
         case .loading: return .loading(provider: provider)
@@ -226,22 +226,16 @@ enum HUDShownState {
 
 /// A provider that sets only the loading text and the look, and leaves the views to the library.
 @MainActor
-final class LoadingTextProvider: @MainActor DMLoadingViewProvider {
+private final class ProviderWithLoadingText: @MainActor DMLoadingViewProvider {
     let loadingViewSettings: any DMProgressViewSettings
     let hudAppearance: DMHUDAppearance
 
     init(loadingText: String, appearance: DMHUDAppearance) {
         let base = appearance.loadingViewSettings
-        let text = base.loadingTextProperties
+        var textProperties = base.loadingTextProperties
+        textProperties.text = loadingText
         loadingViewSettings = DMProgressViewDefaultSettings(
-            loadingTextProperties: ProgressTextProperties(
-                text: loadingText,
-                alignment: text.alignment,
-                foregroundColor: text.foregroundColor,
-                font: text.font,
-                lineLimit: text.lineLimit,
-                linePadding: text.linePadding
-            ),
+            loadingTextProperties: textProperties,
             progressIndicatorProperties: base.progressIndicatorProperties,
             loadingContainerBackgroundColor: base.loadingContainerBackgroundColor,
             frameGeometrySize: base.frameGeometrySize

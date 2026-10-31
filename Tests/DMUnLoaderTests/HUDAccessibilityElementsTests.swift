@@ -37,7 +37,7 @@ final class HUDAccessibilityElementsTests: XCTestCase {
             and no value of the indicator: that value depends on the host
             """
         )
-        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertFalse(sut.elements.first?.frame.isEmpty ?? true, "the element has a frame on the screen")
     }
 
     func test_loading_standardLayout_withACustomText_namesTheElementByThatText() {
@@ -56,7 +56,7 @@ final class HUDAccessibilityElementsTests: XCTestCase {
         XCTAssertEqual(
             sut.signatures,
             [loadingCard(named: "Loading...")],
-            "an empty text draws nothing, and the element is named by the default text, not left without a name"
+            "the element is named by the default text when the host's text is empty, not left without a name"
         )
     }
 
@@ -116,11 +116,10 @@ final class HUDAccessibilityElementsTests: XCTestCase {
             [loadingCard(named: "Loading...")],
             "the same one element as the standard card, named by the text"
         )
-        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
         XCTAssertGreaterThan(
             sut.elements.first?.frame.height ?? 0,
-            40,
-            "the card is drawn at the accessibility size"
+            150,
+            "the card is drawn at the accessibility size (98 points tall in the standard card)"
         )
     }
 
@@ -140,7 +139,7 @@ final class HUDAccessibilityElementsTests: XCTestCase {
         XCTAssertEqual(
             sut.signatures,
             [loadingCard(named: "Loading...")],
-            "an empty text draws nothing, and the element is named by the default text, not left without a name"
+            "the element is named by the default text when the host's text is empty, not left without a name"
         )
     }
 
