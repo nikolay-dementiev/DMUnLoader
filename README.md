@@ -598,8 +598,10 @@ until the HUD goes. When the HUD appears or shows another state, VoiceOver is to
 screen changed and starts at its first element: the HUD's, unless a window above the HUD has
 elements. When the HUD goes, VoiceOver returns to the element it was on, if that element is still
 on the screen. The escape gesture hides a success or a failure as a tap outside the card does.
-Reduce Motion keeps the card and a pressed button still. VoiceOver does not read the default
-images; an image you supply keeps the accessibility you give it.
+The loading HUD is one accessibility element named by its text, or by the default loading text
+("Loading..." in English) when the text is empty or only whitespace. Reduce Motion keeps the card and
+a pressed button still. VoiceOver does not read the default images; an image you supply keeps the
+accessibility you give it.
 
 A success or a failure hides after 2 seconds by default, which can be too short to reach Retry
 with VoiceOver or Switch Control. An app whose users need more time keeps a failure on the screen

@@ -57,7 +57,7 @@ final class HUDAccessibilityActivationTests: XCTestCase {
     // MARK: - The activation point
 
     func test_activationPoints_loadingStandardLayout_lieInTheirElementsAndInTheHUD() {
-        assertActivationPointsLieInTheHUD(showing: .loading, layout: .standard, expectedElements: 2)
+        assertActivationPointsLieInTheHUD(showing: .loading, layout: .standard, expectedElements: 1)
     }
 
     func test_activationPoints_successStandardLayout_lieInTheirElementsAndInTheHUD() {
@@ -69,7 +69,7 @@ final class HUDAccessibilityActivationTests: XCTestCase {
     }
 
     func test_activationPoints_loadingAccessibleLayout_lieInTheirElementsAndInTheHUD() {
-        assertActivationPointsLieInTheHUD(showing: .loading, layout: .accessible, expectedElements: 2)
+        assertActivationPointsLieInTheHUD(showing: .loading, layout: .accessible, expectedElements: 1)
     }
 
     func test_activationPoints_successAccessibleLayout_lieInTheirElementsAndInTheHUD() {
