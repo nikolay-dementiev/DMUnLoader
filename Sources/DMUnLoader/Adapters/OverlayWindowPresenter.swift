@@ -9,18 +9,30 @@ import UIKit
 
 /// Shows the HUD in a window of its own, above the other windows of one scene.
 @MainActor
-final class OverlayWindowPresenter: HUDOverlayPresenting {
+package final class OverlayWindowPresenter: HUDOverlayPresenting {
     // A var: `weak let` needs Swift 6.3, and the floor compiler (Xcode 26.0.1) is Swift 6.2.
     private weak var windowScene: UIWindowScene?
+    private let announcer: any AccessibilityAnnouncer
     private var window: DMPassThroughWindow?
     private var hudController: UIHostingController<AnyView>?
     private var accessibility: HUDAccessibilityCoordinator?
 
-    init(windowScene: UIWindowScene) {
-        self.windowScene = windowScene
+    /// A presenter that tells VoiceOver what the HUD does.
+    convenience init(windowScene: UIWindowScene) {
+        self.init(windowScene: windowScene, announcer: SystemAccessibilityAnnouncer())
     }
 
-    func present<LM: DMLoadingManager>(_ loadingManager: LM) {
+    /// - Parameters:
+    ///   - windowScene: The scene whose windows the HUD covers.
+    ///   - announcer: What tells assistive technology about the HUD. A test gives one that records what
+    ///     it is told. There is no default value: a default that makes a main-actor object is not
+    ///     isolated in the Swift 5 language mode of the pod.
+    package init(windowScene: UIWindowScene, announcer: any AccessibilityAnnouncer) {
+        self.windowScene = windowScene
+        self.announcer = announcer
+    }
+
+    package func present<LM: DMLoadingManager>(_ loadingManager: LM) {
         guard let windowScene else {
             return
         }
@@ -29,7 +41,7 @@ final class OverlayWindowPresenter: HUDOverlayPresenting {
         let window = self.window ?? DMPassThroughWindow(windowScene: windowScene)
         self.window = window
         let accessibility = self.accessibility ?? HUDAccessibilityCoordinator(
-            announcer: SystemAccessibilityAnnouncer(),
+            announcer: announcer,
             contentHider: SceneContentHider(hudWindow: window) { [weak window] in
                 window?.windowScene?.windows ?? []
             }
@@ -64,7 +76,7 @@ final class OverlayWindowPresenter: HUDOverlayPresenting {
         window.isHidden = false
     }
 
-    func dismiss() {
+    package func dismiss() {
         accessibility?.hudDidGo()
         accessibility = nil
         guard let window else {
