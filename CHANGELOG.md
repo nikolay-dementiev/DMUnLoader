@@ -8,8 +8,8 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
 ### Fixed
 
 - The loading HUD exposes itself to assistive technology as one accessibility element named by its
-  text, or by the default loading text ("Loading..." in English) when the text is empty, with the
-  trait that says its content changes. It was two elements, the text and a progress indicator without
+  text, or by the default loading text ("Loading..." in English) when the text is empty or only
+  whitespace, with the trait that says its content changes. It was two elements, the text and a progress indicator without
   a name, and an empty text left only the indicator without a name. Nothing changes on the screen.
 
 ## [1.2.0] - 2026-10-30

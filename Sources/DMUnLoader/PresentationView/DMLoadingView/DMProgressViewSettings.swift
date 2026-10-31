@@ -97,7 +97,7 @@ extension DMProgressViewDefaultSettings: Hashable {
 public struct ProgressTextProperties {
     
     /// The text to display in the loading view. It also names the loading HUD for assistive technology;
-    /// when it is empty, the default loading text names it.
+    /// when it is empty or only whitespace, the default loading text names it.
     public var text: String
     
     /// How the lines of the text line up when it takes more than one line: `.leading`,
