@@ -43,10 +43,10 @@ struct HUDAccessibilityElement {
 }
 
 extension [HUDAccessibilityElement] {
-    /// Whether each element follows the one before it in reading order: lower on the screen, or on the
-    /// same row and further to the right.
+    /// Whether each element has a frame and follows the one before it in reading order: lower on the
+    /// screen, or on the same row and further to the right.
     var areInReadingOrder: Bool {
-        zip(self, dropFirst()).allSatisfy { previous, next in
+        allSatisfy { !$0.frame.isEmpty } && zip(self, dropFirst()).allSatisfy { previous, next in
             let sameRow = abs(next.frame.minY - previous.frame.minY) <= 1
             return next.frame.minY > previous.frame.minY + 1 || (sameRow && next.frame.minX >= previous.frame.minX)
         }
@@ -93,7 +93,9 @@ enum HUDAccessibilityTree {
         if let element = object as? UIAccessibilityElement {
             return element.accessibilityContainer as AnyObject?
         }
-        return object.perform(NSSelectorFromString("accessibilityContainer"))?.takeUnretainedValue()
+        let selector = NSSelectorFromString("accessibilityContainer")
+        guard object.responds(to: selector) else { return nil }
+        return object.perform(selector)?.takeUnretainedValue()
     }
 
     /// One object of the walk up from an element, and whether it handled the escape.
@@ -275,7 +277,8 @@ extension XCTestCase {
         line: UInt = #line
     ) -> HostedHUD? {
         guard turnOnAccessibilityAutomation(file: file, line: line) else { return nil }
-        let probe = UIWindow(frame: UIScreen.main.bounds)
+        // The frame does not matter: the HUD takes the size of the scene, not of this window.
+        let probe = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         guard let scene = probe.windowScene else {
             XCTFail("A window made by UIWindow(frame:) belongs to no window scene.", file: file, line: line)
             return nil
@@ -288,20 +291,32 @@ extension XCTestCase {
         let presenter = scene.makeHUDPresenter()
         presenter.present(manager)
         let hud = HostedHUD(manager: manager, retries: retries, scene: scene, presenter: presenter, probe: probe)
-        addTeardownBlock { [weak hud] in
-            hud?.remove()
-        }
-        guard waitForTree(of: hud) else {
-            XCTFail(
-                "The accessibility tree of the HUD window stayed empty with the automation on.",
+        // Held strongly on purpose: a weak reference would be gone when the test method returns, and
+        // the HUD window would stay in its scene.
+        addTeardownBlock {
+            hud.remove()
+            XCTAssertTrue(
+                hud.scene.windows.compactMap { $0 as? DMPassThroughWindow }.isEmpty,
+                "the HUD window left its scene when the test ended",
                 file: file,
                 line: line
             )
+        }
+        guard let window = hud.window else {
+            XCTFail("The presenter made no HUD window.", file: file, line: line)
             return nil
         }
-        hud.window?.traitOverrides.preferredContentSizeCategory = layout.sizeCategory
+        window.traitOverrides.preferredContentSizeCategory = layout.sizeCategory
+        guard turnRunLoop(until: window.traitCollection.preferredContentSizeCategory == layout.sizeCategory) else {
+            XCTFail("The text size of the HUD window did not become \(layout.sizeCategory.rawValue).", file: file, line: line)
+            return nil
+        }
         guard waitForTree(of: hud) else {
-            XCTFail("The accessibility tree of the HUD window is empty after the text size changed.", file: file, line: line)
+            XCTFail(
+                "The accessibility tree of the HUD window stayed empty or kept changing with the automation on.",
+                file: file,
+                line: line
+            )
             return nil
         }
         return hud
@@ -321,16 +336,23 @@ extension XCTestCase {
         RunLoop.current.run(until: Date().addingTimeInterval(seconds))
     }
 
-    /// Waits until the HUD has elements and their number has not changed for a short while.
+    /// Waits until the HUD has elements and their frames have not changed for 0.3 seconds, which is
+    /// after the layout for the text size has settled.
     private func waitForTree(of hud: HostedHUD) -> Bool {
         guard turnRunLoop(until: !hud.elements.isEmpty) else { return false }
-        var count = hud.elements.count
-        for _ in 0..<50 {
+        var previous = hud.elements.map(\.frame)
+        var steadyChecks = 0
+        for _ in 0..<100 {
             turnRunLoop(for: 0.1)
-            let now = hud.elements.count
-            if now == count { return now > 0 }
-            count = now
+            let now = hud.elements.map(\.frame)
+            if now == previous {
+                steadyChecks += 1
+                if steadyChecks >= 3 { return !now.isEmpty }
+            } else {
+                steadyChecks = 0
+                previous = now
+            }
         }
-        return count > 0
+        return false
     }
 }

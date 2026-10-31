@@ -29,103 +29,139 @@ final class HUDAccessibilityElementsTests: XCTestCase {
     // MARK: - The card of every release so far
 
     func test_loading_standardLayout_listsTheTextAndTheIndicator() {
-        guard let hud = makeHostedHUD(showing: .loading) else { return }
+        guard let sut = makeSUT(showing: .loading) else { return }
 
         XCTAssertEqual(
-            hud.signatures,
+            sut.signatures,
             [loadingText, loadingIndicator],
             """
-            pins today's behaviour: the loading indicator has no label, so assistive technology has \
-            nothing to say for it; a label for it would be a deliberate change (recorded as a defect \
-            of its own). The value is nil in a hosted window of the package tests; the example app \
-            reported "1" for the same indicator on iOS 26.5, so the value depends on the host
+            pins today's behaviour: the loading indicator has no label; a label for it would be a \
+            deliberate change (recorded as a defect of its own). Its value is nil in a hosted window \
+            of the package tests on iOS 17.5, 18.6, 26.2 and 26.5; the example app reported "1" for \
+            the same indicator on iOS 26.5, so the value depends on the host
             """
         )
-        XCTAssertTrue(hud.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
     }
 
     func test_success_standardLayout_listsTheMessageOnly() {
-        guard let hud = makeHostedHUD(showing: .success) else { return }
+        guard let sut = makeSUT(showing: .success) else { return }
 
         XCTAssertEqual(
-            hud.signatures,
+            sut.signatures,
             [successText],
             "pins today's behaviour: the message only; the default image of the success is hidden from assistive technology"
         )
-        XCTAssertTrue(hud.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
     }
 
     func test_failure_standardLayout_listsTheTitleTheMessageAndClose() {
-        guard let hud = makeHostedHUD(showing: .failure) else { return }
+        guard let sut = makeSUT(showing: .failure) else { return }
 
         XCTAssertEqual(
-            hud.signatures,
+            sut.signatures,
             [failureTitle, failureMessage, closeButton],
             "pins today's behaviour: the title carries no header trait; Close is the only button"
         )
-        XCTAssertTrue(hud.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
     }
 
-    func test_failureWithRetry_standardLayout_listsCloseBeforeRetry() {
-        guard let hud = makeHostedHUD(showing: .failureWithRetry) else { return }
+    func test_failureWithRetry_standardLayout_listsCloseBeforeRetryOnOneRow() {
+        guard let sut = makeSUT(showing: .failureWithRetry),
+              let close = sut.element(labeled: "Close"),
+              let retry = sut.element(labeled: "Retry") else { return }
 
         XCTAssertEqual(
-            hud.signatures,
+            sut.signatures,
             [failureTitle, failureMessage, closeButton, retryButton],
             "pins today's behaviour: the title carries no header trait; Close comes before Retry"
         )
-        XCTAssertTrue(
-            hud.elements.areInReadingOrder,
-            "Close stands left of Retry on one row, and both stand under the texts"
+        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertLessThanOrEqual(
+            close.frame.maxX,
+            retry.frame.minX,
+            "Close stands left of Retry"
+        )
+        XCTAssertEqual(
+            close.frame.minY,
+            retry.frame.minY,
+            accuracy: 1,
+            "Close and Retry stand on one row"
         )
     }
 
     // MARK: - The accessible card at the largest accessibility text size
 
-    func test_loading_accessibleLayout_listsTheTextAndTheIndicator() {
-        guard let hud = makeHostedHUD(showing: .loading, layout: .accessible) else { return }
+    func test_loading_accessibleLayout_listsTheTextAndTheIndicatorAtTheAccessibilitySize() {
+        guard let sut = makeSUT(showing: .loading, layout: .accessible) else { return }
 
         XCTAssertEqual(
-            hud.signatures,
+            sut.signatures,
             [loadingText, loadingIndicator],
             "pins today's behaviour: the same two elements as the standard card, the indicator without a label"
         )
-        XCTAssertTrue(hud.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertGreaterThan(
+            sut.elements.first?.frame.height ?? 0,
+            40,
+            "the loading text is drawn at the accessibility size (20 points in the standard card)"
+        )
     }
 
-    func test_success_accessibleLayout_listsTheMessageOnly() {
-        guard let hud = makeHostedHUD(showing: .success, layout: .accessible) else { return }
+    func test_success_accessibleLayout_listsTheMessageOnlyAtTheAccessibilitySize() {
+        guard let sut = makeSUT(showing: .success, layout: .accessible) else { return }
 
-        XCTAssertEqual(hud.signatures, [successText], "pins today's behaviour: the message only")
-        XCTAssertTrue(hud.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertEqual(sut.signatures, [successText], "pins today's behaviour: the message only")
+        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertGreaterThan(
+            sut.elements.first?.frame.height ?? 0,
+            130,
+            "the success is drawn at the accessibility size (107 points in the standard card)"
+        )
     }
 
-    func test_failure_accessibleLayout_listsTheTitleTheMessageAndClose() {
-        guard let hud = makeHostedHUD(showing: .failure, layout: .accessible) else { return }
+    func test_failure_accessibleLayout_listsTheTitleTheMessageAndCloseAtTheAccessibilitySize() {
+        guard let sut = makeSUT(showing: .failure, layout: .accessible) else { return }
 
         XCTAssertEqual(
-            hud.signatures,
+            sut.signatures,
             [failureTitle, failureMessage, closeButton],
             "pins today's behaviour: the title carries no header trait; Close is the only button"
         )
-        XCTAssertTrue(hud.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertGreaterThan(
+            sut.elements.first?.frame.height ?? 0,
+            80,
+            "the title is drawn at the accessibility size (20 points in the standard card)"
+        )
     }
 
-    func test_failureWithRetry_accessibleLayout_stacksCloseAboveRetry() {
-        guard let hud = makeHostedHUD(showing: .failureWithRetry, layout: .accessible) else { return }
-        let close = hud.element(labeled: "Close")
-        let retry = hud.element(labeled: "Retry")
+    func test_failureWithRetry_accessibleLayout_stacksCloseAboveRetryAtTheAccessibilitySize() {
+        guard let sut = makeSUT(showing: .failureWithRetry, layout: .accessible),
+              let close = sut.element(labeled: "Close"),
+              let retry = sut.element(labeled: "Retry") else { return }
 
         XCTAssertEqual(
-            hud.signatures,
+            sut.signatures,
             [failureTitle, failureMessage, closeButton, retryButton],
             "pins today's behaviour: the title carries no header trait; Close comes before Retry"
         )
-        XCTAssertTrue(hud.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
         XCTAssertLessThan(
-            close?.frame.maxY ?? .infinity,
-            retry?.frame.minY ?? 0,
+            close.frame.maxY,
+            retry.frame.minY,
             "at accessibility text sizes Close stands above Retry, not beside it"
         )
+    }
+
+    // MARK: - Helpers
+
+    private func makeSUT(
+        showing shown: HUDShownState,
+        layout: HUDAccessibilityLayout = .standard,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> HostedHUD? {
+        makeHostedHUD(showing: shown, layout: layout, file: file, line: line)
     }
 }
