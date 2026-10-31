@@ -23,12 +23,20 @@ final class HUDAccessibilityAutomationTests: XCTestCase {
     }
 
     func test_automation_turnedOffAgain_isReportedOffBySystem() {
-        XCTAssertNil(AccessibilityAutomation.turnOn(), "the automation is switched on")
-        XCTAssertEqual(AccessibilityAutomation.isOn(), true, "the system reports it on after the switch")
+        guard turnOnAccessibilityAutomation() else { return }
+        // The system takes the switch to its accessibility service and answers a little later, so the
+        // state it reports is waited for, not read at once.
+        XCTAssertTrue(
+            turnRunLoop(until: AccessibilityAutomation.isOn() == true),
+            "the system reports the automation on after the switch"
+        )
 
         AccessibilityAutomation.turnOff()
 
-        XCTAssertEqual(AccessibilityAutomation.isOn(), false, "the system reports it off after it is switched off")
+        XCTAssertTrue(
+            turnRunLoop(until: AccessibilityAutomation.isOn() == false),
+            "the system reports the automation off after it is switched off"
+        )
     }
 
     func test_automation_whenTheSystemOffersNoSwitch_failsWithAMessageThatNamesIt() {
