@@ -167,6 +167,20 @@ enum HUDAccessibilityLayout {
         }
     }
 
+    private var appearance: DMHUDAppearance {
+        switch self {
+        case .standard: .standard
+        case .accessible: .accessible
+        }
+    }
+
+    /// A provider whose loading view shows `loadingText`, in the look of this layout. It leaves the views to
+    /// the library, as a host does that sets only the settings and the look.
+    @MainActor
+    func makeProvider(loadingText: String) -> AnyDMLoadingViewProvider {
+        ProviderWithLoadingText(loadingText: loadingText, appearance: appearance).eraseToAnyViewProvider()
+    }
+
     var sizeCategory: UIContentSizeCategory {
         switch self {
         case .standard: .large
@@ -193,8 +207,12 @@ enum HUDShownState {
     case failureWithRetry
 
     @MainActor
-    func loadableState(layout: HUDAccessibilityLayout, retries: RetryCounter) -> DMLoadableType {
-        let provider = layout.provider
+    func loadableState(
+        layout: HUDAccessibilityLayout,
+        retries: RetryCounter,
+        loadingText: String? = nil
+    ) -> DMLoadableType {
+        let provider = loadingText.map { layout.makeProvider(loadingText: $0) } ?? layout.provider
         let error = DMAppError.custom("The server did not answer.")
         switch self {
         case .loading: return .loading(provider: provider)
@@ -203,6 +221,26 @@ enum HUDShownState {
         case .failureWithRetry:
             return .failure(error: error, provider: provider, onRetry: DMButtonAction { retries.record() })
         }
+    }
+}
+
+/// A provider that sets only the loading text and the look, and leaves the views to the library.
+@MainActor
+private final class ProviderWithLoadingText: @MainActor DMLoadingViewProvider {
+    let loadingViewSettings: any DMProgressViewSettings
+    let hudAppearance: DMHUDAppearance
+
+    init(loadingText: String, appearance: DMHUDAppearance) {
+        let base = appearance.loadingViewSettings
+        var textProperties = base.loadingTextProperties
+        textProperties.text = loadingText
+        loadingViewSettings = DMProgressViewDefaultSettings(
+            loadingTextProperties: textProperties,
+            progressIndicatorProperties: base.progressIndicatorProperties,
+            loadingContainerBackgroundColor: base.loadingContainerBackgroundColor,
+            frameGeometrySize: base.frameGeometrySize
+        )
+        hudAppearance = appearance
     }
 }
 
@@ -268,11 +306,14 @@ extension XCTestCase {
     /// The package tests run in a process with no connected scene. A window made by `UIWindow(frame:)`
     /// belongs to a scene of its own, which the real presenter uses as it uses the scene of an app.
     ///
+    /// - Parameter loadingText: The loading text that a loading HUD shows, in place of the library's
+    ///   default. It changes nothing for the other states.
     /// - Returns: The hosted HUD, or `nil` when the test has failed already: the automation cannot be
     ///   switched on, or the tree stayed empty.
     func makeHostedHUD(
         showing shown: HUDShownState,
         layout: HUDAccessibilityLayout = .standard,
+        loadingText: String? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> HostedHUD? {
@@ -285,7 +326,7 @@ extension XCTestCase {
         }
         let retries = RetryCounter()
         let manager = DMLoadingManagerMain(
-            state: shown.loadableState(layout: layout, retries: retries),
+            state: shown.loadableState(layout: layout, retries: retries, loadingText: loadingText),
             settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
         )
         let presenter = scene.makeHUDPresenter()

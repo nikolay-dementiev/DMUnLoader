@@ -57,6 +57,11 @@ enum DemoText {
     /// After the label of an element of that tree that is an image.
     static let imageMark = " (image)"
 
+    /// After the label of an element of that tree that has a value, with the value.
+    static func valueMark(_ value: String) -> String {
+        " (value: \(value))"
+    }
+
     /// The texts of the HUD with `--host-texts`, in place of the library's defaults.
     enum Host {
         static let title = "Something broke"

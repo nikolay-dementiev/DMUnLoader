@@ -18,8 +18,6 @@ import XCTest
 /// deliberate change and not as a regression.
 @MainActor
 final class HUDAccessibilityElementsTests: XCTestCase {
-    private let loadingText = "label=\"Loading...\" value=nil traits=staticText"
-    private let loadingIndicator = "label=nil value=nil traits=updatesFrequently"
     private let successText = "label=\"Saved\" value=nil traits=staticText"
     private let failureTitle = "label=\"An error has occurred!\" value=nil traits=staticText"
     private let failureMessage = "label=\"The server did not answer.\" value=nil traits=staticText"
@@ -28,20 +26,48 @@ final class HUDAccessibilityElementsTests: XCTestCase {
 
     // MARK: - The card of every release so far
 
-    func test_loading_standardLayout_listsTheTextAndTheIndicator() {
+    func test_loading_standardLayout_listsTheCardAsOneElementNamedByItsText() {
         guard let sut = makeSUT(showing: .loading) else { return }
 
         XCTAssertEqual(
             sut.signatures,
-            [loadingText, loadingIndicator],
+            [loadingCard(named: "Loading...")],
             """
-            pins today's behaviour: the loading indicator has no label; a label for it would be a \
-            deliberate change (recorded as a defect of its own). Its value is nil in a hosted window \
-            of the package tests on iOS 17.5, 18.6, 26.2 and 26.5; the example app reported "1" for \
-            the same indicator on iOS 26.5, so the value depends on the host
+            the text and the indicator are one element named by the text, with no static text trait, \
+            and no value of the indicator: that value depends on the host
             """
         )
-        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
+        XCTAssertFalse(sut.elements.first?.frame.isEmpty ?? true, "the element has a frame on the screen")
+    }
+
+    func test_loading_standardLayout_withACustomText_namesTheElementByThatText() {
+        guard let sut = makeSUT(showing: .loading, loadingText: Self.customText) else { return }
+
+        XCTAssertEqual(
+            sut.signatures,
+            [loadingCard(named: Self.customText)],
+            "the element is named by the text the host set, in full"
+        )
+    }
+
+    func test_loading_standardLayout_withAnEmptyText_namesTheElementByTheDefaultText() {
+        guard let sut = makeSUT(showing: .loading, loadingText: "") else { return }
+
+        XCTAssertEqual(
+            sut.signatures,
+            [loadingCard(named: "Loading...")],
+            "the element is named by the default text when the host's text is empty, not left without a name"
+        )
+    }
+
+    func test_loading_standardLayout_withAWhitespaceOnlyText_namesTheElementByTheDefaultText() {
+        guard let sut = makeSUT(showing: .loading, loadingText: " \n") else { return }
+
+        XCTAssertEqual(
+            sut.signatures,
+            [loadingCard(named: "Loading...")],
+            "a text of only whitespace names the element as an empty text does, by the default text"
+        )
     }
 
     func test_success_standardLayout_listsTheMessageOnly() {
@@ -92,19 +118,38 @@ final class HUDAccessibilityElementsTests: XCTestCase {
 
     // MARK: - The accessible card at the largest accessibility text size
 
-    func test_loading_accessibleLayout_listsTheTextAndTheIndicatorAtTheAccessibilitySize() {
+    func test_loading_accessibleLayout_listsTheCardAsOneElementAtTheAccessibilitySize() {
         guard let sut = makeSUT(showing: .loading, layout: .accessible) else { return }
 
         XCTAssertEqual(
             sut.signatures,
-            [loadingText, loadingIndicator],
-            "pins today's behaviour: the same two elements as the standard card, the indicator without a label"
+            [loadingCard(named: "Loading...")],
+            "the same one element as the standard card, named by the text"
         )
-        XCTAssertTrue(sut.elements.areInReadingOrder, "the elements stand in reading order, top to bottom")
         XCTAssertGreaterThan(
             sut.elements.first?.frame.height ?? 0,
-            40,
-            "the loading text is drawn at the accessibility size (20 points in the standard card)"
+            150,
+            "the card is drawn at the accessibility size (98 points tall in the standard card)"
+        )
+    }
+
+    func test_loading_accessibleLayout_withACustomText_namesTheElementByThatText() {
+        guard let sut = makeSUT(showing: .loading, layout: .accessible, loadingText: Self.customText) else { return }
+
+        XCTAssertEqual(
+            sut.signatures,
+            [loadingCard(named: Self.customText)],
+            "the element is named by the text the host set, in full"
+        )
+    }
+
+    func test_loading_accessibleLayout_withAnEmptyText_namesTheElementByTheDefaultText() {
+        guard let sut = makeSUT(showing: .loading, layout: .accessible, loadingText: "") else { return }
+
+        XCTAssertEqual(
+            sut.signatures,
+            [loadingCard(named: "Loading...")],
+            "the element is named by the default text when the host's text is empty, not left without a name"
         )
     }
 
@@ -156,12 +201,20 @@ final class HUDAccessibilityElementsTests: XCTestCase {
 
     // MARK: - Helpers
 
+    private static let customText = "Please wait while we save your data"
+
+    /// The loading card as one element: named by `text`, which says that its content changes.
+    private func loadingCard(named text: String) -> String {
+        "label=\"\(text)\" value=nil traits=updatesFrequently"
+    }
+
     private func makeSUT(
         showing shown: HUDShownState,
         layout: HUDAccessibilityLayout = .standard,
+        loadingText: String? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> HostedHUD? {
-        makeHostedHUD(showing: shown, layout: layout, file: file, line: line)
+        makeHostedHUD(showing: shown, layout: layout, loadingText: loadingText, file: file, line: line)
     }
 }
