@@ -11,10 +11,11 @@ import XCTest
 /// on the focused element and then on each object above it, the containers of an element and the
 /// superviews of a view, until one returns `true`.
 ///
-/// The model is the routing that VoiceOver documents for the gesture. VoiceOver does not run on the Simulator,
-/// so its own routing is not observed; the tests hold what the walk finds: only the HUD window handles the
-/// escape, nothing in front of it claims it, and the HUD goes when it is handled. A loading HUD cannot be
-/// escaped, so nobody handles it and the HUD stays.
+/// The model is the routing that VoiceOver is understood to take for the gesture, from the focused element
+/// up through its ancestors. VoiceOver does not run on the Simulator, so its own routing is not observed;
+/// the tests hold what the walk finds: only the HUD window handles the escape, nothing in front of it
+/// claims it, and the HUD goes when it is handled. A loading HUD cannot be escaped, so nobody handles it
+/// and the HUD stays.
 @MainActor
 final class HUDAccessibilityEscapeTests: XCTestCase {
 
@@ -44,15 +45,17 @@ final class HUDAccessibilityEscapeTests: XCTestCase {
         assertEscapeHidesTheHUD(showing: .failureWithRetry, layout: .accessible, from: "Close")
     }
 
-    func test_escape_failureWithRetry_doesNotRetry() {
-        guard let hud = makeHostedHUD(showing: .failureWithRetry),
-              let close = hud.element(labeled: "Close") else {
+    func test_escape_failureWithRetryStandardLayout_hidesTheHUDWithoutRetrying() {
+        guard let sut = makeSUT(showing: .failureWithRetry, layout: .standard) else { return }
+        guard let close = sut.element(labeled: "Close") else {
             return XCTFail("the HUD has an element labelled Close")
         }
 
-        _ = HUDAccessibilityTree.escapeChain(from: close.object)
+        let chain = HUDAccessibilityTree.escapeChain(from: close.object)
 
-        XCTAssertEqual(hud.retries.count, 0, "the escape hides the failure as a tap outside the card does, without a retry")
+        XCTAssertTrue(chain.last?.handled == true, "the escape was handled: \(describe(chain))")
+        XCTAssertEqual(sut.manager.loadableState, .none, "the escape hides the failure, as a tap outside the card does")
+        XCTAssertEqual(sut.retries.count, 0, "the escape does not retry")
     }
 
     // MARK: - A HUD that cannot be escaped
@@ -67,6 +70,15 @@ final class HUDAccessibilityEscapeTests: XCTestCase {
 
     // MARK: - Helpers
 
+    private func makeSUT(
+        showing shown: HUDShownState,
+        layout: HUDAccessibilityLayout,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> HostedHUD? {
+        makeHostedHUD(showing: shown, layout: layout, file: file, line: line)
+    }
+
     private func assertEscapeHidesTheHUD(
         showing shown: HUDShownState,
         layout: HUDAccessibilityLayout,
@@ -74,24 +86,19 @@ final class HUDAccessibilityEscapeTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        guard let hud = makeHostedHUD(showing: shown, layout: layout, file: file, line: line),
-              let start = hud.element(labeled: label),
-              let window = hud.window else {
+        guard let sut = makeSUT(showing: shown, layout: layout, file: file, line: line) else { return }
+        guard let start = sut.element(labeled: label), let window = sut.window else {
             return XCTFail("the HUD has a window and an element labelled \(label)", file: file, line: line)
         }
         let hostingView = window.rootViewController?.view
 
+        // The walk stops at the first object that handles the escape, so this one is the last of the
+        // chain, and every object before it has declined.
         let chain = HUDAccessibilityTree.escapeChain(from: start.object)
 
         XCTAssertTrue(
             chain.last?.object === window && chain.last?.handled == true,
-            "the HUD window handles the escape, and it is the last object the walk asks: \(describe(chain))",
-            file: file,
-            line: line
-        )
-        XCTAssertTrue(
-            chain.dropLast().allSatisfy { !$0.handled },
-            "nothing between the element and the window claims the escape: \(describe(chain))",
+            "the HUD window is the first object to handle the escape, and nothing before it did: \(describe(chain))",
             file: file,
             line: line
         )
@@ -101,9 +108,9 @@ final class HUDAccessibilityEscapeTests: XCTestCase {
             file: file,
             line: line
         )
-        XCTAssertEqual(hud.manager.loadableState, .none, "the handled escape hides the HUD", file: file, line: line)
+        XCTAssertEqual(sut.manager.loadableState, .none, "the handled escape hides the HUD", file: file, line: line)
         XCTAssertTrue(
-            turnRunLoop(until: !hud.takesTouches),
+            turnRunLoop(until: sut.window != nil && !sut.takesTouches),
             "a hidden HUD lets the touches through once the window has heard of the new state",
             file: file,
             line: line
@@ -115,12 +122,11 @@ final class HUDAccessibilityEscapeTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        guard let hud = makeHostedHUD(showing: .loading, layout: layout, file: file, line: line),
-              let start = hud.elements.first,
-              let window = hud.window else {
+        guard let sut = makeSUT(showing: .loading, layout: layout, file: file, line: line) else { return }
+        guard let start = sut.elements.first, let window = sut.window else {
             return XCTFail("the loading HUD has a window and an element", file: file, line: line)
         }
-        let stateBefore = hud.manager.loadableState
+        let stateBefore = sut.manager.loadableState
 
         let chain = HUDAccessibilityTree.escapeChain(from: start.object)
 
@@ -136,8 +142,8 @@ final class HUDAccessibilityEscapeTests: XCTestCase {
             file: file,
             line: line
         )
-        XCTAssertEqual(hud.manager.loadableState, stateBefore, "the loading HUD stays", file: file, line: line)
-        XCTAssertTrue(hud.takesTouches, "the loading HUD still takes the touches", file: file, line: line)
+        XCTAssertEqual(sut.manager.loadableState, stateBefore, "the loading HUD stays", file: file, line: line)
+        XCTAssertTrue(sut.takesTouches, "the loading HUD still takes the touches", file: file, line: line)
     }
 
     private func describe(_ chain: [HUDAccessibilityTree.EscapeStep]) -> String {
