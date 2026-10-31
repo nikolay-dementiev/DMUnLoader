@@ -22,8 +22,9 @@ analyzer_rules:
 # Two imports that the analyzer does not see used. ObservableObject is a typealias in Foundation
 # that names Combine.ObservableObject, so it finds no declaration of Combine used in a file that
 # only refines it; the import stays, because the compiler asks for it in a public conformance when
-# the module is built with library evolution, as Scripts/check-api.sh records. The analyzer finds
-# CGSize in CoreFoundation, while the compiler needs CoreGraphics for its conformances.
+# the module is built with library evolution, as the comment on LIBRARY_EVOLUTION in devkit.conf
+# records. The analyzer finds CGSize in CoreFoundation, while the compiler needs CoreGraphics for
+# its conformances.
 unused_import:
   always_keep_imports:
     - Combine
