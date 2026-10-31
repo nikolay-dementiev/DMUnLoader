@@ -23,19 +23,23 @@ that DMDevKit provides (see "The tools").
 ## The checks
 
 The checks are scripts in `Scripts/`, and CI runs them as you do, except
-`check-example-project.sh`, which needs XcodeGen.
+`check-example-project.sh`, which needs XcodeGen, and `check-wrappers.sh`, which CI replaces by the
+command it forwards to, `swift run --quiet --package-path Tools devkit check-wrappers`, so that a
+fault of the script cannot turn the check into another one.
 
 | Script | What it checks |
 |---|---|
 | `Scripts/lint.sh` | SwiftLint, at the version pinned in `.swiftlint.yml`. The first run fetches that version into `.build/tools` and checks its checksum; runs at once on one checkout do not disturb each other. `--analyze <xcodebuild log>` also runs the analyzer rules, which CI does on the log of a build of the library |
 | `Scripts/check-lint-contract.sh` | that the lint rules fire where they should: it lints the fixtures of `Fixtures/Lint` where their folder says (the root as files of the library, `Domain/` and `Adapters/` as files of that folder, `Outside/` outside the library) and compares the diagnostics of the rules named in `devkit.conf` with the ones each line expects |
 | `Scripts/check-lint-tool.sh` | that the helper which fetches SwiftLint (DMDevKit's `swiftlint-tool.sh`) is safe to run twice at once: with a fake archive and shims for `unzip`, `curl` and `mv` it checks that the tool stays whole while another run unpacks and is replaced by a rename, that two first-time runs both succeed, that a wrong checksum never reaches the unpack, and that a failed download or unpack leaves no part file and no unpack folder behind |
-| `Scripts/check-wrappers.sh` | that the four scripts which forward to `devkit` forward faithfully: with a shim in place of `swift` it checks the command and the arguments that reach `devkit`, the directory, the exit status and both standard streams, and that each script works from any directory |
-| `Scripts/check-api.sh` | the public interface against `Fixtures/API/public-interface.txt`; `--self-test` runs the cases of its normalisation; `--since <ref>` prints, without a compiler, the lines the baseline lost, changed or gained since a git ref such as a release tag |
+| `Scripts/check-wrappers.sh` | that the nine scripts which `WRAPPERS` in `devkit.conf` lists forward to `devkit` faithfully (`lint`, `check-lint-contract`, `check-lint-tool`, `prepare-simulator`, `check-api`, `check-release`, `export-coverage`, `count-tests` and this one): `devkit check-wrappers` copies each into a scratch repository whose path holds a space and, with a shim in place of `swift`, checks the command and the arguments that reach `devkit`, the directory, the exit status and both standard streams, that the script ends in an `exec`, that `DEVELOPER_DIR` and standard input reach `swift` as the caller had them, that the first line is `#!/bin/bash`, and that each script works from any directory. Without `WRAPPERS` it ends with status 2 |
+| `Scripts/check-api.sh` | the public interface against `Fixtures/API/public-interface.txt`; `--self-test` runs the cases of its normalisation, which DMDevKit carries; `--since <ref>` prints, without a compiler, the lines the baseline lost, changed or gained since a git ref such as a release tag. A deliberate change of the public API runs it with `--update` and commits the new baseline in the same commit; the message of a failed comparison names `devkit check-api --update`, which is this script |
 | `Scripts/check-manifest.sh` | the manifest, installation by version, the consumer fixture, and every Swift block of `README.md` and of the documentation catalog, each on its own, in Swift 6 and Swift 5 mode: a manifest block is evaluated, every other block compiled. A warning in a compiled block fails it too; a manifest block is only evaluated, so a warning in it is not checked. Installation by version is the manifest block of `README.md`, pointed at a tagged copy and built for the iOS simulator on a cache of its own; its `Package.resolved` must hold this package, DMAction and DMVariableBlurView and nothing else, so a library that only the tests use is not fetched for a consumer. `--self-test` runs the cases of the readers of the README and of `Package.resolved` |
 | `Scripts/coverage-gate.sh <result bundle>` | the line coverage of the library against its floor |
 | `Scripts/check-podspec.sh` | `pod lib lint` in every Swift version of the podspec, that the pod makes its consumer link no test framework, and that the consumer app carries the pod's resource bundle with every key of the string catalog |
 | `Scripts/check-release.sh <version>` | that the newest heading of the changelog is that version with a real release date and has notes under it, and that the podspec still names the frozen 1.1.0; it also takes the previous release from the tags (the highest release tag below the version that the commit reaches) and refuses a changelog whose heading below the newest does not name it, is not lower than the version or skips a reachable tag; it compares the release with it and refuses a version that keeps its major version after a removed or changed line of the interface, or after a breaking-changes heading in the notes (a heading of any level, or a bold line, whose first word is "breaking"); it refuses a release whose previous release is not an ancestor of the commit, and, when the newest heading is for the version, stops with exit 2 in a shallow clone. Under GitHub Actions the reminder for added lines is also a warning annotation. `--notes` prints the notes; `--self-test` runs these decisions on scratch repositories, and the `api` job runs it |
+| `Scripts/export-coverage.sh <result bundle> <target> <output>` | not a check: it exports the line coverage of the library from a result bundle to LCOV, for CI to upload to Codecov |
+| `Scripts/count-tests.sh [--label <text>] <result bundle> <glob>...` | that every test method of the files the globs name ran and passed in the result bundle: a run that lost a test class or skipped a test passes the build and the coverage floor too. A glob that names no tracked file ends with status 2 |
 | `Scripts/check-warnings.sh <build log>` | that no compiler warning points into this repository; CI runs it on the logs of the package tests, of the example's build, of the Release build and of the floor build. It finds the checkout under the path the script is run through, its real path and the links of macOS, and it refuses a log in which no Swift file of the checkout was compiled, such as a second build on a built tree (exit 2); `--self-test` runs it on canned logs |
 | `Scripts/check-example-project.sh` | that the example's Xcode project matches its XcodeGen spec |
 | `Scripts/test-example.sh <simulator udid>` | the example's tests, below |
@@ -57,22 +61,28 @@ the safer place to see it work.
 
 ## The tools
 
-`Scripts/lint.sh`, `Scripts/check-lint-contract.sh`, `Scripts/check-lint-tool.sh` and
-`Scripts/prepare-simulator.sh` are wrappers of
-[DMDevKit](https://github.com/nikolay-dementiev/DMDevKit), the tooling that DMAction,
+`Scripts/lint.sh`, `Scripts/check-lint-contract.sh`, `Scripts/check-lint-tool.sh`,
+`Scripts/prepare-simulator.sh`, `Scripts/check-api.sh`, `Scripts/check-release.sh`,
+`Scripts/export-coverage.sh`, `Scripts/count-tests.sh` and `Scripts/check-wrappers.sh` are wrappers
+of [DMDevKit](https://github.com/nikolay-dementiev/DMDevKit), the tooling that DMAction,
 DMVariableBlurView and DMUnLoader are to share. Each goes to the repository root, which `devkit`
 finds with git, so run them in a clone, and runs
 `swift run --quiet --package-path Tools devkit <command>` with the arguments it was given, so the
-paths that CI and this file name stay as they were. The other scripts of `Scripts/` have not moved.
+paths that CI and this file name stay as they were. A relative path in an argument is relative to
+the root. The other scripts of `Scripts/` have not moved: `check-manifest.sh`, `check-podspec.sh`,
+`check-warnings.sh`, `coverage-gate.sh`, `test-example.sh`, `check-example-project.sh`,
+`check-example-results.sh` and the two `analyze_*` scripts.
 
 - `Tools/Package.swift` is a package of its own. It pins a release of DMDevKit, and
   `Tools/Package.resolved` pins its commit; Dependabot proposes the newer releases. SwiftPM reads
   only the manifest at the root of a dependency, so a package that depends on DMUnLoader does not
   fetch DMDevKit.
-- `devkit.conf` holds the settings of this repository that the commands read: the library folder,
-  the lint rules and the folder of their fixtures. A change to a command is a change to DMDevKit.
-  The file also repeats the settings blocks of `Scripts/check-api.sh` and
-  `Scripts/check-release.sh`, which have not moved: change both until they do.
+- `devkit.conf` holds the settings of this repository that the commands read: the module and the
+  library folder, the compiler flags of the interface check, the lint rules and the folder of their
+  fixtures, the version the pod is frozen at, and the list of the wrappers (`WRAPPERS`). Each
+  setting is written there once, except the compiler flags: `SWIFT_FLAGS` repeats what
+  `Package.swift` sets, and no check compares the two, so change both. A change to a command is a
+  change to DMDevKit.
 - The first run builds `devkit`, takes several seconds and prints the lines that SwiftPM writes
   while it fetches DMDevKit; each next run adds a second or two to the script, the cost of
   `swift run` itself. If `swift run` itself fails, a fetch or a build, the script ends with its

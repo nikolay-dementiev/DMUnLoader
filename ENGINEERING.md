@@ -51,10 +51,10 @@ enters this package only in a major version of this package. The module re-expor
 consumer of DMUnLoader sees. ViewInspector and swift-snapshot-testing are required by the test
 target only. The library product is dynamic.
 
-`Tools/Package.swift` depends on DMDevKit, the development tooling that the lint scripts and
-`Scripts/prepare-simulator.sh` forward to, but it is a package of its own: SwiftPM reads the
-manifest at the root of a dependency only, so a consumer of DMUnLoader does not fetch DMDevKit,
-and the root manifest that this policy and `Scripts/check-manifest.sh` govern does not change.
+`Tools/Package.swift` depends on DMDevKit, the development tooling that the wrappers listed by
+`WRAPPERS` in `devkit.conf` forward to, but it is a package of its own: SwiftPM reads the manifest
+at the root of a dependency only, so a consumer of DMUnLoader does not fetch DMDevKit, and the root
+manifest that this policy and `Scripts/check-manifest.sh` govern does not change.
 
 Who checks. The `api` job of CI runs `Scripts/check-api.sh --self-test` and `Scripts/check-api.sh`
 on every pull request and fails it when the public interface differs from the baseline; on a pull

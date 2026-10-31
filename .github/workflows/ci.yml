@@ -46,9 +46,11 @@ jobs:
       - name: Check that the lint tool is fetched safely
         run: Scripts/check-lint-tool.sh
       # The scripts that forward to devkit are code that nothing else tests: one that dropped its
-      # arguments or its status would pass every other check.
+      # arguments or its status would pass every other check. This step runs devkit itself and not
+      # Scripts/check-wrappers.sh: that wrapper is one of the scripts checked, and one that
+      # forwarded to another command would turn the step into that command and leave it green.
       - name: Check that the wrappers forward to devkit
-        run: Scripts/check-wrappers.sh
+        run: swift run --quiet --package-path Tools devkit check-wrappers
       # The analyzer rules, unused_import among them, read the compiler invocations of a full build.
       - name: Build the library for the analyzer
         run: |
@@ -122,31 +124,15 @@ jobs:
             -skipPackagePluginValidation \
             2>&1 | tee .build/results/ci/package.log
       # A run that lost tests, or skipped them, passes the coverage floor too. So every test method
-      # of the package tests must be in the result bundle, run and passed. The pattern allows
-      # attributes (also with arguments, such as @available(iOS 18, *)) and the modifiers public,
-      # open, internal, final, override and nonisolated before func, and a test that returns
-      # nothing.
+      # of the package tests must be in the result bundle, run and passed.
       - name: Check the test count
-        run: |
-          EXPECTED="$(git grep -hcE '^[[:space:]]*((@[[:alnum:]_]+(\([^)]*\))?|public|open|internal|final|override|nonisolated)[[:space:]]+)*func[[:space:]]+test[[:alnum:]_]*[[:space:]]*\(\)[[:space:]]*(async[[:space:]]*)?(throws[[:space:]]*)?(\{.*|//.*)?$' -- 'Tests/*.swift' \
-            | awk '{ total += $1 } END { print total + 0 }')"
-          xcrun xcresulttool get test-results summary --path .build/results/ci/package.xcresult > "$RUNNER_TEMP/summary.json"
-          if ! jq -e --argjson expected "$EXPECTED" \
-              '$expected > 0 and .totalTestCount == $expected and .passedTests == $expected and .failedTests == 0 and .skippedTests == 0' \
-              "$RUNNER_TEMP/summary.json" > /dev/null; then
-            echo "Expected $EXPECTED tests of the package to run and pass:"
-            jq '{totalTestCount, passedTests, failedTests, skippedTests}' "$RUNNER_TEMP/summary.json"
-            exit 1
-          fi
-          echo "All $EXPECTED tests of the package ran and passed."
+        run: Scripts/count-tests.sh --label package .build/results/ci/package.xcresult 'Tests/*.swift'
       - name: No warning from this repository
         run: Scripts/check-warnings.sh .build/results/ci/package.log
       - name: Coverage floor
         run: Scripts/coverage-gate.sh .build/results/ci/package.xcresult
-      - name: Check the coverage exporter
-        run: python3 -B Scripts/test-export-coverage.py
       - name: Export library coverage
-        run: python3 Scripts/export-coverage.py .build/results/ci/package.xcresult DMUnLoader "$RUNNER_TEMP/coverage.lcov"
+        run: Scripts/export-coverage.sh .build/results/ci/package.xcresult DMUnLoader "$RUNNER_TEMP/coverage.lcov"
       - name: Upload coverage to Codecov
         # Forks and Dependabot cannot request the OIDC credentials used for this upload.
         if: github.actor != 'dependabot[bot]' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
