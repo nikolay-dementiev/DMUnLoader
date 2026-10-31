@@ -29,10 +29,11 @@ struct DMProgressView: View {
     }
 
     /// The label of the card for assistive technology: the text that is shown, or the default text when
-    /// the host's text is empty. An empty text draws nothing, and a card with no name, or with no element
-    /// at all, leaves the HUD with nothing to focus while the content under it is hidden.
+    /// the host's text is empty or only whitespace. Such a text draws nothing, and a card with no name, or
+    /// with no element at all, leaves the HUD with nothing to focus while the content under it is hidden.
+    /// A text with visible characters is the label as it is, the whitespace around it included.
     private func cardAccessibilityLabel(for shownText: String) -> String {
-        shownText.isEmpty ? hudTexts.text(for: .loadingText) : shownText
+        shownText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? hudTexts.text(for: .loadingText) : shownText
     }
 
     /// The accessible look has no cap: the text wraps at the width the card offers and shows in full,
