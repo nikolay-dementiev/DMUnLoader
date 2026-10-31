@@ -28,14 +28,22 @@ struct DMProgressView: View {
         }
     }
 
+    /// The label of the card for assistive technology: the text that is shown, or the default text when
+    /// the host's text is empty. An empty text draws nothing, and a card with no name, or with no element
+    /// at all, leaves the HUD with nothing to focus while the content under it is hidden.
+    private func cardAccessibilityLabel(for shownText: String) -> String {
+        shownText.isEmpty ? hudTexts.text(for: .loadingText) : shownText
+    }
+
     /// The accessible look has no cap: the text wraps at the width the card offers and shows in full,
     /// whatever the text size and the language, and the view is as tall as the text needs.
     private var accessibleBody: some View {
         let loadingTextProperties = settingsProvider.loadingTextProperties
         let progressIndicatorProperties = settingsProvider.progressIndicatorProperties
+        let shownText = HUDDefaultText.loadingText.displayed(loadingTextProperties.text, using: hudTexts)
 
         return VStack {
-            Text(HUDDefaultText.loadingText.displayed(loadingTextProperties.text, using: hudTexts))
+            Text(shownText)
                 .multilineTextAlignment(loadingTextProperties.alignment)
                 .foregroundColor(loadingTextProperties.foregroundColor)
                 .font(loadingTextProperties.font)
@@ -49,6 +57,9 @@ struct DMProgressView: View {
                 .tint(progressIndicatorProperties.tintColor)
                 .layoutPriority(1)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(cardAccessibilityLabel(for: shownText))
+        .accessibilityAddTraits(.updatesFrequently)
         // No flexible frame: one with a minimum size reports the height it is offered when the content
         // is taller, so the card could not tell that the text does not fit and would draw it past
         // itself instead of scrolling it. The content is taller than 30 points anyway.
@@ -61,12 +72,13 @@ struct DMProgressView: View {
         let geometry = settingsProvider.frameGeometrySize
         let loadingTextProperties = settingsProvider.loadingTextProperties
         let progressIndicatorProperties = settingsProvider.progressIndicatorProperties
-        
+        let shownText = HUDDefaultText.loadingText.displayed(loadingTextProperties.text, using: hudTexts)
+
         let minSize: CGFloat = 30
         ZStack(alignment: .center) {
             Color(settingsProvider.loadingContainerBackgroundColor)
             VStack {
-                Text(HUDDefaultText.loadingText.displayed(loadingTextProperties.text, using: hudTexts))
+                Text(shownText)
                     .multilineTextAlignment(loadingTextProperties.alignment)
                     .foregroundColor(loadingTextProperties.foregroundColor)
                     .font(loadingTextProperties.font)
@@ -79,6 +91,9 @@ struct DMProgressView: View {
                     .tint(progressIndicatorProperties.tintColor)
                     .layoutPriority(1)
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(cardAccessibilityLabel(for: shownText))
+            .accessibilityAddTraits(.updatesFrequently)
         }
         .frame(minWidth: minSize,
                maxWidth: geometry.width / 2,
@@ -91,6 +106,14 @@ struct DMProgressView: View {
 #Preview("DefaultSettings") {
     PreviewRenderOwner {
         DMProgressView(settings: DMProgressViewDefaultSettings())
+    }
+}
+
+#Preview("EmptyText") {
+    PreviewRenderOwner {
+        DMProgressView(settings: DMProgressViewDefaultSettings(
+            loadingTextProperties: .init(text: "")
+        ))
     }
 }
 
