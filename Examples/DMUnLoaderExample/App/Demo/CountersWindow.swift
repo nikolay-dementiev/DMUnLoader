@@ -58,8 +58,8 @@ private struct CountersView<LM: DMLoadingManager>: View {
 }
 
 /// The elements that assistive technology reaches in the HUD window, in order: each label, with
-/// `DemoText.imageMark` after an image and `DemoText.valueMark` after a value. The UI tests read them
-/// here, because XCUITest also lists the elements that SwiftUI hides from assistive technology.
+/// `DemoText.valueMark` after a value and `DemoText.imageMark` last, after an image. The UI tests read
+/// them here, because XCUITest also lists the elements that SwiftUI hides from assistive technology.
 @MainActor
 private enum HUDAccessibilityTree {
     /// The HUD windows of the connected scenes.
@@ -84,7 +84,8 @@ private enum HUDAccessibilityTree {
         if object.isAccessibilityElement {
             let label = object.accessibilityLabel ?? ""
             let value = object.accessibilityValue.flatMap { $0.isEmpty ? nil : DemoText.valueMark($0) } ?? ""
-            elements.append((object.accessibilityTraits.contains(.image) ? label + DemoText.imageMark : label) + value)
+            let imageMark = object.accessibilityTraits.contains(.image) ? DemoText.imageMark : ""
+            elements.append(label + value + imageMark)
             return
         }
         children(of: object).forEach { collect($0, into: &elements) }
