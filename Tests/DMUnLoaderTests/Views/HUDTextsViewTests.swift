@@ -52,6 +52,26 @@ final class HUDTextsViewTests: XCTestCase {
         XCTAssertEqual(try cardLabel(of: sut), "[Loading...]", "the accessible card labels an empty text as well")
     }
 
+    func test_progressView_whitespaceOnlyText_labelsTheCardWithTheLookedUpDefaultText() throws {
+        let sut = loadingView(text: " \n", appearance: .standard)
+
+        XCTAssertEqual(
+            try cardLabel(of: sut),
+            "[Loading...]",
+            "a text of only whitespace is labelled with the looked-up default text, as an empty text is"
+        )
+    }
+
+    func test_progressView_textWithSpacesAround_labelsTheCardWithTheTextAsWritten() throws {
+        let sut = loadingView(text: "  Please wait \n", appearance: .standard)
+
+        XCTAssertEqual(
+            try cardLabel(of: sut),
+            "  Please wait \n",
+            "a text with visible characters keeps its exact form, the spaces around it included"
+        )
+    }
+
     func test_progressView_hostText_labelsTheCardWithTheHostText() throws {
         let sut = loadingView(text: "Please wait", appearance: .standard)
 

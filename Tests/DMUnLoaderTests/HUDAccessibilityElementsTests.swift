@@ -60,6 +60,16 @@ final class HUDAccessibilityElementsTests: XCTestCase {
         )
     }
 
+    func test_loading_standardLayout_withAWhitespaceOnlyText_namesTheElementByTheDefaultText() {
+        guard let sut = makeSUT(showing: .loading, loadingText: " \n") else { return }
+
+        XCTAssertEqual(
+            sut.signatures,
+            [loadingCard(named: "Loading...")],
+            "a text of only whitespace names the element as an empty text does, by the default text"
+        )
+    }
+
     func test_success_standardLayout_listsTheMessageOnly() {
         guard let sut = makeSUT(showing: .success) else { return }
 
