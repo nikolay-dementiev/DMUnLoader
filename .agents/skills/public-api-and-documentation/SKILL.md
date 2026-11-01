@@ -34,8 +34,9 @@ and states none of its own. Report each finding in the format of
   (ENGINEERING.md, "whether an added line adds an overload that makes an existing call ambiguous")
   (ENGINEERING.md, "a review finds no member of a conformer that the requirement would capture")
 - A breaking change without the maintainer's decision, a migration note in `CHANGELOG.md` and a
-  major version. For a change of behaviour the notes declare it under a `### Breaking changes`
-  heading, because no script sees behaviour.
+  major version. `Scripts/check-release.sh` refuses a release that keeps the major version after a
+  removed or changed line of the interface; it cannot see a change of behaviour, so the notes
+  declare one under a `### Breaking changes` heading.
   (ENGINEERING.md, "A breaking change needs the maintainer's decision")
   (CONTRIBUTING.md, "Every breaking change, as ENGINEERING.md defines it")
   (CONTRIBUTING.md, "change listed under `### Changed` alone does not count")
@@ -43,8 +44,10 @@ and states none of its own. Report each finding in the format of
   (ENGINEERING.md, "No compiler deprecation attribute ships in a 1.x release")
 - A change that people using the package can notice, with no entry in `CHANGELOG.md`.
   (CONTRIBUTING.md, "A change that people using the package can notice gets an entry")
-- A change to a documented limit that leaves the README or the DocC catalog as it was.
+- A change to a documented limit while the README or the DocC catalog that state it still say the
+  old limit. A change of a limit is a change of behaviour.
   (ENGINEERING.md, "Documented limits")
+  (ENGINEERING.md, "A change of one of those limits is a change of behaviour")
 - The release the change needs is stated in the pull request. A CI or tool pin is class none, with a
   patch release or none.
   (PR template, "The release it needs")

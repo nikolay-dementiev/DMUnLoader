@@ -6,9 +6,9 @@ description: Review a change to DMUnLoader for what the HUD tells assistive tech
 # Accessibility and UI integration
 
 The question of this lane: does the HUD still do what the README tells an app that shows it?
-Observable behaviour is a contract (ENGINEERING.md, "## Public API and behaviour"), and the
-subsections of the README section "Behaviour your app must know" state it. The lane applies the
-rules of the repository and states none of its own. Report each finding in the format of
+Observable behaviour is a contract (ENGINEERING.md, "## Public API and behaviour"), and the README
+states what the HUD does, mostly in its section "Behaviour your app must know". The lane applies
+the rules of the repository and states none of its own. Report each finding in the format of
 [Documentation/Review/README.md](../../../Documentation/Review/README.md).
 
 ## What it checks
@@ -46,19 +46,14 @@ rules of the repository and states none of its own. Report each finding in the f
   that gives two. The manager waits until the root view is in a window of a scene.
   (README.md, "### Threads and lifetime")
   (README.md, "### Failures")
-- A change to `DMAppDelegate`, `DMSceneDelegateBase`, `DMSceneDelegateUIKit` or `DMRootLoadingView`
-  that the example app does not exercise in each of its integration modes: SwiftUI, SwiftUI with a
-  manager written by the host, UIKit, and UIKit with such a manager.
-  (ENGINEERING.md, "The facade that a host uses is public")
-  (CONTRIBUTING.md, "The example is one app that starts in several integration modes")
 
 ## What it ignores
 
-- What a CI script already enforces: `Scripts/lint.sh`; `Scripts/count-tests.sh` and
-  `Scripts/check-example-results.sh`, which fail a run that dropped or skipped a test;
-  `Scripts/check-warnings.sh`; `Scripts/check-manifest.sh`, which compiles the Swift blocks of the
-  README; and the `docs` job.
-- The manual VoiceOver pass, a step of the release that the maintainer takes.
+- What a CI script already enforces: `Scripts/lint.sh`; `Scripts/count-tests.sh`, which fails a run
+  that dropped or skipped a test; `Scripts/check-example-results.sh`, which does the same for the
+  example and decides its skips by device; `Scripts/check-warnings.sh`; `Scripts/check-manifest.sh`,
+  which compiles the Swift blocks of the README; and the `docs` job.
+- The manual VoiceOver pass, a step of the release.
   (CONTRIBUTING.md, "The manual VoiceOver pass")
 - The contrast and the clipped text of the `.standard` look, which the README lists as known.
   (README.md, "## Known issues")

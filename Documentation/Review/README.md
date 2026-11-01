@@ -4,9 +4,8 @@ A change to DMUnLoader is reviewed by a person, by an automated reviewer, or by 
 document says what each reviewer looks at, how a finding is written, and how findings are put
 together into one verdict. It adds no rule to the package. The rules are in
 [ENGINEERING.md](../../ENGINEERING.md), [AGENTS.md](../../AGENTS.md) and
-[CONTRIBUTING.md](../../CONTRIBUTING.md), and the behaviour that a host can rely on is in the
-section "Behaviour your app must know" of [README.md](../../README.md). A lane applies them and
-cites the one it applies.
+[CONTRIBUTING.md](../../CONTRIBUTING.md), and the behaviour that a host can rely on is in
+[README.md](../../README.md). A lane applies them and cites the one it applies.
 
 ## The lanes
 
@@ -35,7 +34,8 @@ FILE:LINE | BLOCKING/NON_BLOCKING | lane | CATEGORY | TITLE | WHY | FIX
 - `FILE:LINE`: the path from the repository root and the first line of the code concerned.
 - `BLOCKING` or `NON_BLOCKING`: whether the change must not be merged before the finding is fixed
   or the maintainer decides otherwise.
-- `lane`: the lane that found it, by the name of its folder.
+- `lane`: the lane that found it, by the name of its folder. Two lanes that found the same defect
+  are written as two names separated by a comma, without spaces.
 - `CATEGORY`: a short upper-case label for the topic of the rule, such as `TOUCHES` or
   `API_CLASS`. It is an open label, not a closed list.
 - `TITLE`: the defect in one phrase.
@@ -57,7 +57,7 @@ A tool that collects findings keeps each one as a record with these fields:
 |---|---|
 | `base_sha` | the commit the change is compared with |
 | `head_sha` | the commit that was reviewed |
-| `lane` | the lane that found it |
+| `lane` | the lane that found it, or the lanes, written as in the finding line |
 | `rule_id` | the rule it applies: the file and the quoted phrase that the lane cites, for the README the heading with its hashes |
 | `path` | the file, from the repository root |
 | `side` | `base` or `head`: the side of the diff that the lines are on |
@@ -85,7 +85,7 @@ accepts it.
    dropped.
 3. Deduplicate by defect, not by line. One defect found by two lanes is one finding that names both
    lanes.
-4. Give each finding a priority:
+4. Give each finding a priority. When two of these fit one finding, the higher applies:
    - **P1**: a crash, a deadlock, a leak, or a break of the public interface that nobody approved.
      A change that alters behaviour the README documents for accessibility, for touches or for the
      accessible appearance, and that the notes do not declare, is such a break: it is P1, and the

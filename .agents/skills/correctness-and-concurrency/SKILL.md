@@ -19,8 +19,8 @@ in the format of [Documentation/Review/README.md](../../../Documentation/Review/
   (ENGINEERING.md, "The loading manager protocol and `DMLoadingManagerMain` are `@MainActor`")
   (ENGINEERING.md, "the backdrop and `DMLoadingManagerDefaultSettings` are `Sendable`")
   (README.md, "### Threads and lifetime")
-- A replaced manager that the HUD keeps alive, or a manager that the library keeps for the host.
-  The host keeps its manager alive, and the HUD keeps no replaced one.
+- A replaced manager that the HUD keeps alive. The host keeps its manager alive, and the HUD keeps
+  no replaced one.
   (README.md, "The HUD keeps no replaced manager alive")
 - A call that stops the app in a path that the lint rules do not list, or a second case beside the
   documented one, `DMRootLoadingView(content:)` without the app delegate of DMUnLoader. The lint

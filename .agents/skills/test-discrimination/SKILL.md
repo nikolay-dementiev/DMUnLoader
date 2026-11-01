@@ -18,8 +18,9 @@ of [Documentation/Review/README.md](../../../Documentation/Review/README.md).
   (CONTRIBUTING.md, "A test must be able to fail")
   (AGENTS.md, "Every new test must be able to fail")
   (PR template, "For each new test, the change to the code that it fails on")
-- A test that reaches past the public API with `@testable import`, or a type made `public` only so
-  that a test can reach it, where the rule is `package`.
+- A new test that reaches past the public API with `@testable import`, or a type made `public`
+  only so that a test can reach it, where the rule is `package`. An existing file that has the
+  import is a finding only where the diff adds it.
   (AGENTS.md, "no `@testable import`")
   (CONTRIBUTING.md, "XCTest, through the public API: no `@testable import` in a new test")
   (CONTRIBUTING.md, "A collaborator that a test must replace is declared `package`")
@@ -31,8 +32,6 @@ of [Documentation/Review/README.md](../../../Documentation/Review/README.md).
 - A fix without a test that reproduces the defect, or a commit with the failing test that does not
   come before the commit that makes it pass. (CONTRIBUTING.md, "A fix starts with a test")
   (CONTRIBUTING.md, "The commit with a failing test comes before")
-- A change of observable behaviour that no test pins. The interface baseline does not see it.
-  (ENGINEERING.md, "which a test catches only where a test pins the behaviour")
 - A snapshot reference whose name lacks the iOS version, or a new picture committed without anyone
   having looked at it.
   (CONTRIBUTING.md, "A snapshot reference is named for its iOS version")
