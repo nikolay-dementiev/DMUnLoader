@@ -151,6 +151,8 @@ project, and run `Scripts/check-example-project.sh` before you commit.
 - A change of the public interface updates `Fixtures/API/public-interface.txt` in the same commit.
 - Pull requests go to `main` and are merged with a merge commit, so the test and fix pairs stay
   visible.
+- A review, by a person or by an automated reviewer, follows the lanes of
+  [Documentation/Review/README.md](Documentation/Review/README.md).
 - A change that people using the package can notice gets an entry in `CHANGELOG.md`.
 
 ## Releases
