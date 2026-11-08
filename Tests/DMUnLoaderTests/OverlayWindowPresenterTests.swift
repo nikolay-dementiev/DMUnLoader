@@ -20,7 +20,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
     func test_hostManagerInASuccess_withATinyAutoHideDelay_isNeverHiddenByThePresenter() {
         let announcer = AccessibilitySpy()
         guard let sut = makeSUT(
-            state: .success("Saved", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
+            state: Self.success,
             settings: DMLoadingManagerDefaultSettings(autoHideDelay: .milliseconds(10)),
             announcer: announcer
         ) else { return }
@@ -42,7 +42,42 @@ final class OverlayWindowPresenterTests: XCTestCase {
         XCTAssertEqual(sut.manager.hideCount, 1, "the escape of the HUD window asks the manager to hide, once")
     }
 
+    // MARK: - The escape of the HUD window
+
+    func test_escape_onARefusingManager_asksItToHideExactlyOnce() {
+        guard let sut = makeSUT(state: Self.success, settings: Self.settings(), announcer: AccessibilitySpy()) else { return }
+
+        let handled = sut.window?.accessibilityPerformEscape()
+
+        XCTAssertEqual(sut.manager.hideCount, 1, "the escape asks the manager once to hide the success")
+        XCTAssertEqual(handled, false, "the success is still shown after the call, so the escape reports that it did not go")
+    }
+
+    func test_escape_whenTheBackdropRuleRefuses_asksForNoHideAndReportsThatTheHUDStayed() {
+        let rules = DMHUDDismissalRules(success: DMHUDDismissal(backdropTapHides: false))
+        guard let sut = makeSUT(
+            state: Self.success,
+            settings: Self.settings(hudDismissal: rules),
+            announcer: AccessibilitySpy()
+        ) else { return }
+
+        let handled = sut.window?.accessibilityPerformEscape()
+        let tapOutsideTheCard = DefaultHUDViewModel(loadingManager: sut.manager).backdropTapped()
+
+        XCTAssertEqual(sut.manager.hideCount, 0, "the escape does what a tap outside the card does: the rule says no hide")
+        XCTAssertEqual(handled, false, "the escape reports that the HUD stayed")
+        XCTAssertEqual(tapOutsideTheCard, handled, "a tap outside the card gives the same answer as the escape")
+    }
+
     // MARK: - Helpers
+
+    private static var success: DMLoadableType {
+        .success("Saved", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
+    }
+
+    private static func settings(hudDismissal: DMHUDDismissalRules = DMHUDDismissalRules()) -> DMLoadingManagerDefaultSettings {
+        DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600), hudDismissal: hudDismissal)
+    }
 
     @MainActor
     private struct Fixture {
