@@ -17,7 +17,7 @@ TARGET="DMUnLoader"
 # decision with its reason, never a way to pass the floor. A path that is not in the report
 # stops the gate, so an exclusion cannot outlive its file.
 EXCLUDED=(
-    "PresentationView/Helpers/PreviewRenderOwner.swift|support for the #Preview blocks, which no host runs"
+    "UI/PreviewRenderOwner.swift|support for the #Preview blocks, which no host runs"
 )
 
 BUNDLE="${1:?give the path of an .xcresult bundle}"
