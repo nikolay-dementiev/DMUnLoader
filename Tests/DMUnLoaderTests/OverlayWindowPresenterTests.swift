@@ -19,13 +19,16 @@ final class OverlayWindowPresenterTests: XCTestCase {
 
     func test_hostManagerInASuccess_withATinyAutoHideDelay_isNeverHiddenByThePresenter() {
         let announcer = AccessibilitySpy()
+        // This manager clears its state when it is asked to hide, so a hide by the presenter would show in the
+        // state as well as in the count.
         guard let sut = makeSUT(
             state: Self.success,
             settings: DMLoadingManagerDefaultSettings(autoHideDelay: .milliseconds(10)),
+            hideClearsState: true,
             announcer: announcer
         ) else { return }
         XCTAssertTrue(
-            turnRunLoop(until: announcer.events.contains(.screenChanged(focusing: nil))),
+            turnRunLoop(until: announcer.events.contains(.screenChanged(focusing: nil)), timeout: TestTiming.callbackAllowance),
             "the view of the HUD reported the success to the window"
         )
 
@@ -36,7 +39,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
         turnRunLoop(for: 0.3)
 
         XCTAssertEqual(sut.manager.hideCount, 0, "a manager of the host's own is hidden by the host, never by the presenter")
-        XCTAssertEqual(sut.manager.loadableState.phase, .success, "the success is still shown after the delay of its settings")
+        XCTAssertEqual(sut.manager.loadableState.phase, .success, "the success is still shown, as a hide would have cleared it")
         // The control: the manager is attached, and the one way the window hides a HUD reaches it.
         _ = sut.window?.accessibilityPerformEscape()
         XCTAssertEqual(sut.manager.hideCount, 1, "the escape of the HUD window asks the manager to hide, once")
@@ -61,6 +64,8 @@ final class OverlayWindowPresenterTests: XCTestCase {
             announcer: AccessibilitySpy()
         ) else { return }
 
+        // That the window has an escape handler at all is shown by the two tests above, which see the manager
+        // asked to hide; without a handler this test would see no hide either.
         let handled = sut.window?.accessibilityPerformEscape()
         let tapOutsideTheCard = DefaultHUDViewModel(loadingManager: sut.manager).backdropTapped()
 

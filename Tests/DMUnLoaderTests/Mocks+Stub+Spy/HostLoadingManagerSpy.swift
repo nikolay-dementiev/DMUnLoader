@@ -53,7 +53,8 @@ final class HostLoadingManagerSpy: DMLoadingManager {
         }
     }
 
-    /// Changes the state: announces first, then changes it.
+    /// Changes the state: announces first and changes it after, as the `willSet` of `@Published` does, because
+    /// the view of the HUD has to deliver the state the manager ended in, not the one it had at the announcement.
     func set(_ state: DMLoadableType) {
         objectWillChange.send()
         loadableState = state
