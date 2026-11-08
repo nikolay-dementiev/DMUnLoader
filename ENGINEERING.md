@@ -102,28 +102,50 @@ Under the rules above it would have needed a major version. The rules apply from
 ## The package as it is
 
 - **Layers.** The folders of `Sources/DMUnLoader` follow the dependency rule: the inner layers know
-  nothing of the outer ones.
+  nothing of the outer ones. `Domain/` is the innermost place and `Presentation/` the next.
+  `Adapters/`, `UI/` and the top level of the folder are outer places, and they name one another
+  today. `Adapters/` and `UI/` reach each other (for example the overlay window presenter in
+  `Adapters/` builds the scene view of `UI/`, and a view extension in `UI/` hands a backdrop
+  failure to the forwarder in `Adapters/`), so neither is the inner one of the two.
   - `Domain/` holds the plain types and policies: the rules for dismissing and auto-hiding the HUD,
-    its phase and card style, and the accessibility transition. It imports nothing today, and may
-    import Foundation only. `Scripts/lint.sh` enforces that: the custom rule `domain_imports`
-    reports any import in that folder except Foundation, whatever its attribute, access level or
-    kind, and a second import after a semicolon too. An import in a comment or a string is not
-    one. An import that follows a block comment on the same line is not seen.
+    its phase and card style, the accessibility transition, the error types, the success marker of
+    a load, and the extensions of `Optional` and `Duration`. It imports Foundation at most.
+    `Scripts/lint.sh` enforces that: the custom rule `domain_imports` reports any import in that
+    folder except Foundation, whatever its attribute, access level or kind, and a second import
+    after a semicolon too. An import in a comment or a string is not one.
+    An import that follows a block comment on the same line is not seen. The public types of
+    `Domain/` are the value types of the dismissal rules, `DMHUDBackdropFailure`, `DMError`,
+    `DMAppError`, `DMLoadableTypeSuccess` and the two methods of `Optional`; the rest is `package`
+    or internal.
   - `Presentation/` holds the view model, the lifecycle of the HUD window and the accessibility
     coordinator. It imports Combine only, and reaches the system through protocols
     (`HUDOverlayPresenting`, `AutoHideScheduler`, `HUDScene`, `ContentUnderneathHiding`,
     `AccessibilityAnnouncer`, `HUDTexts`).
   - `Adapters/` implements those protocols with UIKit, SwiftUI and `os`: the overlay window, the
     run-loop scheduler, the accessibility announcer and content hider, the bundle texts and
-    `UIWindowScene` as the HUD scene. It also holds the observer of scene disconnection.
-  - `PresentationView/` holds the SwiftUI views and their settings types, and `Helpers/` the scene
-    delegates, the HUD window and scene view, the type-erased view provider and the extensions
-    they use.
+    `UIWindowScene` as the HUD scene. It also holds the observer of scene disconnection, the view
+    that anchors the HUD to the scene, the modifier that copies the system accessibility settings
+    into the environment, and the bridge that turns an error of DMVariableBlurView into the
+    backdrop failure of `Domain/`.
+  - `UI/` holds the SwiftUI views and their settings types, the HUD appearance and backdrop, the
+    scene view, the button style, and the view extensions and environment values they use.
+  - The top level holds what a host names: the facade and the public state and manager types
+    (`DMRootLoadingView`, `DMLoadableType`, `DMLoadingManager` with `DMLoadingManagerMain` and
+    `DMObservableLoadingManager`, with their settings, `DMLoadingViewProvider` with its
+    type-erased form), the app and scene delegates, and the re-export of DMAction.
+  - What each place may name. A file of `Domain/` names in code no type declared in
+    `Presentation/`, `Adapters/`, `UI/` or the top level. A file of `Presentation/` names none
+    declared in `Adapters/`, `UI/` or the top level, with one known exception:
+    `HUDOverlayLifecycle.swift`, `HUDOverlayPresenting.swift`, `HUDViewModel.swift` and
+    `RootViewHUDAttachment.swift` constrain a generic parameter to the public `DMLoadingManager`,
+    and `HUDViewModel.swift` reads the loadable state and the settings through it. The exception is
+    not a precedent. The folders are one module, so no import shows a breach and no lint rule
+    reports one.
   - The types of `Presentation/` and `Adapters/` are `package` or internal. The facade that a host
     uses is public: `DMRootLoadingView`, `DMLoadingManager` and `DMLoadingManagerMain`,
     `DMLoadingViewProvider` and `DefaultDMLoadingViewProvider`, `DMAppDelegate`,
-    `DMSceneDelegateBase` and `DMSceneDelegateUIKit`, with the settings types. The value types of
-    the dismissal rules in `Domain/` are public too, because the settings return them.
+    `DMSceneDelegateBase` and `DMSceneDelegateUIKit`, with the settings types. The public types of
+    `Domain/` are listed above; the settings return the value types of the dismissal rules.
 - **Isolation.** The loading manager protocol and `DMLoadingManagerMain` are `@MainActor`. The
   library asks a view provider for its views on the main actor, and `DefaultDMLoadingViewProvider`
   conforms to `DMLoadingViewProvider` with an isolated conformance on the main actor. The dismissal

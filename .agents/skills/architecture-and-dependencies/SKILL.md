@@ -15,13 +15,18 @@ format of [Documentation/Review/README.md](../../../Documentation/Review/README.
   `domain_imports` reports every other import outside Foundation; this is the one case it does not
   see.
   (ENGINEERING.md, "An import that follows a block comment on the same line is not seen")
-- A change that makes a type of `Domain/` name a type of `Presentation/`, `Adapters/`,
-  `PresentationView/` or `Helpers/`, or a type of `Presentation/` name a type of `Adapters/`,
-  `PresentationView/` or `Helpers/`; and a file of `Presentation/` that imports more than Combine
-  or reaches the system other than through the protocols of the folder. The folders are one
-  module, so no import shows the first, and no lint rule reports any of them.
+- A change that makes a type of `Domain/` name in code a type of `Presentation/`, `Adapters/`,
+  `UI/` or the top level of the folder, or a type of `Presentation/` name a type of `Adapters/`,
+  `UI/` or the top level; and a file of `Presentation/` that imports more than Combine or reaches
+  the system other than through the protocols of the folder. One exception is known:
+  `HUDOverlayLifecycle.swift`, `HUDOverlayPresenting.swift`, `HUDViewModel.swift` and
+  `RootViewHUDAttachment.swift` constrain a generic parameter to `DMLoadingManager`, and
+  `HUDViewModel.swift` reads the loadable state and the settings through it. A fifth file that
+  names a type of an outer place is a finding. The folders are one module, so no import shows
+  a breach and no lint rule reports one.
   (ENGINEERING.md, "The folders of `Sources/DMUnLoader` follow the dependency rule")
   (ENGINEERING.md, "It imports Combine only, and reaches the system through protocols")
+  (ENGINEERING.md, "What each place may name")
 - A type of `Presentation/` or `Adapters/` that becomes `public`. `Scripts/check-api.sh` passes when
   the baseline changes with it, so only the reviewer asks whether the rule allows it.
   (ENGINEERING.md, "The types of `Presentation/` and `Adapters/` are `package` or internal")
