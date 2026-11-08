@@ -84,6 +84,105 @@ final class DMHudSceneViewTests: XCTestCase {
         )
     }
 
+    // MARK: - How states reach the window
+    //
+    // Each test ends with a sentinel: a state no other write of the test makes, written after the writes
+    // under test, and waited for. A delivery that is late or doubled would come before it, so the list a
+    // test asserts is the complete list of what the window was told.
+
+    func test_stateChanges_inOneTurn_reportOnlyTheLastState() {
+        let fixture = makeSUT()
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForStates(fixture.reports, count: 1)
+        let provider = Self.provider
+
+        fixture.manager.showLoading(provider: provider)
+        fixture.manager.showFailure(DMAppError.custom("burst"), provider: provider)
+        fixture.manager.showSuccess("Saved", provider: provider)
+        _ = waitForStates(fixture.reports, count: 2)
+        fixture.manager.showFailure(DMAppError.custom("sentinel"), provider: provider)
+        let reported = waitForSentinel(in: fixture.reports, provider: provider)
+
+        XCTAssertEqual(
+            reported,
+            [DMLoadableType.none, .success("Saved", provider: provider), Self.sentinel(provider)],
+            "three writes in one turn reach the window as the last of them, and nothing in between"
+        )
+    }
+
+    func test_equalStateSetAgain_reportsNothingMore() {
+        let provider = Self.provider
+        let shown = DMLoadableType.success("Saved", provider: provider)
+        let fixture = makeSUT(initialState: shown)
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForStates(fixture.reports, count: 1)
+
+        fixture.manager.showSuccess("Saved", provider: provider)
+        passOneTurn()
+        fixture.manager.showFailure(DMAppError.custom("sentinel"), provider: provider)
+        let reported = waitForSentinel(in: fixture.reports, provider: provider)
+
+        XCTAssertEqual(reported, [shown, Self.sentinel(provider)], "an equal state is not told to the window again")
+    }
+
+    func test_stateThatLeavesAndReturnsInOneTurn_reportsNothing() {
+        let provider = Self.provider
+        let shown = DMLoadableType.success("Saved", provider: provider)
+        let fixture = makeSUT(initialState: shown)
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForStates(fixture.reports, count: 1)
+
+        fixture.manager.showLoading(provider: provider)
+        fixture.manager.showSuccess("Saved", provider: provider)
+        passOneTurn()
+        fixture.manager.showFailure(DMAppError.custom("sentinel"), provider: provider)
+        let reported = waitForSentinel(in: fixture.reports, provider: provider)
+
+        XCTAssertEqual(reported, [shown, Self.sentinel(provider)], "a state that left and came back in one turn was never told")
+    }
+
+    func test_customManager_notifyingBeforeItChangesItsState_reportsTheCommittedState() {
+        let fixture = makeHostSUT()
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForStates(fixture.reports, count: 1)
+        let provider = Self.provider
+        let loading = DMLoadableType.loading(provider: provider)
+
+        fixture.manager.set(loading)
+        _ = waitForStates(fixture.reports, count: 2)
+        fixture.manager.set(Self.sentinel(provider))
+        let reported = waitForSentinel(in: fixture.reports, provider: provider)
+
+        XCTAssertEqual(
+            reported,
+            [DMLoadableType.none, loading, Self.sentinel(provider)],
+            "a manager that announces before it changes is told to the window with the state it ended in"
+        )
+    }
+
+    func test_customManager_notifyingWithoutAChange_reportsNothing() {
+        let fixture = makeHostSUT()
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForStates(fixture.reports, count: 1)
+        let provider = Self.provider
+
+        fixture.manager.announceWithoutChange()
+        passOneTurn()
+        fixture.manager.set(Self.sentinel(provider))
+        let reported = waitForSentinel(in: fixture.reports, provider: provider)
+
+        XCTAssertEqual(
+            reported,
+            [DMLoadableType.none, Self.sentinel(provider)],
+            "an announcement with no change behind it tells the window nothing"
+        )
+    }
+
     // MARK: - What is drawn
 
     func test_noState_drawsNothing() throws {
@@ -197,6 +296,45 @@ final class DMHudSceneViewTests: XCTestCase {
             "the window reports \(count) state(s) within the callback allowance"
         )
         return reports.values
+    }
+
+    /// The state a test writes last. Failures are the only states with this message.
+    private static func sentinel(_ provider: AnyDMLoadingViewProvider) -> DMLoadableType {
+        .failure(error: DMAppError.custom("sentinel"), provider: provider, onRetry: nil)
+    }
+
+    /// Turns the run loop until the last thing the window was told is the sentinel, then once more, and returns
+    /// everything the window was told.
+    private func waitForSentinel(in reports: Reports, provider: AnyDMLoadingViewProvider) -> [DMLoadableType] {
+        let sentinel = Self.sentinel(provider)
+        let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
+        while reports.values.last != sentinel, Date() < deadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.02))
+        }
+        XCTAssertEqual(reports.values.last, sentinel, "the window is told about the sentinel within the callback allowance")
+        passOneTurn()
+        return reports.values
+    }
+
+    /// Lets the run loop go through one iteration, so that the view updates for what was written before.
+    /// The 10 milliseconds only cap how long the iteration may block: no assertion depends on them.
+    private func passOneTurn() {
+        RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.01))
+    }
+
+    private struct HostFixture {
+        let sut: DMHudSceneView<HostLoadingManagerSpy>
+        let manager: HostLoadingManagerSpy
+        let reports: Reports
+    }
+
+    /// The view and a manager of the host's own that shows nothing. The test hosts the view itself, as `makeSUT` does.
+    private func makeHostSUT(file: StaticString = #filePath, line: UInt = #line) -> HostFixture {
+        let manager = HostLoadingManagerSpy()
+        let reports = Reports()
+        let sut = DMHudSceneView(loadingManager: manager) { reports.values.append($0) }
+        trackForMemoryLeaks(manager, file: file, line: line)
+        return HostFixture(sut: sut, manager: manager, reports: reports)
     }
 
     /// Renders `view` in a window with a clear background, the way the HUD window shows it,
