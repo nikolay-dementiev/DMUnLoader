@@ -101,7 +101,7 @@ final class DMHudSceneViewTests: XCTestCase {
         fixture.manager.showFailure(DMAppError.custom("burst"), provider: provider)
         fixture.manager.showSuccess("Saved", provider: provider)
         _ = waitForStates(fixture.reports, count: 2)
-        fixture.manager.showFailure(DMAppError.custom("sentinel"), provider: provider)
+        Self.writeSentinel(to: fixture.manager, provider: provider)
         let reported = waitForSentinel(in: fixture.reports, provider: provider)
 
         XCTAssertEqual(
@@ -120,8 +120,8 @@ final class DMHudSceneViewTests: XCTestCase {
         _ = waitForStates(fixture.reports, count: 1)
 
         fixture.manager.showSuccess("Saved", provider: provider)
-        passOneTurn()
-        fixture.manager.showFailure(DMAppError.custom("sentinel"), provider: provider)
+        settle()
+        Self.writeSentinel(to: fixture.manager, provider: provider)
         let reported = waitForSentinel(in: fixture.reports, provider: provider)
 
         XCTAssertEqual(reported, [shown, Self.sentinel(provider)], "an equal state is not told to the window again")
@@ -137,8 +137,8 @@ final class DMHudSceneViewTests: XCTestCase {
 
         fixture.manager.showLoading(provider: provider)
         fixture.manager.showSuccess("Saved", provider: provider)
-        passOneTurn()
-        fixture.manager.showFailure(DMAppError.custom("sentinel"), provider: provider)
+        settle()
+        Self.writeSentinel(to: fixture.manager, provider: provider)
         let reported = waitForSentinel(in: fixture.reports, provider: provider)
 
         XCTAssertEqual(reported, [shown, Self.sentinel(provider)], "a state that left and came back in one turn was never told")
@@ -172,7 +172,7 @@ final class DMHudSceneViewTests: XCTestCase {
         let provider = Self.provider
 
         fixture.manager.announceWithoutChange()
-        passOneTurn()
+        settle()
         fixture.manager.set(Self.sentinel(provider))
         let reported = waitForSentinel(in: fixture.reports, provider: provider)
 
@@ -259,7 +259,7 @@ final class DMHudSceneViewTests: XCTestCase {
         manager.showFailure(error, provider: erased, onRetry: retry)
         XCTAssertTrue(
             turnRunLoop(until: provider.calls.count > callsSoFar, timeout: TestTiming.callbackAllowance),
-            "the library asked the provider again after the failure was shown again"
+            "the library asked the provider again"
         )
 
         let closeIDs = provider.calls.map(\.closeID)
@@ -313,13 +313,23 @@ final class DMHudSceneViewTests: XCTestCase {
 
     /// Turns the run loop until `count` reports arrived or the callback allowance passed, and
     /// returns the phases of the reported states.
-    private func waitForReports(_ reports: Reports, count: Int) -> [HUDPhase] {
-        waitForStates(reports, count: count).map(\.phase)
+    private func waitForReports(
+        _ reports: Reports,
+        count: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [HUDPhase] {
+        waitForStates(reports, count: count, file: file, line: line).map(\.phase)
     }
 
     /// Turns the run loop until `count` reports arrived or the callback allowance passed, and
     /// returns the reported states themselves.
-    private func waitForStates(_ reports: Reports, count: Int) -> [DMLoadableType] {
+    private func waitForStates(
+        _ reports: Reports,
+        count: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [DMLoadableType] {
         let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
         while reports.values.count < count, Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.02))
@@ -327,33 +337,58 @@ final class DMHudSceneViewTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(
             reports.values.count,
             count,
-            "the window reports \(count) state(s) within the callback allowance"
+            "the window reports \(count) state(s) within the callback allowance",
+            file: file,
+            line: line
         )
         return reports.values
     }
 
-    /// The state a test writes last. Failures are the only states with this message.
-    private static func sentinel(_ provider: AnyDMLoadingViewProvider) -> DMLoadableType {
-        .failure(error: DMAppError.custom("sentinel"), provider: provider, onRetry: nil)
+    /// The error of the sentinel, the state a test writes last. Failures with this error are the only states
+    /// that carry it.
+    private static var sentinelError: DMAppError {
+        DMAppError.custom("sentinel")
     }
 
-    /// Turns the run loop until the last thing the window was told is the sentinel, then once more, and returns
+    private static func sentinel(_ provider: AnyDMLoadingViewProvider) -> DMLoadableType {
+        .failure(error: sentinelError, provider: provider, onRetry: nil)
+    }
+
+    /// Writes the sentinel to a manager of the library.
+    private static func writeSentinel(to manager: DMLoadingManagerMain, provider: AnyDMLoadingViewProvider) {
+        manager.showFailure(sentinelError, provider: provider)
+    }
+
+    /// Turns the run loop until the last thing the window was told is the sentinel, lets it settle, and returns
     /// everything the window was told.
-    private func waitForSentinel(in reports: Reports, provider: AnyDMLoadingViewProvider) -> [DMLoadableType] {
+    private func waitForSentinel(
+        in reports: Reports,
+        provider: AnyDMLoadingViewProvider,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [DMLoadableType] {
         let sentinel = Self.sentinel(provider)
         let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
         while reports.values.last != sentinel, Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.02))
         }
-        XCTAssertEqual(reports.values.last, sentinel, "the window is told about the sentinel within the callback allowance")
-        passOneTurn()
+        XCTAssertEqual(
+            reports.values.last,
+            sentinel,
+            "the window is told about the sentinel within the callback allowance",
+            file: file,
+            line: line
+        )
+        settle()
         return reports.values
     }
 
-    /// Lets the run loop go through one iteration, so that the view updates for what was written before.
-    /// The 10 milliseconds only cap how long the iteration may block: no assertion depends on them.
-    private func passOneTurn() {
-        RunLoop.current.run(mode: .default, before: Date().addingTimeInterval(0.01))
+    /// Lets the run loop idle for 50 milliseconds, so that SwiftUI commits what was written before the next write.
+    /// This is a settle time, not a condition. On a machine so loaded that the commit still did not run, two
+    /// writes would reach the view as one, and a test that expects the window to hear nothing would pass without
+    /// proving it: a false pass, never a false failure.
+    private func settle() {
+        RunLoop.current.run(until: Date().addingTimeInterval(0.05))
     }
 
     private struct HostFixture {
