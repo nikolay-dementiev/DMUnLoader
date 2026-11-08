@@ -127,6 +127,30 @@ final class DMLoadingManagerAutoHideTests: XCTestCase {
         XCTAssertFalse(scheduler.scheduled[1].isCancelled, "the hide of the second success stands")
     }
 
+    func test_showSuccess_withAnEqualStateAgain_replacesTheHideWithAFullDelay() {
+        let (sut, scheduler) = makeSUT(autoHideDelay: .seconds(7))
+        sut.showSuccess("Saved", provider: provider)
+        let first = sut.loadableState
+
+        // The window hears nothing about a state equal to the one it shows, but the manager
+        // still owes the new state a full delay.
+        sut.showSuccess("Saved", provider: provider)
+
+        XCTAssertEqual(sut.loadableState, first, "the premise: the second success equals the first")
+        XCTAssertEqual(scheduler.scheduled.map(\.delay), [.seconds(7), .seconds(7)], "an equal success gets the full delay again")
+        XCTAssertEqual(scheduler.scheduled.map(\.isCancelled), [true, false], "only the hide of the newer write stands")
+    }
+
+    func test_showFailure_afterSuccess_replacesTheHideWithAFullDelay() {
+        let (sut, scheduler) = makeSUT(autoHideDelay: .seconds(7))
+        sut.showSuccess("Saved", provider: provider)
+
+        sut.showFailure(DMAppError.custom("Lost"), provider: provider, onRetry: nil)
+
+        XCTAssertEqual(scheduler.scheduled.map(\.delay), [.seconds(7), .seconds(7)], "the failure gets the full delay")
+        XCTAssertEqual(scheduler.scheduled.map(\.isCancelled), [true, false], "only the failure's hide stands")
+    }
+
     func test_lateHide_afterTheStateWasReplaced_keepsTheNewerState() {
         let (sut, scheduler) = makeSUT()
         sut.showSuccess("Saved", provider: provider)
