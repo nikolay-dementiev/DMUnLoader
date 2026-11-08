@@ -238,6 +238,40 @@ final class DMHudSceneViewTests: XCTestCase {
         XCTAssertEqual(retries.count, 1, "Retry runs the retry action of the failure")
     }
 
+    func test_errorView_evaluatedAgain_receivesANewCloseCommandEachTime() {
+        let provider = RecordingErrorProvider()
+        let erased = provider.eraseToAnyViewProvider()
+        let retry = DMButtonAction {}
+        let error = DMAppError.custom("failed")
+        let manager = DMLoadingManagerMain(state: .none, settings: Self.settings)
+        trackForMemoryLeaks(manager)
+        manager.showFailure(error, provider: erased, onRetry: retry)
+        ViewHosting.host(view: DMHudSceneView(loadingManager: manager))
+        defer { ViewHosting.expel() }
+        XCTAssertTrue(
+            turnRunLoop(until: !provider.calls.isEmpty, timeout: TestTiming.callbackAllowance),
+            "the library asked the provider for the error view within the callback allowance"
+        )
+        let callsSoFar = provider.calls.count
+
+        // How often SwiftUI evaluates the view is its own business, so the count is not asserted: the
+        // test waits until the library has asked again, and compares what it was handed each time.
+        manager.showFailure(error, provider: erased, onRetry: retry)
+        XCTAssertTrue(
+            turnRunLoop(until: provider.calls.count > callsSoFar, timeout: TestTiming.callbackAllowance),
+            "the library asked the provider again after the failure was shown again"
+        )
+
+        let closeIDs = provider.calls.map(\.closeID)
+        XCTAssertGreaterThanOrEqual(closeIDs.count, 2, "the error view was evaluated more than once")
+        XCTAssertEqual(Set(closeIDs).count, closeIDs.count, "every evaluation was handed a Close command of its own")
+        XCTAssertEqual(
+            Set(provider.calls.map(\.retryID)),
+            [retry.id],
+            "every evaluation was handed the Retry command of the host, so a repeated id would have shown"
+        )
+    }
+
     // MARK: - Helpers
 
     /// A delay no test reaches, so a HUD never hides by itself during a test.
@@ -354,5 +388,21 @@ final class DMHudSceneViewTests: XCTestCase {
             image = controller.view.renderedLayers()
         } while !done(image) && Date() < deadline
         return image
+    }
+}
+
+/// Records the Close and Retry commands that the library hands to the error view, one entry per evaluation.
+@MainActor
+private final class RecordingErrorProvider: @MainActor DMLoadingViewProvider {
+    struct Call {
+        let closeID: UUID
+        let retryID: UUID?
+    }
+
+    private(set) var calls: [Call] = []
+
+    func getErrorView(error: any Error, onRetry: (any DMAction)?, onClose: any DMAction) -> Color {
+        calls.append(Call(closeID: onClose.id, retryID: onRetry?.id))
+        return Color.clear
     }
 }
