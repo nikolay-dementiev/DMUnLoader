@@ -170,10 +170,12 @@ final class RootViewHUDAttachmentTests: XCTestCase {
         let (manager, scheduler) = makeManagerShowingASuccess()
         let scene = makeScene()
         sut.loadingManagerDidChange(to: manager)
+        let delaysBeforeTheHide = scheduler.scheduled.map(\.delay)
         scheduler.scheduled.last?.runHide()
 
         sut.viewDidMove(to: scene)
 
+        XCTAssertEqual(delaysBeforeTheHide, [Self.delay], "a hide was there to run: the clock started when the manager was made")
         XCTAssertEqual(scene.presented, [ObjectIdentifier(manager)], "the scene is given the manager")
         XCTAssertEqual(manager.loadableState, .none, "the success went when its delay passed, with no scene to show it")
     }
@@ -203,9 +205,11 @@ final class RootViewHUDAttachmentTests: XCTestCase {
         sut.viewDidMove(to: scene)
         scene.disconnect()
 
+        let delaysBeforeTheHide = scheduler.scheduled.map(\.delay)
         scheduler.scheduled.last?.runHide()
         sut.viewDidMove(to: scene)
 
+        XCTAssertEqual(delaysBeforeTheHide, [Self.delay], "a hide was there to run: the clock started when the manager was made")
         XCTAssertEqual(manager.loadableState, .none, "the success went when its delay passed, while no scene showed it")
         XCTAssertEqual(scene.presented, [ObjectIdentifier(manager), ObjectIdentifier(manager)], "the returning scene shows it")
     }
@@ -225,11 +229,12 @@ final class RootViewHUDAttachmentTests: XCTestCase {
         let cancelledAfterOneSceneLeft = scheduler.scheduled.map(\.isCancelled)
         scheduler.scheduled.last?.runHide()
 
+        XCTAssertEqual(firstScene.dismissCount, 1, "the first scene lost its HUD, so the disconnect did reach the attachment")
         XCTAssertEqual(firstScene.presented, [ObjectIdentifier(manager)], "the first scene showed the manager")
         XCTAssertEqual(secondScene.presented, [ObjectIdentifier(manager)], "the second scene showed the same manager")
         XCTAssertEqual(scheduler.scheduled.map(\.delay), [Self.delay], "two windows over one manager share its one timer")
         XCTAssertEqual(cancelledAfterOneSceneLeft, [false], "a scene that leaves does not stop the timer the other still needs")
-        XCTAssertEqual(manager.loadableState, .none, "the one hide of the shared timer hides the manager for both")
+        XCTAssertEqual(manager.loadableState, .none, "the one hide of the shared timer hides the manager")
     }
 
     // MARK: - Helpers
