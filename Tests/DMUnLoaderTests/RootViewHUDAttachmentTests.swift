@@ -210,6 +210,28 @@ final class RootViewHUDAttachmentTests: XCTestCase {
         XCTAssertEqual(scene.presented, [ObjectIdentifier(manager), ObjectIdentifier(manager)], "the returning scene shows it")
     }
 
+    func test_oneManager_inTwoRootViewsOfTwoScenes_runsOneTimer() {
+        let firstView = makeSUT()
+        let secondView = makeSUT()
+        let (manager, scheduler) = makeManagerShowingASuccess()
+        let firstScene = makeScene()
+        let secondScene = makeScene()
+        firstView.loadingManagerDidChange(to: manager)
+        secondView.loadingManagerDidChange(to: manager)
+        firstView.viewDidMove(to: firstScene)
+        secondView.viewDidMove(to: secondScene)
+
+        firstScene.disconnect()
+        let cancelledAfterOneSceneLeft = scheduler.scheduled.map(\.isCancelled)
+        scheduler.scheduled.last?.runHide()
+
+        XCTAssertEqual(firstScene.presented, [ObjectIdentifier(manager)], "the first scene showed the manager")
+        XCTAssertEqual(secondScene.presented, [ObjectIdentifier(manager)], "the second scene showed the same manager")
+        XCTAssertEqual(scheduler.scheduled.map(\.delay), [Self.delay], "two windows over one manager share its one timer")
+        XCTAssertEqual(cancelledAfterOneSceneLeft, [false], "a scene that leaves does not stop the timer the other still needs")
+        XCTAssertEqual(manager.loadableState, .none, "the one hide of the shared timer hides the manager for both")
+    }
+
     // MARK: - Helpers
 
     private static let delay = Duration.seconds(7)
