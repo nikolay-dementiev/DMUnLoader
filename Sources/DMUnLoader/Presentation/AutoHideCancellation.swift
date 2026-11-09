@@ -12,8 +12,9 @@
 /// nothing. So an owner that goes away stops the hide it was waiting for, and a scheduler cannot
 /// forget either half of that contract.
 ///
-/// The action runs on the thread that calls `cancel()` or drops the last reference. In this library
-/// that is the main actor, because the port and the manager that hold the token are `@MainActor`.
+/// The action runs on the thread that calls `cancel()` or drops the last reference. The manager
+/// cancels on the main actor, but it can be released on any thread, and its token with it, so the
+/// action must be safe on any thread.
 package final class AutoHideCancellation {
     private var cancelAction: (() -> Void)?
 
