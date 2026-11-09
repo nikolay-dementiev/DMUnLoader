@@ -74,6 +74,31 @@ final class OverlayWindowPresenterTests: XCTestCase {
         XCTAssertEqual(tapOutsideTheCard, handled, "a tap outside the card gives the same answer as the escape")
     }
 
+    // MARK: - The lifetime of a replaced manager
+
+    func test_escapeHandler_ofAReplacedManager_keepsNoManagerAlive() {
+        var shownFirst: Fixture? = makeSUT(state: Self.success, settings: Self.settings(), announcer: AccessibilitySpy())
+        guard let presenter = shownFirst?.presenter, let handlerOfFirst = shownFirst?.window?.escapeHandler else {
+            XCTFail("The first HUD has a presenter and a window with an escape handler.")
+            return
+        }
+        weak var first = shownFirst?.manager
+
+        // A second manager takes over the window: its root view replaces that of the first, and its
+        // escape handler replaces the first one. The test still holds the handler of the first.
+        presenter.present(HostLoadingManagerSpy())
+        shownFirst = nil
+
+        // The wait ends on a positive signal, the release itself, so there is no fixed length to outlast:
+        // a manager that nothing holds is gone in the first turns of the run loop. A handler that held it
+        // would run the wait to its limit and fail the test. Only a machine stalled for the whole limit
+        // could fail a correct handler.
+        let released = turnRunLoop(until: first == nil, timeout: TestTiming.callbackAllowance)
+
+        XCTAssertTrue(released, "the escape handler of the window held the manager that the window had replaced")
+        XCTAssertFalse(handlerOfFirst(), "the handler of a manager that is gone reports that nothing went")
+    }
+
     // MARK: - Helpers
 
     private static var success: DMLoadableType {
@@ -88,6 +113,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
     private struct Fixture {
         let manager: HostLoadingManagerSpy
         let scene: UIWindowScene
+        let presenter: OverlayWindowPresenter
 
         var window: DMPassThroughWindow? {
             scene.windows.compactMap { $0 as? DMPassThroughWindow }.first
@@ -128,6 +154,6 @@ final class OverlayWindowPresenterTests: XCTestCase {
                 line: line
             )
         }
-        return Fixture(manager: manager, scene: scene)
+        return Fixture(manager: manager, scene: scene, presenter: presenter)
     }
 }
