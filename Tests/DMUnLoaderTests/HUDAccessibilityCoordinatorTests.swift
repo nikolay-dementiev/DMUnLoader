@@ -37,10 +37,10 @@ final class HUDAccessibilityCoordinatorTests: XCTestCase {
 
     func test_anotherStateInTheSamePhase_postsScreenChanged() {
         let (sut, spy) = makeSUT()
-        sut.show(.failure, state: "the first failure")
+        sut.show(.failure, content: 1)
         let eventsOfTheEntry = spy.events
 
-        sut.show(.failure, state: "another failure")
+        sut.show(.failure, content: 2)
 
         XCTAssertEqual(
             spy.events,
@@ -154,9 +154,9 @@ final class HUDAccessibilityCoordinatorTests: XCTestCase {
 }
 
 private extension HUDAccessibilityCoordinator {
-    /// The HUD shows a state of `phase`; the state is the phase's own unless `state` names
-    /// another, so two calls with one phase are the same state.
-    func show(_ phase: HUDPhase, state: String? = nil) {
-        stateDidChange(to: phase, identifiedBy: state ?? "\(phase)")
+    /// The HUD shows a state of `phase`; its content is the same for every call unless `content`
+    /// names another, so two calls with one phase are the same content.
+    func show(_ phase: HUDPhase, content: Int = 0) {
+        stateDidChange(to: phase, content: HUDContentToken(revision: content))
     }
 }

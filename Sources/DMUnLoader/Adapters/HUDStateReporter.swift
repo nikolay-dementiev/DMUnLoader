@@ -27,7 +27,7 @@ package final class HUDStateReporter {
             revision += 1
         }
         lastState = state
-        coordinator.stateDidChange(to: state.phase, identifiedBy: HUDContentToken(revision: revision))
+        coordinator.stateDidChange(to: state.phase, content: HUDContentToken(revision: revision))
     }
 
     /// The presenter removed the HUD, whatever it showed.

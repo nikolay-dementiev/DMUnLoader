@@ -15,7 +15,7 @@ package final class OverlayWindowPresenter: HUDOverlayPresenting {
     private let announcer: any AccessibilityAnnouncer
     private var window: DMPassThroughWindow?
     private var hudController: UIHostingController<AnyView>?
-    private var accessibility: HUDAccessibilityCoordinator?
+    private var accessibility: HUDStateReporter?
 
     /// A presenter that tells VoiceOver what the HUD does.
     convenience init(windowScene: UIWindowScene) {
@@ -40,11 +40,13 @@ package final class OverlayWindowPresenter: HUDOverlayPresenting {
         // one it replaces. The root view is swapped, so the replaced manager is released.
         let window = self.window ?? DMPassThroughWindow(windowScene: windowScene)
         self.window = window
-        let accessibility = self.accessibility ?? HUDAccessibilityCoordinator(
-            announcer: announcer,
-            contentHider: SceneContentHider(hudWindow: window) { [weak window] in
-                window?.windowScene?.windows ?? []
-            }
+        let accessibility = self.accessibility ?? HUDStateReporter(
+            coordinator: HUDAccessibilityCoordinator(
+                announcer: announcer,
+                contentHider: SceneContentHider(hudWindow: window) { [weak window] in
+                    window?.windowScene?.windows ?? []
+                }
+            )
         )
         self.accessibility = accessibility
         // The window knows the state before it becomes visible; the view reports every
@@ -53,7 +55,7 @@ package final class OverlayWindowPresenter: HUDOverlayPresenting {
         let rootView = AnyView(
             DMHudSceneView(loadingManager: loadingManager) { [weak window, weak accessibility] state in
                 window?.interceptsTouches = state.showsHUD
-                accessibility?.stateDidChange(to: state.phase, identifiedBy: state)
+                accessibility?.report(state)
             }
             .modifier(SystemAccessibilitySettings())
         )
