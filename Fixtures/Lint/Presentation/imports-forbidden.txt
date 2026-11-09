@@ -1,0 +1,28 @@
+import Combine // expect: presentation_imports
+import UIKit // expect: presentation_imports
+public import UIKit // expect: presentation_imports
+@preconcurrency import SwiftUI // expect: presentation_imports
+@_implementationOnly import Combine // expect: presentation_imports
+import struct SwiftUI.Color // expect: presentation_imports
+import Foundation; import UIKit // expect: presentation_imports
+package import Combine // expect: presentation_imports
+internal import SwiftUI // expect: presentation_imports
+@testable import Combine // expect: presentation_imports
+@_exported import UIKit // expect: presentation_imports
+import Observation // expect: presentation_imports
+import os // expect: presentation_imports
+import os.log // expect: presentation_imports
+import DMAction // expect: presentation_imports
+import DMVariableBlurView // expect: presentation_imports
+import FoundationNetworking // expect: presentation_imports
+	import Combine // expect: presentation_imports
+import  Combine // expect: presentation_imports
+#if canImport(Combine)
+import Combine // expect: presentation_imports
+#endif
+import Foundation
+
+import SwiftUI // expect: presentation_imports
+let first = 1;
+import Combine // expect: presentation_imports
+import Combine; import SwiftUI // expect: presentation_imports presentation_imports
