@@ -99,7 +99,61 @@ final class OverlayWindowPresenterTests: XCTestCase {
         XCTAssertFalse(handlerOfFirst(), "the handler of a manager that is gone reports that nothing went")
     }
 
+    // MARK: - What the HUD announces for a state that changes
+
+    func test_anotherFailureInTheSamePhase_postsScreenChangedAgain() {
+        let announcer = AccessibilitySpy()
+        let provider = DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+        guard let sut = makeSUT(
+            state: .failure(error: PresenterTestFailure.first, provider: provider, onRetry: nil),
+            settings: Self.settings(),
+            announcer: announcer
+        ) else { return }
+        XCTAssertTrue(
+            turnRunLoop(until: Self.screenChangedCount(of: announcer) == 1, timeout: TestTiming.callbackAllowance),
+            "the first failure was announced"
+        )
+
+        sut.manager.set(.failure(error: PresenterTestFailure.second, provider: provider, onRetry: nil))
+
+        // Another error under one provider is another content in the same phase, and the screen changed.
+        XCTAssertTrue(
+            turnRunLoop(until: Self.screenChangedCount(of: announcer) == 2, timeout: TestTiming.callbackAllowance),
+            "another failure in the same phase was announced again"
+        )
+    }
+
+    func test_managerOfAnotherType_withAnEqualState_announcesNothingMore() {
+        let announcer = AccessibilitySpy()
+        let state = Self.success
+        guard let sut = makeSUT(state: state, settings: Self.settings(), announcer: announcer),
+              let window = sut.window else { return }
+        XCTAssertTrue(
+            turnRunLoop(until: Self.screenChangedCount(of: announcer) == 1, timeout: TestTiming.callbackAllowance),
+            "the first HUD was announced"
+        )
+        let eventsOfTheFirst = announcer.events
+
+        // A manager of another type is another view in the window, so the view delivers its state once as
+        // it appears, equal or not. A manager of the same type is the same view and delivers nothing for an
+        // equal state, so there is nothing to wait for and it is not tried here.
+        sut.presenter.present(DMLoadingManagerMain(state: state, settings: Self.settings()))
+        // The closure of the presenter that the view calls sets this flag and then tells the coordinator, in
+        // one call on the main thread. The flag is set to false here, so it is true again only when the view
+        // delivered its state, and the coordinator has been told by then. The wait ends on that delivery:
+        // there is no fixed length to outlast, and no delivery that arrives later than the check.
+        window.interceptsTouches = false
+        let delivered = turnRunLoop(until: window.interceptsTouches, timeout: TestTiming.callbackAllowance)
+
+        XCTAssertTrue(delivered, "the view of the manager of the other type delivered its state to the window")
+        XCTAssertEqual(announcer.events, eventsOfTheFirst, "a state equal to the one shown is no change of content")
+    }
+
     // MARK: - Helpers
+
+    private static func screenChangedCount(of announcer: AccessibilitySpy) -> Int {
+        announcer.events.filter { $0 == .screenChanged(focusing: nil) }.count
+    }
 
     private static var success: DMLoadableType {
         .success("Saved", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
@@ -156,4 +210,9 @@ final class OverlayWindowPresenterTests: XCTestCase {
         }
         return Fixture(manager: manager, scene: scene, presenter: presenter)
     }
+}
+
+private enum PresenterTestFailure: Error {
+    case first
+    case second
 }
