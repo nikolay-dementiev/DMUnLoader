@@ -173,10 +173,11 @@ Under the rules above it would have needed a major version. The rules apply from
   `Adapters/` as a file of that folder, and under `Outside/` outside the library, where the fixture
   expects nothing. So the contract shows that the termination rule reaches the root, `Domain/` and
   `Adapters/`, that each import rule reaches its own folder and neither the root nor `Adapters/`,
-  and that neither the termination rule nor `domain_imports` reaches a fixture package or a second
-  module, one whose name starts like the library's included. `force_unwrapping` has no
-  include and applies everywhere. The real tree is a second proof for the import rule: the library
-  imports UI frameworks outside `Domain/`, so `Scripts/lint.sh` fails when the rule is widened. The
+  that the termination rule reaches neither a fixture package nor a second module, and that neither
+  import rule reaches a second module, one whose name starts like the library's included.
+  `force_unwrapping` has no include and applies everywhere. The real tree is a second proof for the
+  import rule: the library imports UI frameworks outside `Domain/`, so `Scripts/lint.sh` fails when
+  the rule is widened. The
   termination rule has no lasting proof of that kind: no source of the library calls those
   functions, so only the fixtures show its scope. CI runs the contract right after
   `Scripts/lint.sh`.
