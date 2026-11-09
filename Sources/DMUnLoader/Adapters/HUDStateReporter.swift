@@ -30,9 +30,9 @@ package final class HUDStateReporter {
         coordinator.stateDidChange(to: state.phase, content: HUDContentToken(revision: revision))
     }
 
-    /// The presenter removed the HUD, whatever it showed.
+    /// The presenter removed the HUD, whatever it showed. The coordinator forgets the token it kept,
+    /// so the next state enters the screen again, whether or not it equals the last one.
     package func hudDidGo() {
-        lastState = nil
         coordinator.hudDidGo()
     }
 }
