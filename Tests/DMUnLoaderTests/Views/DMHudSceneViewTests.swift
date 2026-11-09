@@ -84,6 +84,105 @@ final class DMHudSceneViewTests: XCTestCase {
         )
     }
 
+    // MARK: - How states reach the window
+    //
+    // Each test ends with a sentinel: a state no other write of the test makes, written after the writes
+    // under test, and waited for. A delivery that is late or doubled would come before it, so the list a
+    // test asserts is the complete list of what the window was told.
+
+    func test_stateChanges_inOneTurn_reportOnlyTheLastState() {
+        let fixture = makeSUT()
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForStates(fixture.reports, count: 1)
+        let provider = Self.provider
+
+        fixture.manager.showLoading(provider: provider)
+        fixture.manager.showFailure(DMAppError.custom("burst"), provider: provider)
+        fixture.manager.showSuccess("Saved", provider: provider)
+        _ = waitForStates(fixture.reports, count: 2)
+        Self.writeSentinel(to: fixture.manager, provider: provider)
+        let reported = waitForSentinel(in: fixture.reports, provider: provider)
+
+        XCTAssertEqual(
+            reported,
+            [DMLoadableType.none, .success("Saved", provider: provider), Self.sentinel(provider)],
+            "three writes in one turn reach the window as the last of them, and nothing in between"
+        )
+    }
+
+    func test_equalStateSetAgain_reportsNothingMore() {
+        let provider = Self.provider
+        let shown = DMLoadableType.success("Saved", provider: provider)
+        let fixture = makeSUT(initialState: shown)
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForStates(fixture.reports, count: 1)
+
+        fixture.manager.showSuccess("Saved", provider: provider)
+        settle()
+        Self.writeSentinel(to: fixture.manager, provider: provider)
+        let reported = waitForSentinel(in: fixture.reports, provider: provider)
+
+        XCTAssertEqual(reported, [shown, Self.sentinel(provider)], "an equal state is not told to the window again")
+    }
+
+    func test_stateThatLeavesAndReturnsInOneTurn_reportsNothing() {
+        let provider = Self.provider
+        let shown = DMLoadableType.success("Saved", provider: provider)
+        let fixture = makeSUT(initialState: shown)
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForStates(fixture.reports, count: 1)
+
+        fixture.manager.showLoading(provider: provider)
+        fixture.manager.showSuccess("Saved", provider: provider)
+        settle()
+        Self.writeSentinel(to: fixture.manager, provider: provider)
+        let reported = waitForSentinel(in: fixture.reports, provider: provider)
+
+        XCTAssertEqual(reported, [shown, Self.sentinel(provider)], "a state that left and came back in one turn was never told")
+    }
+
+    func test_customManager_notifyingBeforeItChangesItsState_reportsTheCommittedState() {
+        let fixture = makeHostSUT()
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForStates(fixture.reports, count: 1)
+        let provider = Self.provider
+        let loading = DMLoadableType.loading(provider: provider)
+
+        fixture.manager.set(loading)
+        _ = waitForStates(fixture.reports, count: 2)
+        fixture.manager.set(Self.sentinel(provider))
+        let reported = waitForSentinel(in: fixture.reports, provider: provider)
+
+        XCTAssertEqual(
+            reported,
+            [DMLoadableType.none, loading, Self.sentinel(provider)],
+            "a manager that announces before it changes is told to the window with the state it ended in"
+        )
+    }
+
+    func test_customManager_notifyingWithoutAChange_reportsNothing() {
+        let fixture = makeHostSUT()
+        ViewHosting.host(view: fixture.sut)
+        defer { ViewHosting.expel() }
+        _ = waitForStates(fixture.reports, count: 1)
+        let provider = Self.provider
+
+        fixture.manager.announceWithoutChange()
+        settle()
+        fixture.manager.set(Self.sentinel(provider))
+        let reported = waitForSentinel(in: fixture.reports, provider: provider)
+
+        XCTAssertEqual(
+            reported,
+            [DMLoadableType.none, Self.sentinel(provider)],
+            "an announcement with no change behind it tells the window nothing"
+        )
+    }
+
     // MARK: - What is drawn
 
     func test_noState_drawsNothing() throws {
@@ -139,6 +238,40 @@ final class DMHudSceneViewTests: XCTestCase {
         XCTAssertEqual(retries.count, 1, "Retry runs the retry action of the failure")
     }
 
+    func test_errorView_evaluatedAgain_receivesANewCloseCommandEachTime() {
+        let provider = RecordingErrorProvider()
+        let erased = provider.eraseToAnyViewProvider()
+        let retry = DMButtonAction {}
+        let error = DMAppError.custom("failed")
+        let manager = DMLoadingManagerMain(state: .none, settings: Self.settings)
+        trackForMemoryLeaks(manager)
+        manager.showFailure(error, provider: erased, onRetry: retry)
+        ViewHosting.host(view: DMHudSceneView(loadingManager: manager))
+        defer { ViewHosting.expel() }
+        XCTAssertTrue(
+            turnRunLoop(until: !provider.calls.isEmpty, timeout: TestTiming.callbackAllowance),
+            "the library asked the provider for the error view within the callback allowance"
+        )
+        let callsSoFar = provider.calls.count
+
+        // How often SwiftUI evaluates the view is its own business, so the count is not asserted: the
+        // test waits until the library has asked again, and compares what it was handed each time.
+        manager.showFailure(error, provider: erased, onRetry: retry)
+        XCTAssertTrue(
+            turnRunLoop(until: provider.calls.count > callsSoFar, timeout: TestTiming.callbackAllowance),
+            "the library asked the provider again"
+        )
+
+        let closeIDs = provider.calls.map(\.closeID)
+        XCTAssertGreaterThanOrEqual(closeIDs.count, 2, "the error view was evaluated more than once")
+        XCTAssertEqual(Set(closeIDs).count, closeIDs.count, "every evaluation was handed a Close command of its own")
+        XCTAssertEqual(
+            Set(provider.calls.map(\.retryID)),
+            [retry.id],
+            "every evaluation was handed the Retry command of the host, so a repeated id would have shown"
+        )
+    }
+
     // MARK: - Helpers
 
     /// A delay no test reaches, so a HUD never hides by itself during a test.
@@ -180,13 +313,23 @@ final class DMHudSceneViewTests: XCTestCase {
 
     /// Turns the run loop until `count` reports arrived or the callback allowance passed, and
     /// returns the phases of the reported states.
-    private func waitForReports(_ reports: Reports, count: Int) -> [HUDPhase] {
-        waitForStates(reports, count: count).map(\.phase)
+    private func waitForReports(
+        _ reports: Reports,
+        count: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [HUDPhase] {
+        waitForStates(reports, count: count, file: file, line: line).map(\.phase)
     }
 
     /// Turns the run loop until `count` reports arrived or the callback allowance passed, and
     /// returns the reported states themselves.
-    private func waitForStates(_ reports: Reports, count: Int) -> [DMLoadableType] {
+    private func waitForStates(
+        _ reports: Reports,
+        count: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [DMLoadableType] {
         let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
         while reports.values.count < count, Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.02))
@@ -194,9 +337,73 @@ final class DMHudSceneViewTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(
             reports.values.count,
             count,
-            "the window reports \(count) state(s) within the callback allowance"
+            "the window reports \(count) state(s) within the callback allowance",
+            file: file,
+            line: line
         )
         return reports.values
+    }
+
+    /// The error of the sentinel, the state a test writes last. Failures with this error are the only states
+    /// that carry it.
+    private static var sentinelError: DMAppError {
+        DMAppError.custom("sentinel")
+    }
+
+    private static func sentinel(_ provider: AnyDMLoadingViewProvider) -> DMLoadableType {
+        .failure(error: sentinelError, provider: provider, onRetry: nil)
+    }
+
+    /// Writes the sentinel to a manager of the library.
+    private static func writeSentinel(to manager: DMLoadingManagerMain, provider: AnyDMLoadingViewProvider) {
+        manager.showFailure(sentinelError, provider: provider)
+    }
+
+    /// Turns the run loop until the last thing the window was told is the sentinel, lets it settle, and returns
+    /// everything the window was told.
+    private func waitForSentinel(
+        in reports: Reports,
+        provider: AnyDMLoadingViewProvider,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [DMLoadableType] {
+        let sentinel = Self.sentinel(provider)
+        let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)
+        while reports.values.last != sentinel, Date() < deadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.02))
+        }
+        XCTAssertEqual(
+            reports.values.last,
+            sentinel,
+            "the window is told about the sentinel within the callback allowance",
+            file: file,
+            line: line
+        )
+        settle()
+        return reports.values
+    }
+
+    /// Lets the run loop idle for 50 milliseconds, so that SwiftUI commits what was written before the next write.
+    /// This is a settle time, not a condition. On a machine so loaded that the commit still did not run, two
+    /// writes would reach the view as one, and a test that expects the window to hear nothing would pass without
+    /// proving it: a false pass, never a false failure.
+    private func settle() {
+        RunLoop.current.run(until: Date().addingTimeInterval(0.05))
+    }
+
+    private struct HostFixture {
+        let sut: DMHudSceneView<HostLoadingManagerSpy>
+        let manager: HostLoadingManagerSpy
+        let reports: Reports
+    }
+
+    /// The view and a manager of the host's own that shows nothing. The test hosts the view itself, as `makeSUT` does.
+    private func makeHostSUT(file: StaticString = #filePath, line: UInt = #line) -> HostFixture {
+        let manager = HostLoadingManagerSpy()
+        let reports = Reports()
+        let sut = DMHudSceneView(loadingManager: manager) { reports.values.append($0) }
+        trackForMemoryLeaks(manager, file: file, line: line)
+        return HostFixture(sut: sut, manager: manager, reports: reports)
     }
 
     /// Renders `view` in a window with a clear background, the way the HUD window shows it,
@@ -216,5 +423,21 @@ final class DMHudSceneViewTests: XCTestCase {
             image = controller.view.renderedLayers()
         } while !done(image) && Date() < deadline
         return image
+    }
+}
+
+/// Records the Close and Retry commands that the library hands to the error view, one entry per evaluation.
+@MainActor
+private final class RecordingErrorProvider: @MainActor DMLoadingViewProvider {
+    struct Call {
+        let closeID: UUID
+        let retryID: UUID?
+    }
+
+    private(set) var calls: [Call] = []
+
+    func getErrorView(error: any Error, onRetry: (any DMAction)?, onClose: any DMAction) -> Color {
+        calls.append(Call(closeID: onClose.id, retryID: onRetry?.id))
+        return Color.clear
     }
 }

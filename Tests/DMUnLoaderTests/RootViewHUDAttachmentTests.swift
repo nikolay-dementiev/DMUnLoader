@@ -148,7 +148,114 @@ final class RootViewHUDAttachmentTests: XCTestCase {
         )
     }
 
+    // MARK: - The timer of the manager
+
+    func test_managerCreatedWithASuccess_attachedToASceneLater_keepsTheTimerItStartedAtCreation() {
+        let sut = makeSUT()
+        let (manager, scheduler) = makeManagerShowingASuccess()
+        let scene = makeScene()
+        sut.loadingManagerDidChange(to: manager)
+        let delaysBeforeTheScene = scheduler.scheduled.map(\.delay)
+
+        sut.viewDidMove(to: scene)
+
+        XCTAssertEqual(delaysBeforeTheScene, [Self.delay], "the clock of an initial success starts when the manager is made")
+        XCTAssertEqual(scheduler.scheduled.map(\.delay), [Self.delay], "attaching the manager to a scene starts no second timer")
+        XCTAssertEqual(scheduler.scheduled.map(\.isCancelled), [false], "attaching the manager to a scene cancels nothing")
+        XCTAssertEqual(scene.presented, [ObjectIdentifier(manager)], "the scene shows the manager")
+    }
+
+    func test_managerWhoseDelayPassedBeforeTheSceneConnected_isPresentedInNone() {
+        let sut = makeSUT()
+        let (manager, scheduler) = makeManagerShowingASuccess()
+        let scene = makeScene()
+        sut.loadingManagerDidChange(to: manager)
+        let delaysBeforeTheHide = scheduler.scheduled.map(\.delay)
+        scheduler.scheduled.last?.runHide()
+
+        sut.viewDidMove(to: scene)
+
+        XCTAssertEqual(delaysBeforeTheHide, [Self.delay], "a hide was there to run: the clock started when the manager was made")
+        XCTAssertEqual(scene.presented, [ObjectIdentifier(manager)], "the scene is given the manager")
+        XCTAssertEqual(manager.loadableState, .none, "the success went when its delay passed, with no scene to show it")
+    }
+
+    func test_sceneDisconnectsAndReturns_leavesTheTimerOfTheManagerAlone() {
+        let sut = makeSUT()
+        let (manager, scheduler) = makeManagerShowingASuccess()
+        let scene = makeScene()
+        sut.loadingManagerDidChange(to: manager)
+        sut.viewDidMove(to: scene)
+
+        scene.disconnect()
+        let cancelledAfterTheDisconnect = scheduler.scheduled.map(\.isCancelled)
+        sut.viewDidMove(to: scene)
+
+        XCTAssertEqual(cancelledAfterTheDisconnect, [false], "a scene that disconnects leaves the timer of the manager running")
+        XCTAssertEqual(scheduler.scheduled.map(\.delay), [Self.delay], "coming back starts no second timer")
+        XCTAssertEqual(scheduler.scheduled.map(\.isCancelled), [false], "coming back cancels nothing")
+        XCTAssertEqual(scene.presented, [ObjectIdentifier(manager), ObjectIdentifier(manager)], "the kept manager is shown again")
+    }
+
+    func test_delayPassesWhileTheSceneIsDisconnected_theReturningHUDFindsNone() {
+        let sut = makeSUT()
+        let (manager, scheduler) = makeManagerShowingASuccess()
+        let scene = makeScene()
+        sut.loadingManagerDidChange(to: manager)
+        sut.viewDidMove(to: scene)
+        scene.disconnect()
+
+        let delaysBeforeTheHide = scheduler.scheduled.map(\.delay)
+        scheduler.scheduled.last?.runHide()
+        sut.viewDidMove(to: scene)
+
+        XCTAssertEqual(delaysBeforeTheHide, [Self.delay], "a hide was there to run: the clock started when the manager was made")
+        XCTAssertEqual(manager.loadableState, .none, "the success went when its delay passed, while no scene showed it")
+        XCTAssertEqual(scene.presented, [ObjectIdentifier(manager), ObjectIdentifier(manager)], "the returning scene shows it")
+    }
+
+    func test_oneManager_inTwoRootViewsOfTwoScenes_runsOneTimer() {
+        let firstView = makeSUT()
+        let secondView = makeSUT()
+        let (manager, scheduler) = makeManagerShowingASuccess()
+        let firstScene = makeScene()
+        let secondScene = makeScene()
+        firstView.loadingManagerDidChange(to: manager)
+        secondView.loadingManagerDidChange(to: manager)
+        firstView.viewDidMove(to: firstScene)
+        secondView.viewDidMove(to: secondScene)
+
+        firstScene.disconnect()
+        let cancelledAfterOneSceneLeft = scheduler.scheduled.map(\.isCancelled)
+        scheduler.scheduled.last?.runHide()
+
+        XCTAssertEqual(firstScene.dismissCount, 1, "the first scene lost its HUD, so the disconnect did reach the attachment")
+        XCTAssertEqual(firstScene.presented, [ObjectIdentifier(manager)], "the first scene showed the manager")
+        XCTAssertEqual(secondScene.presented, [ObjectIdentifier(manager)], "the second scene showed the same manager")
+        XCTAssertEqual(scheduler.scheduled.map(\.delay), [Self.delay], "two windows over one manager share its one timer")
+        XCTAssertEqual(cancelledAfterOneSceneLeft, [false], "a scene that leaves does not stop the timer the other still needs")
+        XCTAssertEqual(manager.loadableState, .none, "the one hide of the shared timer hides the manager")
+    }
+
     // MARK: - Helpers
+
+    private static let delay = Duration.seconds(7)
+
+    /// A manager that starts in a success and hides it on a scheduler the test drives, so the test decides when
+    /// the delay has passed.
+    private func makeManagerShowingASuccess(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (manager: DMLoadingManagerMain, scheduler: AutoHideSchedulerSpy) {
+        let scheduler = AutoHideSchedulerSpy()
+        let manager = DMLoadingManagerMain(
+            state: .success("Saved", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
+            settings: StubDMLoadingManagerSettings(autoHideDelay: Self.delay),
+            autoHideScheduler: scheduler
+        )
+        trackForMemoryLeaks(manager, file: file, line: line)
+        return (manager, scheduler)
+    }
 
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> RootViewHUDAttachment {
         let sut = RootViewHUDAttachment()

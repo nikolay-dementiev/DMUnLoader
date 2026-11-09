@@ -109,7 +109,7 @@ final class HUDViewModelTests: XCTestCase {
     }
 
     func test_backdropTapped_aManagerWhoseHideKeepsItsState_reportsThatTheHUDStayed() {
-        let manager = HideKeepingManagerSpy(
+        let manager = HostLoadingManagerSpy(
             loadableState: .success("done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
         )
         let sut = DefaultHUDViewModel(loadingManager: manager)
@@ -121,7 +121,7 @@ final class HUDViewModelTests: XCTestCase {
     }
 
     func test_cardAndBackdropTap_withNoState_askTheManagerForNothing() {
-        let manager = HideKeepingManagerSpy()
+        let manager = HostLoadingManagerSpy()
         let sut = DefaultHUDViewModel(loadingManager: manager)
 
         sut.cardTapped()
@@ -140,31 +140,38 @@ final class HUDViewModelTests: XCTestCase {
         XCTAssertEqual(manager.loadableState, .none, "Close hides the failure")
     }
 
-    // MARK: - Helpers
+    func test_cardAndBackdropTap_onARefusingManager_askItToHideExactlyOnce() {
+        for show in Show.allCases {
+            for tap in Tap.allCases {
+                let manager = HostLoadingManagerSpy(loadableState: show.loadableState)
+                let sut = DefaultHUDViewModel(loadingManager: manager)
 
-    /// A loading manager of the host's own that records `hide()` and keeps the state it has.
-    @MainActor
-    private final class HideKeepingManagerSpy: DMLoadingManager {
-        let settings: any DMLoadingManagerSettings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
-        @Published private(set) var loadableState: DMLoadableType
-        private(set) var hideCount = 0
+                tap.send(to: sut)
 
-        init(loadableState: DMLoadableType) {
-            self.loadableState = loadableState
-        }
-
-        init() {
-            self.loadableState = .none
-        }
-
-        func showLoading<PR: DMLoadingViewProvider>(provider: PR) {}
-        func showSuccess<PR: DMLoadingViewProvider>(_ message: any DMLoadableTypeSuccess, provider: PR) {}
-        func showFailure<PR: DMLoadingViewProvider>(_ error: any Error, provider: PR, onRetry: (any DMAction)?) {}
-
-        func hide() {
-            hideCount += 1
+                XCTAssertEqual(manager.hideCount, 1, "a tap on the \(tap) asks the manager once to hide \(show)")
+            }
         }
     }
+
+    func test_closeTapped_whenTheRulesRefuseEveryTap_stillAsksTheManagerToHideOnce() {
+        let refusing = DMHUDDismissal(cardTapHides: false, backdropTapHides: false)
+        let rules = DMHUDDismissalRules(success: refusing, failureWithoutRetry: refusing, failureWithRetry: refusing)
+        let manager = HostLoadingManagerSpy(
+            loadableState: Show.failureWithRetry.loadableState,
+            settings: DMLoadingManagerDefaultSettings(hudDismissal: rules)
+        )
+        let sut = DefaultHUDViewModel(loadingManager: manager)
+
+        sut.cardTapped()
+        sut.backdropTapped()
+        let hidesAskedByTaps = manager.hideCount
+        sut.closeTapped()
+
+        XCTAssertEqual(hidesAskedByTaps, 0, "with every rule off, a tap on the card or outside it asks for no hide")
+        XCTAssertEqual(manager.hideCount, 1, "Close is no tap on the card: it asks for the hide once, whatever the rules say")
+    }
+
+    // MARK: - Helpers
 
     private enum Tap: CaseIterable, CustomStringConvertible {
         case card
@@ -175,7 +182,7 @@ final class HUDViewModelTests: XCTestCase {
         }
 
         @MainActor
-        func send(to viewModel: DefaultHUDViewModel<DMLoadingManagerMain>) {
+        func send<LM: DMLoadingManager>(to viewModel: DefaultHUDViewModel<LM>) {
             switch self {
             case .card:
                 viewModel.cardTapped()
@@ -195,6 +202,20 @@ final class HUDViewModelTests: XCTestCase {
             case .success: "a success"
             case .failureWithoutRetry: "a failure without Retry"
             case .failureWithRetry: "a failure with Retry"
+            }
+        }
+
+        /// The state itself, for a manager that is made already showing it.
+        @MainActor
+        var loadableState: DMLoadableType {
+            let provider = DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+            switch self {
+            case .success:
+                return .success("done", provider: provider)
+            case .failureWithoutRetry:
+                return .failure(error: DMAppError.custom("failed"), provider: provider)
+            case .failureWithRetry:
+                return .failure(error: DMAppError.custom("failed"), provider: provider, onRetry: DMButtonAction {})
             }
         }
 
