@@ -9,7 +9,7 @@
 /// knows whether the content changed and keeps nothing of the content itself.
 ///
 /// Whoever makes tokens decides what "changed" means, and gives the same revision to the same content.
-package struct HUDContentToken: Hashable, Sendable {
+package struct HUDContentToken: Equatable, Sendable {
     private let revision: Int
 
     package init(revision: Int) {
