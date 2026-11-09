@@ -11,13 +11,13 @@ format of [Documentation/Review/README.md](../../../Documentation/Review/README.
 
 ## What it checks
 
-- An import that follows a block comment on the same line, in `Domain/`. The lint rule
-  `domain_imports` reports every other import outside Foundation; this is the one case it does not
-  see.
+- An import that follows a block comment on the same line, in `Domain/` or `Presentation/`. The lint
+  rules `domain_imports` and `presentation_imports` report every other import outside Foundation;
+  this is the one case they do not see.
   (ENGINEERING.md, "An import that follows a block comment on the same line is not seen")
 - A change that makes a type of `Domain/` name in code a type of `Presentation/`, `Adapters/`,
   `UI/` or the top level of the folder, or a type of `Presentation/` name a type of `Adapters/`,
-  `UI/` or the top level; and a file of `Presentation/` that imports more than Combine or reaches
+  `UI/` or the top level; and a file of `Presentation/` that imports more than Foundation or reaches
   the system other than through the protocols of the folder. One exception is known:
   `HUDOverlayLifecycle.swift`, `HUDOverlayPresenting.swift`, `HUDViewModel.swift` and
   `RootViewHUDAttachment.swift` constrain a generic parameter to `DMLoadingManager`, and
@@ -25,7 +25,8 @@ format of [Documentation/Review/README.md](../../../Documentation/Review/README.
   names a type of an outer place is a finding. The folders are one module, so no import shows
   a breach and no lint rule reports one.
   (ENGINEERING.md, "The folders of `Sources/DMUnLoader` follow the dependency rule")
-  (ENGINEERING.md, "It imports Combine only, and reaches the system through protocols")
+  (ENGINEERING.md, "It imports Foundation at most, which `Scripts/lint.sh` enforces with the custom
+  rule `presentation_imports`")
   (ENGINEERING.md, "What each place may name")
 - A type of `Presentation/` or `Adapters/` that becomes `public`. `Scripts/check-api.sh` passes when
   the baseline changes with it, so only the reviewer asks whether the rule allows it.

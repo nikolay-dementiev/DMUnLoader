@@ -4,7 +4,6 @@
 //  Created by Mykola Dementiev
 //
 
-import Combine
 import DMUnLoader
 
 /// Records the auto-hides a loading manager schedules, and runs one when a test says that
@@ -33,10 +32,10 @@ final class AutoHideSchedulerSpy: AutoHideScheduler {
 
     private(set) var scheduled: [ScheduledHide] = []
 
-    func schedule(after delay: Duration, _ hide: @escaping @MainActor () -> Void) -> AnyCancellable {
+    func schedule(after delay: Duration, _ hide: @escaping @MainActor () -> Void) -> AutoHideCancellation {
         let scheduledHide = ScheduledHide(delay: delay, hide: hide)
         scheduled.append(scheduledHide)
-        return AnyCancellable { [weak scheduledHide] in
+        return AutoHideCancellation { [weak scheduledHide] in
             scheduledHide?.isCancelled = true
         }
     }

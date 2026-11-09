@@ -1,0 +1,5 @@
+// Linted in the Presentation folder of a module whose name starts like the library's. The Presentation
+// rule names the Presentation folder of the library itself, so it does not apply. No line expects a
+// diagnostic.
+import UIKit
+import Combine

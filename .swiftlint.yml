@@ -88,3 +88,15 @@ custom_rules:
     match_kinds: [keyword, identifier, attribute.builtin, attribute.id]
     message: "The Domain folder imports Foundation only: no UI and no platform framework."
     severity: error
+  presentation_imports:
+    name: "Presentation imports"
+    # The Presentation layer holds the view model, the lifecycle of the HUD window and the
+    # accessibility coordinator, and is testable without a view. It reaches the system through
+    # protocols that an adapter implements, so it imports Foundation at most, like Domain. The
+    # pattern is that of domain_imports, matched against the absolute path, so only the
+    # Presentation folder of the library is meant.
+    included: ".*/Sources/DMUnLoader/Presentation/.*\\.swift"
+    regex: '(?:^|;)[ \t]*(@\w+(\([^)]*\))?\s+)*((public|package|internal|fileprivate|private)\s+)?import\s+(?:(?:struct|class|enum|protocol|typealias|func|var|let)\s+)?+(?!(?:Foundation)\b)\w+'
+    match_kinds: [keyword, identifier, attribute.builtin, attribute.id]
+    message: "The Presentation folder imports Foundation only: no Combine, no UI and no platform framework."
+    severity: error
