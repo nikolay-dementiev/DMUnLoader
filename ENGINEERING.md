@@ -118,9 +118,13 @@ Under the rules above it would have needed a major version. The rules apply from
     `DMAppError`, `DMLoadableTypeSuccess` and the two methods of `Optional`; the rest is `package`
     or internal.
   - `Presentation/` holds the view model, the lifecycle of the HUD window and the accessibility
-    coordinator. It imports Combine only, and reaches the system through protocols
-    (`HUDOverlayPresenting`, `AutoHideScheduler`, `HUDScene`, `ContentUnderneathHiding`,
-    `AccessibilityAnnouncer`, `HUDTexts`).
+    coordinator. It imports Foundation at most, which `Scripts/lint.sh` enforces with the custom
+    rule `presentation_imports`: the pattern of `domain_imports` for this folder, so an import that
+    follows a block comment on the same line is not seen here either. It reaches the system through
+    protocols (`HUDOverlayPresenting`, `AutoHideScheduler`, `HUDScene`, `ContentUnderneathHiding`,
+    `AccessibilityAnnouncer`, `HUDTexts`). `AutoHideScheduler` hands back the package token
+    `AutoHideCancellation`, so the port names no Combine type; the run-loop scheduler in
+    `Adapters/` keeps its Combine subscription behind the token.
   - `Adapters/` implements those protocols with UIKit, SwiftUI and `os`: the overlay window, the
     run-loop scheduler, the accessibility announcer and content hider, the bundle texts and
     `UIWindowScene` as the HUD scene. It also holds the observer of scene disconnection, the view
@@ -163,13 +167,14 @@ Under the rules above it would have needed a major version. The rules apply from
   delegate.
 - **The rules are proved.** A rule that never matches reports nothing, so
   `Scripts/check-lint-contract.sh` lints the fixtures of `Fixtures/Lint` and proves that
-  `domain_imports`, `force_unwrapping` and `no_process_termination` fire on the lines that expect
-  them and on no other line. Where a fixture lies decides where it is linted: in the root of
-  `Fixtures/Lint` as a file of the library, in `Domain/` or `Adapters/` as a file of that folder,
-  and under `Outside/` outside the library, where the fixture expects nothing. So the contract shows
-  that the termination rule reaches the root, `Domain/` and `Adapters/`, that the import rule
-  reaches `Domain/` and neither the root nor `Adapters/`, and that neither reaches a fixture package
-  or a second module, one whose name starts like the library's included. `force_unwrapping` has no
+  `domain_imports`, `presentation_imports`, `force_unwrapping` and `no_process_termination` fire on
+  the lines that expect them and on no other line. Where a fixture lies decides where it is linted:
+  in the root of `Fixtures/Lint` as a file of the library, in `Domain/`, `Presentation/` or
+  `Adapters/` as a file of that folder, and under `Outside/` outside the library, where the fixture
+  expects nothing. So the contract shows that the termination rule reaches the root, `Domain/` and
+  `Adapters/`, that each import rule reaches its own folder and neither the root nor `Adapters/`,
+  and that neither the termination rule nor `domain_imports` reaches a fixture package or a second
+  module, one whose name starts like the library's included. `force_unwrapping` has no
   include and applies everywhere. The real tree is a second proof for the import rule: the library
   imports UI frameworks outside `Domain/`, so `Scripts/lint.sh` fails when the rule is widened. The
   termination rule has no lasting proof of that kind: no source of the library calls those
