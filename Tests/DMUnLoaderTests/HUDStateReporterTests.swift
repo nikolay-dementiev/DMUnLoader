@@ -61,6 +61,19 @@ final class HUDStateReporterTests: XCTestCase {
         )
     }
 
+    func test_report_loadingWithAnotherProvider_announcesTheScreenAgain() {
+        let (sut, announcer) = makeSUT()
+
+        sut.report(.loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()))
+        sut.report(.loading(provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()))
+
+        XCTAssertEqual(
+            announcer.events,
+            [.readFocus, .hide, .screenChanged(focusing: nil), .screenChanged(focusing: nil)],
+            "a loading state of another provider is another content, though both read \"Loading\""
+        )
+    }
+
     func test_hudDidGo_givesTheScreenBack_andTheNextStateEntersAgain() {
         let (sut, announcer) = makeSUT()
         sut.report(Self.success("Saved"))
