@@ -82,7 +82,8 @@ final class OverlayWindowPresenterTests: XCTestCase {
             XCTFail("The first HUD has a presenter and a window with an escape handler.")
             return
         }
-        weak var first = shownFirst?.manager
+        // A capture list holds it weakly: `weak let` needs Swift 6.3, and a `weak var` that nothing assigns warns.
+        let firstIsReleased = { [weak first = shownFirst?.manager] in first == nil }
 
         // A second manager takes over the window: its root view replaces that of the first, and its
         // escape handler replaces the first one. The test still holds the handler of the first.
@@ -93,7 +94,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
         // a manager that nothing holds is gone in the first turns of the run loop. A handler that held it
         // would run the wait to its limit and fail the test. Only a machine stalled for the whole limit
         // could fail a correct handler.
-        let released = turnRunLoop(until: first == nil, timeout: TestTiming.callbackAllowance)
+        let released = turnRunLoop(until: firstIsReleased(), timeout: TestTiming.callbackAllowance)
 
         XCTAssertTrue(released, "the escape handler of the window held the manager that the window had replaced")
         XCTAssertFalse(handlerOfFirst(), "the handler of a manager that is gone reports that nothing went")
