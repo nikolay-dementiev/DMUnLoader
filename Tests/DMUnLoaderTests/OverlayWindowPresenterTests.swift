@@ -67,7 +67,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
         // That the window has an escape handler at all is shown by the two tests above, which see the manager
         // asked to hide; without a handler this test would see no hide either.
         let handled = sut.window?.accessibilityPerformEscape()
-        let tapOutsideTheCard = DefaultHUDViewModel(loadingManager: sut.manager).backdropTapped()
+        let tapOutsideTheCard = DefaultHUDViewModel(model: LoadingManagerHUDModel(sut.manager)).backdropTapped()
 
         XCTAssertEqual(sut.manager.hideCount, 0, "the escape does what a tap outside the card does: the rule says no hide")
         XCTAssertEqual(handled, false, "the escape reports that the HUD stayed")

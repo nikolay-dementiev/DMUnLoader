@@ -66,10 +66,10 @@ package final class OverlayWindowPresenter: HUDOverlayPresenting {
             self.hudController = hudController
         }
         // The escape does what a tap outside the card does. The handler holds the manager
-        // weakly, so the window keeps no manager alive.
+        // weakly, so the window keeps no replaced manager alive.
         window.escapeHandler = { [weak loadingManager] in
             guard let loadingManager else { return false }
-            return DefaultHUDViewModel(loadingManager: loadingManager).backdropTapped()
+            return DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager)).backdropTapped()
         }
         // Set on every call, so a new manager that takes over the window brings its own level.
         window.windowLevel = loadingManager.settings.hudWindowLevel

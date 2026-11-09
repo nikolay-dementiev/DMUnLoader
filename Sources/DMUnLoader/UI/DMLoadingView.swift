@@ -155,7 +155,7 @@ private func loadingViewPreview(
 ) -> some View {
     let state = state(DefaultDMLoadingViewProvider(appearance: appearance).eraseToAnyViewProvider())
     let manager = DMLoadingManagerMain(state: state, settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600)))
-    return DMLoadingView(loadingManager: manager, viewModel: DefaultHUDViewModel(loadingManager: manager))
+    return DMLoadingView(loadingManager: manager, viewModel: DefaultHUDViewModel(model: LoadingManagerHUDModel(manager)))
 }
 
 #Preview("Loading") {

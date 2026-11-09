@@ -22,18 +22,18 @@ package protocol HUDViewModel {
     func closeTapped()
 }
 
-/// Reads its loading manager on every access and acts through it: the manager's state stays
-/// the one state, and the view model keeps no copy of it.
+/// Reads its HUD model on every access and acts through it: the state stays where its owner keeps
+/// it, and the view model keeps no copy of it.
 @MainActor
-package struct DefaultHUDViewModel<LM: DMLoadingManager>: HUDViewModel {
-    private let loadingManager: LM
+package struct DefaultHUDViewModel: HUDViewModel {
+    private let model: any HUDModel
 
-    package init(loadingManager: LM) {
-        self.loadingManager = loadingManager
+    package init(model: any HUDModel) {
+        self.model = model
     }
 
     package var showsHUD: Bool {
-        loadingManager.loadableState.showsHUD
+        model.phase.showsHUD
     }
 
     package func cardTapped() {
@@ -46,19 +46,19 @@ package struct DefaultHUDViewModel<LM: DMLoadingManager>: HUDViewModel {
     }
 
     package func closeTapped() {
-        loadingManager.hide()
+        model.hide()
     }
 
-    /// Hides the HUD when the rules of the manager's settings let a tap at `target` hide the
-    /// kind shown, and returns whether the HUD is gone after the call: a manager's `hide()` that
-    /// keeps its state does not count as a hide.
+    /// Hides the HUD when the rules of the model let a tap at `target` hide the kind shown, and
+    /// returns whether the HUD is gone after the call: a `hide()` that keeps the state does not
+    /// count as a hide.
     @discardableResult
     private func hide(onTapAt target: HUDTapTarget) -> Bool {
-        let phase = loadingManager.loadableState.phase
-        guard DismissPolicy.tapDismisses(phase, on: target, rules: loadingManager.settings.hudDismissal) else {
+        let phase = model.phase
+        guard DismissPolicy.tapDismisses(phase, on: target, rules: model.dismissalRules) else {
             return false
         }
-        loadingManager.hide()
-        return !loadingManager.loadableState.showsHUD
+        model.hide()
+        return !model.phase.showsHUD
     }
 }

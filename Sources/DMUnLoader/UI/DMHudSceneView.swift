@@ -42,7 +42,7 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
             ) {
                 DMLoadingView(
                     loadingManager: loadingManager,
-                    viewModel: DefaultHUDViewModel(loadingManager: loadingManager),
+                    viewModel: DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager)),
                     dim: backdrop.dim
                 )
             }
