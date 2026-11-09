@@ -5,8 +5,8 @@
 //
 
 /// What the view model of the HUD reads and acts on: the phase of the HUD, the rules for a tap,
-/// and a way to ask for a hide. The owner of the state implements it, so the view model does not
-/// name that owner.
+/// and a way to ask for a hide. An adapter over the owner of the state implements it, so the view
+/// model does not name that owner.
 @MainActor
 package protocol HUDModel {
     /// The phase the HUD is in. It is read on every access: an implementation keeps no copy, because

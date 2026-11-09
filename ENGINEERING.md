@@ -134,7 +134,7 @@ Under the rules above it would have needed a major version. The rules apply from
     into the environment, and the bridge that turns an error of DMVariableBlurView into the
     backdrop failure of `Domain/`. `LoadingManagerHUDModel` is the projection of a loading manager
     onto the `HUDModel` that the view model reads, and `HUDStateReporter` hands the accessibility
-    coordinator the phase and the content token of each state, so the coordinator keeps no state.
+    coordinator the phase and the content token of each state, so the coordinator keeps no loadable state.
   - `UI/` holds the SwiftUI views and their settings types, the HUD appearance and backdrop, the
     scene view, the button style, and the view extensions and environment values they use.
   - The top level holds what a host names: the facade and the public state and manager types
