@@ -19,11 +19,11 @@ format of [Documentation/Review/README.md](../../../Documentation/Review/README.
   `UI/` or the top level of the folder, or a type of `Presentation/` name a type of `Adapters/`,
   `UI/` or the top level; and a file of `Presentation/` that imports more than Foundation or reaches
   the system other than through the protocols of the folder. One exception is known:
-  `HUDOverlayLifecycle.swift`, `HUDOverlayPresenting.swift`, `HUDViewModel.swift` and
-  `RootViewHUDAttachment.swift` constrain a generic parameter to `DMLoadingManager`, and
-  `HUDViewModel.swift` reads the loadable state and the settings through it. A fifth file that
-  names a type of an outer place is a finding. The folders are one module, so no import shows
-  a breach and no lint rule reports one.
+  `HUDOverlayLifecycle.swift`, `HUDOverlayPresenting.swift` and `RootViewHUDAttachment.swift`
+  constrain a generic parameter to `DMLoadingManager`. A fourth file that names a type of an
+  outer place is a finding, and so is a view model or a coordinator that names a loading manager
+  or a loadable state again. The folders are one module, so no import shows a breach and no lint
+  rule reports one.
   (ENGINEERING.md, "The folders of `Sources/DMUnLoader` follow the dependency rule")
   (ENGINEERING.md, "It imports Foundation at most, which `Scripts/lint.sh` enforces with the custom
   rule `presentation_imports`")
