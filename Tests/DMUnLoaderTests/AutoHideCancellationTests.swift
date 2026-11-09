@@ -59,6 +59,40 @@ final class AutoHideCancellationTests: XCTestCase {
         withExtendedLifetime(sut) {}
     }
 
+    func test_cancelFromWithinTheAction_runsTheActionOnce() {
+        let runs = RunCounter()
+        let box = TokenBox()
+        let sut = AutoHideCancellation { [weak box] in
+            runs.count += 1
+            // Only the first run calls back, so that a token which still held its action here would
+            // show as a count of two instead of a stack overflow.
+            if runs.count == 1 { box?.token?.cancel() }
+        }
+        box.token = sut
+        trackForMemoryLeaks(sut)
+
+        sut.cancel()
+
+        XCTAssertEqual(runs.count, 1, "a cancel that the action itself calls finds the action spent")
+    }
+
+    func test_cancel_letsGoOfWhatTheActionHeld() {
+        weak var held: RunCounter?
+        let sut: AutoHideCancellation
+        do {
+            let counter = RunCounter()
+            held = counter
+            sut = AutoHideCancellation { counter.count += 1 }
+        }
+        XCTAssertNotNil(held, "until it ran, the action keeps alive what the delivery needs")
+
+        sut.cancel()
+
+        withExtendedLifetime(sut) {
+            XCTAssertNil(held, "the token that is still held lets go of the action once it ran")
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(runs: RunCounter, file: StaticString = #filePath, line: UInt = #line) -> AutoHideCancellation {
@@ -71,4 +105,9 @@ final class AutoHideCancellationTests: XCTestCase {
 /// Counts how often the action of a token ran.
 private final class RunCounter {
     var count = 0
+}
+
+/// Lets the action of a token reach the token without keeping it alive.
+private final class TokenBox {
+    var token: AutoHideCancellation?
 }
