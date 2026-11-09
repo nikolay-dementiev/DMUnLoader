@@ -13,8 +13,8 @@ import Foundation
 package struct RunLoopAutoHideScheduler: AutoHideScheduler {
     package init() {}
 
-    package func schedule(after delay: Duration, _ hide: @escaping @MainActor () -> Void) -> AnyCancellable {
-        Deferred {
+    package func schedule(after delay: Duration, _ hide: @escaping @MainActor () -> Void) -> AutoHideCancellation {
+        let subscription = Deferred {
             Future<Void, Never> { promise in
                 promise(.success(()))
             }
@@ -23,5 +23,7 @@ package struct RunLoopAutoHideScheduler: AutoHideScheduler {
         .sink { _ in
             hide()
         }
+        // The action holds the subscription: without it the sink would end when this call returns.
+        return AutoHideCancellation(subscription.cancel)
     }
 }

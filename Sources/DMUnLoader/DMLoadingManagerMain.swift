@@ -25,8 +25,8 @@ public final class DMLoadingManagerMain: DMLoadingManager {
         }
     }
     
-    /// A cancellable subscription used to manage the inactivity timer.
-    private var inactivityTimerCancellable: AnyCancellable?
+    /// The token of the pending auto-hide, kept so that a new state can cancel it.
+    private var inactivityTimerCancellable: AutoHideCancellation?
     
     /// Runs the auto-hide once the delay of `settings` has passed.
     private let autoHideScheduler: any AutoHideScheduler
