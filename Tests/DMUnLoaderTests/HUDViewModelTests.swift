@@ -101,7 +101,7 @@ final class HUDViewModelTests: XCTestCase {
             loadableState: .success("done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()),
             settings: DMLoadingManagerDefaultSettings(hudDismissal: rules)
         )
-        let sut = DefaultHUDViewModel(loadingManager: manager)
+        let sut = DefaultHUDViewModel(model: LoadingManagerHUDModel(manager))
 
         sut.backdropTapped()
 
@@ -112,7 +112,7 @@ final class HUDViewModelTests: XCTestCase {
         let manager = HostLoadingManagerSpy(
             loadableState: .success("done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
         )
-        let sut = DefaultHUDViewModel(loadingManager: manager)
+        let sut = DefaultHUDViewModel(model: LoadingManagerHUDModel(manager))
 
         let hid = sut.backdropTapped()
 
@@ -122,7 +122,7 @@ final class HUDViewModelTests: XCTestCase {
 
     func test_cardAndBackdropTap_withNoState_askTheManagerForNothing() {
         let manager = HostLoadingManagerSpy()
-        let sut = DefaultHUDViewModel(loadingManager: manager)
+        let sut = DefaultHUDViewModel(model: LoadingManagerHUDModel(manager))
 
         sut.cardTapped()
         let hid = sut.backdropTapped()
@@ -144,7 +144,7 @@ final class HUDViewModelTests: XCTestCase {
         for show in Show.allCases {
             for tap in Tap.allCases {
                 let manager = HostLoadingManagerSpy(loadableState: show.loadableState)
-                let sut = DefaultHUDViewModel(loadingManager: manager)
+                let sut = DefaultHUDViewModel(model: LoadingManagerHUDModel(manager))
 
                 tap.send(to: sut)
 
@@ -160,7 +160,7 @@ final class HUDViewModelTests: XCTestCase {
             loadableState: Show.failureWithRetry.loadableState,
             settings: DMLoadingManagerDefaultSettings(hudDismissal: rules)
         )
-        let sut = DefaultHUDViewModel(loadingManager: manager)
+        let sut = DefaultHUDViewModel(model: LoadingManagerHUDModel(manager))
 
         sut.cardTapped()
         sut.backdropTapped()
@@ -182,7 +182,7 @@ final class HUDViewModelTests: XCTestCase {
         }
 
         @MainActor
-        func send<LM: DMLoadingManager>(to viewModel: DefaultHUDViewModel<LM>) {
+        func send(to viewModel: DefaultHUDViewModel) {
             switch self {
             case .card:
                 viewModel.cardTapped()
@@ -237,13 +237,13 @@ final class HUDViewModelTests: XCTestCase {
         rules: DMHUDDismissalRules = DMHUDDismissalRules(),
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (sut: DefaultHUDViewModel<DMLoadingManagerMain>, manager: DMLoadingManagerMain) {
+    ) -> (sut: DefaultHUDViewModel, manager: DMLoadingManagerMain) {
         // A delay no test reaches, so no state hides by itself during a test.
         let manager = DMLoadingManagerMain(
             state: .none,
             settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600), hudDismissal: rules)
         )
         trackForMemoryLeaks(manager, file: file, line: line)
-        return (DefaultHUDViewModel(loadingManager: manager), manager)
+        return (DefaultHUDViewModel(model: LoadingManagerHUDModel(manager)), manager)
     }
 }

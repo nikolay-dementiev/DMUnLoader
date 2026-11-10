@@ -294,7 +294,7 @@ final class DMLoadingViewTests: XCTestCase {
         
         let sut = DMLoadingView(
             loadingManager: loadingManager,
-            viewModel: DefaultHUDViewModel(loadingManager: loadingManager)
+            viewModel: DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager))
         )
         
         trackForMemoryLeaks(loadingManager)

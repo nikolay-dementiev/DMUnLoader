@@ -67,14 +67,94 @@ final class OverlayWindowPresenterTests: XCTestCase {
         // That the window has an escape handler at all is shown by the two tests above, which see the manager
         // asked to hide; without a handler this test would see no hide either.
         let handled = sut.window?.accessibilityPerformEscape()
-        let tapOutsideTheCard = DefaultHUDViewModel(loadingManager: sut.manager).backdropTapped()
+        let tapOutsideTheCard = DefaultHUDViewModel(model: LoadingManagerHUDModel(sut.manager)).backdropTapped()
 
         XCTAssertEqual(sut.manager.hideCount, 0, "the escape does what a tap outside the card does: the rule says no hide")
         XCTAssertEqual(handled, false, "the escape reports that the HUD stayed")
         XCTAssertEqual(tapOutsideTheCard, handled, "a tap outside the card gives the same answer as the escape")
     }
 
+    // MARK: - The lifetime of a replaced manager
+
+    func test_escapeHandler_ofAReplacedManager_keepsNoManagerAlive() {
+        var shownFirst: Fixture? = makeSUT(state: Self.success, settings: Self.settings(), announcer: AccessibilitySpy())
+        guard let presenter = shownFirst?.presenter, let handlerOfFirst = shownFirst?.window?.escapeHandler else {
+            XCTFail("The first HUD has a presenter and a window with an escape handler.")
+            return
+        }
+        // A capture list holds it weakly: `weak let` needs Swift 6.3, and a `weak var` that nothing assigns warns.
+        let firstIsReleased = { [weak first = shownFirst?.manager] in first == nil }
+
+        // A second manager takes over the window: its root view replaces that of the first, and its
+        // escape handler replaces the first one. The test still holds the handler of the first.
+        presenter.present(HostLoadingManagerSpy())
+        shownFirst = nil
+
+        // The wait ends on a positive signal, the release itself, so there is no fixed length to outlast:
+        // a manager that nothing holds is gone in the first turns of the run loop. A handler that held it
+        // would run the wait to its limit and fail the test. Only a machine stalled for the whole limit
+        // could fail a correct handler.
+        let released = turnRunLoop(until: firstIsReleased(), timeout: TestTiming.callbackAllowance)
+
+        XCTAssertTrue(released, "the escape handler of the window held the manager that the window had replaced")
+        XCTAssertFalse(handlerOfFirst(), "the handler of a manager that is gone reports that nothing went")
+    }
+
+    // MARK: - What the HUD announces for a state that changes
+
+    func test_anotherFailureInTheSamePhase_postsScreenChangedAgain() {
+        let announcer = AccessibilitySpy()
+        let provider = DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+        guard let sut = makeSUT(
+            state: .failure(error: PresenterTestFailure.first, provider: provider, onRetry: nil),
+            settings: Self.settings(),
+            announcer: announcer
+        ) else { return }
+        XCTAssertTrue(
+            turnRunLoop(until: Self.screenChangedCount(of: announcer) == 1, timeout: TestTiming.callbackAllowance),
+            "the first failure was announced"
+        )
+
+        sut.manager.set(.failure(error: PresenterTestFailure.second, provider: provider, onRetry: nil))
+
+        // Another error under one provider is another content in the same phase, and the screen changed.
+        XCTAssertTrue(
+            turnRunLoop(until: Self.screenChangedCount(of: announcer) == 2, timeout: TestTiming.callbackAllowance),
+            "another failure in the same phase was announced again"
+        )
+    }
+
+    func test_managerOfAnotherType_withAnEqualState_announcesNothingMore() {
+        let announcer = AccessibilitySpy()
+        let state = Self.success
+        guard let sut = makeSUT(state: state, settings: Self.settings(), announcer: announcer),
+              let window = sut.window else { return }
+        XCTAssertTrue(
+            turnRunLoop(until: Self.screenChangedCount(of: announcer) == 1, timeout: TestTiming.callbackAllowance),
+            "the first HUD was announced"
+        )
+        let eventsOfTheFirst = announcer.events
+
+        // A manager of another type is another view in the window, so the view delivers its state once as
+        // it appears, equal or not. A manager of the same type is the same view and delivers nothing for an
+        // equal state, so there is nothing to wait for and it is not tried here.
+        sut.presenter.present(DMLoadingManagerMain(state: state, settings: Self.settings()))
+        // The closure of the presenter that the view calls sets this flag and then tells the coordinator, in
+        // one call on the main thread. The flag is set to false here, so it is true again only when the view
+        // delivered its state, and the coordinator has been told by then. The wait ends on that delivery:
+        // there is no fixed length to outlast, and no delivery that arrives later than the check.
+        window.interceptsTouches = false
+        let delivered = turnRunLoop(until: window.interceptsTouches, timeout: TestTiming.callbackAllowance)
+
+        XCTAssertTrue(delivered, "the view of the manager of the other type delivered its state to the window")
+        XCTAssertEqual(announcer.events, eventsOfTheFirst, "a state equal to the one shown is no change of content")
+    }
+
     // MARK: - Helpers
+
+    private static func screenChangedCount(of announcer: AccessibilitySpy) -> Int {
+        announcer.events.filter { $0 == .screenChanged(focusing: nil) }.count
+    }
 
     private static var success: DMLoadableType {
         .success("Saved", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
@@ -88,6 +168,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
     private struct Fixture {
         let manager: HostLoadingManagerSpy
         let scene: UIWindowScene
+        let presenter: OverlayWindowPresenter
 
         var window: DMPassThroughWindow? {
             scene.windows.compactMap { $0 as? DMPassThroughWindow }.first
@@ -128,6 +209,11 @@ final class OverlayWindowPresenterTests: XCTestCase {
                 line: line
             )
         }
-        return Fixture(manager: manager, scene: scene)
+        return Fixture(manager: manager, scene: scene, presenter: presenter)
     }
+}
+
+private enum PresenterTestFailure: Error {
+    case first
+    case second
 }

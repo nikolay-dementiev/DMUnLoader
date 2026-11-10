@@ -35,7 +35,7 @@ package final class HUDAccessibilityCoordinator {
     private let announcer: any AccessibilityAnnouncer
     private let contentHider: any ContentUnderneathHiding
     private var phase: HUDPhase = .none
-    private var state: AnyHashable?
+    private var content: HUDContentToken?
     private weak var focusBeforeHUD: AnyObject?
 
     package init(announcer: any AccessibilityAnnouncer, contentHider: any ContentUnderneathHiding) {
@@ -43,12 +43,12 @@ package final class HUDAccessibilityCoordinator {
         self.contentHider = contentHider
     }
 
-    /// The HUD shows `next` now, in the state that `state` identifies. Another state in the same
-    /// phase is a change of content.
-    package func stateDidChange(to next: HUDPhase, identifiedBy state: AnyHashable) {
-        let transition = HUDAccessibilityTransition(from: phase, to: next, stateChanged: state != self.state)
+    /// The HUD shows `next` now, with the content that `content` stands for. Another content in the
+    /// same phase is a change of content.
+    package func stateDidChange(to next: HUDPhase, content: HUDContentToken) {
+        let transition = HUDAccessibilityTransition(from: phase, to: next, stateChanged: content != self.content)
         phase = next
-        self.state = state
+        self.content = content
         switch transition {
         case .entered:
             focusBeforeHUD = announcer.focusedElement
@@ -65,7 +65,7 @@ package final class HUDAccessibilityCoordinator {
 
     /// The presenter removed the HUD, whatever it showed.
     package func hudDidGo() {
-        state = nil
+        content = nil
         guard phase.showsHUD else {
             return
         }
