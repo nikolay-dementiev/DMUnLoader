@@ -51,6 +51,20 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         )
     }
 
+    func test_connect_afterTheCallerLetGoOfTheManager_stillPresentsIt() {
+        let (sut, presenter) = makeSUT()
+        // Once the call returns, nothing but the lifecycle holds this manager.
+        sut.loadingManagerDidChange(to: DMLoadingManagerMain())
+
+        sut.sceneDidConnect(presenter: presenter)
+
+        XCTAssertEqual(
+            presenter.presented.count,
+            1,
+            "a manager that only the lifecycle holds is still shown once the scene connects"
+        )
+    }
+
     func test_managerSetToNil_afterAManagerWasShown_removesTheHUD() {
         let (sut, presenter) = makeSUT()
         sut.sceneDidConnect(presenter: presenter)
