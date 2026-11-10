@@ -120,15 +120,15 @@ Under the rules above it would have needed a major version. The rules apply from
   - `Presentation/` holds the view model, the lifecycle of the HUD window and the accessibility
     coordinator. The view model reads a `HUDModel` (the phase, the rules for a tap and a hide) and
     the coordinator keeps a `HUDContentToken`, so neither names a loading manager or a loadable
-    state. The lifecycle of the HUD window and the attachment of a root view take a
-    `HUDPresentation`, the identity of the owner and the action that shows it through a presenter,
-    so they name none either. It imports Foundation at most, which `Scripts/lint.sh` enforces with the custom
+    state. It imports Foundation at most, which `Scripts/lint.sh` enforces with the custom
     rule `presentation_imports`: the pattern of `domain_imports` for this folder, so an import that
     follows a block comment on the same line is not seen here either. It reaches the system through
     protocols (`HUDOverlayPresenting`, `AutoHideScheduler`, `HUDScene`, `ContentUnderneathHiding`,
     `AccessibilityAnnouncer`, `HUDTexts`). `AutoHideScheduler` hands back the package token
     `AutoHideCancellation`, so the port names no Combine type; the run-loop scheduler in
-    `Adapters/` keeps its Combine subscription behind the token.
+    `Adapters/` keeps its Combine subscription behind the token. The lifecycle of the HUD window and
+    the attachment of a root view take a `HUDPresentation`, the identity of the owner and the action
+    that shows it through a presenter, so they name no loading manager either.
   - `Adapters/` implements those protocols with UIKit, SwiftUI and `os`: the overlay window, the
     run-loop scheduler, the accessibility announcer and content hider, the bundle texts and
     `UIWindowScene` as the HUD scene. It also holds the observer of scene disconnection, the view
@@ -137,9 +137,9 @@ Under the rules above it would have needed a major version. The rules apply from
     backdrop failure of `Domain/`. `LoadingManagerHUDModel` is the projection of a loading manager
     onto the `HUDModel` that the view model reads, and `HUDStateReporter` hands the accessibility
     coordinator the phase and the content token of each state, so the coordinator keeps no loadable state.
-    `LoadingManagerHUDPresentation` makes the `HUDPresentation` of a loading manager, the only place
-    that builds one from a manager, and gives the lifecycle and the attachment the typed call that
-    the scene delegate, the scene anchor and the tests use.
+    The extensions in `LoadingManagerHUDPresentation.swift` make the `HUDPresentation` of a loading
+    manager, the only place that builds one from a manager, and give the lifecycle and the
+    attachment the typed call that the scene delegate, the scene anchor and the tests use.
   - `UI/` holds the SwiftUI views and their settings types, the HUD appearance and backdrop, the
     scene view, the button style, and the view extensions and environment values they use.
   - The top level holds what a host names: the facade and the public state and manager types
@@ -153,7 +153,7 @@ Under the rules above it would have needed a major version. The rules apply from
     The exception is not a precedent and is meant to go. The folders are one module, so no import
     shows a breach. The custom rule `presentation_names_no_manager` reports the three names
     `DMLoadingManager`, `DMLoadableType` and `DMLoadingManagerMain` in every file of `Presentation/`
-    but that one, so a fourth file that names one is reported; no lint rule reports another type of
+    but that one, so a second file that names one is reported; no lint rule reports another type of
     an outer place.
   - The types of `Presentation/` and `Adapters/` are `package` or internal. The facade that a host
     uses is public: `DMRootLoadingView`, `DMLoadingManager` and `DMLoadingManagerMain`,
