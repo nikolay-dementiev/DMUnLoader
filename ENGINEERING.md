@@ -120,7 +120,9 @@ Under the rules above it would have needed a major version. The rules apply from
   - `Presentation/` holds the view model, the lifecycle of the HUD window and the accessibility
     coordinator. The view model reads a `HUDModel` (the phase, the rules for a tap and a hide) and
     the coordinator keeps a `HUDContentToken`, so neither names a loading manager or a loadable
-    state. It imports Foundation at most, which `Scripts/lint.sh` enforces with the custom
+    state. The lifecycle of the HUD window and the attachment of a root view take a
+    `HUDPresentation`, the identity of the owner and the action that shows it through a presenter,
+    so they name none either. It imports Foundation at most, which `Scripts/lint.sh` enforces with the custom
     rule `presentation_imports`: the pattern of `domain_imports` for this folder, so an import that
     follows a block comment on the same line is not seen here either. It reaches the system through
     protocols (`HUDOverlayPresenting`, `AutoHideScheduler`, `HUDScene`, `ContentUnderneathHiding`,
@@ -135,6 +137,9 @@ Under the rules above it would have needed a major version. The rules apply from
     backdrop failure of `Domain/`. `LoadingManagerHUDModel` is the projection of a loading manager
     onto the `HUDModel` that the view model reads, and `HUDStateReporter` hands the accessibility
     coordinator the phase and the content token of each state, so the coordinator keeps no loadable state.
+    `LoadingManagerHUDPresentation` makes the `HUDPresentation` of a loading manager, the only place
+    that builds one from a manager, and gives the lifecycle and the attachment the typed call that
+    the scene delegate, the scene anchor and the tests use.
   - `UI/` holds the SwiftUI views and their settings types, the HUD appearance and backdrop, the
     scene view, the button style, and the view extensions and environment values they use.
   - The top level holds what a host names: the facade and the public state and manager types
@@ -144,10 +149,12 @@ Under the rules above it would have needed a major version. The rules apply from
   - What each place may name. A file of `Domain/` names in code no type declared in
     `Presentation/`, `Adapters/`, `UI/` or the top level. A file of `Presentation/` names none
     declared in `Adapters/`, `UI/` or the top level, with one known exception:
-    `HUDOverlayLifecycle.swift`, `HUDOverlayPresenting.swift` and `RootViewHUDAttachment.swift`
-    constrain a generic parameter to the public `DMLoadingManager`. The exception is not a
-    precedent. The folders are one module, so no import shows a breach and no lint rule reports
-    one.
+    `HUDOverlayPresenting.swift` constrains a generic parameter to the public `DMLoadingManager`.
+    The exception is not a precedent and is meant to go. The folders are one module, so no import
+    shows a breach. The custom rule `presentation_names_no_manager` reports the three names
+    `DMLoadingManager`, `DMLoadableType` and `DMLoadingManagerMain` in every file of `Presentation/`
+    but that one, so a fourth file that names one is reported; no lint rule reports another type of
+    an outer place.
   - The types of `Presentation/` and `Adapters/` are `package` or internal. The facade that a host
     uses is public: `DMRootLoadingView`, `DMLoadingManager` and `DMLoadingManagerMain`,
     `DMLoadingViewProvider` and `DefaultDMLoadingViewProvider`, `DMAppDelegate`,
@@ -170,17 +177,23 @@ Under the rules above it would have needed a major version. The rules apply from
   delegate.
 - **The rules are proved.** A rule that never matches reports nothing, so
   `Scripts/check-lint-contract.sh` lints the fixtures of `Fixtures/Lint` and proves that
-  `domain_imports`, `presentation_imports`, `force_unwrapping` and `no_process_termination` fire on
-  the lines that expect them and on no other line. Where a fixture lies decides where it is linted:
+  `domain_imports`, `presentation_imports`, `presentation_names_no_manager`, `force_unwrapping` and
+  `no_process_termination` fire on the lines that expect them and on no other line. Where a fixture lies decides where it is linted:
   in the root of `Fixtures/Lint` as a file of the library, in `Domain/`, `Presentation/` or
   `Adapters/` as a file of that folder, and under `Outside/` outside the library, where the fixture
   expects nothing. So the contract shows that the termination rule reaches the root, `Domain/` and
   `Adapters/`, that each import rule reaches its own folder and neither the root nor `Adapters/`,
   that the termination rule reaches neither a fixture package nor a second module, and that neither
   import rule reaches a second module, one whose name starts like the library's included.
-  `force_unwrapping` has no include and applies everywhere. The real tree is a second proof for the
-  import rule: the library imports UI frameworks outside `Domain/`, so `Scripts/lint.sh` fails when
-  the rule is widened. The
+  `force_unwrapping` has no include and applies everywhere. `presentation_names_no_manager` fires on
+  a constraint, a parameter or result type, a cast, a call and a member access, and not in a
+  comment, a string or a longer name such as `DMLoadingManagerSettings`; it reaches `Presentation/`
+  and neither `Adapters/` nor a second module, and it leaves out `HUDOverlayPresenting.swift`
+  directly in that folder and not a file of that name below it. The real tree is a second proof for
+  the import rule: the library imports UI frameworks outside `Domain/`, so `Scripts/lint.sh` fails
+  when the rule is widened. The names rule has the same proof: the top level and `UI/` name the
+  managers and the port file names one, so `Scripts/lint.sh` fails when that rule is widened or
+  loses its exclusion. The
   termination rule has no lasting proof of that kind: no source of the library calls those
   functions, so only the fixtures show its scope. CI runs the contract right after
   `Scripts/lint.sh`.
