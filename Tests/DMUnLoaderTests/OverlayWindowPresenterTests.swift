@@ -100,6 +100,42 @@ final class OverlayWindowPresenterTests: XCTestCase {
         XCTAssertFalse(handlerOfFirst(), "the handler of a manager that is gone reports that nothing went")
     }
 
+    // MARK: - A HUD that comes after a dismiss
+
+    func test_present_afterADismiss_hidesTheContentUnderTheNewWindow() {
+        // The frame does not matter: the HUD takes the size of the scene, not of this window.
+        let probe = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        guard let scene = probe.windowScene else {
+            XCTFail("A window made by UIWindow(frame:) belongs to no window scene.")
+            return
+        }
+        let appWindow = UIWindow(windowScene: scene)
+        appWindow.isHidden = false
+        let presenter = OverlayWindowPresenter(windowScene: scene, announcer: AccessibilitySpy())
+        addTeardownBlock {
+            presenter.dismiss()
+            appWindow.isHidden = true
+            probe.isHidden = true
+        }
+        presenter.present(HostLoadingManagerSpy(loadableState: Self.success, settings: Self.settings()))
+        // The view of the HUD delivers its state after the window is made, so the hide comes a turn later.
+        XCTAssertTrue(
+            turnRunLoop(until: appWindow.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            "the first HUD hid the window under it from assistive technology"
+        )
+        presenter.dismiss()
+        XCTAssertFalse(appWindow.accessibilityElementsHidden, "the window is reachable again once the HUD is gone")
+
+        presenter.present(HostLoadingManagerSpy(loadableState: Self.success, settings: Self.settings()))
+
+        // The wait ends on the hide itself. A coordinator that stayed bound to the window that went hides
+        // the windows of a scene that window has left, which are none, so the wait would run to its limit.
+        XCTAssertTrue(
+            turnRunLoop(until: appWindow.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            "the HUD that came after a dismiss hid the window under it from assistive technology"
+        )
+    }
+
     // MARK: - What the HUD announces for a state that changes
 
     func test_anotherFailureInTheSamePhase_postsScreenChangedAgain() {
