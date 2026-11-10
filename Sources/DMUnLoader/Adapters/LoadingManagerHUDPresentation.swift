@@ -6,7 +6,8 @@
 
 extension HUDPresentation {
     /// The HUD of `loadingManager`, with its type kept for the presenter. The value holds the
-    /// manager strongly, as the lifecycle always has.
+    /// manager strongly, so a manager that only the HUD refers to stays alive until the value is
+    /// replaced or removed.
     fileprivate init<LM: DMLoadingManager>(_ loadingManager: LM) {
         self.init(id: ObjectIdentifier(loadingManager)) { presenter in
             presenter.present(loadingManager)
@@ -18,7 +19,7 @@ extension HUDOverlayLifecycle {
     /// The loading manager of the scene was set, to `loadingManager`. The same manager again
     /// keeps its HUD; another one replaces it; `nil` removes it.
     package func loadingManagerDidChange<LM: DMLoadingManager>(to loadingManager: LM?) {
-        presentationDidChange(to: loadingManager.map(HUDPresentation.init))
+        presentationDidChange(to: loadingManager.map { HUDPresentation($0) })
     }
 }
 

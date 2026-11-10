@@ -8,8 +8,8 @@
 /// owner through a presenter. The layer that knows the owner makes it, so the lifecycle of the HUD
 /// decides when to show it without naming the owner.
 ///
-/// The `show` action holds the owner strongly until the value is replaced or dropped, as the
-/// lifecycle holds it.
+/// The `show` action holds the owner strongly until the value is replaced or dropped, so an owner
+/// that only the HUD refers to stays alive for as long as the HUD is wanted.
 @MainActor
 package struct HUDPresentation {
     /// Tells two presentations of the same owner from those of two owners: the same identity again
