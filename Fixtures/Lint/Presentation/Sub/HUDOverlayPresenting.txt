@@ -1,0 +1,3 @@
+// Linted as Presentation/Sub/HUDOverlayPresenting.swift: only the file of that name directly in the
+// Presentation folder is left out, so a file of the same name in a folder below it is not.
+func present<LM: DMLoadingManager>(_ loadingManager: LM) {} // expect: presentation_names_no_manager

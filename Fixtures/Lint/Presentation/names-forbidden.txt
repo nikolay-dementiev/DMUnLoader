@@ -1,0 +1,15 @@
+// Linted as a file of the Presentation folder: every form that names a loading manager type fires,
+// whether it is a generic constraint, a parameter or result type, a cast, a call or a member access.
+func a1<LM: DMLoadingManager>(_ value: LM) {} // expect: presentation_names_no_manager
+func a2(_ value: DMLoadingManagerMain) {} // expect: presentation_names_no_manager
+let a3 = DMLoadingManagerMain() // expect: presentation_names_no_manager
+let a4 = something as? DMLoadingManagerMain // expect: presentation_names_no_manager
+func a5(_ value: any DMLoadingManager) {} // expect: presentation_names_no_manager
+func a6() -> DMLoadableType { .none } // expect: presentation_names_no_manager
+extension Wrapper where LM: DMLoadingManager {} // expect: presentation_names_no_manager
+let a8: [DMLoadableType] = [] // expect: presentation_names_no_manager
+typealias A9 = DMLoadingManager // expect: presentation_names_no_manager
+var a10: Set<DMLoadingManagerMain> = [] // expect: presentation_names_no_manager
+let a11 = DMLoadableType.none // expect: presentation_names_no_manager
+let a12 = something is DMLoadingManagerMain // expect: presentation_names_no_manager
+func a13(_ value: some DMLoadingManager) {} // expect: presentation_names_no_manager

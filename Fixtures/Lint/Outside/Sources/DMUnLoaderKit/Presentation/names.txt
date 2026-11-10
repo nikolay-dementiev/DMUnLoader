@@ -1,0 +1,5 @@
+// Linted in the Presentation folder of a module whose name starts like the library's. The rule names
+// the Presentation folder of the library itself, so it does not apply. No line expects a diagnostic.
+func a1<LM: DMLoadingManager>(_ value: LM) {}
+let a2 = DMLoadingManagerMain()
+let a3: DMLoadableType? = nil
