@@ -128,6 +128,22 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         XCTAssertEqual(firstPresenter.dismissCount, 1, "a HUD is left behind by no presenter")
     }
 
+    func test_secondConnect_withoutADisconnect_presentsTheManagerOnTheSecondPresenter() {
+        let (sut, firstPresenter) = makeSUT()
+        let secondPresenter = HUDOverlayPresenterSpy()
+        let manager = DMLoadingManagerMain()
+        sut.sceneDidConnect(presenter: firstPresenter)
+        sut.loadingManagerDidChange(to: manager)
+
+        sut.sceneDidConnect(presenter: secondPresenter)
+
+        XCTAssertEqual(
+            secondPresenter.presented.map(ObjectIdentifier.init),
+            [ObjectIdentifier(manager)],
+            "a connect starts over: the manager that the first presenter showed is shown by the second"
+        )
+    }
+
     func test_sceneDidDisconnect_afterAManagerWasShown_removesTheHUD() {
         let (sut, presenter) = makeSUT()
         sut.sceneDidConnect(presenter: presenter)
