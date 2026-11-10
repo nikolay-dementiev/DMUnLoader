@@ -107,6 +107,19 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         )
     }
 
+    func test_connect_afterTheManagerWasSetAndThenRemoved_presentsNothing() {
+        let (sut, presenter) = makeSUT()
+        sut.loadingManagerDidChange(to: DMLoadingManagerMain())
+        sut.loadingManagerDidChange(to: DMLoadingManagerMain?.none)
+
+        sut.sceneDidConnect(presenter: presenter)
+
+        XCTAssertTrue(
+            presenter.presented.isEmpty,
+            "a manager that was taken away before the scene connected is not shown when it does"
+        )
+    }
+
     func test_otherManagerSet_afterAManagerWasShown_dismissesNothing() {
         let (sut, presenter) = makeSUT()
         sut.sceneDidConnect(presenter: presenter)
