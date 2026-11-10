@@ -100,3 +100,17 @@ custom_rules:
     match_kinds: [keyword, identifier, attribute.builtin, attribute.id]
     message: "The Presentation folder imports Foundation only: no Combine, no UI and no platform framework."
     severity: error
+  presentation_names_no_manager:
+    name: "Presentation names no loading manager"
+    # The Presentation layer takes what it shows as a HUDPresentation, so it does not name the
+    # loading manager types; the adapter that makes the value does. The one exception is the port
+    # of the HUD, HUDOverlayPresenting.swift directly in the folder, which still takes the manager
+    # as a generic argument until a later step moves that out. Both patterns are matched against
+    # the absolute path. A comment, a string and a longer name such as DMLoadingManagerSettings do
+    # not match.
+    included: ".*/Sources/DMUnLoader/Presentation/.*\\.swift"
+    excluded: ".*/Sources/DMUnLoader/Presentation/HUDOverlayPresenting\\.swift"
+    regex: '\b(DMLoadingManager|DMLoadableType|DMLoadingManagerMain)\b'
+    match_kinds: [identifier, typeidentifier]
+    message: "The Presentation folder names no loading manager type: take a HUDPresentation and let an adapter make it."
+    severity: error

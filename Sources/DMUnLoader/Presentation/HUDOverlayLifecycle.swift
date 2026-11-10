@@ -4,61 +4,53 @@
 //  Created by Mykola Dementiev
 //
 
-/// Decides when the HUD of one scene is presented, from what happens to the scene and to
-/// its loading manager. The scene delegates report those events; a presenter does the UI
+/// Decides when the HUD of one scene is presented, from what happens to the scene and to the
+/// presentation it is given. The scene delegates report those events; a presenter does the UI
 /// work.
 @MainActor
 package final class HUDOverlayLifecycle {
-    /// The manager the scene shows, with a way to present it that keeps its type.
-    private struct CurrentManager {
-        let id: ObjectIdentifier
-        let present: @MainActor (any HUDOverlayPresenting) -> Void
-    }
-
     private var presenter: (any HUDOverlayPresenting)?
-    private var currentManager: CurrentManager?
-    private var presentedManager: ObjectIdentifier?
+    private var currentPresentation: HUDPresentation?
+    private var presentedID: ObjectIdentifier?
 
     package init() {}
 
-    /// The scene connected, and `presenter` shows HUDs over it. A manager set before is
+    /// The scene connected, and `presenter` shows HUDs over it. A presentation set before is
     /// shown now. A presenter of an earlier connect loses its HUD first.
     package func sceneDidConnect(presenter: any HUDOverlayPresenting) {
         self.presenter?.dismiss()
         self.presenter = presenter
-        presentedManager = nil
-        presentCurrentManager()
+        presentedID = nil
+        presentCurrentPresentation()
     }
 
-    /// The loading manager of the scene was set, to `loadingManager`. The same manager again
-    /// keeps its HUD; another one replaces it; `nil` removes it.
-    package func loadingManagerDidChange<LM: DMLoadingManager>(to loadingManager: LM?) {
-        guard let loadingManager else {
-            currentManager = nil
-            presentedManager = nil
+    /// The HUD of the scene was set, to `presentation`. The same identity again keeps the HUD;
+    /// another one replaces it; `nil` removes it.
+    package func presentationDidChange(to presentation: HUDPresentation?) {
+        guard let presentation else {
+            currentPresentation = nil
+            presentedID = nil
             presenter?.dismiss()
             return
         }
-        currentManager = CurrentManager(id: ObjectIdentifier(loadingManager)) { presenter in
-            presenter.present(loadingManager)
-        }
-        presentCurrentManager()
+        currentPresentation = presentation
+        presentCurrentPresentation()
     }
 
-    /// The scene disconnected. Its HUD is removed; the manager is kept and shown again when a
-    /// scene connects.
+    /// The scene disconnected. Its HUD is removed; the presentation is kept and shown again when
+    /// a scene connects.
     package func sceneDidDisconnect() {
         presenter?.dismiss()
         presenter = nil
-        presentedManager = nil
+        presentedID = nil
     }
 
-    private func presentCurrentManager() {
-        guard let presenter, let currentManager, presentedManager != currentManager.id else {
+    private func presentCurrentPresentation() {
+        guard let presenter, let currentPresentation, presentedID != currentPresentation.id else {
             return
         }
-        currentManager.present(presenter)
-        presentedManager = currentManager.id
+        currentPresentation.show(presenter)
+        presentedID = currentPresentation.id
     }
 }
 

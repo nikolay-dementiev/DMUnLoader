@@ -4,9 +4,8 @@
 //  Created by Mykola Dementiev
 //
 
-/// Shows the HUD of the loading manager of one root view over the scene that view is in. The
-/// view reports where it moved; the HUD waits while the view is in no scene and follows it
-/// from scene to scene.
+/// Shows the HUD of one root view over the scene that view is in. The view reports where it
+/// moved; the HUD waits while the view is in no scene and follows it from scene to scene.
 @MainActor
 package final class RootViewHUDAttachment {
     private let lifecycle = HUDOverlayLifecycle()
@@ -15,10 +14,10 @@ package final class RootViewHUDAttachment {
 
     package init() {}
 
-    /// The root view was given `loadingManager`. Its HUD is shown over the scene of the view,
-    /// now or once the view is in one; another manager takes over the HUD.
-    package func loadingManagerDidChange<LM: DMLoadingManager>(to loadingManager: LM) {
-        lifecycle.loadingManagerDidChange(to: loadingManager)
+    /// The root view was given `presentation`. Its HUD is shown over the scene of the view, now or
+    /// once the view is in one; another identity takes over the HUD.
+    package func presentationDidChange(to presentation: HUDPresentation) {
+        lifecycle.presentationDidChange(to: presentation)
     }
 
     /// The root view moved into a window of `scene`, or, with `nil`, into no window of a

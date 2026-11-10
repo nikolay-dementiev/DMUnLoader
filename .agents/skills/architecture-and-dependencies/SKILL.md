@@ -19,11 +19,12 @@ format of [Documentation/Review/README.md](../../../Documentation/Review/README.
   `UI/` or the top level of the folder, or a type of `Presentation/` name a type of `Adapters/`,
   `UI/` or the top level; and a file of `Presentation/` that imports more than Foundation or reaches
   the system other than through the protocols of the folder. One exception is known:
-  `HUDOverlayLifecycle.swift`, `HUDOverlayPresenting.swift` and `RootViewHUDAttachment.swift`
-  constrain a generic parameter to `DMLoadingManager`. A fourth file that names a type of an
-  outer place is a finding, and so is a view model or a coordinator that names a loading manager
-  or a loadable state again. The folders are one module, so no import shows a breach and no lint
-  rule reports one.
+  `HUDOverlayPresenting.swift` constrains a generic parameter to `DMLoadingManager`. A second file
+  that names a type of an outer place is a finding, and so is a view model, a coordinator, the
+  lifecycle or the attachment that names a loading manager or a loadable state again. The lint
+  rule `presentation_names_no_manager` reports `DMLoadingManager`, `DMLoadableType` and
+  `DMLoadingManagerMain` in `Presentation/` outside that file; no lint rule reports another type of
+  an outer place, and the folders are one module, so no import shows a breach.
   (ENGINEERING.md, "The folders of `Sources/DMUnLoader` follow the dependency rule")
   (ENGINEERING.md, "It imports Foundation at most, which `Scripts/lint.sh` enforces with the custom
   rule `presentation_imports`")
@@ -56,7 +57,8 @@ format of [Documentation/Review/README.md](../../../Documentation/Review/README.
 ## What it ignores
 
 - What a CI script already enforces: `Scripts/lint.sh` and its rules (the imports of `Domain/`,
-  force unwraps, process termination, missing documentation, formatting),
+  the loading manager names of `Presentation/`, force unwraps, process termination, missing
+  documentation, formatting),
   `Scripts/check-lint-contract.sh`, `Scripts/check-wrappers.sh` and `Scripts/check-warnings.sh`.
 - `Scripts/check-manifest.sh`, which rejects a dependency required by branch or revision, a
   plugin, an unsafe flag and a read of the environment, and fails when a consumer would resolve a

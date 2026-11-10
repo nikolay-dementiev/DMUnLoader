@@ -1,0 +1,13 @@
+// Linted as a file of the Presentation folder: a comment, a string and a longer name do not name a
+// loading manager type, so no line expects a diagnostic.
+// DMLoadingManager in a comment
+/// DMLoadableType in a doc comment
+/* DMLoadingManagerMain in a block comment */
+let quoted = "DMLoadingManager in a string"
+let multiline = """
+DMLoadableType in a multiline string
+"""
+let longer = DMLoadingManagerSettings.self
+let prefixed = myDMLoadingManager
+let suffixed = DMLoadingManagerCount
+let myDMLoadableType = 1

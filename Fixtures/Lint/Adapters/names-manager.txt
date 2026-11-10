@@ -1,0 +1,4 @@
+// Linted as a file of the Adapters folder: the adapters are the layer that knows the loading manager,
+// so naming it is fine here. No line expects a diagnostic.
+func make<LM: DMLoadingManager>(_ value: LM) -> DMLoadingManagerMain? { nil }
+let state: DMLoadableType? = nil

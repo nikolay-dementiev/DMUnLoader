@@ -61,6 +61,22 @@ final class RootViewHUDAttachmentTests: XCTestCase {
         )
     }
 
+    func test_sameManagerInjectedAgain_keepsTheHUD() {
+        let sut = makeSUT()
+        let manager = DMLoadingManagerMain()
+        let scene = makeScene()
+        sut.viewDidMove(to: scene)
+        sut.loadingManagerDidChange(to: manager)
+
+        sut.loadingManagerDidChange(to: manager)
+
+        XCTAssertEqual(
+            scene.presented,
+            [ObjectIdentifier(manager)],
+            "an update that hands the view the manager it has keeps the HUD it shows"
+        )
+    }
+
     func test_otherManagerInjected_takesOverTheHUD() {
         let sut = makeSUT()
         let first = DMLoadingManagerMain()
