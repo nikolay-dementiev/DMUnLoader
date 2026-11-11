@@ -107,6 +107,19 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         )
     }
 
+    func test_connect_afterTheManagerWasSetAndThenRemoved_presentsNothing() {
+        let (sut, presenter) = makeSUT()
+        sut.loadingManagerDidChange(to: DMLoadingManagerMain())
+        sut.loadingManagerDidChange(to: DMLoadingManagerMain?.none)
+
+        sut.sceneDidConnect(presenter: presenter)
+
+        XCTAssertTrue(
+            presenter.presented.isEmpty,
+            "a manager that was taken away before the scene connected is not shown when it does"
+        )
+    }
+
     func test_otherManagerSet_afterAManagerWasShown_dismissesNothing() {
         let (sut, presenter) = makeSUT()
         sut.sceneDidConnect(presenter: presenter)
@@ -126,6 +139,22 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         sut.sceneDidConnect(presenter: secondPresenter)
 
         XCTAssertEqual(firstPresenter.dismissCount, 1, "a HUD is left behind by no presenter")
+    }
+
+    func test_secondConnect_withoutADisconnect_presentsTheManagerOnTheSecondPresenter() {
+        let (sut, firstPresenter) = makeSUT()
+        let secondPresenter = HUDOverlayPresenterSpy()
+        let manager = DMLoadingManagerMain()
+        sut.sceneDidConnect(presenter: firstPresenter)
+        sut.loadingManagerDidChange(to: manager)
+
+        sut.sceneDidConnect(presenter: secondPresenter)
+
+        XCTAssertEqual(
+            secondPresenter.presented.map(ObjectIdentifier.init),
+            [ObjectIdentifier(manager)],
+            "a connect starts over: the manager that the first presenter showed is shown by the second"
+        )
     }
 
     func test_sceneDidDisconnect_afterAManagerWasShown_removesTheHUD() {
@@ -178,6 +207,64 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         XCTAssertEqual(secondPresenter.dismissCount, 0, "each scene has a lifecycle and a HUD of its own")
     }
 
+    // MARK: - Presentations built by hand
+    //
+    // The lifecycle sees an identity and an action, never the owner behind them. These tests give it
+    // exactly that, so they hold for any maker of presentations, not only for a loading manager.
+
+    func test_presentationOfTheSameID_setAgain_isNotShownAgain() {
+        let (sut, presenter) = makeSUT()
+        let recorder = ShowRecorder()
+        let owner = Owner()
+        sut.sceneDidConnect(presenter: presenter)
+        sut.presentationDidChange(to: recorder.presentation(of: owner, named: "first"))
+
+        sut.presentationDidChange(to: recorder.presentation(of: owner, named: "second"))
+
+        XCTAssertEqual(
+            recorder.shown.map(\.name),
+            ["first"],
+            "the identity decides: the same one again keeps the HUD, whatever action comes with it"
+        )
+    }
+
+    func test_presentationOfAnotherID_setAfterOne_isShown() {
+        let (sut, presenter) = makeSUT()
+        let recorder = ShowRecorder()
+        let firstOwner = Owner()
+        let secondOwner = Owner()
+        sut.sceneDidConnect(presenter: presenter)
+        sut.presentationDidChange(to: recorder.presentation(of: firstOwner, named: "first"))
+
+        sut.presentationDidChange(to: recorder.presentation(of: secondOwner, named: "second"))
+
+        XCTAssertEqual(recorder.shown.map(\.name), ["first", "second"], "another identity takes over the HUD")
+    }
+
+    func test_reconnect_afterTheSameIDWasSetTwice_showsTheLatestPresentationThroughTheNewPresenter() {
+        let (sut, firstPresenter) = makeSUT()
+        let secondPresenter = HUDOverlayPresenterSpy()
+        let recorder = ShowRecorder()
+        let owner = Owner()
+        sut.sceneDidConnect(presenter: firstPresenter)
+        sut.presentationDidChange(to: recorder.presentation(of: owner, named: "first"))
+        sut.presentationDidChange(to: recorder.presentation(of: owner, named: "second"))
+        sut.sceneDidDisconnect()
+
+        sut.sceneDidConnect(presenter: secondPresenter)
+
+        XCTAssertEqual(
+            recorder.shown.map(\.name),
+            ["first", "second"],
+            "the same identity is not shown again while connected; a reconnect shows the latest presentation of it"
+        )
+        XCTAssertEqual(
+            recorder.shown.map(\.presenter),
+            [ObjectIdentifier(firstPresenter), ObjectIdentifier(secondPresenter)],
+            "each connect shows the HUD through its own presenter, and the first is not asked again"
+        )
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(
@@ -188,5 +275,29 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         let presenter = HUDOverlayPresenterSpy()
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, presenter)
+    }
+}
+
+// MARK: - Doubles for the presentations built by hand
+
+private final class Owner {}
+
+/// Makes presentations that record, when shown, their name and the presenter they were given.
+@MainActor
+private final class ShowRecorder {
+    struct Show {
+        let name: String
+        let presenter: ObjectIdentifier
+    }
+
+    private(set) var shown: [Show] = []
+
+    /// Holds `owner` as the adapter of a loading manager does, so its identity stays its own while
+    /// the presentation lives.
+    func presentation(of owner: Owner, named name: String) -> HUDPresentation {
+        HUDPresentation(id: ObjectIdentifier(owner)) { [self, owner] presenter in
+            _ = owner
+            shown.append(Show(name: name, presenter: ObjectIdentifier(presenter)))
+        }
     }
 }
