@@ -234,13 +234,16 @@ final class DMLoadingViewTests: XCTestCase {
     func test_card_takesTheLookOfTheProviderOfTheState() throws {
         let accessibleProvider = DefaultDMLoadingViewProvider(appearance: .accessible).eraseToAnyViewProvider()
         let standardProvider = DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+        let viewModel = HUDViewModelSpy(showsHUD: true)
         let accessible = DMLoadingView(
             loadingManager: StubDMLoadingManager(loadableState: .success("Done", provider: accessibleProvider)),
-            viewModel: HUDViewModelSpy(showsHUD: true)
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
         )
         let standard = DMLoadingView(
             loadingManager: StubDMLoadingManager(loadableState: .success("Done", provider: standardProvider)),
-            viewModel: HUDViewModelSpy(showsHUD: true)
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
         )
 
         XCTAssertEqual(
@@ -258,7 +261,11 @@ final class DMLoadingViewTests: XCTestCase {
     func test_tapOnTheCard_isReportedToItsViewModel() throws {
         let viewModel = HUDViewModelSpy(showsHUD: true)
         let success = DMLoadableType.success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
-        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: success), viewModel: viewModel)
+        let sut = DMLoadingView(
+            loadingManager: StubDMLoadingManager(loadableState: success),
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
+        )
         
         try cardOf(sut).callOnTapGesture()
         
@@ -268,33 +275,106 @@ final class DMLoadingViewTests: XCTestCase {
     func test_tapOutsideTheCard_isReportedToItsViewModel() throws {
         let viewModel = HUDViewModelSpy(showsHUD: true)
         let success = DMLoadableType.success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
-        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: success), viewModel: viewModel)
+        let sut = DMLoadingView(
+            loadingManager: StubDMLoadingManager(loadableState: success),
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
+        )
         
         try backdropOf(sut).callOnTapGesture()
         
         XCTAssertEqual(viewModel.calls, [.backdropTapped], "a tap outside the card goes to the view model as a backdrop tap")
     }
     
-    func test_closeOnAFailure_isReportedToItsViewModel() throws {
+    func test_closeOnAFailure_runsTheCommandOfTheFactory() throws {
         let viewModel = HUDViewModelSpy(showsHUD: true)
         let failure = DMLoadableType.failure(
             error: DMAppError.custom("failed"),
             provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
         )
-        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: failure), viewModel: viewModel)
+        let sut = DMLoadingView(
+            loadingManager: StubDMLoadingManager(loadableState: failure),
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
+        )
         
         try sut.inspect().find(button: "Close").tap()
         
-        XCTAssertEqual(viewModel.calls, [.closeTapped], "Close on a failure goes to the view model of the view")
+        XCTAssertEqual(
+            viewModel.calls,
+            [.closeTapped],
+            "Close on a failure runs the command that the factory made, which here reports to the view model"
+        )
+    }
+    
+    // MARK: - Close command
+    
+    func test_errorView_evaluatedAgain_callsTheFactoryOncePerEvaluationAndHandsOnWhatItMade() {
+        let provider = ErrorViewProviderSpy()
+        let erased = provider.eraseToAnyViewProvider()
+        let factory = CloseCommandFactorySpy()
+        let error = DMAppError.custom("failed")
+        let manager = StubDMLoadingManager(loadableState: .failure(error: error, provider: erased))
+        // Hosted, so that the view keeps what SwiftUI keeps of a view between its evaluations.
+        ViewHosting.host(
+            view: DMLoadingView(
+                loadingManager: manager,
+                viewModel: HUDViewModelSpy(showsHUD: true),
+                makeCloseCommand: { factory.make() }
+            )
+        )
+        defer { ViewHosting.expel() }
+        XCTAssertTrue(
+            turnRunLoop(until: !provider.closeIDs.isEmpty, timeout: TestTiming.callbackAllowance),
+            "the view asked the provider for the error view within the callback allowance"
+        )
+        let evaluationsSoFar = provider.closeIDs.count
+        
+        // How often SwiftUI evaluates the view is its own business, so the count is not asserted: the
+        // test waits until the view has asked the provider once more, whatever asked for it, and then
+        // compares what the factory made with what the provider was handed.
+        manager.showFailure(error, provider: erased, onRetry: nil)
+        XCTAssertTrue(
+            turnRunLoop(until: provider.closeIDs.count > evaluationsSoFar, timeout: TestTiming.callbackAllowance),
+            "the view asked the provider again"
+        )
+        
+        XCTAssertEqual(
+            provider.closeIDs,
+            factory.made.map(\.id),
+            "each evaluation called the factory once and was handed the command that call made, in order"
+        )
+    }
+    
+    func test_stateOtherThanAFailure_evaluated_doesNotCallTheFactory() throws {
+        let factory = CloseCommandFactorySpy()
+        let provider = DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+        let states: [DMLoadableType] = [.none, .loading(provider: provider), .success("Done", provider: provider)]
+        
+        for state in states {
+            let sut = DMLoadingView(
+                loadingManager: StubDMLoadingManager(loadableState: state),
+                viewModel: HUDViewModelSpy(showsHUD: true),
+                makeCloseCommand: { factory.make() }
+            )
+            _ = try cardOf(sut)
+        }
+        
+        XCTAssertTrue(
+            factory.made.isEmpty,
+            "only the error view of a failure takes a Close command, so no other state asks for one"
+        )
     }
     
     // MARK: - Helpers
     
     private func makeSUT<LM: DMLoadingManager>(manager loadingManager: LM) -> DMLoadingView<LM> {
         
+        let viewModel = DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager))
         let sut = DMLoadingView(
             loadingManager: loadingManager,
-            viewModel: DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager))
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
         )
         
         trackForMemoryLeaks(loadingManager)
@@ -427,5 +507,28 @@ private final class HUDViewModelSpy: HUDViewModel {
     
     func closeTapped() {
         calls.append(.closeTapped)
+    }
+}
+
+/// Makes Close commands for a view and records each one it made, in the order it made them.
+@MainActor
+private final class CloseCommandFactorySpy {
+    private(set) var made: [DMButtonAction] = []
+    
+    func make() -> DMButtonAction {
+        let command = DMButtonAction {}
+        made.append(command)
+        return command
+    }
+}
+
+/// Records the Close command of every error view it is asked for.
+@MainActor
+private final class ErrorViewProviderSpy: @MainActor DMLoadingViewProvider {
+    private(set) var closeIDs: [UUID] = []
+    
+    func getErrorView(error: any Error, onRetry: (any DMAction)?, onClose: any DMAction) -> Color {
+        closeIDs.append(onClose.id)
+        return Color.clear
     }
 }

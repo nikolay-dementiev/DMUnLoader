@@ -11,17 +11,30 @@ import SwiftUI
 struct DMLoadingView<LLM: DMLoadingManager>: View {
     @ObservedObject private(set) var loadingManager: LLM
     private let viewModel: any HUDViewModel
+    private let makeCloseCommand: @MainActor () -> DMButtonAction
     @State private var animateTheAppearance = false
     @Environment(\.hudReducesMotion) private var reducesMotion
     private let dim: HUDBackdropDrawing.Dim
 
     /// - Parameters:
     ///   - viewModel: Decides what the view shows of the state of `loadingManager` and what a
-    ///     tap and Close do. The view observes `loadingManager` to draw its changes.
+    ///     tap does. The view observes `loadingManager` to draw its changes.
+    ///   - makeCloseCommand: Makes the command that the view hands the provider as `onClose` of the
+    ///     error view of a failure. The view calls it once each time it builds that error view, and in
+    ///     no other state. SwiftUI decides how often the view is built, so the factory must have no
+    ///     side effects. A provider can tell the commands it is handed apart by their `id`, and each
+    ///     build has always been handed a new one, so the factory should return a new command on each
+    ///     call. The view holds the factory for as long as it lives, and what the factory captures too.
     ///   - dim: The dim of the backdrop, faded in with the card.
-    init(loadingManager: LLM, viewModel: any HUDViewModel, dim: HUDBackdropDrawing.Dim = .standard) {
+    init(
+        loadingManager: LLM,
+        viewModel: any HUDViewModel,
+        makeCloseCommand: @escaping @MainActor () -> DMButtonAction,
+        dim: HUDBackdropDrawing.Dim = .standard
+    ) {
         self.loadingManager = loadingManager
         self.viewModel = viewModel
+        self.makeCloseCommand = makeCloseCommand
         self.dim = dim
     }
     
@@ -37,7 +50,7 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
             provider.getErrorView(
                 error: error,
                 onRetry: onRetry,
-                onClose: DMButtonAction(viewModel.closeTapped)
+                onClose: makeCloseCommand()
             )
         case let .success(object, provider):
             provider.getSuccessView(object: object)
@@ -155,7 +168,12 @@ private func loadingViewPreview(
 ) -> some View {
     let state = state(DefaultDMLoadingViewProvider(appearance: appearance).eraseToAnyViewProvider())
     let manager = DMLoadingManagerMain(state: state, settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600)))
-    return DMLoadingView(loadingManager: manager, viewModel: DefaultHUDViewModel(model: LoadingManagerHUDModel(manager)))
+    let viewModel = DefaultHUDViewModel(model: LoadingManagerHUDModel(manager))
+    return DMLoadingView(
+        loadingManager: manager,
+        viewModel: viewModel,
+        makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
+    )
 }
 
 #Preview("Loading") {
