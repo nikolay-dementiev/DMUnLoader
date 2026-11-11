@@ -4,7 +4,9 @@
 //  Created by Mykola Dementiev
 //
 
+import SwiftUI
 import UIKit
+import ViewInspector
 import XCTest
 import DMUnLoader
 
@@ -98,6 +100,23 @@ final class OverlayWindowPresenterTests: XCTestCase {
 
         XCTAssertTrue(released, "the escape handler of the window held the manager that the window had replaced")
         XCTAssertFalse(handlerOfFirst(), "the handler of a manager that is gone reports that nothing went")
+    }
+
+    // MARK: - The root view of the window
+
+    func test_rootView_appliesTheSystemAccessibilitySettings() throws {
+        guard let sut = makeSUT(state: Self.success, settings: Self.settings(), announcer: AccessibilitySpy()),
+              let hosting = sut.window?.rootViewController as? UIHostingController<AnyView> else {
+            XCTFail("The HUD window has a hosting controller of an AnyView.")
+            return
+        }
+
+        let sceneView = try hosting.rootView.inspect().anyView().view(DMHudSceneView<HostLoadingManagerSpy>.self)
+
+        XCTAssertNoThrow(
+            try sceneView.modifier(SystemAccessibilitySettings.self),
+            "the view in the window takes Reduce Motion and Reduce Transparency from the system"
+        )
     }
 
     // MARK: - A HUD that comes after a dismiss
