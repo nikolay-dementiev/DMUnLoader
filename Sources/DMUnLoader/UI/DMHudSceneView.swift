@@ -40,9 +40,11 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
                 blur: blurValues,
                 onBackdropFailure: onBackdropFailure
             ) {
+                let viewModel = DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager))
                 DMLoadingView(
                     loadingManager: loadingManager,
-                    viewModel: DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager)),
+                    viewModel: viewModel,
+                    makeCloseCommand: { DMButtonAction(viewModel.closeTapped) },
                     dim: backdrop.dim
                 )
             }

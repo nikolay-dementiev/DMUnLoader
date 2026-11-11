@@ -234,13 +234,16 @@ final class DMLoadingViewTests: XCTestCase {
     func test_card_takesTheLookOfTheProviderOfTheState() throws {
         let accessibleProvider = DefaultDMLoadingViewProvider(appearance: .accessible).eraseToAnyViewProvider()
         let standardProvider = DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+        let viewModel = HUDViewModelSpy(showsHUD: true)
         let accessible = DMLoadingView(
             loadingManager: StubDMLoadingManager(loadableState: .success("Done", provider: accessibleProvider)),
-            viewModel: HUDViewModelSpy(showsHUD: true)
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
         )
         let standard = DMLoadingView(
             loadingManager: StubDMLoadingManager(loadableState: .success("Done", provider: standardProvider)),
-            viewModel: HUDViewModelSpy(showsHUD: true)
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
         )
 
         XCTAssertEqual(
@@ -258,7 +261,11 @@ final class DMLoadingViewTests: XCTestCase {
     func test_tapOnTheCard_isReportedToItsViewModel() throws {
         let viewModel = HUDViewModelSpy(showsHUD: true)
         let success = DMLoadableType.success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
-        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: success), viewModel: viewModel)
+        let sut = DMLoadingView(
+            loadingManager: StubDMLoadingManager(loadableState: success),
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
+        )
         
         try cardOf(sut).callOnTapGesture()
         
@@ -268,7 +275,11 @@ final class DMLoadingViewTests: XCTestCase {
     func test_tapOutsideTheCard_isReportedToItsViewModel() throws {
         let viewModel = HUDViewModelSpy(showsHUD: true)
         let success = DMLoadableType.success("Done", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
-        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: success), viewModel: viewModel)
+        let sut = DMLoadingView(
+            loadingManager: StubDMLoadingManager(loadableState: success),
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
+        )
         
         try backdropOf(sut).callOnTapGesture()
         
@@ -281,7 +292,11 @@ final class DMLoadingViewTests: XCTestCase {
             error: DMAppError.custom("failed"),
             provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
         )
-        let sut = DMLoadingView(loadingManager: StubDMLoadingManager(loadableState: failure), viewModel: viewModel)
+        let sut = DMLoadingView(
+            loadingManager: StubDMLoadingManager(loadableState: failure),
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
+        )
         
         try sut.inspect().find(button: "Close").tap()
         
@@ -292,9 +307,11 @@ final class DMLoadingViewTests: XCTestCase {
     
     private func makeSUT<LM: DMLoadingManager>(manager loadingManager: LM) -> DMLoadingView<LM> {
         
+        let viewModel = DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager))
         let sut = DMLoadingView(
             loadingManager: loadingManager,
-            viewModel: DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager))
+            viewModel: viewModel,
+            makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
         )
         
         trackForMemoryLeaks(loadingManager)
