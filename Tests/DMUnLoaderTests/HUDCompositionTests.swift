@@ -62,6 +62,27 @@ final class HUDCompositionTests: XCTestCase {
         XCTAssertEqual(sut.windowLevel, .alert, "the composition read the settings of the moment it was asked")
     }
 
+    // MARK: - What the composition holds
+
+    func test_composition_afterTheCallerLetGoOfTheManager_stillReadsIt() {
+        var manager: HostLoadingManagerSpy? = HostLoadingManagerSpy(
+            loadableState: Self.success,
+            settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600), hudWindowLevel: .alert)
+        )
+        let isReleased = { [weak held = manager] in held == nil }
+        var sut: HUDComposition? = manager.map { HUDComposition($0) }
+
+        // Once the caller lets go, nothing but the composition holds the manager, as when a lifecycle
+        // keeps the composition of a manager that was set before its scene connected.
+        manager = nil
+
+        XCTAssertFalse(isReleased(), "the composition holds the manager that it was made from")
+        XCTAssertEqual(sut?.showsHUD, true, "the composition still reads the state of the manager that nothing else holds")
+        XCTAssertEqual(sut?.windowLevel, .alert, "the composition still reads the settings of that manager")
+        sut = nil
+        XCTAssertTrue(isReleased(), "the composition is the only holder: the manager goes with it")
+    }
+
     // MARK: - Helpers
 
     /// A composition over `manager`. The composition holds the manager strongly, so the manager is
