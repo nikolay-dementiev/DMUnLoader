@@ -1,4 +1,0 @@
-// Linted as Presentation/HUDOverlayPresenting.swift, the one file the rule leaves out: the port of
-// the HUD still takes the loading manager as a generic argument until a later step moves that out.
-// No line expects a diagnostic.
-func present<LM: DMLoadingManager>(_ loadingManager: LM) {}

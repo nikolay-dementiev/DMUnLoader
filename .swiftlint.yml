@@ -103,13 +103,10 @@ custom_rules:
   presentation_names_no_manager:
     name: "Presentation names no loading manager"
     # The Presentation layer takes what it shows as a HUDPresentation, so it does not name the
-    # loading manager types; the adapter that makes the value does. The one exception is the port
-    # of the HUD, HUDOverlayPresenting.swift directly in the folder, which still takes the manager
-    # as a generic argument until a later step moves that out. Both patterns are matched against
-    # the absolute path. A comment, a string and a longer name such as DMLoadingManagerSettings do
-    # not match.
+    # loading manager types; the adapter that makes the value does. No file is left out. The
+    # pattern is matched against the absolute path. A comment, a string and a longer name such as
+    # DMLoadingManagerSettings do not match.
     included: ".*/Sources/DMUnLoader/Presentation/.*\\.swift"
-    excluded: ".*/Sources/DMUnLoader/Presentation/HUDOverlayPresenting\\.swift"
     regex: '\b(DMLoadingManager|DMLoadableType|DMLoadingManagerMain)\b'
     match_kinds: [identifier, typeidentifier]
     message: "The Presentation folder names no loading manager type: take a HUDPresentation and let an adapter make it."
