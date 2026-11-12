@@ -130,6 +130,31 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         XCTAssertEqual(presenter.dismissCount, 0, "the new manager takes over the HUD: nothing is removed")
     }
 
+    func test_otherManagerSet_afterAManagerWasShown_releasesTheFirstAndPresentsTheSecond() {
+        let sut = HUDOverlayLifecycle<HUDComposition>()
+        let presenter = IdentityOnlyPresenter()
+        trackForMemoryLeaks(sut)
+        trackForMemoryLeaks(presenter)
+        var first: DMLoadingManagerMain? = DMLoadingManagerMain()
+        let firstIsReleased = { [weak held = first] in held == nil }
+        let second = DMLoadingManagerMain()
+        sut.sceneDidConnect(presenter: presenter)
+        sut.loadingManagerDidChange(to: first)
+        let presentedFirst = presenter.presentedIDs
+        // Once this reference is gone, nothing but the lifecycle holds the first manager: the presenter keeps none.
+        first = nil
+        XCTAssertFalse(firstIsReleased(), "the lifecycle holds the manager whose HUD is shown")
+
+        sut.loadingManagerDidChange(to: second)
+
+        XCTAssertTrue(firstIsReleased(), "the lifecycle let go of the manager that the other one replaced")
+        XCTAssertEqual(
+            presenter.presentedIDs,
+            presentedFirst + [ObjectIdentifier(second)],
+            "the second manager is the one presented in place of the first"
+        )
+    }
+
     func test_secondConnect_withoutADisconnect_removesTheHUDOfTheFirstPresenter() {
         let (sut, firstPresenter) = makeSUT()
         let secondPresenter = HUDOverlayPresenterSpy()
@@ -288,6 +313,24 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, ShowRecorder())
     }
+}
+
+// MARK: - Doubles
+
+/// Records the identity of every presentation it is asked to show and keeps nothing else, unlike
+/// `HUDOverlayPresenterSpy`, which keeps the presentations and so the managers behind them. What stays
+/// alive after the lifecycle lets go of a manager is then the lifecycle's own doing.
+@MainActor
+private final class IdentityOnlyPresenter: HUDOverlayPresenting {
+    typealias Content = HUDComposition
+
+    private(set) var presentedIDs: [ObjectIdentifier] = []
+
+    func present(_ presentation: HUDPresentation<HUDComposition>) {
+        presentedIDs.append(presentation.id)
+    }
+
+    func dismiss() {}
 }
 
 // MARK: - Doubles for the presentations built by hand

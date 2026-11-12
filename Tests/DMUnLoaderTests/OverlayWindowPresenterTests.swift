@@ -155,6 +155,21 @@ final class OverlayWindowPresenterTests: XCTestCase {
         )
     }
 
+    // MARK: - A presentation that was made before it was presented
+
+    func test_present_aPresentationMadeBeforeTheManagerShowedAnything_showsTheStateAndTheLevelOfTheMomentOfPresenting() {
+        let manager = HostLoadingManagerSpy(loadableState: .none, settings: Self.settings())
+        let presentation = HUDPresentation(manager)
+        // The manager changes after the presentation is made, as one does that is set before it has a HUD to show.
+        manager.set(Self.success)
+        manager.replaceSettings(with: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600), hudWindowLevel: .alert))
+
+        guard let sut = makeSUT(presenting: manager, presentation: presentation, announcer: AccessibilitySpy()) else { return }
+
+        XCTAssertEqual(sut.window?.interceptsTouches, true, "the window shows the success of the moment of presenting")
+        XCTAssertEqual(sut.window?.windowLevel, .alert, "the window takes the level that the settings had when it was presented")
+    }
+
     // MARK: - What the HUD announces for a state that changes
 
     func test_anotherFailureInTheSamePhase_postsScreenChangedAgain() {
@@ -243,15 +258,31 @@ final class OverlayWindowPresenterTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Fixture? {
+        let manager = HostLoadingManagerSpy(loadableState: state, settings: settings, hideClearsState: hideClearsState)
+        return makeSUT(presenting: manager, announcer: announcer, file: file, line: line)
+    }
+
+    /// The same, for a manager that the test made and set up. The presenter shows `presentation` when the
+    /// test made one before, and the HUD of `manager` as it is when the test did not.
+    private func makeSUT(
+        presenting manager: HostLoadingManagerSpy,
+        presentation: HUDPresentation<HUDComposition>? = nil,
+        announcer: AccessibilitySpy,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Fixture? {
         // The frame does not matter: the HUD takes the size of the scene, not of this window.
         let probe = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         guard let scene = probe.windowScene else {
             XCTFail("A window made by UIWindow(frame:) belongs to no window scene.", file: file, line: line)
             return nil
         }
-        let manager = HostLoadingManagerSpy(loadableState: state, settings: settings, hideClearsState: hideClearsState)
         let presenter = OverlayWindowPresenter(windowScene: scene, announcer: announcer)
-        presenter.present(manager)
+        if let presentation {
+            presenter.present(presentation)
+        } else {
+            presenter.present(manager)
+        }
         // The presenter is held strongly on purpose: a weak reference would be gone when the test method
         // returns, and the HUD window would stay in its scene.
         addTeardownBlock {

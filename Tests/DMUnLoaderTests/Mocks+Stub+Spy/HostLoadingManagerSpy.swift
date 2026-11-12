@@ -14,7 +14,7 @@ import DMUnLoader
 /// `hide()` leaves the state as it is, like a manager that refuses to hide, unless `hideClearsState` is set.
 @MainActor
 final class HostLoadingManagerSpy: DMLoadingManager {
-    let settings: any DMLoadingManagerSettings
+    private(set) var settings: any DMLoadingManagerSettings
     private(set) var loadableState: DMLoadableType
     private(set) var hideCount = 0
     private let hideClearsState: Bool
@@ -58,6 +58,11 @@ final class HostLoadingManagerSpy: DMLoadingManager {
     func set(_ state: DMLoadableType) {
         objectWillChange.send()
         loadableState = state
+    }
+
+    /// Replaces the settings, as a manager does whose settings come from a place that changes.
+    func replaceSettings(with settings: any DMLoadingManagerSettings) {
+        self.settings = settings
     }
 
     /// Announces a change and makes none, as a manager does that sends `objectWillChange` for nothing.
