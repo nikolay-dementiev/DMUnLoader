@@ -20,7 +20,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         sut.loadingManagerDidChange(to: manager)
 
         XCTAssertEqual(
-            presenter.presented.map(ObjectIdentifier.init),
+            presenter.presentedIDs,
             [ObjectIdentifier(manager)],
             "one presentation of that manager"
         )
@@ -34,7 +34,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
 
         sut.loadingManagerDidChange(to: manager)
 
-        XCTAssertEqual(presenter.presented.count, 1, "the HUD of that manager is already shown: nothing is built again")
+        XCTAssertEqual(presenter.presentedIDs.count, 1, "the HUD of that manager is already shown: nothing is built again")
     }
 
     func test_connect_afterTheManagerWasSet_presentsIt() {
@@ -45,7 +45,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         sut.sceneDidConnect(presenter: presenter)
 
         XCTAssertEqual(
-            presenter.presented.map(ObjectIdentifier.init),
+            presenter.presentedIDs,
             [ObjectIdentifier(manager)],
             "a manager set before the scene connected is shown once it connects"
         )
@@ -59,7 +59,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         sut.sceneDidConnect(presenter: presenter)
 
         XCTAssertEqual(
-            presenter.presented.count,
+            presenter.presentedIDs.count,
             1,
             "a manager that only the lifecycle holds is still shown once the scene connects"
         )
@@ -85,7 +85,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         sut.loadingManagerDidChange(to: second)
 
         XCTAssertEqual(
-            presenter.presented.map(ObjectIdentifier.init),
+            presenter.presentedIDs,
             [ObjectIdentifier(first), ObjectIdentifier(second)],
             "a replaced manager has its HUD presented in place of the first"
         )
@@ -101,7 +101,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         sut.loadingManagerDidChange(to: manager)
 
         XCTAssertEqual(
-            presenter.presented.map(ObjectIdentifier.init),
+            presenter.presentedIDs,
             [ObjectIdentifier(manager), ObjectIdentifier(manager)],
             "a manager set again after nil gets its HUD back"
         )
@@ -115,7 +115,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         sut.sceneDidConnect(presenter: presenter)
 
         XCTAssertTrue(
-            presenter.presented.isEmpty,
+            presenter.presentedIDs.isEmpty,
             "a manager that was taken away before the scene connected is not shown when it does"
         )
     }
@@ -151,7 +151,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         sut.sceneDidConnect(presenter: secondPresenter)
 
         XCTAssertEqual(
-            secondPresenter.presented.map(ObjectIdentifier.init),
+            secondPresenter.presentedIDs,
             [ObjectIdentifier(manager)],
             "a connect starts over: the manager that the first presenter showed is shown by the second"
         )
@@ -174,7 +174,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
 
         sut.loadingManagerDidChange(to: DMLoadingManagerMain())
 
-        XCTAssertTrue(presenter.presented.isEmpty, "a disconnected scene shows no HUD")
+        XCTAssertTrue(presenter.presentedIDs.isEmpty, "a disconnected scene shows no HUD")
     }
 
     func test_reconnect_afterADisconnect_presentsTheManagerOnTheNewScene() {
@@ -188,7 +188,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         sut.sceneDidConnect(presenter: secondScene)
 
         XCTAssertEqual(
-            secondScene.presented.map(ObjectIdentifier.init),
+            secondScene.presentedIDs,
             [ObjectIdentifier(manager)],
             "the manager comes back with the scene"
         )
@@ -209,12 +209,13 @@ final class HUDOverlayLifecycleTests: XCTestCase {
 
     // MARK: - Presentations built by hand
     //
-    // The lifecycle sees an identity and an action, never the owner behind them. These tests give it
-    // exactly that, so they hold for any maker of presentations, not only for a loading manager.
+    // The lifecycle sees an identity and a content, never the owner behind them. These tests give it
+    // exactly that, with a name for a content, so they hold for any maker of presentations, not only
+    // for a loading manager.
 
     func test_presentationOfTheSameID_setAgain_isNotShownAgain() {
-        let (sut, presenter) = makeSUT()
-        let recorder = ShowRecorder()
+        let (sut, recorder) = makeNamedSUT()
+        let presenter = recorder.makePresenter()
         let owner = Owner()
         sut.sceneDidConnect(presenter: presenter)
         sut.presentationDidChange(to: recorder.presentation(of: owner, named: "first"))
@@ -229,8 +230,8 @@ final class HUDOverlayLifecycleTests: XCTestCase {
     }
 
     func test_presentationOfAnotherID_setAfterOne_isShown() {
-        let (sut, presenter) = makeSUT()
-        let recorder = ShowRecorder()
+        let (sut, recorder) = makeNamedSUT()
+        let presenter = recorder.makePresenter()
         let firstOwner = Owner()
         let secondOwner = Owner()
         sut.sceneDidConnect(presenter: presenter)
@@ -242,9 +243,9 @@ final class HUDOverlayLifecycleTests: XCTestCase {
     }
 
     func test_reconnect_afterTheSameIDWasSetTwice_showsTheLatestPresentationThroughTheNewPresenter() {
-        let (sut, firstPresenter) = makeSUT()
-        let secondPresenter = HUDOverlayPresenterSpy()
-        let recorder = ShowRecorder()
+        let (sut, recorder) = makeNamedSUT()
+        let firstPresenter = recorder.makePresenter()
+        let secondPresenter = recorder.makePresenter()
         let owner = Owner()
         sut.sceneDidConnect(presenter: firstPresenter)
         sut.presentationDidChange(to: recorder.presentation(of: owner, named: "first"))
@@ -270,11 +271,22 @@ final class HUDOverlayLifecycleTests: XCTestCase {
     private func makeSUT(
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (sut: HUDOverlayLifecycle, presenter: HUDOverlayPresenterSpy) {
-        let sut = HUDOverlayLifecycle()
+    ) -> (sut: HUDOverlayLifecycle<HUDComposition>, presenter: HUDOverlayPresenterSpy) {
+        let sut = HUDOverlayLifecycle<HUDComposition>()
         let presenter = HUDOverlayPresenterSpy()
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, presenter)
+    }
+
+    /// A lifecycle over the named contents of the hand-built presentations, with the recorder whose
+    /// presenters it is connected to.
+    private func makeNamedSUT(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (sut: HUDOverlayLifecycle<NamedContent>, recorder: ShowRecorder) {
+        let sut = HUDOverlayLifecycle<NamedContent>()
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return (sut, ShowRecorder())
     }
 }
 
@@ -282,7 +294,14 @@ final class HUDOverlayLifecycleTests: XCTestCase {
 
 private final class Owner {}
 
-/// Makes presentations that record, when shown, their name and the presenter they were given.
+/// The content of a presentation built by hand: a name, and the owner it holds as the content made for
+/// a loading manager holds the manager, so the identity stays its own while the presentation lives.
+private struct NamedContent {
+    let name: String
+    let owner: Owner
+}
+
+/// Records, for every presentation that its presenters are asked to show, its name and the presenter.
 @MainActor
 private final class ShowRecorder {
     struct Show {
@@ -292,12 +311,32 @@ private final class ShowRecorder {
 
     private(set) var shown: [Show] = []
 
-    /// Holds `owner` as the adapter of a loading manager does, so its identity stays its own while
-    /// the presentation lives.
-    func presentation(of owner: Owner, named name: String) -> HUDPresentation {
-        HUDPresentation(id: ObjectIdentifier(owner)) { [self, owner] presenter in
-            _ = owner
-            shown.append(Show(name: name, presenter: ObjectIdentifier(presenter)))
-        }
+    func makePresenter() -> NamedContentPresenter {
+        NamedContentPresenter(recorder: self)
     }
+
+    func presentation(of owner: Owner, named name: String) -> HUDPresentation<NamedContent> {
+        HUDPresentation(id: ObjectIdentifier(owner), content: NamedContent(name: name, owner: owner))
+    }
+
+    fileprivate func record(_ presentation: HUDPresentation<NamedContent>, shownBy presenter: NamedContentPresenter) {
+        shown.append(Show(name: presentation.content.name, presenter: ObjectIdentifier(presenter)))
+    }
+}
+
+@MainActor
+private final class NamedContentPresenter: HUDOverlayPresenting {
+    typealias Content = NamedContent
+
+    private let recorder: ShowRecorder
+
+    init(recorder: ShowRecorder) {
+        self.recorder = recorder
+    }
+
+    func present(_ presentation: HUDPresentation<NamedContent>) {
+        recorder.record(presentation, shownBy: self)
+    }
+
+    func dismiss() {}
 }

@@ -6,15 +6,23 @@
 
 import DMUnLoader
 
-/// Records the loading managers whose HUD a lifecycle asks to present, in order.
+/// Records the presentations whose HUD a lifecycle asks to present, in order. It keeps each one, so a
+/// manager that a presentation holds stays alive for as long as the spy does.
 @MainActor
 final class HUDOverlayPresenterSpy: HUDOverlayPresenting {
-    private(set) var presented: [AnyObject] = []
+    typealias Content = HUDComposition
+
+    private(set) var presentations: [HUDPresentation<HUDComposition>] = []
 
     private(set) var dismissCount = 0
 
-    func present<LM: DMLoadingManager>(_ loadingManager: LM) {
-        presented.append(loadingManager)
+    /// The identities of the presentations, in order: those of the managers that were presented.
+    var presentedIDs: [ObjectIdentifier] {
+        presentations.map(\.id)
+    }
+
+    func present(_ presentation: HUDPresentation<HUDComposition>) {
+        presentations.append(presentation)
     }
 
     func dismiss() {

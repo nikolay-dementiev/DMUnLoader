@@ -10,6 +10,8 @@ import UIKit
 /// Shows the HUD in a window of its own, above the other windows of one scene.
 @MainActor
 package final class OverlayWindowPresenter: HUDOverlayPresenting {
+    package typealias Content = HUDComposition
+
     // A var: `weak let` needs Swift 6.3, and the floor compiler (Xcode 26.0.1) is Swift 6.2.
     private weak var windowScene: UIWindowScene?
     private let announcer: any AccessibilityAnnouncer
@@ -32,7 +34,12 @@ package final class OverlayWindowPresenter: HUDOverlayPresenting {
         self.announcer = announcer
     }
 
+    /// Shows the HUD of `loadingManager`, as `present(_:)` of a presentation made of it.
     package func present<LM: DMLoadingManager>(_ loadingManager: LM) {
+        present(HUDPresentation(loadingManager))
+    }
+
+    package func present(_ presentation: HUDPresentation<HUDComposition>) {
         guard let windowScene else {
             return
         }
@@ -51,7 +58,7 @@ package final class OverlayWindowPresenter: HUDOverlayPresenting {
         self.accessibility = accessibility
         // The window knows the state before it becomes visible; the view reports every
         // change after that. The window owns the view, so the view holds it weakly.
-        let composition = HUDComposition(loadingManager)
+        let composition = presentation.content
         window.interceptsTouches = composition.showsHUD
         let rootView = composition.makeRoot { [weak window, weak accessibility] state in
             window?.interceptsTouches = state.showsHUD

@@ -12,7 +12,7 @@ import UIKit
 struct SceneHUDAnchor<LM: DMLoadingManager>: UIViewRepresentable {
     let manager: LM
 
-    func makeCoordinator() -> RootViewHUDAttachment {
+    func makeCoordinator() -> RootViewHUDAttachment<HUDComposition> {
         RootViewHUDAttachment()
     }
 
@@ -32,7 +32,7 @@ struct SceneHUDAnchor<LM: DMLoadingManager>: UIViewRepresentable {
         context.coordinator.loadingManagerDidChange(to: manager)
     }
 
-    static func dismantleUIView(_ view: SceneReaderView, coordinator: RootViewHUDAttachment) {
+    static func dismantleUIView(_ view: SceneReaderView, coordinator: RootViewHUDAttachment<HUDComposition>) {
         coordinator.viewDidMove(to: nil)
     }
 }
