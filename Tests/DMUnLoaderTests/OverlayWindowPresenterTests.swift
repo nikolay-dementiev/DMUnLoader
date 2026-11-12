@@ -89,7 +89,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
 
         // A second manager takes over the window: its root view replaces that of the first, and its
         // escape handler replaces the first one. The test still holds the handler of the first.
-        presenter.present(HostLoadingManagerSpy())
+        presenter.present(HUDPresentation(HostLoadingManagerSpy()))
         shownFirst = nil
 
         // The wait ends on a positive signal, the release itself, so there is no fixed length to outlast:
@@ -136,7 +136,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
             appWindow.isHidden = true
             probe.isHidden = true
         }
-        presenter.present(HostLoadingManagerSpy(loadableState: Self.success, settings: Self.settings()))
+        presenter.present(HUDPresentation(HostLoadingManagerSpy(loadableState: Self.success, settings: Self.settings())))
         // The view of the HUD delivers its state after the window is made, so the hide comes a turn later.
         XCTAssertTrue(
             turnRunLoop(until: appWindow.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
@@ -145,7 +145,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
         presenter.dismiss()
         XCTAssertFalse(appWindow.accessibilityElementsHidden, "the window is reachable again once the HUD is gone")
 
-        presenter.present(HostLoadingManagerSpy(loadableState: Self.success, settings: Self.settings()))
+        presenter.present(HUDPresentation(HostLoadingManagerSpy(loadableState: Self.success, settings: Self.settings())))
 
         // The wait ends on the hide itself. A coordinator that stayed bound to the window that went hides
         // the windows of a scene that window has left, which are none, so the wait would run to its limit.
@@ -208,7 +208,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
         // A manager of another type is another view in the window, so the view delivers its state once as
         // it appears, equal or not. A manager of the same type is the same view and delivers nothing for an
         // equal state, so there is nothing to wait for and it is not tried here.
-        sut.presenter.present(DMLoadingManagerMain(state: state, settings: Self.settings()))
+        sut.presenter.present(HUDPresentation(DMLoadingManagerMain(state: state, settings: Self.settings())))
         // The closure of the presenter that the view calls sets this flag and then tells the coordinator, in
         // one call on the main thread. The flag is set to false here, so it is true again only when the view
         // delivered its state, and the coordinator has been told by then. The wait ends on that delivery:
@@ -262,8 +262,8 @@ final class OverlayWindowPresenterTests: XCTestCase {
         return makeSUT(presenting: manager, announcer: announcer, file: file, line: line)
     }
 
-    /// The same, for a manager that the test made and set up. The presenter shows `presentation` when the
-    /// test made one before, and the HUD of `manager` as it is when the test did not.
+    /// The same, for a manager that the test made and set up. The presenter shows `presentation`, which must
+    /// be one of `manager`, when the test made it before, and a presentation made now when the test did not.
     private func makeSUT(
         presenting manager: HostLoadingManagerSpy,
         presentation: HUDPresentation<HUDComposition>? = nil,
@@ -278,11 +278,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
             return nil
         }
         let presenter = OverlayWindowPresenter(windowScene: scene, announcer: announcer)
-        if let presentation {
-            presenter.present(presentation)
-        } else {
-            presenter.present(manager)
-        }
+        presenter.present(presentation ?? HUDPresentation(manager))
         // The presenter is held strongly on purpose: a weak reference would be gone when the test method
         // returns, and the HUD window would stay in its scene.
         addTeardownBlock {

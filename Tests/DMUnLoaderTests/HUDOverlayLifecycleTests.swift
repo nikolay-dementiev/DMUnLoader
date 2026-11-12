@@ -34,7 +34,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
 
         sut.loadingManagerDidChange(to: manager)
 
-        XCTAssertEqual(presenter.presentedIDs.count, 1, "the HUD of that manager is already shown: nothing is built again")
+        XCTAssertEqual(presenter.presentedIDs.count, 1, "the HUD of that manager is already shown: nothing is presented again")
     }
 
     func test_connect_afterTheManagerWasSet_presentsIt() {
@@ -131,9 +131,8 @@ final class HUDOverlayLifecycleTests: XCTestCase {
     }
 
     func test_otherManagerSet_afterAManagerWasShown_releasesTheFirstAndPresentsTheSecond() {
-        let sut = HUDOverlayLifecycle<HUDComposition>()
+        let sut = makeLifecycle()
         let presenter = IdentityOnlyPresenter()
-        trackForMemoryLeaks(sut)
         trackForMemoryLeaks(presenter)
         var first: DMLoadingManagerMain? = DMLoadingManagerMain()
         let firstIsReleased = { [weak held = first] in held == nil }
@@ -250,7 +249,7 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         XCTAssertEqual(
             recorder.shown.map(\.name),
             ["first"],
-            "the identity decides: the same one again keeps the HUD, whatever action comes with it"
+            "the identity decides: the same one again keeps the HUD, whatever content comes with it"
         )
     }
 
@@ -297,10 +296,17 @@ final class HUDOverlayLifecycleTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> (sut: HUDOverlayLifecycle<HUDComposition>, presenter: HUDOverlayPresenterSpy) {
+        (makeLifecycle(file: file, line: line), HUDOverlayPresenterSpy())
+    }
+
+    /// A lifecycle with no presenter, for a test that brings a presenter of its own.
+    private func makeLifecycle(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> HUDOverlayLifecycle<HUDComposition> {
         let sut = HUDOverlayLifecycle<HUDComposition>()
-        let presenter = HUDOverlayPresenterSpy()
         trackForMemoryLeaks(sut, file: file, line: line)
-        return (sut, presenter)
+        return sut
     }
 
     /// A lifecycle over the named contents of the hand-built presentations, with the recorder whose

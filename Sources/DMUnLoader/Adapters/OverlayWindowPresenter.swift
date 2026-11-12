@@ -34,11 +34,8 @@ package final class OverlayWindowPresenter: HUDOverlayPresenting {
         self.announcer = announcer
     }
 
-    /// Shows the HUD of `loadingManager`, as `present(_:)` of a presentation made of it.
-    package func present<LM: DMLoadingManager>(_ loadingManager: LM) {
-        present(HUDPresentation(loadingManager))
-    }
-
+    /// Shows the HUD of the composition in `presentation`. A HUD shown before gives its window, and its
+    /// controller, to this one. Does nothing once the scene is gone.
     package func present(_ presentation: HUDPresentation<HUDComposition>) {
         guard let windowScene else {
             return

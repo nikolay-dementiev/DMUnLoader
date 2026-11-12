@@ -53,11 +53,11 @@ final class HUDCompositionTests: XCTestCase {
     }
 
     func test_windowLevel_readsTheSettingsWhenAsked_notWhenTheCompositionWasMade() {
-        let manager = LevelManagerSpy(level: .normal)
+        let manager = HostLoadingManagerSpy(settings: Self.settings(level: .normal))
         let sut = makeSUT(manager)
         XCTAssertEqual(sut.windowLevel, .normal, "the level of the settings the manager was made with")
 
-        manager.level = .alert
+        manager.replaceSettings(with: Self.settings(level: .alert))
 
         XCTAssertEqual(sut.windowLevel, .alert, "the composition read the settings of the moment it was asked")
     }
@@ -100,32 +100,8 @@ final class HUDCompositionTests: XCTestCase {
     private static var success: DMLoadableType {
         .success("Saved", provider: DefaultDMLoadingViewProvider().eraseToAnyViewProvider())
     }
-}
 
-/// A manager whose settings change after it is made, to tell a read at the point of use from one made earlier.
-@MainActor
-private final class LevelManagerSpy: DMLoadingManager {
-    var level: UIWindow.Level
-
-    var settings: any DMLoadingManagerSettings {
+    private static func settings(level: UIWindow.Level) -> DMLoadingManagerDefaultSettings {
         DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600), hudWindowLevel: level)
     }
-
-    private(set) var loadableState: DMLoadableType = .none
-
-    init(level: UIWindow.Level) {
-        self.level = level
-    }
-
-    convenience init() {
-        self.init(level: .normal)
-    }
-
-    func showLoading<PR: DMLoadingViewProvider>(provider: PR) {}
-
-    func showSuccess<PR: DMLoadingViewProvider>(_ message: any DMLoadableTypeSuccess, provider: PR) {}
-
-    func showFailure<PR: DMLoadingViewProvider>(_ error: any Error, provider: PR, onRetry: (any DMAction)?) {}
-
-    func hide() {}
 }
