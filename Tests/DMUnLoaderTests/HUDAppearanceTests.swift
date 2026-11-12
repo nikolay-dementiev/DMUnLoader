@@ -261,7 +261,7 @@ final class HUDAppearanceTests: XCTestCase {
             settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
         )
         trackForMemoryLeaks(manager)
-        ViewHosting.host(view: DMHudSceneView(loadingManager: manager))
+        ViewHosting.host(view: DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager)))
         defer { ViewHosting.expel() }
 
         let deadline = Date().addingTimeInterval(TestTiming.callbackAllowance)

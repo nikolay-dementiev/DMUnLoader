@@ -9,20 +9,27 @@ import SwiftUI
 package struct DMHudSceneView<LM: DMLoadingManager>: View {
     @ObservedObject var loadingManager: LM
     @Environment(\.hudReducesTransparency) private var reducesTransparency
+    private let viewModel: any HUDViewModel
     private let onStateChange: @MainActor (DMLoadableType) -> Void
     private let blurValues: HUDBlurValues
 
     /// - Parameters:
+    ///   - viewModel: Decides what the HUD shows of the state of `loadingManager` and what a tap
+    ///     does. The view hands it to the loading view and makes the Close command of a failure
+    ///     over it, so a tap on the card, a tap outside it and Close all act through this one.
+    ///     The view makes none.
     ///   - blurValues: The values of the variable blur. The HUD gives its own; a test gives
     ///     others, to make the blur fail.
     ///   - onStateChange: Called with the state of `loadingManager` when the view
     ///     appears and whenever the state changes, also inside one phase.
     package init(
         loadingManager: LM,
+        viewModel: any HUDViewModel,
         blurValues: HUDBlurValues = .hud,
         onStateChange: @escaping @MainActor (DMLoadableType) -> Void = { _ in }
     ) {
         self.loadingManager = loadingManager
+        self.viewModel = viewModel
         self.blurValues = blurValues
         self.onStateChange = onStateChange
     }
@@ -32,6 +39,7 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
         let settings = loadingManager.settings
         let backdrop = settings.backdrop.drawing(reducesTransparency: reducesTransparency)
         let onBackdropFailure = settings.onBackdropFailure
+        let viewModel = viewModel
         Color.clear
             .ignoresSafeArea(.all)
             .hudCenter(
@@ -40,7 +48,6 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
                 blur: blurValues,
                 onBackdropFailure: onBackdropFailure
             ) {
-                let viewModel = DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager))
                 DMLoadingView(
                     loadingManager: loadingManager,
                     viewModel: viewModel,
@@ -52,6 +59,15 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
                 onStateChange(state)
             }
     }
+}
+
+/// A scene view over `loadingManager` with the view model that a composition makes.
+@MainActor
+private func hudSceneViewPreview<LM: DMLoadingManager>(_ loadingManager: LM) -> DMHudSceneView<LM> {
+    DMHudSceneView(
+        loadingManager: loadingManager,
+        viewModel: DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager))
+    )
 }
 
 #Preview("Error") {
@@ -69,7 +85,7 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
         // swiftlint:disable:next line_length
         Text("A wiki  is a form of hypertext publication on the internet which is collaboratively edited and managed by its audience directly through a web browser. A typical wiki contains multiple pages that can either be edited by the public or limited to use within an organization for maintaining its knowledge base. Its name derives from the first user-editable website called\nA wiki  is a form of hypertext publication on the internet which is collaboratively edited and managed by its audience directly through a web browser. A typical wiki contains multiple pages that can either be edited by the public or limited to use within an organization for maintaining its knowledge base. Its name derives from the first user-editable website called\nA wiki  is a form of hypertext publication on the internet which is collaboratively edited and managed by its audience directly through a web browser. A typical wiki contains multiple pages that can either be edited by the public or limited to use within an organization for maintaining its knowledge base. Its name derives from the first user-editable website called\nA wiki  is a form of hypertext publication on the internet which is collaboratively edited and managed by its audience directly through a web browser. A typical wiki contains multiple pages that can either be edited by the public or limited to use within an organization for maintaining its knowledge base. Its name derives from the first user-editable website called\nA wiki  is a form of hypertext publication on the internet which is collaboratively edited and managed by its audience directly through a web browser. A typical wiki contains multiple pages that can either be edited by the public or limited to use within an organization for maintaining its knowledge base. Its name derives from the first user-editable website called\n")
         
-        DMHudSceneView(loadingManager: loadingManager)
+        hudSceneViewPreview(loadingManager)
     }.ignoresSafeArea()
 }
 
@@ -82,7 +98,7 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
         settings: DMLoadingManagerDefaultSettings()
     )
     
-    DMHudSceneView(loadingManager: loadingManager)
+    hudSceneViewPreview(loadingManager)
 }
 
 #Preview("Success") {
@@ -95,7 +111,7 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
         settings: DMLoadingManagerDefaultSettings()
     )
     
-    DMHudSceneView(loadingManager: loadingManager)
+    hudSceneViewPreview(loadingManager)
 }
 
 #Preview("None") {
@@ -104,7 +120,7 @@ package struct DMHudSceneView<LM: DMLoadingManager>: View {
         settings: DMLoadingManagerDefaultSettings()
     )
 
-    DMHudSceneView(loadingManager: loadingManager)
+    hudSceneViewPreview(loadingManager)
 }
 
 #Preview("Dim backdrop") {
@@ -136,7 +152,7 @@ private func backdropPreview(_ backdrop: DMHUDBackdrop, reducesTransparency: Boo
     )
     return ZStack {
         Text(String(repeating: "The app under the HUD. ", count: 60))
-        DMHudSceneView(loadingManager: loadingManager)
+        hudSceneViewPreview(loadingManager)
             .environment(\.hudReducesTransparency, reducesTransparency)
     }
     .ignoresSafeArea()

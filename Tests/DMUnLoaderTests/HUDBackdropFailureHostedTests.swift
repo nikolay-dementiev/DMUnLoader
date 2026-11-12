@@ -202,7 +202,10 @@ final class HUDBackdropFailureHostedTests: XCTestCase {
     /// ViewInspector pairs `host` and `expel` by the name of the function that calls them, so the name of
     /// the test is passed on: hosted under the name of this helper, the window would never be expelled.
     private func host(_ manager: DMLoadingManagerMain, function: String = #function) {
-        ViewHosting.host(view: DMHudSceneView(loadingManager: manager, blurValues: Self.rejectedBlur), function: function)
+        ViewHosting.host(
+            view: DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager), blurValues: Self.rejectedBlur),
+            function: function
+        )
     }
 
     /// What the host is told while the HUD of `backdrop` is hosted with a blur that fails.
@@ -218,7 +221,7 @@ final class HUDBackdropFailureHostedTests: XCTestCase {
         )
 
         ViewHosting.host(
-            view: DMHudSceneView(loadingManager: manager, blurValues: Self.rejectedBlur)
+            view: DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager), blurValues: Self.rejectedBlur)
                 .environment(\.hudReducesTransparency, reducesTransparency)
         )
         waitUntil(!spy.received.isEmpty)
@@ -231,7 +234,8 @@ final class HUDBackdropFailureHostedTests: XCTestCase {
     /// nothing is logged.
     private func blurViewOfTheHUD(settings: DMLoadingManagerDefaultSettings) throws -> DMVariableBlurView {
         let manager = makeManager(state: .loading(provider: Self.provider()), settings: settings)
-        return try DMHudSceneView(loadingManager: manager).inspect().find(DMVariableBlurView.self).actualView()
+        let sceneView = DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager))
+        return try sceneView.inspect().find(DMVariableBlurView.self).actualView()
     }
 
     /// Whether the blur view has a handler of failures. `DMVariableBlurView` keeps it in a private stored

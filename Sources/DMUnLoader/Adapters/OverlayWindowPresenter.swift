@@ -51,14 +51,12 @@ package final class OverlayWindowPresenter: HUDOverlayPresenting {
         self.accessibility = accessibility
         // The window knows the state before it becomes visible; the view reports every
         // change after that. The window owns the view, so the view holds it weakly.
-        window.interceptsTouches = loadingManager.loadableState.showsHUD
-        let rootView = AnyView(
-            DMHudSceneView(loadingManager: loadingManager) { [weak window, weak accessibility] state in
-                window?.interceptsTouches = state.showsHUD
-                accessibility?.report(state)
-            }
-            .modifier(SystemAccessibilitySettings())
-        )
+        let composition = HUDComposition(loadingManager)
+        window.interceptsTouches = composition.showsHUD
+        let rootView = composition.makeRoot { [weak window, weak accessibility] state in
+            window?.interceptsTouches = state.showsHUD
+            accessibility?.report(state)
+        }
         if let hudController {
             hudController.rootView = rootView
         } else {
@@ -69,12 +67,9 @@ package final class OverlayWindowPresenter: HUDOverlayPresenting {
         }
         // The escape does what a tap outside the card does. The handler holds the manager
         // weakly, so the window keeps no replaced manager alive.
-        window.escapeHandler = { [weak loadingManager] in
-            guard let loadingManager else { return false }
-            return DefaultHUDViewModel(model: LoadingManagerHUDModel(loadingManager)).backdropTapped()
-        }
+        window.escapeHandler = composition.escape
         // Set on every call, so a new manager that takes over the window brings its own level.
-        window.windowLevel = loadingManager.settings.hudWindowLevel
+        window.windowLevel = composition.windowLevel
         window.isHidden = false
     }
 
