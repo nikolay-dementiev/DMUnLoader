@@ -1,13 +1,13 @@
 {
-  "originHash" : "895c4c6231553e615a4337be84de999ac40ed40be96e5284a0227cf6a929e09b",
+  "originHash" : "365403461dea0f9b3024e5f9150bd040e956556b8b2775a8161c49ca350ba687",
   "pins" : [
     {
       "identity" : "dmaction",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nikolay-dementiev/DMAction.git",
       "state" : {
-        "revision" : "76194dc9edc8fa349b8effcc03aa11d37dfe1a28",
-        "version" : "1.1.0"
+        "revision" : "fc405b696a339cd7dc3bcdb7a3a5046465199d00",
+        "version" : "1.2.0"
       }
     },
     {
