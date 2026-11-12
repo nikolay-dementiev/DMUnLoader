@@ -192,7 +192,7 @@ final class DMHudSceneViewTests: XCTestCase {
         // The view reports when it has appeared, so an empty rendering is the view's own, not
         // a view that was never drawn.
         let image = render(
-            DMHudSceneView(loadingManager: manager) { reports.values.append($0) },
+            DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager)) { reports.values.append($0) },
             for: TestTiming.callbackAllowance,
             until: { _ in !reports.values.isEmpty }
         )
@@ -205,7 +205,7 @@ final class DMHudSceneViewTests: XCTestCase {
         let manager = DMLoadingManagerMain(state: .loading(provider: Self.provider), settings: Self.settings)
 
         let image = render(
-            DMHudSceneView(loadingManager: manager),
+            DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager)),
             for: TestTiming.callbackAllowance,
             until: { (try? RenderedAlphas(of: $0).centre) ?? 0 > 0 }
         )
@@ -219,7 +219,7 @@ final class DMHudSceneViewTests: XCTestCase {
         let manager = DMLoadingManagerMain(state: .none, settings: Self.settings)
         manager.showFailure(DMAppError.custom("failed"), provider: DefaultDMLoadingViewProvider(), onRetry: nil)
 
-        try DMHudSceneView(loadingManager: manager).inspect().find(button: "Close").tap()
+        try DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager)).inspect().find(button: "Close").tap()
 
         XCTAssertEqual(manager.loadableState, .none, "Close hides the failure HUD")
     }
@@ -233,7 +233,7 @@ final class DMHudSceneViewTests: XCTestCase {
             onRetry: DMButtonAction { retries.count += 1 }
         )
 
-        try DMHudSceneView(loadingManager: manager).inspect().find(button: "Retry").tap()
+        try DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager)).inspect().find(button: "Retry").tap()
 
         XCTAssertEqual(retries.count, 1, "Retry runs the retry action of the failure")
     }
@@ -246,7 +246,7 @@ final class DMHudSceneViewTests: XCTestCase {
         let manager = DMLoadingManagerMain(state: .none, settings: Self.settings)
         trackForMemoryLeaks(manager)
         manager.showFailure(error, provider: erased, onRetry: retry)
-        ViewHosting.host(view: DMHudSceneView(loadingManager: manager))
+        ViewHosting.host(view: DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager)))
         defer { ViewHosting.expel() }
         XCTAssertTrue(
             turnRunLoop(until: !provider.calls.isEmpty, timeout: TestTiming.callbackAllowance),
@@ -306,7 +306,7 @@ final class DMHudSceneViewTests: XCTestCase {
     ) -> Fixture {
         let manager = DMLoadingManagerMain(state: initialState, settings: Self.settings)
         let reports = Reports()
-        let sut = DMHudSceneView(loadingManager: manager) { reports.values.append($0) }
+        let sut = DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager)) { reports.values.append($0) }
         trackForMemoryLeaks(manager, file: file, line: line)
         return Fixture(sut: sut, manager: manager, reports: reports)
     }
@@ -401,7 +401,7 @@ final class DMHudSceneViewTests: XCTestCase {
     private func makeHostSUT(file: StaticString = #filePath, line: UInt = #line) -> HostFixture {
         let manager = HostLoadingManagerSpy()
         let reports = Reports()
-        let sut = DMHudSceneView(loadingManager: manager) { reports.values.append($0) }
+        let sut = DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager)) { reports.values.append($0) }
         trackForMemoryLeaks(manager, file: file, line: line)
         return HostFixture(sut: sut, manager: manager, reports: reports)
     }

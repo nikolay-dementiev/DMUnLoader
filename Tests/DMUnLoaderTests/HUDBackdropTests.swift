@@ -169,7 +169,7 @@ final class HUDBackdropTests: XCTestCase {
             settings: settings
         )
         trackForMemoryLeaks(manager)
-        return DMHudSceneView(loadingManager: manager)
+        return DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager))
     }
 }
 

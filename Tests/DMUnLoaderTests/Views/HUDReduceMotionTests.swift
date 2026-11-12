@@ -55,7 +55,7 @@ final class HUDReduceMotionTests: XCTestCase {
             settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
         )
         trackForMemoryLeaks(manager)
-        return DMHudSceneView(loadingManager: manager)
+        return DMHudSceneView(loadingManager: manager, viewModel: hudViewModel(of: manager))
     }
 
     /// The scale of the card: the only scale effect of the HUD scene.
