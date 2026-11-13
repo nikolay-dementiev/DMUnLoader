@@ -447,13 +447,13 @@ for scheme in ConsumerSwift6 ConsumerSwift5; do
 done
 
 # 4. The Swift blocks of README.md, of the documentation catalog and of
-#    Documentation/Migration-2.0.md, each compiled in a context of its own, so that a block cannot use a name another block declares and one
-#    broken block cannot hide another. A block must compile as it is written, its imports
-#    included. A block that contains `Package(` is a complete package manifest, and SwiftPM
-#    evaluates it. Every other block is a target of its own, twice: in Swift 6 and in Swift 5
-#    language mode, in a generated package for iOS that depends on this checkout by path, the
-#    way Fixtures/Consumer does. The build goes on after an error, so that one run names every
-#    broken block. A warning in a block fails the check too.
+#    Documentation/Migration-2.0.md, each compiled in a context of its own, so that a block
+#    cannot use a name another block declares and one broken block cannot hide another. A block
+#    must compile as it is written, its imports included. A block that contains `Package(` is a
+#    complete package manifest, and SwiftPM evaluates it. Every other block is a target of its
+#    own, twice: in Swift 6 and in Swift 5 language mode, in a generated package for iOS that
+#    depends on this checkout by path, the way Fixtures/Consumer does. The build goes on after an
+#    error, so that one run names every broken block. A warning in a block fails the check too.
 SNIPPETS="$WORK/snippets"
 rm -rf "$SNIPPETS"
 mkdir -p "$SNIPPETS/blocks"
@@ -463,12 +463,12 @@ DOCUMENTS=("$ROOT/README.md")
 while IFS= read -r DOCUMENT; do
     DOCUMENTS+=("$DOCUMENT")
 done < <(find "$ROOT/Sources/$MODULE/$MODULE.docc" -name '*.md' | LC_ALL=C sort)
-DOCUMENTS+=("$ROOT/Documentation/Migration-2.0.md")
 # The status of find is lost in the substitution above, so a missing catalog is caught here.
 if [ "${#DOCUMENTS[@]}" -lt 2 ]; then
     echo "check-manifest: the documentation catalog Sources/$MODULE/$MODULE.docc has no Markdown file." >&2
     SNIPPETS_FAILED=1
 fi
+DOCUMENTS+=("$ROOT/Documentation/Migration-2.0.md")
 if ! python3 - "$ROOT" "$SNIPPETS" "${DOCUMENTS[@]}" > "$WORK/snippet-blocks.txt" <<'PY'
 import os
 import re
