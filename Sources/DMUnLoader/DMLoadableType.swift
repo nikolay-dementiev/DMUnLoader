@@ -11,6 +11,8 @@
 public enum DMLoadableType: Hashable, RawRepresentable {
     
     /// A description of the state, for logs.
+    ///
+    /// Retired together with the `RawRepresentable` conformance that needs it: removed in 2.0.0.
     public typealias RawValue = String
     
     /// Work runs; `provider` supplies the loading view.
