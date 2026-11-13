@@ -9,6 +9,9 @@ struct CustomManagerExampleApp: App {
 
     var body: some Scene {
         WindowGroup {
+            // Stays on the retired init(content:) on purpose: the app-delegate route still
+            // ships in 1.x and this app is its test bed. 2.0.0 removes the initializer, see
+            // Documentation/Migration-2.0.md.
             DMRootLoadingView { (loadingManager: StickyLoadingManager) in
                 DemoScreen(loadingManager: loadingManager)
             }
