@@ -153,3 +153,99 @@ func sizesAfter() -> Set<SizeKey> {
     [SizeKey(CGSize(width: 44, height: 44))]
 }
 ```
+
+## `NSError` as `DMError` and `LocalizedError`
+
+Retired: the conformances of `NSError` to `LocalizedError` and to `DMError`. `DMError` refines
+`LocalizedError`, so they go together. Every API that shows a failure takes `any Error`, so pass
+the `NSError` itself. `DMError` is for the error types your own code declares. Where an `NSError`
+goes into `DMAppError.generalError`, wrap it in an error type of your own that conforms to
+`DMError`.
+
+Before:
+
+```swift
+import DMUnLoader
+import Foundation
+
+@MainActor
+func showBefore(on manager: DMLoadingManagerMain) {
+    let error: any DMError = NSError(domain: "Example", code: 7)
+    manager.showFailure(error, provider: DefaultDMLoadingViewProvider())
+}
+
+func appErrorBefore() -> DMAppError {
+    .generalError(NSError(domain: "Example", code: 7))
+}
+```
+
+After:
+
+```swift
+import DMUnLoader
+import Foundation
+
+struct WrappedError: DMError {
+    let underlying: NSError
+
+    var errorDescription: String? {
+        underlying.localizedDescription
+    }
+}
+
+@MainActor
+func showAfter(on manager: DMLoadingManagerMain) {
+    let error: any Error = NSError(domain: "Example", code: 7)
+    manager.showFailure(error, provider: DefaultDMLoadingViewProvider())
+}
+
+func appErrorAfter() -> DMAppError {
+    .generalError(WrappedError(underlying: NSError(domain: "Example", code: 7)))
+}
+```
+
+## `foregroundStyle` with an optional style
+
+Retired: `View.foregroundStyle(_:)` for an optional style. Apply a style only when you have one,
+with `if let style` in a view builder, as the modifier below does. `style ?? .primary` is not the
+same: it sets a style where the retired overload leaves the one the view inherits.
+
+Before:
+
+```swift
+import DMUnLoader
+import SwiftUI
+
+struct TintedLabelBefore: View {
+    let color: Color?
+
+    var body: some View {
+        Text("Label").foregroundStyle(color)
+    }
+}
+```
+
+After:
+
+```swift
+import SwiftUI
+
+extension View {
+    @ViewBuilder
+    func foregroundStyleIfPresent<S: ShapeStyle>(_ style: S?) -> some View {
+        if let style {
+            foregroundStyle(style)
+        } else {
+            self
+        }
+    }
+}
+
+struct TintedLabelAfter: View {
+    let color: Color?
+
+    var body: some View {
+        Text("Label").foregroundStyleIfPresent(color)
+    }
+}
+```
