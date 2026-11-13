@@ -42,6 +42,10 @@ public protocol DMLoadingViewProvider: ObservableObject, Hashable {
     /// success or a failure hides after the `settings.autoHideDelay` of the loading manager
     /// that shows it, whatever provider it was shown with. `eraseToAnyViewProvider()` passes
     /// the value on unchanged.
+    ///
+    /// Retired: removed in 2.0.0, with the `loadingManagerSettings` argument of
+    /// ``DefaultDMLoadingViewProvider`` that sets it. Give the settings to the loading manager:
+    /// `DMLoadingManagerMain(state:settings:)`.
     var loadingManagerSettings: any DMLoadingManagerSettings { get }
     /// The settings that the default `getLoadingView()` gives the loading view.
     var loadingViewSettings: any DMProgressViewSettings { get }
@@ -111,6 +115,8 @@ public extension DMLoadingViewProvider {
 
     /// Settings with an auto-hide delay of 2 seconds. Not read by the library: the loading
     /// manager's own settings decide the delay.
+    ///
+    /// Retired together with the requirement: removed in 2.0.0.
     var loadingManagerSettings: any DMLoadingManagerSettings {
         DMLoadingManagerDefaultSettings()
     }
@@ -144,6 +150,8 @@ public extension DMLoadingViewProvider {
 public class DefaultDMLoadingViewProvider: @MainActor DMLoadingViewProvider {
     /// The settings passed to the initializer, or settings with a 2-second delay. Not read by
     /// the library: the loading manager's own settings decide the delay.
+    ///
+    /// Retired together with the `loadingManagerSettings` argument: removed in 2.0.0.
     public let loadingManagerSettings: any DMLoadingManagerSettings
     /// The settings passed to the initializer, or `DMProgressViewDefaultSettings()`.
     public let loadingViewSettings: any DMProgressViewSettings
@@ -159,7 +167,8 @@ public class DefaultDMLoadingViewProvider: @MainActor DMLoadingViewProvider {
     /// - Parameters:
     ///   - loadingManagerSettings: Kept as `loadingManagerSettings` and not read by the
     ///     library; set the delay on the loading manager, `DMLoadingManagerMain(state:settings:)`.
-    ///     Defaults to settings with a 2-second delay.
+    ///     Defaults to settings with a 2-second delay. Retired: this argument is removed in
+    ///     2.0.0.
     ///   - loadingViewSettings: Settings of the loading view. Defaults to `DMProgressViewDefaultSettings()`.
     ///   - errorViewSettings: Settings of the error view. Defaults to `DMErrorDefaultViewSettings()`.
     ///   - successViewSettings: Settings of the success view. Defaults to `DMSuccessDefaultViewSettings()`.

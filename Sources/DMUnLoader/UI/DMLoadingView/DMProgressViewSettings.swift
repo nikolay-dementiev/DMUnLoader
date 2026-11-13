@@ -182,6 +182,9 @@ public struct ProgressIndicatorProperties {
     /// The style of the progress indicator. It is always `CircularProgressViewStyle()` and
     /// cannot be changed; for another indicator, return your own view from
     /// `DMLoadingViewProvider.getLoadingView()`.
+    ///
+    /// Retired: removed in 2.0.0. The indicator is always circular; where you need the style,
+    /// write `.circular`.
     public let style = CircularProgressViewStyle()
     
     /// Initializes a new instance of `ProgressIndicatorProperties` with optional customizations.

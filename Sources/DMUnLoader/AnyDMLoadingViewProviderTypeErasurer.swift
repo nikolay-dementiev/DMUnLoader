@@ -11,6 +11,9 @@ import SwiftUI
 ///
 /// It keeps the settings of the wrapped provider as they were when it was made, and asks the
 /// wrapped provider for each view when one is needed. It is equal only to itself.
+///
+/// Name this type through ``AnyDMLoadingViewProvider``. The generic type is an implementation
+/// detail, and 2.0.0 may replace it behind that alias.
 public final class AnyDMLoadingViewProviderTypeErasurer<
     LoadingViewType: View,
     ErrorViewType: View,
@@ -31,6 +34,8 @@ public final class AnyDMLoadingViewProviderTypeErasurer<
 
     /// The `loadingManagerSettings` of the erased provider at the moment it was erased. Not
     /// read by the library.
+    ///
+    /// Retired together with the requirement it forwards: removed in 2.0.0.
     public var loadingManagerSettings: any DMLoadingManagerSettings { _loadingManagerSettings() }
     /// The `loadingViewSettings` of the erased provider at the moment it was erased.
     public var loadingViewSettings: any DMProgressViewSettings { _loadingViewSettings() }
