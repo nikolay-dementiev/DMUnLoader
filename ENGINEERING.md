@@ -89,7 +89,9 @@ catches only where a test pins the behaviour; and the approval of a dependency.
 No compiler deprecation attribute ships in a 1.x release. Its warning appears at every use of the
 symbol and fails a consumer that builds with warnings as errors, so it would turn a notice into a
 breaking change. A symbol is retired in the documentation instead: the replacement and a
-migration example say what to use. The next major version removes it.
+migration example say what to use. The next major version removes it. The retirements that
+are announced at present, each with a before and an after that the checks compile, are in
+`Documentation/Migration-2.0.md`.
 
 ## History
 
