@@ -1,9 +1,9 @@
 # Moving to DMUnLoader 2.0
 
-DMUnLoader 2.0.0 is planned to remove the declarations on this page. Version 1.3.0 removes
-nothing and warns about nothing: each declaration still works and says in its documentation
-comment that it is retired. Every "after" below works in 1.3.0 too, so you can move on your own
-schedule, before you update to 2.0.0. `CHANGELOG.md` lists the same declarations under
+DMUnLoader 2.0.0 is planned to remove the declarations that this page marks as retired. Version
+1.3.0 removes nothing and warns about nothing: each declaration still works and says in its
+documentation comment that it is retired. Every "after" below works in 1.3.0 too, so you can move
+on your own schedule, before you update to 2.0.0. `CHANGELOG.md` lists the same declarations under
 "Deprecated".
 
 Every Swift block on this page is compiled by `Scripts/check-manifest.sh` against the sources of
@@ -160,7 +160,10 @@ Retired: the conformances of `NSError` to `LocalizedError` and to `DMError`. `DM
 `LocalizedError`, so they go together. Every API that shows a failure takes `any Error`, so pass
 the `NSError` itself. `DMError` is for the error types your own code declares. Where an `NSError`
 goes into `DMAppError.generalError`, wrap it in an error type of your own that conforms to
-`DMError`.
+`DMError`. The wrapper keeps the `NSError` in a property, so the original is `underlying`, not the
+error you catch. When the failure is a resource or a network failure, `DMAppError.resourceError`
+with `.error(_:)` and `DMAppError.network` with `.generalError(_:)` take any `Error` and need no
+wrapper.
 
 Before:
 
@@ -255,9 +258,11 @@ struct TintedLabelAfter: View {
 Retired: the `loadingManagerSettings` requirement of `DMLoadingViewProvider`, its default
 implementation, the `loadingManagerSettings` argument and property of
 `DefaultDMLoadingViewProvider`, and the property of the type that `eraseToAnyViewProvider()`
-returns. The library has never read them: a success or a failure hides after the delay in the
-settings of the loading manager that shows it, whatever provider it was shown with. Give the
-settings to the manager, `DMLoadingManagerMain(state:settings:)`.
+returns. Nothing in the library has ever acted on them: a success or a failure hides after the
+delay in the settings of the loading manager that shows it, whatever provider it was shown with.
+To have the settings take effect, give them to the manager with
+`DMLoadingManagerMain(state:settings:)`. To keep what your app does today, drop the argument
+instead.
 
 Before:
 
@@ -292,7 +297,10 @@ of your own and the one for `DMLoadingManagerMain`. They create the loading mana
 app delegate of DMUnLoader, `DMAppDelegateType` or `DMAppDelegate<YourManager>`; without it
 SwiftUI stops the app when the view appears. Use `init(manager:content:)` with a manager that
 your app owns. It needs no app delegate. Keep the manager alive outside the view, as the
-`@StateObject` below does.
+`@StateObject` below does, and create it in a view that every window makes for itself, not in the
+`App`: the retired initializers gave each window a manager of its own, and a manager that the `App`
+holds is shared by all windows, so one `showLoading` would draw a HUD in each of them. A manager
+type of your own is created the same way, with its own initializer in the `@StateObject`.
 
 Before:
 
@@ -333,13 +341,19 @@ import SwiftUI
 
 @main
 struct AfterApp: App {
-    @StateObject private var loadingManager = DMLoadingManagerMain()
-
     var body: some Scene {
         WindowGroup {
-            DMRootLoadingView(manager: loadingManager) { manager in
-                AfterContent(loadingManager: manager)
-            }
+            AfterRoot()
+        }
+    }
+}
+
+struct AfterRoot: View {
+    @StateObject private var loadingManager = DMLoadingManagerMain()
+
+    var body: some View {
+        DMRootLoadingView(manager: loadingManager) { manager in
+            AfterContent(loadingManager: manager)
         }
     }
 }
@@ -427,4 +441,4 @@ func providerAfter() -> AnyDMLoadingViewProvider {
 ## What stays
 
 `DMError`, `DMAppError`, `DMAppError.ResourceError` and `DMAppError.NetworkError` stay in 2.0.0.
-This page announces nothing else.
+This page retires nothing else.

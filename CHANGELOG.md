@@ -37,9 +37,9 @@ after for each.
   failure takes `any Error`, so pass the `NSError` itself.
 - `View.foregroundStyle(_:)` for an optional style. Apply a style with `if let` in a view builder.
 - The `loadingManagerSettings` requirement of `DMLoadingViewProvider`, its default
-  implementation, and the argument and property of `DefaultDMLoadingViewProvider`. The library
-  has never read them. Give the settings to the loading manager,
-  `DMLoadingManagerMain(state:settings:)`.
+  implementation, the argument and property of `DefaultDMLoadingViewProvider`, and the property
+  of the type that `eraseToAnyViewProvider()` returns. Nothing in the library has ever acted on
+  them. Give the settings to the loading manager, `DMLoadingManagerMain(state:settings:)`.
 - Both `DMRootLoadingView` initializers named `init(content:)`. Use `init(manager:content:)` with
   a manager that your app owns.
 - `ProgressIndicatorProperties.style`, which is always `CircularProgressViewStyle()`. Write

@@ -671,9 +671,9 @@ How the package is tested:
   and the readability of its "Loading..." label; the audit of the accessible look runs every audit
   type, at the default text size and at the largest one, and leaves out only that label.
 - CI also lints, compares the public interface with a committed baseline, builds a consumer
-  package and every Swift block of this README and of the documentation catalog, builds the
-  documentation, lints the podspec, runs the tests under the Thread Sanitizer, and fails below a
-  coverage floor.
+  package and every Swift block of this README, of the documentation catalog and of the
+  migration guide, builds the documentation, lints the podspec, runs the tests under the Thread
+  Sanitizer, and fails below a coverage floor.
 
 ## Versions and migration
 
