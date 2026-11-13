@@ -5,6 +5,11 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+- `DMLoadableType.diagnosticDescription`: the text that describes a state for logs, "Loading",
+  "Error: `<error>`", "Success: `<message>`" or "None". It is the text that `rawValue` returns.
+
 ### Fixed
 
 - The loading HUD exposes itself to assistive technology as one accessibility element named by its
@@ -12,6 +17,15 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   whitespace, with the trait that says its content changes. It was two elements, the text and a
   progress indicator without a name, and an empty text left only the indicator without a name.
   Nothing changes on the screen.
+
+### Deprecated
+
+Nothing is removed in 1.x and nothing warns at build time. Each item below is removed in 2.0.0,
+and the replacement it names works now.
+
+- `DMLoadableType.rawValue`, `DMLoadableType.init?(rawValue:)` and the `RawRepresentable`
+  conformance of `DMLoadableType`. The initializer always returns `nil`, so the conformance cannot
+  do what `RawRepresentable` means. Read `diagnosticDescription`, which returns the same text.
 
 ## [1.2.0] - 2026-10-30
 

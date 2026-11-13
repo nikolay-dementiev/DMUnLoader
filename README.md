@@ -205,7 +205,7 @@ struct ObservationContent: View {
 
     var body: some View {
         VStack {
-            Text(verbatim: loading.loadableState.rawValue)
+            Text(verbatim: loading.loadableState.diagnosticDescription)
 
             Button("Load") {
                 loading.showLoading(provider: DefaultDMLoadingViewProvider())
