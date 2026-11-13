@@ -6,8 +6,8 @@
 
 /// The state of a loading manager: nothing shown, work running, a failure or a success.
 ///
-/// `rawValue` describes a state for logs. It cannot be read back: `init?(rawValue:)` always
-/// returns `nil`.
+/// `diagnosticDescription` describes a state for logs. A state cannot be read back from that text:
+/// it holds a provider and actions that no text can restore.
 public enum DMLoadableType: Hashable, RawRepresentable {
     
     /// A description of the state, for logs.
@@ -23,23 +23,30 @@ public enum DMLoadableType: Hashable, RawRepresentable {
     /// No HUD is shown.
     case none
     
-    /// "Loading", "Error: `<error>`", "Success: `<message>`" or "None".
-    public var rawValue: RawValue {
-        let rawValueForReturn: RawValue
+    /// A description of the state, for logs: "Loading", "Error: `<error>`", "Success: `<message>`"
+    /// or "None". `<error>` is the error as `String(describing:)` prints it, and `<message>` is
+    /// the `description` of the success value.
+    public var diagnosticDescription: String {
         switch self {
         case .loading:
-            rawValueForReturn = "Loading"
+            "Loading"
         case .failure(let error, _, _):
-            rawValueForReturn = "Error: `\(error)`"
+            "Error: `\(error)`"
         case .success(let message, _):
-            rawValueForReturn = "Success: `\(message.description)`"
+            "Success: `\(message.description)`"
         case .none:
-            rawValueForReturn = "None"
+            "None"
         }
-        return rawValueForReturn
     }
-    
-    /// Always `nil`: a state holds a provider and actions that no text can restore.
+
+    /// Retired: read ``diagnosticDescription``, which returns the same text. `rawValue`,
+    /// `init?(rawValue:)` and the `RawRepresentable` conformance are removed in 2.0.0.
+    public var rawValue: RawValue {
+        diagnosticDescription
+    }
+
+    /// Always `nil`: a state holds a provider and actions that no text can restore. Retired
+    /// together with ``rawValue``: it is removed in 2.0.0.
     public init?(rawValue: RawValue) {
         nil
     }
