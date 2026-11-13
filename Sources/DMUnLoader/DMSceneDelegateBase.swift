@@ -89,7 +89,7 @@ public final class DMSceneDelegateBase<
         }
     }
 
-    private let overlay = HUDOverlayLifecycle()
+    private let overlay = HUDOverlayLifecycle<HUDComposition>()
     private var disconnectObservation: AnyObject?
     weak var windowScene: UIWindowScene?
 

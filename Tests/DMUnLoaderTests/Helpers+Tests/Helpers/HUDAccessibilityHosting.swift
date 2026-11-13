@@ -252,14 +252,14 @@ final class HostedHUD {
     let manager: DMLoadingManagerMain
     let retries: RetryCounter
     let scene: UIWindowScene
-    private let presenter: any HUDOverlayPresenting
+    private let presenter: any HUDOverlayPresenting<HUDComposition>
     private let probe: UIWindow
 
     fileprivate init(
         manager: DMLoadingManagerMain,
         retries: RetryCounter,
         scene: UIWindowScene,
-        presenter: any HUDOverlayPresenting,
+        presenter: any HUDOverlayPresenting<HUDComposition>,
         probe: UIWindow
     ) {
         self.manager = manager
@@ -330,7 +330,7 @@ extension XCTestCase {
             settings: DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600))
         )
         let presenter = scene.makeHUDPresenter()
-        presenter.present(manager)
+        presenter.present(HUDPresentation(manager))
         let hud = HostedHUD(manager: manager, retries: retries, scene: scene, presenter: presenter, probe: probe)
         // Held strongly on purpose: a weak reference would be gone when the test method returns, and
         // the HUD window would stay in its scene.

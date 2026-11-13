@@ -16,7 +16,9 @@ final class HUDSceneSpy: HUDScene {
     private(set) var presenters: [HUDOverlayPresenterSpy] = []
     private weak var observation: Observation?
 
-    func makeHUDPresenter() -> any HUDOverlayPresenting {
+    typealias Content = HUDComposition
+
+    func makeHUDPresenter() -> any HUDOverlayPresenting<HUDComposition> {
         let presenter = HUDOverlayPresenterSpy()
         presenters.append(presenter)
         return presenter
@@ -35,7 +37,7 @@ final class HUDSceneSpy: HUDScene {
 
     /// The managers presented over this scene, in order, by every presenter it made.
     var presented: [ObjectIdentifier] {
-        presenters.flatMap { $0.presented.map(ObjectIdentifier.init) }
+        presenters.flatMap(\.presentedIDs)
     }
 
     /// How many times the presenters of this scene removed a HUD.

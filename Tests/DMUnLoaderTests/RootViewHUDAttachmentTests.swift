@@ -273,8 +273,8 @@ final class RootViewHUDAttachmentTests: XCTestCase {
         return (manager, scheduler)
     }
 
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> RootViewHUDAttachment {
-        let sut = RootViewHUDAttachment()
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> RootViewHUDAttachment<HUDComposition> {
+        let sut = RootViewHUDAttachment<HUDComposition>()
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }

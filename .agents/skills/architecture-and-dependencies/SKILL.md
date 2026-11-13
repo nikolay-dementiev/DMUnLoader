@@ -18,12 +18,11 @@ format of [Documentation/Review/README.md](../../../Documentation/Review/README.
 - A change that makes a type of `Domain/` name in code a type of `Presentation/`, `Adapters/`,
   `UI/` or the top level of the folder, or a type of `Presentation/` name a type of `Adapters/`,
   `UI/` or the top level; and a file of `Presentation/` that imports more than Foundation or reaches
-  the system other than through the protocols of the folder. One exception is known:
-  `HUDOverlayPresenting.swift` constrains a generic parameter to `DMLoadingManager`. A second file
-  that names a type of an outer place is a finding, and so is a view model, a coordinator, the
-  lifecycle or the attachment that names a loading manager or a loadable state again. The lint
+  the system other than through the protocols of the folder. No exception is known: a file that
+  names a type of an outer place is a finding, and so is a view model, a coordinator, the
+  lifecycle or the attachment that names a loading manager or a loadable state. The lint
   rule `presentation_names_no_manager` reports `DMLoadingManager`, `DMLoadableType` and
-  `DMLoadingManagerMain` in `Presentation/` outside that file; no lint rule reports another type of
+  `DMLoadingManagerMain` in `Presentation/`; no lint rule reports another type of
   an outer place, and the folders are one module, so no import shows a breach.
   (ENGINEERING.md, "The folders of `Sources/DMUnLoader` follow the dependency rule")
   (ENGINEERING.md, "It imports Foundation at most, which `Scripts/lint.sh` enforces with the custom

@@ -24,7 +24,7 @@ final class HUDAccessibilityAnnouncementTests: XCTestCase {
     func test_show_postsScreenChangedWithNoFocusOnceTheAppWindowIsHidden() {
         guard let sut = makeSUT() else { return }
 
-        sut.presenter.present(sut.makeManager(state: sut.loading))
+        sut.presenter.present(HUDPresentation(sut.makeManager(state: sut.loading)))
 
         awaitPosts(1, in: sut, after: "the HUD appears")
         XCTAssertTrue(sut.recorder.posts.first?.notification == .screenChanged, "the notification is screenChanged")
@@ -41,7 +41,7 @@ final class HUDAccessibilityAnnouncementTests: XCTestCase {
     func test_changeOfContent_postsScreenChangedAgainWhileTheAppWindowStaysHidden() {
         guard let sut = makeSUT() else { return }
         let manager = sut.makeManager(state: sut.loading)
-        sut.presenter.present(manager)
+        sut.presenter.present(HUDPresentation(manager))
         awaitPosts(1, in: sut, after: "the HUD appears")
 
         manager.showSuccess("Saved", provider: sut.provider)
@@ -60,7 +60,7 @@ final class HUDAccessibilityAnnouncementTests: XCTestCase {
     func test_hide_postsScreenChangedFocusingTheViewThatHadTheFocusAfterTheAppWindowIsBack() {
         guard let sut = makeSUT() else { return }
         let manager = sut.makeManager(state: sut.loading)
-        sut.presenter.present(manager)
+        sut.presenter.present(HUDPresentation(manager))
         awaitPosts(1, in: sut, after: "the HUD appears")
 
         manager.hide()
@@ -80,7 +80,7 @@ final class HUDAccessibilityAnnouncementTests: XCTestCase {
     func test_hide_whenTheViewThatHadTheFocusIsGone_postsScreenChangedWithNoFocus() {
         guard let sut = makeSUT() else { return }
         let manager = sut.makeManager(state: sut.loading)
-        sut.presenter.present(manager)
+        sut.presenter.present(HUDPresentation(manager))
         awaitPosts(1, in: sut, after: "the HUD appears")
         sut.appView.removeFromSuperview()
 
@@ -99,7 +99,7 @@ final class HUDAccessibilityAnnouncementTests: XCTestCase {
         guard let sut = makeSUT() else { return }
         let manager = sut.makeManager(state: sut.loading)
 
-        sut.presenter.present(manager)
+        sut.presenter.present(HUDPresentation(manager))
         awaitPosts(1, in: sut, after: "the HUD appears")
         manager.showSuccess("Saved", provider: sut.provider)
         awaitPosts(2, in: sut, after: "the HUD shows another state")
