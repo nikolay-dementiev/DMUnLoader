@@ -340,6 +340,9 @@ public enum DMLoadableType : Swift.Hashable, Swift.RawRepresentable {
   case failure(error: any Swift.Error, provider: DMUnLoader.AnyDMLoadingViewProvider, onRetry: (any DMAction.DMAction)? = nil)
   case success(any DMUnLoader.DMLoadableTypeSuccess, provider: DMUnLoader.AnyDMLoadingViewProvider)
   case none
+  public var diagnosticDescription: Swift.String {
+    get
+  }
   public var rawValue: DMUnLoader.DMLoadableType.RawValue {
     get
   }
