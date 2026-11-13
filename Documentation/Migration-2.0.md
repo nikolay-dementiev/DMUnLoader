@@ -249,3 +249,182 @@ struct TintedLabelAfter: View {
     }
 }
 ```
+
+## `loadingManagerSettings` of a view provider
+
+Retired: the `loadingManagerSettings` requirement of `DMLoadingViewProvider`, its default
+implementation, the `loadingManagerSettings` argument and property of
+`DefaultDMLoadingViewProvider`, and the property of the type that `eraseToAnyViewProvider()`
+returns. The library has never read them: a success or a failure hides after the delay in the
+settings of the loading manager that shows it, whatever provider it was shown with. Give the
+settings to the manager, `DMLoadingManagerMain(state:settings:)`.
+
+Before:
+
+```swift
+import DMUnLoader
+
+@MainActor
+func managerBefore() -> (DMLoadingManagerMain, DefaultDMLoadingViewProvider) {
+    let settings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(5))
+    let provider = DefaultDMLoadingViewProvider(loadingManagerSettings: settings)
+    return (DMLoadingManagerMain(), provider)
+}
+```
+
+After:
+
+```swift
+import DMUnLoader
+
+@MainActor
+func managerAfter() -> (DMLoadingManagerMain, DefaultDMLoadingViewProvider) {
+    let settings = DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(5))
+    let manager = DMLoadingManagerMain(state: .none, settings: settings)
+    return (manager, DefaultDMLoadingViewProvider())
+}
+```
+
+## `DMRootLoadingView(content:)`
+
+Retired: both `DMRootLoadingView` initializers named `init(content:)`, the one for a manager type
+of your own and the one for `DMLoadingManagerMain`. They create the loading manager and need the
+app delegate of DMUnLoader, `DMAppDelegateType` or `DMAppDelegate<YourManager>`; without it
+SwiftUI stops the app when the view appears. Use `init(manager:content:)` with a manager that
+your app owns. It needs no app delegate. Keep the manager alive outside the view, as the
+`@StateObject` below does.
+
+Before:
+
+```swift
+import DMUnLoader
+import SwiftUI
+
+@main
+struct BeforeApp: App {
+    @UIApplicationDelegateAdaptor private var delegate: DMAppDelegateType
+
+    var body: some Scene {
+        WindowGroup {
+            DMRootLoadingView { loadingManager in
+                BeforeContent(loadingManager: loadingManager)
+            }
+        }
+    }
+}
+
+struct BeforeContent: View {
+    let loadingManager: DMLoadingManagerMain
+    private let provider = DefaultDMLoadingViewProvider()
+
+    var body: some View {
+        Button("Show success") {
+            loadingManager.showSuccess("Data loaded", provider: provider)
+        }
+    }
+}
+```
+
+After:
+
+```swift
+import DMUnLoader
+import SwiftUI
+
+@main
+struct AfterApp: App {
+    @StateObject private var loadingManager = DMLoadingManagerMain()
+
+    var body: some Scene {
+        WindowGroup {
+            DMRootLoadingView(manager: loadingManager) { manager in
+                AfterContent(loadingManager: manager)
+            }
+        }
+    }
+}
+
+struct AfterContent: View {
+    let loadingManager: DMLoadingManagerMain
+    private let provider = DefaultDMLoadingViewProvider()
+
+    var body: some View {
+        Button("Show success") {
+            loadingManager.showSuccess("Data loaded", provider: provider)
+        }
+    }
+}
+```
+
+## `ProgressIndicatorProperties.style`
+
+Retired: the `style` property. It is always `CircularProgressViewStyle()` and cannot be changed.
+Where you need the style, write `.circular`.
+
+Before:
+
+```swift
+import DMUnLoader
+import SwiftUI
+
+struct IndicatorBefore: View {
+    let properties = ProgressIndicatorProperties(size: .small, tintColor: .green)
+
+    var body: some View {
+        ProgressView()
+            .progressViewStyle(properties.style)
+            .controlSize(properties.size)
+    }
+}
+```
+
+After:
+
+```swift
+import DMUnLoader
+import SwiftUI
+
+struct IndicatorAfter: View {
+    let properties = ProgressIndicatorProperties(size: .small, tintColor: .green)
+
+    var body: some View {
+        ProgressView()
+            .progressViewStyle(.circular)
+            .controlSize(properties.size)
+    }
+}
+```
+
+## `AnyDMLoadingViewProviderTypeErasurer`: name it through the alias
+
+Not retired, and nothing to migrate if you already name the type `AnyDMLoadingViewProvider`. The
+generic type behind the alias is an implementation detail, and 2.0.0 may replace it. Name the
+alias, not the generic type, so that a replacement does not reach your code.
+
+Before:
+
+```swift
+import DMUnLoader
+import SwiftUI
+
+@MainActor
+func providerBefore() -> AnyDMLoadingViewProviderTypeErasurer<AnyView, AnyView, AnyView> {
+    DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+}
+```
+
+After:
+
+```swift
+import DMUnLoader
+
+@MainActor
+func providerAfter() -> AnyDMLoadingViewProvider {
+    DefaultDMLoadingViewProvider().eraseToAnyViewProvider()
+}
+```
+
+## What stays
+
+`DMError`, `DMAppError`, `DMAppError.ResourceError` and `DMAppError.NetworkError` stay in 2.0.0.
+This page announces nothing else.
