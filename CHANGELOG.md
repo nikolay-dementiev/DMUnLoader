@@ -3,7 +3,7 @@
 All notable changes to DMUnLoader are recorded in this file. The format follows Keep a
 Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
 
-## [Unreleased]
+## [1.3.0] - 2026-11-14
 
 ### Added
 
@@ -215,7 +215,8 @@ Behaviour changes. None of them removes a declaration; each one is pinned by a t
   own, for SwiftUI and UIKit, with default views and views of the app's own through
   `DMLoadingViewProvider`.
 
-[Unreleased]: https://github.com/nikolay-dementiev/DMUnLoader/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/nikolay-dementiev/DMUnLoader/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/nikolay-dementiev/DMUnLoader/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/nikolay-dementiev/DMUnLoader/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/nikolay-dementiev/DMUnLoader/compare/1.0.3...1.1.0
 [1.0.3]: https://github.com/nikolay-dementiev/DMUnLoader/compare/1.0.2...1.0.3
