@@ -19,6 +19,9 @@ public struct DMRootLoadingView<
     /// `DMAppDelegate<LM>`, used with `@UIApplicationDelegateAdaptor`, puts it there. Without it
     /// SwiftUI stops the app when the view appears. In an app without `DMAppDelegate`, use
     /// `init(manager:content:)`.
+    ///
+    /// Retired: removed in 2.0.0, together with the other `init(content:)`. Use
+    /// `init(manager:content:)` with a manager that your app owns; it needs no app delegate.
     public init(@ViewBuilder content: @escaping (LM) -> Content) {
         self.managerSource = .createdForTheSceneDelegate
         self.content = content
@@ -31,6 +34,9 @@ public struct DMRootLoadingView<
     /// environment. `DMAppDelegateType`, used with `@UIApplicationDelegateAdaptor`, puts it
     /// there. Without it SwiftUI stops the app when the view appears. In an app without
     /// `DMAppDelegateType`, use `init(manager:content:)`.
+    ///
+    /// Retired: removed in 2.0.0, together with the other `init(content:)`. Use
+    /// `init(manager:content:)` with a manager that your app owns; it needs no app delegate.
     public init(@ViewBuilder content: @escaping (DMLoadingManagerMain) -> Content)
         where LM == DMLoadingManagerMain {
         self.managerSource = .createdForTheSceneDelegate

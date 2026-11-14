@@ -113,6 +113,11 @@ extension DMAppError {
 // MARK: - Extend NSError to Conform to DMError
 
 /// Extends `NSError` to conform to `DMError` and `LocalizedError`.
+///
+/// Retired: this conformance and the `DMError` one below are removed in 2.0.0. `NSError` is a
+/// type of the system and `LocalizedError` is a protocol of the system, so the conformance reaches
+/// every app that imports DMUnLoader, and another module can declare the same one. Every API that
+/// shows a failure takes `any Error`, so pass the `NSError` itself.
 extension NSError: @retroactive LocalizedError {
     
     /// Provides a localized description for the error.
@@ -121,6 +126,10 @@ extension NSError: @retroactive LocalizedError {
         return self.localizedDescription
     }
 }
+/// Retired: removed in 2.0.0 together with the `LocalizedError` conformance above, which
+/// `DMError` refines. `DMError` is for the error types your own code declares. Where an `NSError`
+/// goes into `DMAppError.generalError`, wrap it in an error type of your own that conforms to
+/// `DMError`.
 extension NSError: DMError { }
 
 // MARK: - Localized Error Text

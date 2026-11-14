@@ -21,11 +21,29 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
 ### Deprecated
 
 Nothing is removed in 1.x and nothing warns at build time. Each item below is removed in 2.0.0,
-and the replacement it names works now.
+and the replacement it names works now. `Documentation/Migration-2.0.md` shows a before and an
+after for each.
 
-- `DMLoadableType.rawValue`, `DMLoadableType.init?(rawValue:)` and the `RawRepresentable`
-  conformance of `DMLoadableType`. The initializer always returns `nil`, so the conformance cannot
-  do what `RawRepresentable` means. Read `diagnosticDescription`, which returns the same text.
+- `DMLoadableType.rawValue`, `DMLoadableType.init?(rawValue:)`, the `RawRepresentable`
+  conformance of `DMLoadableType` and its `RawValue` type alias. The initializer always returns
+  `nil`, so the conformance cannot do what `RawRepresentable` means. Read
+  `diagnosticDescription`, which returns the same text.
+- `Optional.isSomeValue()` and `Optional.unwrapValue()`. Compare with `nil`, or use `if let`,
+  `guard let` or `??`.
+- The conformances of `EdgeInsets` and `CGSize` to `Hashable`. Each conforms a type of the
+  system to a protocol of the system for every app that imports DMUnLoader, and iOS 18 and later
+  provide the one of `CGSize`. Use a key type of your own.
+- The conformances of `NSError` to `LocalizedError` and to `DMError`. Every API that shows a
+  failure takes `any Error`, so pass the `NSError` itself.
+- `View.foregroundStyle(_:)` for an optional style. Apply a style with `if let` in a view builder.
+- The `loadingManagerSettings` requirement of `DMLoadingViewProvider`, its default
+  implementation, the argument and property of `DefaultDMLoadingViewProvider`, and the property
+  of the type that `eraseToAnyViewProvider()` returns. Nothing in the library has ever acted on
+  them. Give the settings to the loading manager, `DMLoadingManagerMain(state:settings:)`.
+- Both `DMRootLoadingView` initializers named `init(content:)`. Use `init(manager:content:)` with
+  a manager that your app owns.
+- `ProgressIndicatorProperties.style`, which is always `CircularProgressViewStyle()`. Write
+  `.circular`.
 
 ## [1.2.0] - 2026-10-30
 

@@ -26,8 +26,9 @@
 # 3. Fixtures/Consumer builds in Swift 6 and in Swift 5 language mode, and its own sources
 #    compile without a warning. It uses the released API, so if it stops building, a
 #    consumer's code stops building.
-# 4. Every Swift block of README.md and of the documentation catalog compiles as it is
-#    written, in Swift 6 and in Swift 5 language mode.
+# 4. Every Swift block of README.md, of the documentation catalog and of
+#    Documentation/Migration-2.0.md compiles as it is written, in Swift 6 and in Swift 5
+#    language mode.
 #
 # --self-test needs no network, no build and no swift. A reader that never fails looks the
 # same as a clean tree, so it takes the python blocks of item 2 (marked readme-consumer and
@@ -445,14 +446,14 @@ for scheme in ConsumerSwift6 ConsumerSwift5; do
     fi
 done
 
-# 4. The Swift blocks of README.md and of the documentation catalog, each compiled in a
-#    context of its own, so that a block cannot use a name another block declares and one
-#    broken block cannot hide another. A block must compile as it is written, its imports
-#    included. A block that contains `Package(` is a complete package manifest, and SwiftPM
-#    evaluates it. Every other block is a target of its own, twice: in Swift 6 and in Swift 5
-#    language mode, in a generated package for iOS that depends on this checkout by path, the
-#    way Fixtures/Consumer does. The build goes on after an error, so that one run names every
-#    broken block. A warning in a block fails the check too.
+# 4. The Swift blocks of README.md, of the documentation catalog and of
+#    Documentation/Migration-2.0.md, each compiled in a context of its own, so that a block
+#    cannot use a name another block declares and one broken block cannot hide another. A block
+#    must compile as it is written, its imports included. A block that contains `Package(` is a
+#    complete package manifest, and SwiftPM evaluates it. Every other block is a target of its
+#    own, twice: in Swift 6 and in Swift 5 language mode, in a generated package for iOS that
+#    depends on this checkout by path, the way Fixtures/Consumer does. The build goes on after an
+#    error, so that one run names every broken block. A warning in a block fails the check too.
 SNIPPETS="$WORK/snippets"
 rm -rf "$SNIPPETS"
 mkdir -p "$SNIPPETS/blocks"
@@ -467,6 +468,7 @@ if [ "${#DOCUMENTS[@]}" -lt 2 ]; then
     echo "check-manifest: the documentation catalog Sources/$MODULE/$MODULE.docc has no Markdown file." >&2
     SNIPPETS_FAILED=1
 fi
+DOCUMENTS+=("$ROOT/Documentation/Migration-2.0.md")
 if ! python3 - "$ROOT" "$SNIPPETS" "${DOCUMENTS[@]}" > "$WORK/snippet-blocks.txt" <<'PY'
 import os
 import re
@@ -574,7 +576,7 @@ else
         fi
     fi
     if [ "$SNIPPETS_FAILED" -eq 0 ]; then
-        echo "check-manifest: the $(wc -l < "$WORK/snippet-blocks.txt" | tr -d ' ') Swift blocks of README.md and the documentation catalog compile in Swift 6 and Swift 5 mode."
+        echo "check-manifest: the $(wc -l < "$WORK/snippet-blocks.txt" | tr -d ' ') Swift blocks of README.md, the documentation catalog and the migration guide compile in Swift 6 and Swift 5 mode."
     fi
 fi
 if [ "$SNIPPETS_FAILED" -ne 0 ]; then

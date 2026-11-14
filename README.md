@@ -260,10 +260,13 @@ func followLoadableState(of loading: DMObservableLoadingManager, render: @escapi
 
 ### SwiftUI with the app delegate of DMUnLoader
 
-`DMRootLoadingView(content:)` creates the loading manager itself and passes it to your content.
-It needs the app delegate: `DMAppDelegateType`, or `DMAppDelegate<YourManager>` for a manager type
-of your own, puts the scene delegate of DMUnLoader into the environment. Without it SwiftUI stops
-the app when the view appears.
+`DMRootLoadingView(content:)` is retired: 2.0.0 removes it, and a new app uses
+`DMRootLoadingView(manager:content:)` with a manager it owns, as
+[SwiftUI with a manager your app owns](#swiftui-with-a-manager-your-app-owns) shows. Until then it
+works as before: it creates the loading manager itself and passes it to your content. It needs the
+app delegate: `DMAppDelegateType`, or `DMAppDelegate<YourManager>` for a manager type of your own,
+puts the scene delegate of DMUnLoader into the environment. Without it SwiftUI stops the app when
+the view appears.
 
 ```swift
 import DMUnLoader
@@ -447,8 +450,8 @@ func makeLoadingManager() -> DMLoadingManagerMain {
 
 Here a failure with Retry waits for the user: it leaves through Close, a tap outside its card,
 or another state. Give such a manager to `DMRootLoadingView(manager:content:)`. The settings of
-a view provider do not change the manager: its `loadingManagerSettings` is not read. The README of
-1.0.x set the delay there, which never had an effect.
+a view provider do not change the manager: its `loadingManagerSettings` is not read, and 2.0.0
+removes it. The README of 1.0.x set the delay there, which never had an effect.
 
 ### Backdrop
 
@@ -587,8 +590,9 @@ scene delegate of DMUnLoader holds a manager and that also shows
 ### Failures
 
 `DMRootLoadingView(content:)` without the app delegate of DMUnLoader stops the app when the view
-appears. `DMRootLoadingView(manager:content:)` needs no app delegate: until the view is in a
-window of a scene, the manager waits, and the HUD appears once the view is in one.
+appears. 2.0.0 removes that initializer. `DMRootLoadingView(manager:content:)` needs no app
+delegate: until the view is in a window of a scene, the manager waits, and the HUD appears once
+the view is in one.
 
 ### Accessibility
 
@@ -667,9 +671,9 @@ How the package is tested:
   and the readability of its "Loading..." label; the audit of the accessible look runs every audit
   type, at the default text size and at the largest one, and leaves out only that label.
 - CI also lints, compares the public interface with a committed baseline, builds a consumer
-  package and every Swift block of this README and of the documentation catalog, builds the
-  documentation, lints the podspec, runs the tests under the Thread Sanitizer, and fails below a
-  coverage floor.
+  package and every Swift block of this README, of the documentation catalog and of the
+  migration guide, builds the documentation, lints the podspec, runs the tests under the Thread
+  Sanitizer, and fails below a coverage floor.
 
 ## Versions and migration
 
@@ -688,6 +692,13 @@ behaviour changed, and the changelog lists each change. The ones most likely to 
 - a loading text or a success message of more than one line is centred by default;
 - the default failure title reads "An error has occurred!";
 - the HUD hides the content under it from assistive technology, as described above.
+
+### Retirements planned for 2.0.0
+
+Some declarations are retired in 1.x: the documentation says so, nothing warns at build time, and
+2.0.0 removes them. [CHANGELOG.md](CHANGELOG.md) lists them under Deprecated, and
+[Documentation/Migration-2.0.md](Documentation/Migration-2.0.md) shows a before and an after for
+each, so an app can move now.
 
 ## Known issues
 
