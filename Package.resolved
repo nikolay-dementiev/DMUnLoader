@@ -1,5 +1,5 @@
 {
-  "originHash" : "895c4c6231553e615a4337be84de999ac40ed40be96e5284a0227cf6a929e09b",
+  "originHash" : "acff3a040d7da2ccdc178d3457c8fc79672ba7db714038db1eefcc5813f092f0",
   "pins" : [
     {
       "identity" : "dmaction",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nikolay-dementiev/DMVariableBlurView.git",
       "state" : {
-        "revision" : "fa4ec5a433fd24f41ad516bcd650c6141e5895be",
-        "version" : "1.1.0"
+        "revision" : "8d96ca066e14a8b3f90f986e63cc5fe3c959a7d6",
+        "version" : "2.0.0"
       }
     },
     {
