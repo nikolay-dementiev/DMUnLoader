@@ -92,6 +92,20 @@ final class HUDStateReporterTests: XCTestCase {
         )
     }
 
+    func test_hudWindowLevelDidChange_whileShown_hidesTheContentAgainAndAnnouncesNothing() {
+        let (sut, announcer) = makeSUT()
+        sut.report(Self.success("Saved"))
+        let eventsOfTheEntry = announcer.events
+
+        sut.hudWindowLevelDidChange()
+
+        XCTAssertEqual(
+            announcer.events,
+            eventsOfTheEntry + [.hide],
+            "a new level of the window moves the set of windows under it, and the state is not announced again"
+        )
+    }
+
     // MARK: - Helpers
 
     private enum Failure: Error {

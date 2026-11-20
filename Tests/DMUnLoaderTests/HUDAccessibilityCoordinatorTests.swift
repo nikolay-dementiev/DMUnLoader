@@ -140,6 +140,41 @@ final class HUDAccessibilityCoordinatorTests: XCTestCase {
         )
     }
 
+    // MARK: - The window of the HUD changes its level
+
+    func test_levelChanges_whileTheHUDIsShown_hidesTheContentAgainAndAnnouncesNothing() {
+        let (sut, spy) = makeSUT()
+        sut.show(.loading)
+        let eventsOfTheEntry = spy.events
+
+        sut.hudWindowLevelDidChange()
+
+        XCTAssertEqual(
+            spy.events,
+            eventsOfTheEntry + [.hide],
+            "the windows under the new level are hidden and the ones above it come back, with no screen change"
+        )
+    }
+
+    func test_levelChanges_whileNoHUDIsShown_doesNothing() {
+        let (sut, spy) = makeSUT()
+
+        sut.hudWindowLevelDidChange()
+
+        XCTAssertEqual(spy.events, [], "with no HUD shown there is no content to hide")
+    }
+
+    func test_levelChanges_afterTheHUDWent_doesNothing() {
+        let (sut, spy) = makeSUT()
+        sut.show(.loading)
+        sut.show(.none)
+        let eventsOfTheExit = spy.events
+
+        sut.hudWindowLevelDidChange()
+
+        XCTAssertEqual(spy.events, eventsOfTheExit, "the content came back with the HUD, and a new level hides none of it")
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(
