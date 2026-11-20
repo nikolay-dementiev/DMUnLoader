@@ -113,12 +113,12 @@ final class HUDAccessibilityCoordinatorTests: XCTestCase {
         XCTAssertEqual(spy.events, eventsAfterTheFirst, "the same state again tells nothing")
     }
 
-    // MARK: - Remembered element that nobody can see (known defect)
+    // MARK: - Remembered element that nobody can see
 
-    /// Pins a known defect as it is today, with the answer of the adapter that the HUD uses: that adapter takes a
-    /// hidden view for a view on screen, so the focus returns to a view that nobody can reach. The test
-    /// is green now and fails the day the defect is fixed; a fix flips its assertion.
-    func test_hudGoes_rememberedViewIsHidden_focusStillReturnsToIt_knownDefect() {
+    /// Uses the answer of the adapter that the HUD uses: a view that nobody can see is not on screen, so the
+    /// focus does not return to it. The screen change is posted with no element, and the system puts the
+    /// focus on the first element of the screen.
+    func test_hudGoes_rememberedViewIsHidden_focusGoesToTheFirstElement() {
         let (sut, spy) = makeSUT()
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         window.isHidden = false
@@ -135,9 +135,44 @@ final class HUDAccessibilityCoordinatorTests: XCTestCase {
 
         XCTAssertEqual(
             spy.events.last,
-            .screenChanged(focusing: ObjectIdentifier(view)),
-            "known defect as it is today: the focus returns to the hidden view; a fix posts the change with no element"
+            .screenChanged(focusing: nil),
+            "the focus does not return to a view that was hidden while the HUD was up"
         )
+    }
+
+    // MARK: - The window of the HUD changes its level
+
+    func test_levelChanges_whileTheHUDIsShown_hidesTheContentAgainAndAnnouncesNothing() {
+        let (sut, spy) = makeSUT()
+        sut.show(.loading)
+        let eventsOfTheEntry = spy.events
+
+        sut.hudWindowLevelDidChange()
+
+        XCTAssertEqual(
+            spy.events,
+            eventsOfTheEntry + [.hide],
+            "the content underneath is worked out again, and no screen change is posted"
+        )
+    }
+
+    func test_levelChanges_whileNoHUDIsShown_doesNothing() {
+        let (sut, spy) = makeSUT()
+
+        sut.hudWindowLevelDidChange()
+
+        XCTAssertEqual(spy.events, [], "with no HUD shown there is no content to hide")
+    }
+
+    func test_levelChanges_afterTheHUDWent_doesNothing() {
+        let (sut, spy) = makeSUT()
+        sut.show(.loading)
+        sut.show(.none)
+        let eventsOfTheExit = spy.events
+
+        sut.hudWindowLevelDidChange()
+
+        XCTAssertEqual(spy.events, eventsOfTheExit, "the content came back with the HUD, and a new level hides none of it")
     }
 
     // MARK: - Helpers

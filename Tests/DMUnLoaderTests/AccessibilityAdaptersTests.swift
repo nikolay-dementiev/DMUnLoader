@@ -60,6 +60,30 @@ final class AccessibilityAdaptersTests: XCTestCase {
         XCTAssertFalse(windows.app.accessibilityElementsHidden, "one restore gives back what two hides of one HUD took")
     }
 
+    func test_contentHider_hiddenAgainAtAHigherLevel_hidesTheWindowThatIsNowUnderTheHUD() {
+        let windows = SceneWindows()
+        let sut = makeHider(for: windows)
+        sut.hideContentUnderneath()
+        windows.hud.windowLevel = .normal + 2
+
+        sut.hideContentUnderneath()
+
+        XCTAssertTrue(windows.above.accessibilityElementsHidden, "the window that the new level puts under the HUD is hidden")
+        XCTAssertTrue(windows.app.accessibilityElementsHidden, "a window that stays under the HUD stays hidden")
+    }
+
+    func test_contentHider_hiddenAgainAtALowerLevel_givesBackTheWindowThatIsNowAboveTheHUD() {
+        let windows = SceneWindows()
+        let sut = makeHider(for: windows)
+        sut.hideContentUnderneath()
+        windows.hud.windowLevel = .normal - 1
+
+        sut.hideContentUnderneath()
+
+        XCTAssertFalse(windows.app.accessibilityElementsHidden, "the window that the new level puts above the HUD is reachable")
+        XCTAssertTrue(windows.below.accessibilityElementsHidden, "a window that stays under the HUD stays hidden")
+    }
+
     func test_contentHider_twoHUDsOverlap_giveTheWindowBackWhenTheLastGoes() {
         let windows = SceneWindows()
         let secondHUD = UIWindow()
@@ -111,15 +135,13 @@ final class AccessibilityAdaptersTests: XCTestCase {
         XCTAssertFalse(SystemAccessibilityAnnouncer().isOnScreen(element))
     }
 
-    // MARK: - Remembered element that nobody can see (known defect)
+    // MARK: - Remembered element that nobody can see
 
-    // The three tests below pin a known defect as it is today: `isOnScreen` tells whether a view is attached to a
-    // window, not whether anyone can see it. Each shows its window and hides one thing, so that each
-    // varies one factor, and each asserts what the code does now: it is green now and fails the day the
-    // defect is fixed, and a fix flips its assertion. The same answer, met by the coordinator, is pinned
-    // in HUDAccessibilityCoordinatorTests.
+    // A view is on screen when it is in a window and nobody has hidden it: not the view, not a view above
+    // it, not the window. Each test below shows its window and hides one thing, so that each varies one
+    // factor. The coordinator meets the same answer in HUDAccessibilityCoordinatorTests.
 
-    func test_announcer_hiddenView_isStillOnScreen_knownDefect() {
+    func test_announcer_hiddenView_isNotOnScreen() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         window.isHidden = false
         defer { window.isHidden = true }
@@ -127,13 +149,13 @@ final class AccessibilityAdaptersTests: XCTestCase {
         window.addSubview(view)
         view.isHidden = true
 
-        XCTAssertTrue(
+        XCTAssertFalse(
             SystemAccessibilityAnnouncer().isOnScreen(view),
-            "known defect as it is today: a hidden view in a shown window counts as on screen; a fix makes it not"
+            "a hidden view in a shown window is not on screen"
         )
     }
 
-    func test_announcer_childOfHiddenView_isStillOnScreen_knownDefect() {
+    func test_announcer_childOfHiddenView_isNotOnScreen() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         window.isHidden = false
         defer { window.isHidden = true }
@@ -143,13 +165,13 @@ final class AccessibilityAdaptersTests: XCTestCase {
         parent.addSubview(child)
         parent.isHidden = true
 
-        XCTAssertTrue(
+        XCTAssertFalse(
             SystemAccessibilityAnnouncer().isOnScreen(child),
-            "known defect as it is today: the child of a hidden view counts as on screen; a fix makes it not"
+            "the child of a hidden view is not on screen, though the child itself is not hidden"
         )
     }
 
-    func test_announcer_viewInHiddenWindow_isStillOnScreen_knownDefect() {
+    func test_announcer_viewInHiddenWindow_isNotOnScreen() {
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
         // A new window is hidden by itself. The test shows it and hides it again, so that the hiding
         // of the window is the one thing that makes the view invisible.
@@ -158,9 +180,9 @@ final class AccessibilityAdaptersTests: XCTestCase {
         window.addSubview(view)
         window.isHidden = true
 
-        XCTAssertTrue(
+        XCTAssertFalse(
             SystemAccessibilityAnnouncer().isOnScreen(view),
-            "known defect as it is today: a visible view in a hidden window counts as on screen; a fix makes it not"
+            "a visible view in a hidden window is not on screen"
         )
     }
 

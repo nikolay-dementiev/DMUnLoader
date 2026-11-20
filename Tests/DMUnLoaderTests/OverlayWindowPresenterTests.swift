@@ -220,6 +220,81 @@ final class OverlayWindowPresenterTests: XCTestCase {
         XCTAssertEqual(announcer.events, eventsOfTheFirst, "a state equal to the one shown is no change of content")
     }
 
+    // MARK: - A manager that takes over a shown HUD at another window level
+
+    func test_present_managerAtAHigherLevelTakesOver_hidesTheWindowThatIsNowUnderTheHUD() {
+        let state = Self.success
+        guard let rig = makeSceneWithACover() else { return }
+        rig.presenter.present(
+            HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal)))
+        )
+        XCTAssertTrue(
+            turnRunLoop(until: rig.appWindow.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            "precondition: the first HUD hides the app window, which is under it"
+        )
+        XCTAssertFalse(rig.cover.accessibilityElementsHidden, "precondition: the cover is above the first HUD and reachable")
+
+        // The same state: the level is the only thing that tells the HUD that the cover is under it now.
+        rig.presenter.present(
+            HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal + 2)))
+        )
+
+        XCTAssertTrue(
+            turnRunLoop(until: rig.cover.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            "the cover is under the HUD of the new manager, so the HUD hides it"
+        )
+    }
+
+    func test_present_managerAtALowerLevelTakesOver_givesBackTheWindowThatIsNowAboveTheHUD() {
+        let state = Self.success
+        guard let rig = makeSceneWithACover() else { return }
+        rig.presenter.present(
+            HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal + 2)))
+        )
+        XCTAssertTrue(
+            turnRunLoop(until: rig.cover.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            "precondition: the first HUD hides the cover, which is under it"
+        )
+        XCTAssertTrue(rig.appWindow.accessibilityElementsHidden, "precondition: the first HUD hides the app window as well")
+
+        rig.presenter.present(
+            HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal)))
+        )
+
+        XCTAssertTrue(
+            turnRunLoop(until: !rig.cover.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            "the cover is above the HUD of the new manager, so the HUD gives it back"
+        )
+        XCTAssertTrue(rig.appWindow.accessibilityElementsHidden, "the app window stays under the HUD and stays hidden")
+    }
+
+    func test_present_managerAtTheSameLevelTakesOver_hidesNoWindowThatCameAfterTheHUD() {
+        let state = Self.success
+        guard let rig = makeSceneWithACover() else { return }
+        rig.presenter.present(
+            HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal)))
+        )
+        XCTAssertTrue(
+            turnRunLoop(until: rig.appWindow.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            "precondition: the first HUD hides the app window, which is under it"
+        )
+        // A window that comes after the HUD is not part of what the HUD hid when it appeared.
+        let lateWindow = UIWindow(windowScene: rig.windowScene)
+        lateWindow.isHidden = false
+        addTeardownBlock { lateWindow.isHidden = true }
+
+        rig.presenter.present(
+            HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal)))
+        )
+
+        // The level did not change, so nothing is worked out again. The work would be done within the call
+        // of `present`, so the check needs no wait.
+        XCTAssertFalse(
+            lateWindow.accessibilityElementsHidden,
+            "a manager at the same level is no reason to hide a window that came after the HUD"
+        )
+    }
+
     // MARK: - Helpers
 
     private static func screenChangedCount(of announcer: AccessibilitySpy) -> Int {
@@ -232,6 +307,52 @@ final class OverlayWindowPresenterTests: XCTestCase {
 
     private static func settings(hudDismissal: DMHUDDismissalRules = DMHUDDismissalRules()) -> DMLoadingManagerDefaultSettings {
         DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600), hudDismissal: hudDismissal)
+    }
+
+    private static func settings(atLevel level: UIWindow.Level) -> DMLoadingManagerDefaultSettings {
+        DMLoadingManagerDefaultSettings(autoHideDelay: .seconds(600), hudWindowLevel: level)
+    }
+
+    @MainActor
+    private struct SceneWithACover {
+        let windowScene: UIWindowScene
+        let presenter: OverlayWindowPresenter
+        let appWindow: UIWindow
+        let cover: UIWindow
+    }
+
+    /// The real presenter over the scene of a bare window, which holds the app's own window at the normal
+    /// level and a cover one level above it. The test gets `nil` when it has failed already: the window
+    /// belongs to no scene.
+    private func makeSceneWithACover(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> SceneWithACover? {
+        // The frame does not matter: the HUD takes the size of the scene, not of this window.
+        let probe = UIWindow(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        guard let scene = probe.windowScene else {
+            XCTFail("A window made by UIWindow(frame:) belongs to no window scene.", file: file, line: line)
+            return nil
+        }
+        let appWindow = UIWindow(windowScene: scene)
+        appWindow.isHidden = false
+        let cover = UIWindow(windowScene: scene)
+        cover.windowLevel = .normal + 1
+        cover.isHidden = false
+        let presenter = OverlayWindowPresenter(windowScene: scene, announcer: AccessibilitySpy())
+        addTeardownBlock {
+            presenter.dismiss()
+            cover.isHidden = true
+            appWindow.isHidden = true
+            probe.isHidden = true
+            XCTAssertTrue(
+                scene.windows.compactMap { $0 as? DMPassThroughWindow }.isEmpty,
+                "the HUD window left its scene when the test ended",
+                file: file,
+                line: line
+            )
+        }
+        return SceneWithACover(windowScene: scene, presenter: presenter, appWindow: appWindow, cover: cover)
     }
 
     @MainActor
