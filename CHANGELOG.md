@@ -18,6 +18,15 @@ Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
   system with its tint and reports `effectUnavailable` once, as before. Before, the blur could stay
   without its tint. This shows only where the system refuses the blur; where it accepts it,
   nothing changes on the screen.
+- When the HUD goes, VoiceOver returns to the element it was on only if a person can still reach
+  that element: it is in a window, and neither it, nor a view above it, nor its window is hidden.
+  If your app hid that element, or the screen around it, while the HUD was up, VoiceOver now
+  starts at the first element of the screen. Before, it was told to focus the hidden element.
+- When a manager takes over a HUD that is on the screen and brings another `hudWindowLevel`, the
+  windows that VoiceOver can reach follow the new level. A window of your app that the new level
+  puts under the HUD is now hidden from VoiceOver, and one that the new level puts above the HUD
+  is now reachable. Before, both stayed as the first level had left them. This shows only where
+  an app replaces the manager of a shown HUD with one that has another level.
 
 ## [1.3.0] - 2026-11-14
 
