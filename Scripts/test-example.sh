@@ -4,6 +4,13 @@
 # by group, with the example app uninstalled before each group.
 #
 #   Scripts/test-example.sh <simulator udid> [<results dir>]
+#   Scripts/test-example.sh --build [<results dir>]
+#   Scripts/test-example.sh --no-build <simulator udid> [<results dir>]
+#
+# The first form builds the example for that simulator and runs the tests. The other two do the
+# same in two steps, so that a build can run while a simulator boots: --build builds for the generic
+# simulator destination, one architecture, and touches no simulator; --no-build runs the tests of a
+# build that --build made.
 #
 # Why the groups: the example is one app that starts in several integration modes. A launch
 # that ends with the app in the background leaves its scene session saved, and the next
@@ -20,12 +27,24 @@
 # Exit codes: 0 every run passed, 1 a build or a test run failed, a run left no readable
 # result with a test in it, or the check of the results failed, 2 the runs could not be set up
 # (an unknown simulator, a UI test class outside the groups, a grouped class that does not
-# exist, an uninstall that fails).
+# exist, an uninstall that fails, --no-build without a build to run).
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-UDID="${1:?give the udid of a simulator}"
+# all: build for the simulator and run. build: build only. run: run an existing build.
+MODE=all
+case "${1-}" in
+    --build) MODE=build; shift ;;
+    --no-build) MODE=run; shift ;;
+    *) ;;
+esac
+if [ "$MODE" = build ]; then
+    RESULTS="${1:-$ROOT/.build/results/example}"
+else
+    UDID="${1:?give the udid of a simulator}"
+    RESULTS="${2:-$ROOT/.build/results/example}"
+fi
 
 # The state of the simulator with the udid, or nothing when no simulator has it.
 simulator_state() {
@@ -38,12 +57,12 @@ for devices in json.load(sys.stdin)["devices"].values():
 ' "$UDID"
 }
 
-# The simulator is checked before anything is built, installed or uninstalled.
-if [ -z "$(simulator_state)" ]; then
+# The simulator is checked before anything is built, installed or uninstalled. A build alone
+# needs none.
+if [ "$MODE" != build ] && [ -z "$(simulator_state)" ]; then
     echo "test-example: no simulator with the udid $UDID" >&2
     exit 2
 fi
-RESULTS="${2:-$ROOT/.build/results/example}"
 PROJECT="$ROOT/Examples/DMUnLoaderExample/DMUnLoaderExample.xcodeproj"
 SCHEME="DMUnLoaderExample"
 APP_ID="com.dmunloader.example.app"
@@ -160,20 +179,39 @@ uninstall_example() {
     fi
 }
 
-if ! xcodebuild build-for-testing \
-    -project "$PROJECT" \
-    -scheme "$SCHEME" \
-    -destination "id=$UDID" \
-    -derivedDataPath "$DERIVED" \
-    -clonedSourcePackagesDirPath "$PACKAGES" \
-    -onlyUsePackageVersionsFromResolvedFile \
-    -skipPackagePluginValidation \
-    > "$RESULTS/build-for-testing.log" 2>&1; then
-    echo "test-example: the build for testing failed. See ${RESULTS#"$ROOT"/}/build-for-testing.log" >&2
-    grep -E "error:" "$RESULTS/build-for-testing.log" | sort -u | head -20 >&2 || true
-    exit 1
+if [ "$MODE" = run ]; then
+    if ! compgen -G "$DERIVED/Build/Products/*.xctestrun" > /dev/null; then
+        echo "test-example: no build to run in ${DERIVED#"$ROOT"/}. Run Scripts/test-example.sh --build first." >&2
+        exit 2
+    fi
+else
+    # A build alone has no simulator, so it builds for the generic destination. That destination
+    # compiles every architecture unless one is named, which doubles the compile time.
+    DESTINATION="generic/platform=iOS Simulator"
+    ARCH_ARGUMENTS=(ARCHS=arm64)
+    if [ "$MODE" = all ]; then
+        DESTINATION="id=$UDID"
+        ARCH_ARGUMENTS=()
+    fi
+    if ! xcodebuild build-for-testing \
+        -project "$PROJECT" \
+        -scheme "$SCHEME" \
+        -destination "$DESTINATION" \
+        -derivedDataPath "$DERIVED" \
+        -clonedSourcePackagesDirPath "$PACKAGES" \
+        -onlyUsePackageVersionsFromResolvedFile \
+        -skipPackagePluginValidation \
+        ${ARCH_ARGUMENTS[@]+"${ARCH_ARGUMENTS[@]}"} \
+        > "$RESULTS/build-for-testing.log" 2>&1; then
+        echo "test-example: the build for testing failed. See ${RESULTS#"$ROOT"/}/build-for-testing.log" >&2
+        grep -E "error:" "$RESULTS/build-for-testing.log" | sort -u | head -20 >&2 || true
+        exit 1
+    fi
+    echo "test-example: built for testing."
+    if [ "$MODE" = build ]; then
+        exit 0
+    fi
 fi
-echo "test-example: built for testing."
 
 uninstall_example "the app-hosted tests"
 run_tests app-hosted -only-testing:DMUnLoaderExampleTests

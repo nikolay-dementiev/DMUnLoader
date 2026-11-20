@@ -42,7 +42,7 @@ fault of the script cannot turn the check into another one.
 | `Scripts/count-tests.sh [--label <text>] <result bundle> <glob>...` | that every test method of the files the globs name ran and passed in the result bundle: a run that lost a test class or skipped a test passes the build and the coverage floor too. A glob that names no tracked file ends with status 2 |
 | `Scripts/check-warnings.sh <build log>` | that no compiler warning points into this repository; CI runs it on the logs of the package tests, of the example's build, of the Release build and of the floor build. It finds the checkout under the path the script is run through, its real path and the links of macOS, and it refuses a log in which no Swift file of the checkout was compiled, such as a second build on a built tree (exit 2); `--self-test` runs it on canned logs |
 | `Scripts/check-example-project.sh` | that the example's Xcode project matches its XcodeGen spec |
-| `Scripts/test-example.sh <simulator udid>` | the example's tests, below |
+| `Scripts/test-example.sh <simulator udid>` | the example's tests, below; `--build` builds them with no simulator and `--no-build <simulator udid>` runs a build that `--build` made |
 | `Scripts/check-example-results.sh <family> <bundle>...` | that the runs of the example held as many tests as its sources have test methods and skipped only what may skip on that device (family `phone`: the two tests that need a second scene; `pad`: nothing, and both ran and passed); `Scripts/test-example.sh` runs it after its last group, and `--self-test` runs the cases of its reader |
 
 CI also builds the documentation, with DocC's warnings as errors:
@@ -108,6 +108,11 @@ UI tests run with one script, on the simulator whose udid you pass
 ```bash
 Scripts/test-example.sh <simulator udid>
 ```
+
+The same run in two steps lets a simulator boot while the example builds: `--build` builds for
+the generic simulator destination, one architecture, and touches no simulator, and
+`--no-build <simulator udid>` runs the tests of that build and ends with status 2 when there is
+none.
 
 The example is one app that starts in several integration modes: SwiftUI, SwiftUI with a
 manager written by the host, UIKit, and UIKit with such a manager. A launch that ends with
