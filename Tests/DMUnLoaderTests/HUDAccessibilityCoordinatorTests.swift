@@ -152,7 +152,7 @@ final class HUDAccessibilityCoordinatorTests: XCTestCase {
         XCTAssertEqual(
             spy.events,
             eventsOfTheEntry + [.hide],
-            "the windows under the new level are hidden and the ones above it come back, with no screen change"
+            "the content underneath is worked out again, and no screen change is posted"
         )
     }
 

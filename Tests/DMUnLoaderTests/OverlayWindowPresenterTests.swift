@@ -224,70 +224,71 @@ final class OverlayWindowPresenterTests: XCTestCase {
 
     func test_present_managerAtAHigherLevelTakesOver_hidesTheWindowThatIsNowUnderTheHUD() {
         let state = Self.success
-        guard let scene = makeSceneWithACover() else { return }
-        scene.presenter.present(
+        guard let rig = makeSceneWithACover() else { return }
+        rig.presenter.present(
             HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal)))
         )
         XCTAssertTrue(
-            turnRunLoop(until: scene.appWindow.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            turnRunLoop(until: rig.appWindow.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
             "precondition: the first HUD hides the app window, which is under it"
         )
-        XCTAssertFalse(scene.cover.accessibilityElementsHidden, "precondition: the cover is above the first HUD and reachable")
+        XCTAssertFalse(rig.cover.accessibilityElementsHidden, "precondition: the cover is above the first HUD and reachable")
 
         // The same state: the level is the only thing that tells the HUD that the cover is under it now.
-        scene.presenter.present(
+        rig.presenter.present(
             HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal + 2)))
         )
 
         XCTAssertTrue(
-            turnRunLoop(until: scene.cover.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            turnRunLoop(until: rig.cover.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
             "the cover is under the HUD of the new manager, so the HUD hides it"
         )
     }
 
     func test_present_managerAtALowerLevelTakesOver_givesBackTheWindowThatIsNowAboveTheHUD() {
         let state = Self.success
-        guard let scene = makeSceneWithACover() else { return }
-        scene.presenter.present(
+        guard let rig = makeSceneWithACover() else { return }
+        rig.presenter.present(
             HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal + 2)))
         )
         XCTAssertTrue(
-            turnRunLoop(until: scene.cover.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            turnRunLoop(until: rig.cover.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
             "precondition: the first HUD hides the cover, which is under it"
         )
-        XCTAssertTrue(scene.appWindow.accessibilityElementsHidden, "precondition: the first HUD hides the app window as well")
+        XCTAssertTrue(rig.appWindow.accessibilityElementsHidden, "precondition: the first HUD hides the app window as well")
 
-        scene.presenter.present(
+        rig.presenter.present(
             HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal)))
         )
 
         XCTAssertTrue(
-            turnRunLoop(until: !scene.cover.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            turnRunLoop(until: !rig.cover.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
             "the cover is above the HUD of the new manager, so the HUD gives it back"
         )
-        XCTAssertTrue(scene.appWindow.accessibilityElementsHidden, "the app window stays under the HUD and stays hidden")
+        XCTAssertTrue(rig.appWindow.accessibilityElementsHidden, "the app window stays under the HUD and stays hidden")
     }
 
-    func test_present_managerAtTheSameLevelTakesOver_worksNothingOutAgain() throws {
+    func test_present_managerAtTheSameLevelTakesOver_hidesNoWindowThatCameAfterTheHUD() {
         let state = Self.success
-        guard let scene = makeSceneWithACover() else { return }
-        scene.presenter.present(
+        guard let rig = makeSceneWithACover() else { return }
+        rig.presenter.present(
             HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal)))
         )
         XCTAssertTrue(
-            turnRunLoop(until: scene.appWindow.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            turnRunLoop(until: rig.appWindow.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
             "precondition: the first HUD hides the app window, which is under it"
         )
         // A window that comes after the HUD is not part of what the HUD hid when it appeared.
-        let lateWindow = UIWindow(windowScene: try XCTUnwrap(scene.appWindow.windowScene))
+        let lateWindow = UIWindow(windowScene: rig.windowScene)
         lateWindow.isHidden = false
         addTeardownBlock { lateWindow.isHidden = true }
 
-        scene.presenter.present(
+        rig.presenter.present(
             HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal)))
         )
 
-        // The level did not change, so nothing is worked out again, and the work would be done within the call.
+        // The level did not change, so nothing is worked out again. The work would be done within the call
+        // of `present`, so the check needs no wait.
         XCTAssertFalse(
             lateWindow.accessibilityElementsHidden,
             "a manager at the same level is no reason to hide a window that came after the HUD"
@@ -314,6 +315,7 @@ final class OverlayWindowPresenterTests: XCTestCase {
 
     @MainActor
     private struct SceneWithACover {
+        let windowScene: UIWindowScene
         let presenter: OverlayWindowPresenter
         let appWindow: UIWindow
         let cover: UIWindow
@@ -343,8 +345,14 @@ final class OverlayWindowPresenterTests: XCTestCase {
             cover.isHidden = true
             appWindow.isHidden = true
             probe.isHidden = true
+            XCTAssertTrue(
+                scene.windows.compactMap { $0 as? DMPassThroughWindow }.isEmpty,
+                "the HUD window left its scene when the test ended",
+                file: file,
+                line: line
+            )
         }
-        return SceneWithACover(presenter: presenter, appWindow: appWindow, cover: cover)
+        return SceneWithACover(windowScene: scene, presenter: presenter, appWindow: appWindow, cover: cover)
     }
 
     @MainActor

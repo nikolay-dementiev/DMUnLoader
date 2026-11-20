@@ -102,7 +102,7 @@ final class HUDStateReporterTests: XCTestCase {
         XCTAssertEqual(
             announcer.events,
             eventsOfTheEntry + [.hide],
-            "a new level of the window moves the set of windows under it, and the state is not announced again"
+            "a new level makes the content underneath be worked out again, and the state is not announced again"
         )
     }
 

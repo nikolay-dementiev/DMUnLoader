@@ -60,6 +60,30 @@ final class AccessibilityAdaptersTests: XCTestCase {
         XCTAssertFalse(windows.app.accessibilityElementsHidden, "one restore gives back what two hides of one HUD took")
     }
 
+    func test_contentHider_hiddenAgainAtAHigherLevel_hidesTheWindowThatIsNowUnderTheHUD() {
+        let windows = SceneWindows()
+        let sut = makeHider(for: windows)
+        sut.hideContentUnderneath()
+        windows.hud.windowLevel = .normal + 2
+
+        sut.hideContentUnderneath()
+
+        XCTAssertTrue(windows.above.accessibilityElementsHidden, "the window that the new level puts under the HUD is hidden")
+        XCTAssertTrue(windows.app.accessibilityElementsHidden, "a window that stays under the HUD stays hidden")
+    }
+
+    func test_contentHider_hiddenAgainAtALowerLevel_givesBackTheWindowThatIsNowAboveTheHUD() {
+        let windows = SceneWindows()
+        let sut = makeHider(for: windows)
+        sut.hideContentUnderneath()
+        windows.hud.windowLevel = .normal - 1
+
+        sut.hideContentUnderneath()
+
+        XCTAssertFalse(windows.app.accessibilityElementsHidden, "the window that the new level puts above the HUD is reachable")
+        XCTAssertTrue(windows.below.accessibilityElementsHidden, "a window that stays under the HUD stays hidden")
+    }
+
     func test_contentHider_twoHUDsOverlap_giveTheWindowBackWhenTheLastGoes() {
         let windows = SceneWindows()
         let secondHUD = UIWindow()
