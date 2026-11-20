@@ -3,6 +3,22 @@
 All notable changes to DMUnLoader are recorded in this file. The format follows Keep a
 Changelog 1.1.0, and versions follow Semantic Versioning 2.0.0.
 
+## [Unreleased]
+
+### Breaking changes
+
+- The Swift package requires DMVariableBlurView `from: "2.0.0"`; it was `from: "1.1.0"`. An app
+  or a package that lists DMVariableBlurView in its own manifest with a requirement that ends
+  below 2.0, such as `from: "1.1.0"`, cannot resolve together with this release. Move that
+  requirement to `from: "2.0.0"`, or remove it if the code does not import the library itself.
+  An app that lists only DMUnLoader changes nothing. `Documentation/Migration-2.0.md` has the
+  details.
+- When the system rebuilds the effect behind the HUD, for example on a change between light and
+  dark appearance, and the variable blur cannot be put back, the HUD shows the regular blur of the
+  system with its tint and reports `effectUnavailable` once, as before. Before, the blur could stay
+  without its tint. This shows only where the system refuses the blur; where it accepts it,
+  nothing changes on the screen.
+
 ## [1.3.0] - 2026-11-14
 
 ### Added

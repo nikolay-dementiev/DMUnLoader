@@ -45,8 +45,9 @@ Raising the minimum version of a dependency within the same major version is add
 moves no platform floor, changes no behaviour and asks nothing of a consumer. It then needs a minor
 release and its own line in the changelog. A raise that does any of these is breaking.
 
-DMAction and DMVariableBlurView are required `from: "1.1.0"`. A new major version of either
-enters this package only in a major version of this package. The module re-exports DMAction
+DMAction is required `from: "1.1.0"` and DMVariableBlurView `from: "2.0.0"`, a major version that
+enters this package with its 2.0.0. A new major version of either enters this package only in a
+major version of this package. The module re-exports DMAction
 (`@_exported import DMAction`), so the public declarations of DMAction are part of what a
 consumer of DMUnLoader sees. ViewInspector and swift-snapshot-testing are required by the test
 target only. The library product is dynamic.
