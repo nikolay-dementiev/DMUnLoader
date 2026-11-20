@@ -98,31 +98,59 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # The udid names the device, not a name and an OS: a hosted image can list a runtime with
-      # no device in it, and the script creates the device then.
-      - name: Prepare the simulator
+      # The simulator boots in the background while the job builds. The udid names the device,
+      # not a name and an OS: a hosted image can list a runtime with no device in it, and the
+      # script creates the device then. Every descriptor of the background command goes to a
+      # file, because a step waits for a process that keeps its output open.
+      - name: Start the simulator
         env:
           DEVICE: ${{ matrix.device }}
           OS: ${{ matrix.os }}
         run: |
-          udid="$(Scripts/prepare-simulator.sh "$DEVICE" "$OS")"
-          echo "SIMULATOR=$udid" >> "$GITHUB_ENV"
+          sim="$RUNNER_TEMP/sim"
+          mkdir -p "$sim"
+          {
+            status=0
+            Scripts/prepare-simulator.sh "$DEVICE" "$OS" > "$sim/udid" 2> "$sim/log" || status=$?
+            echo "$status" > "$sim/status"
+          } > /dev/null 2>&1 < /dev/null &
       # A scan that never fails looks the same as a clean build, so it is tried on canned logs
       # first: a warning through every path the checkout is printed by, and a build that compiled
       # nothing. It needs no build.
       - name: Check the warning scan
         run: Scripts/check-warnings.sh --self-test
-      - name: Build and test
+      # A generic destination builds every architecture of the SDK; the simulator is arm64, and
+      # the tests built for it before, so one architecture is built here. The runner is fresh,
+      # so there is nothing to clean.
+      - name: Build the tests
         run: |
           mkdir -p .build/results/ci
-          xcodebuild clean build test \
+          xcodebuild build-for-testing \
+            -scheme DMUnLoader \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -enableCodeCoverage YES \
+            -skipPackagePluginValidation \
+            ARCHS=arm64 \
+            2>&1 | tee .build/results/ci/package.log
+      # A boot that failed, or that took more than ten minutes, fails the job here.
+      - name: Wait for the simulator
+        run: |
+          sim="$RUNNER_TEMP/sim"
+          for _ in $(seq 1 600); do [ -f "$sim/status" ] && break; sleep 1; done
+          cat "$sim/log" >&2
+          [ -f "$sim/status" ] && [ "$(cat "$sim/status")" = 0 ] || { echo "The simulator did not boot." >&2; exit 1; }
+          echo "SIMULATOR=$(cat "$sim/udid")" >> "$GITHUB_ENV"
+      - name: Test
+        run: |
+          xcodebuild test-without-building \
             -scheme DMUnLoader \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,id=$SIMULATOR" \
             -enableCodeCoverage YES \
             -resultBundlePath .build/results/ci/package.xcresult \
             -skipPackagePluginValidation \
-            2>&1 | tee .build/results/ci/package.log
+            2>&1 | tee -a .build/results/ci/package.log
       # A run that lost tests, or skipped them, passes the coverage floor too. So every test method
       # of the package tests must be in the result bundle, run and passed.
       - name: Check the test count
@@ -283,20 +311,44 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Prepare the simulator
+      # The simulator boots in the background while the job builds; see the test job.
+      - name: Start the simulator
         env:
           DEVICE: iPhone 17 Pro
           OS: "26.5"
         run: |
-          udid="$(Scripts/prepare-simulator.sh "$DEVICE" "$OS")"
-          echo "SIMULATOR=$udid" >> "$GITHUB_ENV"
+          sim="$RUNNER_TEMP/sim"
+          mkdir -p "$sim"
+          {
+            status=0
+            Scripts/prepare-simulator.sh "$DEVICE" "$OS" > "$sim/udid" 2> "$sim/log" || status=$?
+            echo "$status" > "$sim/status"
+          } > /dev/null 2>&1 < /dev/null &
+      # One architecture, as in the test job.
+      - name: Build the tests with the Thread Sanitizer
+        run: |
+          xcodebuild build-for-testing \
+            -scheme DMUnLoader \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -enableThreadSanitizer YES \
+            -skipPackagePluginValidation \
+            ARCHS=arm64
+      # A boot that failed, or that took more than ten minutes, fails the job here.
+      - name: Wait for the simulator
+        run: |
+          sim="$RUNNER_TEMP/sim"
+          for _ in $(seq 1 600); do [ -f "$sim/status" ] && break; sleep 1; done
+          cat "$sim/log" >&2
+          [ -f "$sim/status" ] && [ "$(cat "$sim/status")" = 0 ] || { echo "The simulator did not boot." >&2; exit 1; }
+          echo "SIMULATOR=$(cat "$sim/udid")" >> "$GITHUB_ENV"
       - name: Test with the Thread Sanitizer
         # The snapshot test classes compare images, which says nothing about data races and
         # is slow under the sanitizer, so this job skips them. The test job runs them on each
         # of its matrix cells.
         run: |
           mkdir -p .build/results/ci
-          xcodebuild test \
+          xcodebuild test-without-building \
             -scheme DMUnLoader \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,id=$SIMULATOR" \
@@ -383,21 +435,36 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # The udid names the device, not a name and an OS: a hosted image can list a runtime with
-      # no device in it, and the script creates the device then.
-      - name: Prepare the simulator
+      # The simulator boots in the background while the job builds; see the test job.
+      - name: Start the simulator
         env:
           DEVICE: ${{ matrix.device }}
           OS: ${{ matrix.os }}
         run: |
-          udid="$(Scripts/prepare-simulator.sh "$DEVICE" "$OS")"
-          echo "UDID=$udid" >> "$GITHUB_ENV"
+          sim="$RUNNER_TEMP/sim"
+          mkdir -p "$sim"
+          {
+            status=0
+            Scripts/prepare-simulator.sh "$DEVICE" "$OS" > "$sim/udid" 2> "$sim/log" || status=$?
+            echo "$status" > "$sim/status"
+          } > /dev/null 2>&1 < /dev/null &
       # A check that never fails looks the same as a clean run, so its reader is tried on texts that
       # must fail before it is trusted with the real ones. It needs no simulator.
       - name: Check the reader of the example's results
         run: Scripts/check-example-results.sh --self-test
-      - name: Build the example and run its tests, one launch mode at a time
-        run: Scripts/test-example.sh "$UDID" .build/results/ci/example
+      # The build needs no simulator; the tests start only after the wait below.
+      - name: Build the example
+        run: Scripts/test-example.sh --build .build/results/ci/example
+      # A boot that failed, or that took more than ten minutes, fails the job here.
+      - name: Wait for the simulator
+        run: |
+          sim="$RUNNER_TEMP/sim"
+          for _ in $(seq 1 600); do [ -f "$sim/status" ] && break; sleep 1; done
+          cat "$sim/log" >&2
+          [ -f "$sim/status" ] && [ "$(cat "$sim/status")" = 0 ] || { echo "The simulator did not boot." >&2; exit 1; }
+          echo "SIMULATOR=$(cat "$sim/udid")" >> "$GITHUB_ENV"
+      - name: Run the example's tests, one launch mode at a time
+        run: Scripts/test-example.sh --no-build "$SIMULATOR" .build/results/ci/example
       - name: No warning from this repository
         run: Scripts/check-warnings.sh .build/results/ci/example/build-for-testing.log
       - name: Upload the result bundles
