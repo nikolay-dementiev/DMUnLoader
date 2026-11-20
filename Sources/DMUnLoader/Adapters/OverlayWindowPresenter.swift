@@ -75,8 +75,10 @@ package final class OverlayWindowPresenter: HUDOverlayPresenting {
         // Set on every call, so a new manager that takes over the window brings its own level. The
         // windows that the HUD hides depend on that level, so the accessibility side is told when it
         // moved, and only after it moved: it reads the level of the window when it works them out.
-        let levelChanged = window.windowLevel != composition.windowLevel
-        window.windowLevel = composition.windowLevel
+        // Read once: the composition asks the settings of its manager each time, so two reads could differ.
+        let level = composition.windowLevel
+        let levelChanged = window.windowLevel != level
+        window.windowLevel = level
         if levelChanged {
             accessibility.hudWindowLevelDidChange()
         }
