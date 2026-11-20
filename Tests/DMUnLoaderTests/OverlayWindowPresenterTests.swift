@@ -268,6 +268,32 @@ final class OverlayWindowPresenterTests: XCTestCase {
         XCTAssertTrue(scene.appWindow.accessibilityElementsHidden, "the app window stays under the HUD and stays hidden")
     }
 
+    func test_present_managerAtTheSameLevelTakesOver_worksNothingOutAgain() throws {
+        let state = Self.success
+        guard let scene = makeSceneWithACover() else { return }
+        scene.presenter.present(
+            HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal)))
+        )
+        XCTAssertTrue(
+            turnRunLoop(until: scene.appWindow.accessibilityElementsHidden, timeout: TestTiming.callbackAllowance),
+            "precondition: the first HUD hides the app window, which is under it"
+        )
+        // A window that comes after the HUD is not part of what the HUD hid when it appeared.
+        let lateWindow = UIWindow(windowScene: try XCTUnwrap(scene.appWindow.windowScene))
+        lateWindow.isHidden = false
+        addTeardownBlock { lateWindow.isHidden = true }
+
+        scene.presenter.present(
+            HUDPresentation(HostLoadingManagerSpy(loadableState: state, settings: Self.settings(atLevel: .normal)))
+        )
+
+        // The level did not change, so nothing is worked out again, and the work would be done within the call.
+        XCTAssertFalse(
+            lateWindow.accessibilityElementsHidden,
+            "a manager at the same level is no reason to hide a window that came after the HUD"
+        )
+    }
+
     // MARK: - Helpers
 
     private static func screenChangedCount(of announcer: AccessibilitySpy) -> Int {
