@@ -599,12 +599,13 @@ the view is in one.
 While a HUD is shown, DMUnLoader hides from assistive technology, and so from your own UI tests,
 the windows of its scene at the HUD window's level or below that are open when the HUD appears,
 until the HUD goes. A manager that takes over a HUD on the screen with another `hudWindowLevel`
-moves that set: the windows under the new level are hidden, and those above it are reachable. When
-the HUD appears or shows another state, VoiceOver is told that the screen changed and starts at
-its first element: the HUD's, unless a window above the HUD has elements. When the HUD goes,
-VoiceOver returns to the element it was on, if that element is still on the screen: in a window,
-and not hidden, nor under a hidden view. Otherwise VoiceOver starts at the first element of the
-screen. The escape gesture hides a success or a failure as a tap outside the card does.
+makes the HUD work that set out again at that moment: the windows under the new level are hidden,
+including one opened since the HUD appeared, and those above it are reachable. When the HUD
+appears or shows another state, VoiceOver is told that the screen changed and starts at its first
+element: the HUD's, unless a window above the HUD has elements. When the HUD goes, VoiceOver
+returns to the element it was on, if that element is still on the screen: in a window, and not
+hidden, nor under a hidden view. Otherwise VoiceOver starts at the first element of the screen.
+The escape gesture hides a success or a failure as a tap outside the card does.
 The loading HUD is one accessibility element named by its text, or by the default loading text
 ("Loading..." in English) when the text is empty or only whitespace. Reduce Motion keeps the card and
 a pressed button still. VoiceOver does not read the default images; an image you supply keeps the
