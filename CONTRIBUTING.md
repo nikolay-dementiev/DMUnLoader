@@ -44,6 +44,7 @@ fault of the script cannot turn the check into another one.
 | `Scripts/check-example-project.sh` | that the example's Xcode project matches its XcodeGen spec |
 | `Scripts/test-example.sh <simulator udid>` | the example's tests, below; `--build` builds them with no simulator and `--no-build <simulator udid>` runs a build that `--build` made |
 | `Scripts/check-example-results.sh <family> <bundle>...` | that the runs of the example held as many tests as its sources have test methods and skipped only what may skip on that device (family `phone`: the two tests that need a second scene; `pad`: nothing, and both ran and passed); `Scripts/test-example.sh` runs it after its last group, and `--self-test` runs the cases of its reader |
+| `Scripts/ci-changes.sh <event> <base sha>` | not a check of the code: it decides which jobs of CI a pull request needs, from the paths it changes (`git diff --no-renames` against the base, with `core.quotePath=false` so that a name which is not ASCII stays whole). A pull request that touches only documents (`*.md` outside the code directories, `Documentation`, `LICENSE`, `DocumentationAndBluePrints`, `.agents`) skips the jobs that build and test the code (`test`, `example`, `floor`, `thread-sanitizer`); one that touches only `.coderabbit.yaml` skips every job; any other path, an empty list, a diff that cannot be made and every event but a pull request run all of them. `--self-test` runs the decision on lists of paths, the job table of `ci.yml` and the real diff on a scratch repository, and the `changes` job runs it |
 
 CI also builds the documentation, with DocC's warnings as errors:
 
@@ -71,7 +72,7 @@ finds with git, so run them in a clone, and runs
 paths that CI and this file name stay as they were. A relative path in an argument is relative to
 the root. The other scripts of `Scripts/` have not moved: `check-manifest.sh`, `check-podspec.sh`,
 `check-warnings.sh`, `coverage-gate.sh`, `test-example.sh`, `check-example-project.sh`,
-`check-example-results.sh` and the two `analyze_*` scripts.
+`check-example-results.sh`, `ci-changes.sh` and the two `analyze_*` scripts.
 
 - `Tools/Package.swift` is a package of its own. It pins a release of DMDevKit, and
   `Tools/Package.resolved` pins its commit; Dependabot proposes the newer releases. SwiftPM reads

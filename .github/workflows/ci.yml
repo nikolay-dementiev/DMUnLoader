@@ -27,8 +27,37 @@ defaults:
     shell: bash
 
 jobs:
+  # Decides from the changed paths which jobs a pull request needs (Scripts/ci-changes.sh). It runs on
+  # Linux, so it takes no macOS slot. The clone has its whole history: the diff against the base of the
+  # pull request needs the merge base, and a diff that cannot be made runs every job. A job that this
+  # one fails to answer for runs too: the jobs below ask for what is not 'skip'.
+  changes:
+    name: changes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      light: ${{ steps.decide.outputs.light }}
+      heavy: ${{ steps.decide.outputs.heavy }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check the filter
+        run: Scripts/ci-changes.sh --self-test
+      - name: Decide which jobs run
+        id: decide
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -o pipefail
+          Scripts/ci-changes.sh "$EVENT" "$BASE" | tee -a "$GITHUB_OUTPUT"
+
   lint:
     name: lint
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.light != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 20
     env:
@@ -68,6 +97,8 @@ jobs:
     # The newest hosted Xcode with the newest runtime, and with the oldest runtime it offers.
     # The sources need Swift 6.2, so only an Xcode 26 can build them.
     name: test (${{ matrix.name }})
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.heavy != 'skip' }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     permissions:
@@ -184,6 +215,8 @@ jobs:
 
   consumer:
     name: consumer
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.light != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 30
     env:
@@ -218,6 +251,8 @@ jobs:
     # The manifest declares Swift tools 6.2: the oldest hosted Xcode with that compiler has
     # to build the library.
     name: floor
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.heavy != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 30
     env:
@@ -250,6 +285,8 @@ jobs:
   api:
     # The interface text depends on the compiler, so this job runs on one pinned Xcode.
     name: api
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.light != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 15
     env:
@@ -302,6 +339,8 @@ jobs:
     # loading manager, which any thread may call. The sanitizer checks those, and whatever a
     # later change moves off the main actor.
     name: thread-sanitizer
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.heavy != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 45
     env:
@@ -373,6 +412,8 @@ jobs:
     # sources as a pod against the frozen sibling pods (`~> 1.1` from the trunk), so it holds only
     # while the sources use nothing the siblings added after 1.1.0.
     name: podspec
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.light != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 45
     env:
@@ -386,6 +427,8 @@ jobs:
 
   docs:
     name: docs
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.light != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 20
     env:
@@ -407,6 +450,8 @@ jobs:
 
   example:
     name: example (${{ matrix.name }})
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.heavy != 'skip' }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     strategy:
