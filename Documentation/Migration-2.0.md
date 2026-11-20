@@ -438,6 +438,51 @@ func providerAfter() -> AnyDMLoadingViewProvider {
 }
 ```
 
+## The DMVariableBlurView requirement
+
+Not a retirement: 2.0.0 asks for a newer major version of
+[DMVariableBlurView](https://github.com/nikolay-dementiev/DMVariableBlurView), the library behind
+the default backdrop of the HUD. The Swift package of DMUnLoader 1.3.0 requires it `from: "1.1.0"`,
+and 2.0.0 requires it `from: "2.0.0"`.
+
+An app that lists only DMUnLoader changes nothing: Swift Package Manager picks DMVariableBlurView
+2.0 by itself.
+
+An app or a package that also lists DMVariableBlurView in its own manifest, for example to import
+it itself (DMUnLoader does not re-export it), has to allow 2.0. A requirement that ends below 2.0,
+such as `from: "1.1.0"`, `.upToNextMinor(from: "1.1.0")` or `exact: "1.1.0"`, leaves no version
+that satisfies both it and DMUnLoader 2.0.0, and Swift Package Manager reports that it cannot
+resolve. Change it to `from: "2.0.0"`, or remove the line if you do not import the library yourself.
+
+What a host of DMUnLoader sees. The default backdrop, `.variableBlur`, looks and behaves as before,
+with one exception. When the system rebuilds the effect behind the HUD, for example on a change
+between light and dark appearance, and refuses to take the variable blur back, the HUD now shows
+the regular blur of the system with its tint. Before, the blur could stay without its tint. The
+failure reaches `onBackdropFailure` once, as `effectUnavailable`, as before. No code path of the
+HUD reaches the first two changes of the list below on current systems: the HUD puts no filter of
+its own on the blur, never turns on the Reduce Transparency option of the blur (under that setting
+the HUD removes the blur itself), and never changes the values of the blur.
+
+If you use DMVariableBlurView yourself, three of its behaviours change in 2.0. The changelog of the
+library, section 2.0.0, has the full text.
+
+- The view finds its own filter on the backdrop by identity. When the backdrop carries another
+  filter in the place of the one the view installed, put there by your code or by a later system,
+  the view counts the effect as rebuilt and, while it shows the variable blur, installs its blur
+  again at the next layout pass, and the other filter is gone. In 1.1.0 the view asked any single
+  filter for its radius and mask, and a filter without those keys raised an exception that Swift
+  cannot catch and ended the app. If you put your own filter on the backdrop layer of the view,
+  move it to a view of your own.
+- A SwiftUI update is applied as one request. When one update turns the Reduce Transparency option
+  off and changes the values together, the view shows the new values under the new option once. It
+  no longer installs the previous values first, so a failure of the values that the update replaced
+  no longer reaches your handler. Nothing to change, unless your handler counted on that failure.
+- A layout pass that cannot install the blur again leaves the regular blur of the system with its
+  tint, as for every other failure, and reports it once. Before, the view could keep the standard
+  filters without the tint. Nothing to change.
+
+The UIKit view also has a new initializer that takes a failure handler.
+
 ## What stays
 
 `DMError`, `DMAppError`, `DMAppError.ResourceError` and `DMAppError.NetworkError` stay in 2.0.0.
