@@ -131,11 +131,25 @@ package final class SystemAccessibilityAnnouncer: AccessibilityAnnouncer {
         var current: Any? = element
         while let candidate = current {
             if let view = candidate as? UIView {
-                return view.window != nil
+                return isShown(view)
             }
             current = (candidate as? UIAccessibilityElement)?.accessibilityContainer
         }
         // An element that names no view cannot be checked; VoiceOver ignores one that is gone.
+        return true
+    }
+
+    /// A view is shown when it is in a window and nobody has hidden it, nor a view above it, nor the
+    /// window. The window is the top of the chain of superviews, so one walk covers all three.
+    private func isShown(_ view: UIView) -> Bool {
+        guard view.window != nil else { return false }
+        var current: UIView? = view
+        while let candidate = current {
+            if candidate.isHidden {
+                return false
+            }
+            current = candidate.superview
+        }
         return true
     }
 
