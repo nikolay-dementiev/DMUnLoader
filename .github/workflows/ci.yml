@@ -8,8 +8,10 @@ on:
   # The release workflow runs this workflow on a version tag.
   workflow_call:
   schedule:
-    # Mondays, 05:17 UTC. An early warning when a new runner image or OS breaks the package.
-    - cron: "17 5 * * 1"
+    # Wednesdays, 05:17 UTC. An early warning when a new runner image or OS breaks the package. The
+    # other repositories of the family run on other days: runs that start together queue behind each
+    # other for the macOS runners.
+    - cron: "17 5 * * 3"
 
 permissions:
   contents: read
