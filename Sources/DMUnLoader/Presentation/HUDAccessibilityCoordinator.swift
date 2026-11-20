@@ -7,7 +7,9 @@
 /// Hides what lies under the HUD from assistive technology, and shows it again.
 @MainActor
 package protocol ContentUnderneathHiding: AnyObject {
-    /// Hides from assistive technology the content that the HUD covers.
+    /// Hides from assistive technology the content that the HUD covers. Called again while that content
+    /// is hidden, it works the content out anew: what the HUD covers now is hidden, and a window that
+    /// it no longer covers comes back.
     func hideContentUnderneath()
 
     /// Shows that content again, as it was before it was hidden.
@@ -71,6 +73,17 @@ package final class HUDAccessibilityCoordinator {
         }
         phase = .none
         giveBackTheScreen()
+    }
+
+    /// The window of the HUD got another level, which the presenter has set already. The windows that
+    /// the HUD hides are the ones at or under its level, so a HUD that stays on the screen works them
+    /// out again. Nothing is announced: the HUD on the screen is the one that was there. Does nothing
+    /// while no HUD is shown, as there is nothing hidden then.
+    package func hudWindowLevelDidChange() {
+        guard phase.showsHUD else {
+            return
+        }
+        contentHider.hideContentUnderneath()
     }
 
     private func giveBackTheScreen() {

@@ -35,4 +35,10 @@ package final class HUDStateReporter {
     package func hudDidGo() {
         coordinator.hudDidGo()
     }
+
+    /// The presenter gave the HUD window another level. The state does not change, so the revision of
+    /// the token stays; the coordinator only works out again which windows the window covers.
+    package func hudWindowLevelDidChange() {
+        coordinator.hudWindowLevelDidChange()
+    }
 }
