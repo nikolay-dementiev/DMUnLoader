@@ -1,13 +1,13 @@
 {
-  "originHash" : "acff3a040d7da2ccdc178d3457c8fc79672ba7db714038db1eefcc5813f092f0",
+  "originHash" : "7b875fd3b60a1d966215f4518659539f9175f693e804c5f8eb1af975f265461d",
   "pins" : [
     {
       "identity" : "dmaction",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nikolay-dementiev/DMAction.git",
       "state" : {
-        "revision" : "76194dc9edc8fa349b8effcc03aa11d37dfe1a28",
-        "version" : "1.1.0"
+        "revision" : "fc405b696a339cd7dc3bcdb7a3a5046465199d00",
+        "version" : "1.2.0"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
       "state" : {
-        "revision" : "28e5de025e3fd98991791bfbf83023ab3708da03",
-        "version" : "1.19.6"
+        "revision" : "1488390b0735e726564b948bf08b384398bdab5c",
+        "version" : "1.19.7"
       }
     },
     {
