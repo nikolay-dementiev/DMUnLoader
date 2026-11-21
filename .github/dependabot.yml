@@ -11,12 +11,23 @@ updates:
     # A release is proposed a week after it appears, not on the day it does.
     cooldown:
       default-days: 7
+    # The minor and patch updates of an ecosystem come as one pull request a week, so that a merge
+    # to main does not make Dependabot rebase several at once. A major update stays a pull request
+    # of its own: it needs its own lines in the changelog.
+    groups:
+      actions:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
   - package-ecosystem: swift
     directory: /
     schedule:
       interval: weekly
     cooldown:
       default-days: 7
+    groups:
+      packages:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
   - package-ecosystem: swift
     directory: /Tools
     schedule:
@@ -24,3 +35,7 @@ updates:
     # A release of DMDevKit is proposed a week after it appears, as for an action.
     cooldown:
       default-days: 7
+    groups:
+      tools:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]

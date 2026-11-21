@@ -8,8 +8,10 @@ on:
   # The release workflow runs this workflow on a version tag.
   workflow_call:
   schedule:
-    # Mondays, 05:17 UTC. An early warning when a new runner image or OS breaks the package.
-    - cron: "17 5 * * 1"
+    # Wednesdays, 05:17 UTC. An early warning when a new runner image or OS breaks the package. The
+    # other repositories of the family run on other days: runs that start together queue behind each
+    # other for the macOS runners.
+    - cron: "17 5 * * 3"
 
 permissions:
   contents: read
@@ -27,8 +29,37 @@ defaults:
     shell: bash
 
 jobs:
+  # Decides from the changed paths which jobs a pull request needs (Scripts/ci-changes.sh). It runs on
+  # Linux, so it takes no macOS slot. The clone has its whole history: the diff against the base of the
+  # pull request needs the merge base, and a diff that cannot be made runs every job. A job that this
+  # one fails to answer for runs too: the jobs below ask for what is not 'skip'.
+  changes:
+    name: changes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      light: ${{ steps.decide.outputs.light }}
+      heavy: ${{ steps.decide.outputs.heavy }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check the filter
+        run: Scripts/ci-changes.sh --self-test
+      - name: Decide which jobs run
+        id: decide
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -o pipefail
+          Scripts/ci-changes.sh "$EVENT" "$BASE" | tee -a "$GITHUB_OUTPUT"
+
   lint:
     name: lint
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.light != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 20
     env:
@@ -68,6 +99,8 @@ jobs:
     # The newest hosted Xcode with the newest runtime, and with the oldest runtime it offers.
     # The sources need Swift 6.2, so only an Xcode 26 can build them.
     name: test (${{ matrix.name }})
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.heavy != 'skip' }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     permissions:
@@ -98,31 +131,59 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # The udid names the device, not a name and an OS: a hosted image can list a runtime with
-      # no device in it, and the script creates the device then.
-      - name: Prepare the simulator
+      # The simulator boots in the background while the job builds. The udid names the device,
+      # not a name and an OS: a hosted image can list a runtime with no device in it, and the
+      # script creates the device then. Every descriptor of the background command goes to a
+      # file, because a step waits for a process that keeps its output open.
+      - name: Start the simulator
         env:
           DEVICE: ${{ matrix.device }}
           OS: ${{ matrix.os }}
         run: |
-          udid="$(Scripts/prepare-simulator.sh "$DEVICE" "$OS")"
-          echo "SIMULATOR=$udid" >> "$GITHUB_ENV"
+          sim="$RUNNER_TEMP/sim"
+          mkdir -p "$sim"
+          {
+            status=0
+            Scripts/prepare-simulator.sh "$DEVICE" "$OS" > "$sim/udid" 2> "$sim/log" || status=$?
+            echo "$status" > "$sim/status"
+          } > /dev/null 2>&1 < /dev/null &
       # A scan that never fails looks the same as a clean build, so it is tried on canned logs
       # first: a warning through every path the checkout is printed by, and a build that compiled
       # nothing. It needs no build.
       - name: Check the warning scan
         run: Scripts/check-warnings.sh --self-test
-      - name: Build and test
+      # A generic destination builds every architecture of the SDK; the simulator is arm64, and
+      # the tests built for it before, so one architecture is built here. The runner is fresh,
+      # so there is nothing to clean.
+      - name: Build the tests
         run: |
           mkdir -p .build/results/ci
-          xcodebuild clean build test \
+          xcodebuild build-for-testing \
+            -scheme DMUnLoader \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -enableCodeCoverage YES \
+            -skipPackagePluginValidation \
+            ARCHS=arm64 \
+            2>&1 | tee .build/results/ci/package.log
+      # A boot that failed, or that took more than ten minutes, fails the job here.
+      - name: Wait for the simulator
+        run: |
+          sim="$RUNNER_TEMP/sim"
+          for _ in $(seq 1 600); do [ -f "$sim/status" ] && break; sleep 1; done
+          cat "$sim/log" >&2
+          [ -f "$sim/status" ] && [ "$(cat "$sim/status")" = 0 ] || { echo "The simulator did not boot." >&2; exit 1; }
+          echo "SIMULATOR=$(cat "$sim/udid")" >> "$GITHUB_ENV"
+      - name: Test
+        run: |
+          xcodebuild test-without-building \
             -scheme DMUnLoader \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,id=$SIMULATOR" \
             -enableCodeCoverage YES \
             -resultBundlePath .build/results/ci/package.xcresult \
             -skipPackagePluginValidation \
-            2>&1 | tee .build/results/ci/package.log
+            2>&1 | tee -a .build/results/ci/package.log
       # A run that lost tests, or skipped them, passes the coverage floor too. So every test method
       # of the package tests must be in the result bundle, run and passed.
       - name: Check the test count
@@ -156,6 +217,8 @@ jobs:
 
   consumer:
     name: consumer
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.light != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 30
     env:
@@ -190,6 +253,8 @@ jobs:
     # The manifest declares Swift tools 6.2: the oldest hosted Xcode with that compiler has
     # to build the library.
     name: floor
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.heavy != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 30
     env:
@@ -222,6 +287,8 @@ jobs:
   api:
     # The interface text depends on the compiler, so this job runs on one pinned Xcode.
     name: api
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.light != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 15
     env:
@@ -274,6 +341,8 @@ jobs:
     # loading manager, which any thread may call. The sanitizer checks those, and whatever a
     # later change moves off the main actor.
     name: thread-sanitizer
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.heavy != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 45
     env:
@@ -283,20 +352,44 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Prepare the simulator
+      # The simulator boots in the background while the job builds; see the test job.
+      - name: Start the simulator
         env:
           DEVICE: iPhone 17 Pro
           OS: "26.5"
         run: |
-          udid="$(Scripts/prepare-simulator.sh "$DEVICE" "$OS")"
-          echo "SIMULATOR=$udid" >> "$GITHUB_ENV"
+          sim="$RUNNER_TEMP/sim"
+          mkdir -p "$sim"
+          {
+            status=0
+            Scripts/prepare-simulator.sh "$DEVICE" "$OS" > "$sim/udid" 2> "$sim/log" || status=$?
+            echo "$status" > "$sim/status"
+          } > /dev/null 2>&1 < /dev/null &
+      # One architecture, as in the test job.
+      - name: Build the tests with the Thread Sanitizer
+        run: |
+          xcodebuild build-for-testing \
+            -scheme DMUnLoader \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -enableThreadSanitizer YES \
+            -skipPackagePluginValidation \
+            ARCHS=arm64
+      # A boot that failed, or that took more than ten minutes, fails the job here.
+      - name: Wait for the simulator
+        run: |
+          sim="$RUNNER_TEMP/sim"
+          for _ in $(seq 1 600); do [ -f "$sim/status" ] && break; sleep 1; done
+          cat "$sim/log" >&2
+          [ -f "$sim/status" ] && [ "$(cat "$sim/status")" = 0 ] || { echo "The simulator did not boot." >&2; exit 1; }
+          echo "SIMULATOR=$(cat "$sim/udid")" >> "$GITHUB_ENV"
       - name: Test with the Thread Sanitizer
         # The snapshot test classes compare images, which says nothing about data races and
         # is slow under the sanitizer, so this job skips them. The test job runs them on each
         # of its matrix cells.
         run: |
           mkdir -p .build/results/ci
-          xcodebuild test \
+          xcodebuild test-without-building \
             -scheme DMUnLoader \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,id=$SIMULATOR" \
@@ -321,6 +414,8 @@ jobs:
     # sources as a pod against the frozen sibling pods (`~> 1.1` from the trunk), so it holds only
     # while the sources use nothing the siblings added after 1.1.0.
     name: podspec
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.light != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 45
     env:
@@ -334,6 +429,8 @@ jobs:
 
   docs:
     name: docs
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.light != 'skip' }}
     runs-on: macos-26
     timeout-minutes: 20
     env:
@@ -355,6 +452,8 @@ jobs:
 
   example:
     name: example (${{ matrix.name }})
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.heavy != 'skip' }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     strategy:
@@ -383,21 +482,36 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      # The udid names the device, not a name and an OS: a hosted image can list a runtime with
-      # no device in it, and the script creates the device then.
-      - name: Prepare the simulator
+      # The simulator boots in the background while the job builds; see the test job.
+      - name: Start the simulator
         env:
           DEVICE: ${{ matrix.device }}
           OS: ${{ matrix.os }}
         run: |
-          udid="$(Scripts/prepare-simulator.sh "$DEVICE" "$OS")"
-          echo "UDID=$udid" >> "$GITHUB_ENV"
+          sim="$RUNNER_TEMP/sim"
+          mkdir -p "$sim"
+          {
+            status=0
+            Scripts/prepare-simulator.sh "$DEVICE" "$OS" > "$sim/udid" 2> "$sim/log" || status=$?
+            echo "$status" > "$sim/status"
+          } > /dev/null 2>&1 < /dev/null &
       # A check that never fails looks the same as a clean run, so its reader is tried on texts that
       # must fail before it is trusted with the real ones. It needs no simulator.
       - name: Check the reader of the example's results
         run: Scripts/check-example-results.sh --self-test
-      - name: Build the example and run its tests, one launch mode at a time
-        run: Scripts/test-example.sh "$UDID" .build/results/ci/example
+      # The build needs no simulator; the tests start only after the wait below.
+      - name: Build the example
+        run: Scripts/test-example.sh --build .build/results/ci/example
+      # A boot that failed, or that took more than ten minutes, fails the job here.
+      - name: Wait for the simulator
+        run: |
+          sim="$RUNNER_TEMP/sim"
+          for _ in $(seq 1 600); do [ -f "$sim/status" ] && break; sleep 1; done
+          cat "$sim/log" >&2
+          [ -f "$sim/status" ] && [ "$(cat "$sim/status")" = 0 ] || { echo "The simulator did not boot." >&2; exit 1; }
+          echo "SIMULATOR=$(cat "$sim/udid")" >> "$GITHUB_ENV"
+      - name: Run the example's tests, one launch mode at a time
+        run: Scripts/test-example.sh --no-build "$SIMULATOR" .build/results/ci/example
       - name: No warning from this repository
         run: Scripts/check-warnings.sh .build/results/ci/example/build-for-testing.log
       - name: Upload the result bundles
