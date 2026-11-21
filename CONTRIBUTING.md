@@ -46,6 +46,17 @@ fault of the script cannot turn the check into another one.
 | `Scripts/check-example-results.sh <family> <bundle>...` | that the runs of the example held as many tests as its sources have test methods and skipped only what may skip on that device (family `phone`: the two tests that need a second scene; `pad`: nothing, and both ran and passed); `Scripts/test-example.sh` runs it after its last group, and `--self-test` runs the cases of its reader |
 | `Scripts/ci-changes.sh <event> <base sha> <ref>` | not a check of the code: it decides which jobs of CI a pull request or a push to main needs, from the paths it changes (`git diff --no-renames` against the base, which for a push is the commit it replaced, with `core.quotePath=false` so that a name which is not ASCII stays whole). A pull request that touches only documents (`*.md` outside the code directories, `Documentation`, `LICENSE`, `DocumentationAndBluePrints`, `.agents`) skips the jobs that build and test the code (`test`, `example`, `floor`, `thread-sanitizer`); one that touches only `.coderabbit.yaml` skips every job; any other path, an empty list, a diff that cannot be made and every event but a pull request or a push run all of them. A push is filtered only on `refs/heads/main`: a push to any other ref (a version tag included, which is how the release reaches CI), a base of 40 zeros or one that is not a commit of the clone runs all of them. `--self-test` runs the decision on lists of paths, the job table of `ci.yml` and the real diff on a scratch repository, and the `changes` job runs it |
 
+CI keeps the packages that a job fetches and the tools that it builds from one run to the next, with
+`actions/cache`: the `SourcePackages` of the package scheme (in the `lint` job, the one under its own
+derived data directory), the `.build/example-packages` of the example, and `Tools/.build`. The key is
+made of a version token, the job, the Xcode of the job and the hash of `Package.resolved`,
+`Tools/Package.resolved` and `Tools/Package.swift`, so a change to any of them starts a cache of its
+own. A missing cache costs only the fetch and the build that it replaces, and a damaged one is
+repaired by the next resolve and build. A saved entry never changes, so one that a newer compiler
+rejects stays until the token `spm-v1` in the keys of `ci.yml` is raised or `gh cache delete`
+removes it. The `floor` job keeps no cache, because it checks that the tools build with the oldest
+Xcode.
+
 CI also builds the documentation, with DocC's warnings as errors:
 
 ```bash
