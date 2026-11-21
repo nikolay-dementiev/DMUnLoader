@@ -1,8 +1,9 @@
 #!/bin/bash
 #
-# Decides which jobs of .github/workflows/ci.yml a pull request needs, from the paths it changes.
+# Decides which jobs of .github/workflows/ci.yml a pull request or a push to main needs, from the
+# paths it changes.
 #
-#   Scripts/ci-changes.sh <event> <base sha>   diffs HEAD against the base, prints light=... heavy=...
+#   Scripts/ci-changes.sh <event> <base sha> <ref>   diffs HEAD against the base, prints light=... heavy=...
 #   Scripts/ci-changes.sh --classify <event>   the same decision for the paths on standard input
 #   Scripts/ci-changes.sh --self-test          proves the decision on fixtures and the job table on ci.yml
 #
@@ -14,8 +15,14 @@
 # A change that only touches documents (*.md outside the code directories, Documentation, LICENSE,
 # DocumentationAndBluePrints, .agents) skips heavy. A change that only touches an inert file
 # (.coderabbit.yaml, which no job reads) skips both. Every other path runs both, and so does a path
-# nobody listed, an empty list, a diff that cannot be made, and every event that is not a pull
-# request (push, schedule, workflow_dispatch and workflow_call, which is the release).
+# nobody listed, an empty list, a diff that cannot be made, and every event that is neither a pull
+# request nor a push (schedule, workflow_dispatch, workflow_call).
+#
+# A push is filtered only on main, against the commit it replaced: the diff is the push's own, from
+# <base sha> (github.event.before) to HEAD. Anything that is not that runs everything: another ref,
+# which includes a tag push (the release calls this workflow for a version tag, and inside it the event
+# is push), a base of 40 zeros (a ref that was just created), a base that is not a commit of the
+# clone, a diff that fails, and a push that changes nothing.
 
 set -euo pipefail
 
@@ -47,7 +54,7 @@ decide() {
             *) ;;
         esac
     done
-    if [ "$event" != pull_request ] || [ "$count" -eq 0 ]; then
+    if { [ "$event" != pull_request ] && [ "$event" != push ]; } || [ "$count" -eq 0 ]; then
         mode=code
     fi
     case "$mode" in
@@ -57,18 +64,39 @@ decide() {
     esac
 }
 
-# The repository is the third argument so that the self-test can run the real diff on a scratch one.
+# The repository is the fourth argument so that the self-test can run the real diff on a scratch one.
 run_diff() {
-    local event="$1" base="$2" repo="${3-$ROOT}" paths
-    if [ "$event" != pull_request ]; then
-        printf '' | decide "$event"
-        return
-    fi
+    local event="$1" base="$2" ref="$3" repo="${4-$ROOT}" paths err
+    local -a range
+    case "$event" in
+        pull_request) range=("$base...HEAD") ;;
+        push)
+            # An empty list runs everything. The checks come one by one so that each can be proved.
+            if [ "$ref" != refs/heads/main ]; then
+                printf '' | decide "$event"
+                return
+            fi
+            if [ -z "$base" ] || [ "$base" = 0000000000000000000000000000000000000000 ]; then
+                printf '' | decide "$event"
+                return
+            fi
+            if ! err="$(git -C "$repo" cat-file -e "$base^{commit}" 2>&1)"; then
+                echo "ci-changes: $base is not a commit of this clone${err:+ ($err)}, so every job runs." >&2
+                printf '' | decide "$event"
+                return
+            fi
+            range=("$base" HEAD)
+            ;;
+        *)
+            printf '' | decide "$event"
+            return
+            ;;
+    esac
     # A base that is not in the clone, or no common ancestor, must run everything: a path that no
     # class lists stands for the change that could not be listed.
     # --no-renames lists both paths of a moved file, so a source file moved into Documentation is
     # still a source change; core.quotePath=false keeps a non-ASCII path as it is, not in quotes.
-    if ! paths="$(git -C "$repo" -c core.quotePath=false diff --no-renames --name-only "$base"...HEAD)"; then
+    if ! paths="$(git -C "$repo" -c core.quotePath=false diff --no-renames --name-only "${range[@]}")"; then
         echo "ci-changes: git diff against $base failed, so every job runs." >&2
         paths="unlisted/unknown-change"
     fi
@@ -87,8 +115,8 @@ expect() {
 }
 
 expect_diff() {
-    local label="$1" repo="$2" base="$3" want="$4" got
-    got="$(run_diff pull_request "$base" "$repo" 2> /dev/null | tr '\n' ' ')"
+    local label="$1" repo="$2" base="$3" want="$4" event="${5-pull_request}" ref="${6-refs/pull/1/merge}" got
+    got="$(run_diff "$event" "$base" "$ref" "$repo" 2> /dev/null | tr '\n' ' ')"
     got="${got% }"
     if [ "$got" != "$want" ]; then
         echo "ci-changes self-test: $label: wanted '$want', got '$got'" >&2
@@ -159,6 +187,44 @@ check_real_diff() {
     expect_diff "documents with a space and a non-ASCII name skip the heavy jobs" "$dir" "$base" "light=run heavy=skip"
 }
 
+# The push cases on the scratch repository that check_real_diff made: the diff of a push is from the
+# commit it replaced to HEAD, and each fall-back that runs everything has a case of its own.
+check_push_diff() {
+    local dir="$SCRATCH" root tip main=refs/heads/main zeros=0000000000000000000000000000000000000000
+    local all="light=run heavy=run" docs="light=run heavy=skip" none="light=skip heavy=skip"
+    root="$(git -C "$dir" rev-list --max-parents=0 HEAD)"
+    git -C "$dir" reset -q --hard "$root"
+    echo "x" > "$dir/.coderabbit.yaml"
+    git -C "$dir" add -A
+    git -C "$dir" commit -q -m inert
+    expect_diff "a push to main that changes only the inert file skips every job" "$dir" "$root" "$none" push "$main"
+    expect_diff "the same push on a tag runs every job" "$dir" "$root" "$all" push refs/tags/1.4.0
+    expect_diff "the same push on another branch runs every job" "$dir" "$root" "$all" push refs/heads/other
+    expect_diff "a push whose base is 40 zeros runs every job" "$dir" "$zeros" "$all" push "$main"
+    expect_diff "a push with no base runs every job" "$dir" "" "$all" push "$main"
+    expect_diff "a push whose base is not a commit of the clone runs every job" "$dir" "1111111111111111111111111111111111111111" "$all" push "$main"
+    expect_diff "a push that changes nothing runs every job" "$dir" "$(git -C "$dir" rev-parse HEAD)" "$all" push "$main"
+    expect_diff "the inert diff on a schedule runs every job" "$dir" "$root" "$all" schedule "$main"
+    expect_diff "the inert diff on a manual run runs every job" "$dir" "$root" "$all" workflow_dispatch "$main"
+    expect_diff "the inert diff in a called workflow runs every job" "$dir" "$root" "$all" workflow_call "$main"
+    tip="$(git -C "$dir" rev-parse HEAD)"
+    echo "text" >> "$dir/README.md"
+    git -C "$dir" add -A
+    git -C "$dir" commit -q -m document
+    expect_diff "a push to main that changes only a document skips the heavy jobs" "$dir" "$tip" "$docs" push "$main"
+    expect_diff "the push of both commits skips the heavy jobs, not the light ones" "$dir" "$root" "$docs" push "$main"
+    tip="$(git -C "$dir" rev-parse HEAD)"
+    echo "let value = 2" > "$dir/Sources/DMUnLoader/Foo.swift"
+    git -C "$dir" add -A
+    git -C "$dir" commit -q -m source
+    expect_diff "a push to main that changes a source file runs every job" "$dir" "$tip" "$all" push "$main"
+    tip="$(git -C "$dir" rev-parse HEAD)"
+    mkdir -p "$dir/Documentation"
+    git -C "$dir" mv Sources/DMUnLoader/Foo.swift Documentation/Foo.md
+    git -C "$dir" commit -q -m moved
+    expect_diff "a push that moves a source file into Documentation runs every job" "$dir" "$tip" "$all" push "$main"
+}
+
 self_test() {
     local all="light=run heavy=run" docs="light=run heavy=skip" none="light=skip heavy=skip" path event
     for path in Sources/DMUnLoader/X.swift Tests/DMUnLoaderTests/X.swift Package.swift Examples/DMUnLoaderExample/X.swift Scripts/lint.sh Tools/Package.swift Fixtures/Consumer/X.swift DMUnLoader.podspec .swiftlint.yml; do
@@ -177,12 +243,20 @@ self_test() {
     expect "the inert file with a README skips the heavy jobs" pull_request $'.coderabbit.yaml\nREADME.md' "$docs"
     expect "the inert file with a source file runs every job" pull_request $'.coderabbit.yaml\nSources/DMUnLoader/X.swift' "$all"
     expect "an empty list runs every job" pull_request "" "$all"
-    for event in push schedule workflow_dispatch workflow_call; do
+    for event in schedule workflow_dispatch workflow_call; do
         expect "the event $event runs every job whatever changed" "$event" "README.md" "$all"
         expect "the event $event runs every job for the inert file" "$event" ".coderabbit.yaml" "$all"
     done
+    expect "a push of the inert file alone skips every job" push ".coderabbit.yaml" "$none"
+    expect "a push of a document alone skips the heavy jobs" push "README.md" "$docs"
+    expect "a push of a source file runs every job" push "Sources/DMUnLoader/X.swift" "$all"
+    for path in Tests/DMUnLoaderTests/X.swift Examples/DMUnLoaderExample/X.swift Scripts/lint.sh Tools/Package.swift .github/workflows/ci.yml new/dir/x.bin; do
+        expect "a push of $path runs every job" push "$path" "$all"
+    done
+    expect "a push with an empty list runs every job" push "" "$all"
     check_job_table
     check_real_diff
+    check_push_diff
     if [ "$failures" -ne 0 ]; then
         echo "ci-changes self-test: $failures failed." >&2
         exit 1
@@ -197,11 +271,11 @@ case "${1-}" in
         decide "$2"
         ;;
     "" | -*)
-        echo "usage: Scripts/ci-changes.sh <event> <base sha> | --classify <event> | --self-test" >&2
+        echo "usage: Scripts/ci-changes.sh <event> <base sha> <ref> | --classify <event> | --self-test" >&2
         exit 2
         ;;
     *)
-        [ "$#" -eq 2 ] || { echo "usage: Scripts/ci-changes.sh <event> <base sha>" >&2; exit 2; }
-        run_diff "$1" "$2"
+        [ "$#" -eq 3 ] || { echo "usage: Scripts/ci-changes.sh <event> <base sha> <ref>" >&2; exit 2; }
+        run_diff "$1" "$2" "$3"
         ;;
 esac

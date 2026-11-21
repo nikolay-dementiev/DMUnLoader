@@ -29,10 +29,10 @@ defaults:
     shell: bash
 
 jobs:
-  # Decides from the changed paths which jobs a pull request needs (Scripts/ci-changes.sh). It runs on
-  # Linux, so it takes no macOS slot. The clone has its whole history: the diff against the base of the
-  # pull request needs the merge base, and a diff that cannot be made runs every job. A job that this
-  # one fails to answer for runs too: the jobs below ask for what is not 'skip'.
+  # Decides from the changed paths which jobs a pull request or a push to main needs
+  # (Scripts/ci-changes.sh). It runs on Linux, so it takes no macOS slot. The clone has its whole
+  # history: the diff against the base needs the merge base, and a diff that cannot be made runs every
+  # job. A job that this one fails to answer for runs too: the jobs below ask for what is not 'skip'.
   changes:
     name: changes
     runs-on: ubuntu-24.04
@@ -49,12 +49,15 @@ jobs:
         run: Scripts/ci-changes.sh --self-test
       - name: Decide which jobs run
         id: decide
+        # A pull request is compared with its base, a push with the commit it replaced. The release
+        # calls this workflow for a version tag, and then the event is push: the ref tells it apart.
         env:
           EVENT: ${{ github.event_name }}
-          BASE: ${{ github.event.pull_request.base.sha }}
+          BASE: ${{ github.event_name == 'push' && github.event.before || github.event.pull_request.base.sha }}
+          REF: ${{ github.ref }}
         run: |
           set -o pipefail
-          Scripts/ci-changes.sh "$EVENT" "$BASE" | tee -a "$GITHUB_OUTPUT"
+          Scripts/ci-changes.sh "$EVENT" "$BASE" "$REF" | tee -a "$GITHUB_OUTPUT"
 
   lint:
     name: lint
