@@ -251,8 +251,10 @@ final class DMLoadingViewTests: XCTestCase {
             try cardOf(accessible).find(ViewType.ViewThatFits.self),
             "a state of a provider that opts in gets the accessible card"
         )
+        // The card is found before the search inside it, so that a card that is not found cannot pass as a card without one.
+        let standardCard = try cardOf(standard)
         XCTAssertThrowsError(
-            try cardOf(standard).find(ViewType.ViewThatFits.self),
+            try standardCard.find(ViewType.ViewThatFits.self),
             "a state of any other provider keeps the released card"
         )
     }

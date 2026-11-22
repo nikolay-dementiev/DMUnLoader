@@ -28,6 +28,14 @@ final class HUDCardContentTests: XCTestCase {
         }
     }
 
+    func test_card_thatHoldsAnAnyView_isReadAsOne() throws {
+        let sut = HUDCard(appearance: .standard, isShown: true, content: AnyView(Text("state")))
+
+        // The control of the test above: the cast that it expects to fail does succeed when the content is an AnyView,
+        // so that its failure comes from the type of the content and from nothing else.
+        XCTAssertNoThrow(try sut.inspect().find(HUDCard<AnyView>.self).actualView(), "a card of an AnyView is read as one")
+    }
+
     // MARK: - Helpers
 
     /// A scene view over a manager that shows a failure, with the view model the HUD builds for it.
