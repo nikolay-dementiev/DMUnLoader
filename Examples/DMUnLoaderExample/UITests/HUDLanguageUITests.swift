@@ -16,13 +16,13 @@ final class HUDLanguageUITests: XCTestCase {
         let loadingApp = launchExample(Launch.swiftUI + doubled)
         loadingApp.buttons[DemoIdentifier.showLoading].tap()
         let loading = text(beginningWith: "Loading...", in: loadingApp)
-        XCTAssertTrue(loading.waitForExistence(timeout: Wait.screenChange), "the loading HUD shows its text")
+        XCTAssertTrue(loading.appears(within: Wait.screenChange), "the loading HUD shows its text")
         let loadingLabel = loading.label
 
         let app = launchExample(Launch.swiftUI + doubled)
         app.buttons[DemoIdentifier.showFailure].tap()
         let title = text(beginningWith: "An error has occurred!", in: app)
-        XCTAssertTrue(title.waitForExistence(timeout: Wait.screenChange), "the failure HUD shows its title")
+        XCTAssertTrue(title.appears(within: Wait.screenChange), "the failure HUD shows its title")
 
         let close = button(beginningWith: "Close", in: app).label
         let retry = button(beginningWith: "Retry", in: app).label
@@ -39,14 +39,14 @@ final class HUDLanguageUITests: XCTestCase {
         let arguments = Launch.swiftUI + ["--host-texts", "-NSDoubleLocalizedStrings", "YES"]
         let loadingApp = launchExample(arguments)
         loadingApp.buttons[DemoIdentifier.showLoading].tap()
-        let loadingShown = loadingApp.staticTexts[DemoText.Host.loading].waitForExistence(timeout: Wait.screenChange)
+        let loadingShown = loadingApp.staticTexts[DemoText.Host.loading].appears(within: Wait.screenChange)
 
         let app = launchExample(arguments)
         app.buttons[DemoIdentifier.showFailure].tap()
 
         XCTAssertTrue(loadingShown, "the host's loading text is shown as written")
         XCTAssertTrue(
-            app.staticTexts[DemoText.Host.title].waitForExistence(timeout: Wait.screenChange),
+            app.staticTexts[DemoText.Host.title].appears(within: Wait.screenChange),
             "the host's title is shown as written"
         )
         XCTAssertTrue(app.buttons[DemoText.Host.close].exists, "the host's Close text is shown as written")
@@ -61,7 +61,7 @@ final class HUDLanguageUITests: XCTestCase {
         app.buttons[DemoIdentifier.showFailure].tap()
 
         XCTAssertTrue(
-            app.staticTexts["An error has occurred!"].waitForExistence(timeout: Wait.screenChange),
+            app.staticTexts["An error has occurred!"].appears(within: Wait.screenChange),
             "the library has English texts only, so a German app shows the English title"
         )
         XCTAssertTrue(app.buttons["Close"].exists, "the Close text stays English")
@@ -75,7 +75,7 @@ final class HUDLanguageUITests: XCTestCase {
         app.buttons[DemoIdentifier.showFailure].tap()
         let close = app.buttons["Close"]
         let retry = app.buttons["Retry"]
-        XCTAssertTrue(close.waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
+        XCTAssertTrue(close.appears(within: Wait.screenChange), "the failure HUD is shown")
 
         XCTAssertGreaterThan(close.frame.minX, retry.frame.minX, "in a right-to-left language Close lies right of Retry")
     }

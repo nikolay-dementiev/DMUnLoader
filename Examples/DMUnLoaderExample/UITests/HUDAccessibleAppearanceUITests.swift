@@ -70,16 +70,16 @@ final class HUDAccessibleAppearanceUITests: XCTestCase {
     /// handler of the card, which hides a failure by default.
     func test_failureHUD_scrollingCard_tapOnItsText_hidesTheFailure() {
         let app = launchAccessible(at: .largest, extraArguments: ["--long-messages"])
-        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: Wait.launch), "the demo screen is shown")
+        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].appears(within: Wait.launch), "the demo screen is shown")
         app.buttons[DemoIdentifier.showFailure].tap()
         let retry = app.buttons["Retry"]
-        XCTAssertTrue(retry.waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
+        XCTAssertTrue(retry.appears(within: Wait.screenChange), "the failure HUD is shown")
         XCTAssertFalse(retry.isHittable, "precondition: the card is taller than the screen, so Retry lies below the fold")
 
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.25)).tap()
 
         XCTAssertTrue(
-            retry.waitForNonExistence(timeout: Wait.screenChange),
+            retry.disappears(within: Wait.screenChange),
             "a tap on the text of the scrolling card reaches the handler of the card, which hides the failure"
         )
     }
@@ -125,9 +125,9 @@ final class HUDAccessibleAppearanceUITests: XCTestCase {
     ) throws {
         let app = launchAccessible(at: size)
         let trigger = app.buttons[button]
-        XCTAssertTrue(trigger.waitForExistence(timeout: Wait.launch), "the demo screen is shown", file: file, line: line)
+        XCTAssertTrue(trigger.appears(within: Wait.launch), "the demo screen is shown", file: file, line: line)
         trigger.tap()
-        XCTAssertTrue(shown(app).waitForExistence(timeout: Wait.screenChange), "the HUD is shown", file: file, line: line)
+        XCTAssertTrue(shown(app).appears(within: Wait.screenChange), "the HUD is shown", file: file, line: line)
 
         try performAccessibilityAuditRetryingTimeouts {
             try app.performAccessibilityAudit(for: .all) { issue in
