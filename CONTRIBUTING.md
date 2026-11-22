@@ -42,7 +42,7 @@ fault of the script cannot turn the check into another one.
 | `Scripts/count-tests.sh [--label <text>] <result bundle> <glob>...` | that every test method of the files the globs name ran and passed in the result bundle: a run that lost a test class or skipped a test passes the build and the coverage floor too. A glob that names no tracked file ends with status 2 |
 | `Scripts/check-warnings.sh <build log>` | that no compiler warning points into this repository; CI runs it on the logs of the package tests, of the example's build, of the Release build and of the floor build. It finds the checkout under the path the script is run through, its real path and the links of macOS, and it refuses a log in which no Swift file of the checkout was compiled, such as a second build on a built tree (exit 2); `--self-test` runs it on canned logs |
 | `Scripts/check-example-project.sh` | that the example's Xcode project matches its XcodeGen spec |
-| `Scripts/test-example.sh <simulator udid>` | the example's tests, below; `--build` builds them with no simulator and `--no-build <simulator udid>` runs a build that `--build` made |
+| `Scripts/test-example.sh <simulator udid>` | the example's tests, below; `--build` builds them with no simulator, `--no-build <simulator udid>` runs a build that `--build` made, and `--second-simulator <udid>` runs the groups on two simulators at once |
 | `Scripts/check-example-results.sh <family> <bundle>...` | that the runs of the example held as many tests as its sources have test methods and skipped only what may skip on that device (family `phone`: the two tests that need a second scene; `pad`: nothing, and both ran and passed); `Scripts/test-example.sh` runs it after its last group, and `--self-test` runs the cases of its reader |
 | `Scripts/ci-changes.sh <event> <base sha> <ref>` | not a check of the code: it decides which jobs of CI a pull request or a push to main needs, from the paths it changes (`git diff --no-renames` against the base, which for a push is the commit it replaced, with `core.quotePath=false` so that a name which is not ASCII stays whole). A pull request that touches only documents (`*.md` outside the code directories, `Documentation`, `LICENSE`, `DocumentationAndBluePrints`, `.agents`) skips the jobs that build and test the code (`test`, `example`, `floor`, `thread-sanitizer`); one that touches only `.coderabbit.yaml` skips every job; any other path, an empty list, a diff that cannot be made and every event but a pull request or a push run all of them. A push is filtered only on `refs/heads/main`: a push to any other ref (a version tag included, which is how the release reaches CI), a base of 40 zeros or one that is not a commit of the clone runs all of them. `--self-test` runs the decision on lists of paths, the job table of `ci.yml` and the real diff on a scratch repository, and the `changes` job runs it |
 
@@ -125,6 +125,12 @@ The same run in two steps lets a simulator boot while the example builds: `--bui
 the generic simulator destination, one architecture, and touches no simulator, and
 `--no-build <simulator udid>` runs the tests of that build and ends with status 2 when there is
 none.
+
+With `--second-simulator <udid>`, a second simulator of the same family (phone or pad) takes the
+app-hosted tests and the two UIKit groups, while the SwiftUI group, the longest, has the first
+one to itself; the runs, their bundles and the check of the results are the same. CI passes it.
+`--sequential` runs everything on the first simulator, one run after the other, though a second
+one is given, which is the form to try when a run of two simulators at once looks flaky.
 
 The example is one app that starts in several integration modes: SwiftUI, SwiftUI with a
 manager written by the host, UIKit, and UIKit with such a manager. A launch that ends with

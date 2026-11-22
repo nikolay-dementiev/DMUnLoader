@@ -1,16 +1,24 @@
 #!/bin/bash
 #
-# Runs the example's tests on one simulator: the app-hosted tests, then the UI tests group
-# by group, with the example app uninstalled before each group.
+# Runs the example's tests on one simulator, or on two at once (--second-simulator): the
+# app-hosted tests, then the UI tests group by group, with the example app uninstalled before
+# each group.
 #
-#   Scripts/test-example.sh <simulator udid> [<results dir>]
+#   Scripts/test-example.sh [--second-simulator <udid>] [--sequential] <simulator udid> [<results dir>]
 #   Scripts/test-example.sh --build [<results dir>]
-#   Scripts/test-example.sh --no-build <simulator udid> [<results dir>]
+#   Scripts/test-example.sh --no-build [--second-simulator <udid>] [--sequential] <simulator udid> [<results dir>]
 #
 # The first form builds the example for that simulator and runs the tests. The other two do the
 # same in two steps, so that a build can run while a simulator boots: --build builds for the generic
 # simulator destination, one architecture, and touches no simulator; --no-build runs the tests of a
 # build that --build made.
+#
+# With --second-simulator the runs share two simulators of one family and go in parallel: the
+# SwiftUI group, the longest, has the first simulator to itself, and the app-hosted tests and the
+# other groups follow one another on the second. Two groups never share a simulator at the same
+# time, for the reason given under "Why the groups", so two simulators are the one way to overlap
+# them. --sequential runs everything on the first simulator, one run after the other, though a
+# second one is given.
 #
 # Why the groups: the example is one app that starts in several integration modes. A launch
 # that ends with the app in the background leaves its scene session saved, and the next
@@ -27,26 +35,37 @@
 # Exit codes: 0 every run passed, 1 a build or a test run failed, a run left no readable
 # result with a test in it, or the check of the results failed, 2 the runs could not be set up
 # (an unknown simulator, a UI test class outside the groups, a grouped class that does not
-# exist, an uninstall that fails, --no-build without a build to run).
+# exist, an uninstall that fails, a simulator that does not boot, a second simulator that is the
+# first again, unknown or of another family, --no-build without a build to run).
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # all: build for the simulator and run. build: build only. run: run an existing build.
 MODE=all
-case "${1-}" in
-    --build) MODE=build; shift ;;
-    --no-build) MODE=run; shift ;;
-    *) ;;
-esac
+SECOND_UDID=""
+SEQUENTIAL=no
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --build) MODE=build; shift ;;
+        --no-build) MODE=run; shift ;;
+        --second-simulator) SECOND_UDID="${2:?give the udid of the second simulator}"; shift 2 ;;
+        --sequential) SEQUENTIAL=yes; shift ;;
+        *) break ;;
+    esac
+done
 if [ "$MODE" = build ]; then
+    if [ -n "$SECOND_UDID" ]; then
+        echo "test-example: --build touches no simulator, so --second-simulator has no use with it." >&2
+        exit 2
+    fi
     RESULTS="${1:-$ROOT/.build/results/example}"
 else
     UDID="${1:?give the udid of a simulator}"
     RESULTS="${2:-$ROOT/.build/results/example}"
 fi
 
-# The state of the simulator with the udid, or nothing when no simulator has it.
+# The state of the simulator with the udid in $UDID, or nothing when no simulator has it.
 simulator_state() {
     xcrun simctl list devices -j | python3 -c '
 import json, sys
@@ -57,10 +76,14 @@ for devices in json.load(sys.stdin)["devices"].values():
 ' "$UDID"
 }
 
-# The simulator is checked before anything is built, installed or uninstalled. A build alone
+# The simulators are checked before anything is built, installed or uninstalled. A build alone
 # needs none.
 if [ "$MODE" != build ] && [ -z "$(simulator_state)" ]; then
     echo "test-example: no simulator with the udid $UDID" >&2
+    exit 2
+fi
+if [ -n "$SECOND_UDID" ] && [ -z "$(UDID="$SECOND_UDID" simulator_state)" ]; then
+    echo "test-example: no simulator with the udid $SECOND_UDID" >&2
     exit 2
 fi
 PROJECT="$ROOT/Examples/DMUnLoaderExample/DMUnLoaderExample.xcodeproj"
@@ -107,8 +130,17 @@ fi
 
 mkdir -p "$RESULTS"
 FAILED=0
-# The bundles of the groups that ran, for the check of the results at the end.
+# The runs in the order of a single simulator: the app-hosted tests, then the groups. A run named
+# ui-<group> is the group of that name.
+RUNS=(app-hosted)
+for group in "${TEST_GROUPS[@]}"; do
+    RUNS+=("ui-${group%%|*}")
+done
+# The bundles of the runs, for the check of the results at the end.
 RAN_BUNDLES=()
+for run in "${RUNS[@]}"; do
+    RAN_BUNDLES+=("$RESULTS/$run.xcresult")
+done
 
 # phone or pad: the family of the simulator with the udid, from its device type.
 device_family() {
@@ -138,7 +170,6 @@ run_tests() {
     shift
     local bundle="$RESULTS/$name.xcresult"
     rm -rf "$bundle"
-    RAN_BUNDLES+=("$bundle")
     local status=0
     xcodebuild test-without-building \
         -project "$PROJECT" \
@@ -164,8 +195,9 @@ run_tests() {
 
 # Boots the simulator when it is not running: simctl uninstalls only from a running device.
 boot() {
-    if [ "$(simulator_state)" != "Booted" ]; then
-        xcrun simctl bootstatus "$UDID" -b > /dev/null
+    if [ "$(simulator_state)" != "Booted" ] && ! xcrun simctl bootstatus "$UDID" -b > /dev/null; then
+        echo "test-example: the simulator $UDID did not boot." >&2
+        exit 2
     fi
 }
 
@@ -213,18 +245,74 @@ else
     fi
 fi
 
-uninstall_example "the app-hosted tests"
-run_tests app-hosted -only-testing:DMUnLoaderExampleTests
-
-for group in "${TEST_GROUPS[@]}"; do
-    name="${group%%|*}"
-    uninstall_example "the group $name"
-    arguments=()
-    for class in ${group#*|}; do
-        arguments+=("-only-testing:DMUnLoaderExampleUITests/$class")
+# Makes the run named $1 on the simulator in $UDID, after the uninstall of the app.
+run_one() {
+    local run="$1" group class
+    local -a arguments=()
+    if [ "$run" = app-hosted ]; then
+        uninstall_example "the app-hosted tests"
+        run_tests app-hosted -only-testing:DMUnLoaderExampleTests
+        return 0
+    fi
+    for group in "${TEST_GROUPS[@]}"; do
+        [ "ui-${group%%|*}" = "$run" ] || continue
+        uninstall_example "the group ${group%%|*}"
+        for class in ${group#*|}; do
+            arguments+=("-only-testing:DMUnLoaderExampleUITests/$class")
+        done
+        run_tests "$run" "${arguments[@]}"
     done
-    run_tests "ui-$name" "${arguments[@]}"
-done
+}
+
+# Makes the runs that follow the udid, one after the other, on that simulator. The helpers read
+# $UDID, which the local one shadows; a failed run sets FAILED.
+run_lane() {
+    # shellcheck disable=SC2034 # read by simulator_state, boot, uninstall_example and run_tests
+    local UDID="$1" run
+    shift
+    for run in "$@"; do
+        run_one "$run"
+    done
+}
+
+if [ -n "$SECOND_UDID" ] && [ "$SEQUENTIAL" = no ]; then
+    if [ "$SECOND_UDID" = "$UDID" ]; then
+        echo "test-example: --second-simulator names the first simulator again." >&2
+        exit 2
+    fi
+    # The check of the results reads one family, so the two simulators have to be of one.
+    if [ "$(device_family)" != "$(UDID="$SECOND_UDID" device_family)" ]; then
+        echo "test-example: the two simulators are not of one family (phone or pad)." >&2
+        exit 2
+    fi
+    # The SwiftUI group is the longest, so it has a simulator to itself.
+    SECOND_RUNS=()
+    for run in "${RUNS[@]}"; do
+        [ "$run" = ui-swiftui ] || SECOND_RUNS+=("$run")
+    done
+    if [ "${#SECOND_RUNS[@]}" -ne $((${#RUNS[@]} - 1)) ]; then
+        echo "test-example: there is no ui-swiftui run to give a simulator of its own." >&2
+        exit 2
+    fi
+    echo "test-example: two simulators at once: $UDID runs ui-swiftui, $SECOND_UDID runs ${SECOND_RUNS[*]}."
+    (run_lane "$UDID" ui-swiftui; exit "$FAILED") &
+    first=$!
+    (run_lane "$SECOND_UDID" "${SECOND_RUNS[@]}"; exit "$FAILED") &
+    second=$!
+    status_first=0
+    status_second=0
+    wait "$first" || status_first=$?
+    wait "$second" || status_second=$?
+    for status in "$status_first" "$status_second"; do
+        case "$status" in
+            0) ;;
+            1) FAILED=1 ;;
+            *) exit "$status" ;;
+        esac
+    done
+else
+    run_lane "$UDID" "${RUNS[@]}"
+fi
 
 # Every test of the sources ran, and only the tests that may skip on this device skipped.
 if ! "$ROOT/Scripts/check-example-results.sh" "$(device_family)" "${RAN_BUNDLES[@]}"; then

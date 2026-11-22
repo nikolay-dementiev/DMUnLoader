@@ -565,8 +565,29 @@ jobs:
           cat "$sim/log" >&2
           [ -f "$sim/status" ] && [ "$(cat "$sim/status")" = 0 ] || { echo "The simulator did not boot." >&2; exit 1; }
           echo "SIMULATOR=$(cat "$sim/udid")" >> "$GITHUB_ENV"
-      - name: Run the example's tests, one launch mode at a time
-        run: Scripts/test-example.sh --no-build "$SIMULATOR" .build/results/ci/example
+      # The SwiftUI group has the first simulator to itself, and the other runs go one after the other
+      # on a second one (Scripts/test-example.sh). A clone is made of a device that is shut down, so the
+      # first simulator goes down for it and boots again, together with the clone.
+      - name: Add a second simulator
+        timeout-minutes: 10
+        run: |
+          xcrun simctl shutdown "$SIMULATOR"
+          second="$(xcrun simctl clone "$SIMULATOR" second-simulator)"
+          xcrun simctl bootstatus "$SIMULATOR" -b > "$RUNNER_TEMP/boot-first.log" 2>&1 &
+          first_boot=$!
+          xcrun simctl bootstatus "$second" -b > "$RUNNER_TEMP/boot-second.log" 2>&1 &
+          second_boot=$!
+          status=0
+          wait "$first_boot" || status=$?
+          wait "$second_boot" || status=$?
+          if [ "$status" -ne 0 ]; then
+            cat "$RUNNER_TEMP/boot-first.log" "$RUNNER_TEMP/boot-second.log" >&2
+            echo "A simulator did not boot." >&2
+            exit "$status"
+          fi
+          echo "SECOND_SIMULATOR=$second" >> "$GITHUB_ENV"
+      - name: Run the example's tests, one launch mode at a time on each simulator
+        run: Scripts/test-example.sh --no-build --second-simulator "$SECOND_SIMULATOR" "$SIMULATOR" .build/results/ci/example
       - name: No warning from this repository
         run: Scripts/check-warnings.sh .build/results/ci/example/build-for-testing.log
       - name: Upload the result bundles
