@@ -97,7 +97,7 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
                     HUDCard(
                         appearance: loadingManager.loadableState.hudAppearance,
                         isShown: animateTheAppearance,
-                        content: AnyView(overlayView)
+                        content: overlayView
                     )
                         .onTapGesture {
                             viewModel.cardTapped()
@@ -121,13 +121,13 @@ struct DMLoadingView<LLM: DMLoadingManager>: View {
 
 /// The card of a shown HUD: the view of the state on a rounded background. A tap anywhere on
 /// the card is a tap on the card, between the lines of its text too.
-package struct HUDCard: View {
+package struct HUDCard<Content: View>: View {
     @Environment(\.hudReducesTransparency) private var reducesTransparency
     package let appearance: DMHUDAppearance
     let isShown: Bool
-    let content: AnyView
+    let content: Content
 
-    package init(appearance: DMHUDAppearance, isShown: Bool, content: AnyView) {
+    package init(appearance: DMHUDAppearance, isShown: Bool, content: Content) {
         self.appearance = appearance
         self.isShown = isShown
         self.content = content

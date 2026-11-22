@@ -432,8 +432,11 @@ final class DMLoadingViewTests: XCTestCase {
     }
     
     /// The card of the shown HUD: the one `HUDCard` of the view, which carries the card's tap.
-    private func cardOf<LM: DMLoadingManager>(_ sut: DMLoadingView<LM>) throws -> InspectableView<ViewType.View<HUDCard>> {
-        try sut.inspect().find(HUDCard.self)
+    private func cardOf<LM: DMLoadingManager>(
+        _ sut: DMLoadingView<LM>
+    ) throws -> InspectableView<ViewType.View<HUDCard<EmptyView>>> {
+        // The search ignores the card's content type: only the card itself is used.
+        try sut.inspect().find(HUDCard<EmptyView>.self)
     }
     
     /// The layer outside the card that takes the backdrop's tap: the one clear colour of the view.

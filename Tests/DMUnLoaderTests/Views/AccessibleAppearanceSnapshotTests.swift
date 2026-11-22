@@ -81,7 +81,7 @@ private struct AccessibleHUDContainer<Content: View>: View {
             Color.black.opacity(0.2)
                 .ignoresSafeArea()
 
-            HUDCard(appearance: .accessible, isShown: true, content: AnyView(content))
+            HUDCard(appearance: .accessible, isShown: true, content: content)
                 .padding(15)
         }
         .environment(\.hudAppearance, .accessible)
