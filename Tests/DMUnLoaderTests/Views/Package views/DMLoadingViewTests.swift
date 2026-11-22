@@ -246,14 +246,13 @@ final class DMLoadingViewTests: XCTestCase {
             makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
         )
 
-        XCTAssertEqual(
-            try cardOf(accessible).actualView().appearance,
-            .accessible,
+        // Only the accessible card lays its content out in a `ViewThatFits`.
+        XCTAssertNoThrow(
+            try cardOf(accessible).find(ViewType.ViewThatFits.self),
             "a state of a provider that opts in gets the accessible card"
         )
-        XCTAssertEqual(
-            try cardOf(standard).actualView().appearance,
-            .standard,
+        XCTAssertThrowsError(
+            try cardOf(standard).find(ViewType.ViewThatFits.self),
             "a state of any other provider keeps the released card"
         )
     }
