@@ -21,18 +21,18 @@ final class HUDTouchRoutingUIKitUITests: XCTestCase {
     func test_loadingHUD_uiKit_isShownInOneHUDWindow() {
         let app = launchExample(["--uikit", "--accessibility-tree"])
         XCTAssertTrue(
-            app.buttons[DemoIdentifier.content].waitForExistence(timeout: Wait.launch),
+            app.buttons[DemoIdentifier.content].appears(within: Wait.launch),
             "the demo screen is shown"
         )
         app.buttons[DemoIdentifier.showLoading].tap()
         XCTAssertTrue(
-            app.staticTexts["Loading..."].waitForExistence(timeout: Wait.screenChange),
+            app.staticTexts["Loading..."].appears(within: Wait.screenChange),
             "the loading HUD shows its text before the HUD windows are counted"
         )
 
         let windowCount = app.staticTexts[DemoIdentifier.hudWindowCount]
         XCTAssertTrue(
-            windowCount.waitForExistence(timeout: Wait.launch),
+            windowCount.appears(within: Wait.launch),
             "the counters window reports the HUD windows"
         )
         XCTAssertTrue(
@@ -51,7 +51,7 @@ final class HUDTouchRoutingUIKitUITests: XCTestCase {
         let app = launchExample(["--uikit"])
         let witness = app.staticTexts[DemoIdentifier.constructionWitness]
         XCTAssertTrue(
-            witness.waitForExistence(timeout: Wait.launch),
+            witness.appears(within: Wait.launch),
             "the counters window reports what the delegate held while the root view was built"
         )
 

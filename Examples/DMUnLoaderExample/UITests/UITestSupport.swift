@@ -29,6 +29,40 @@ enum Wait {
     static let noEffectOfTwoTouches: TimeInterval = 2
 }
 
+/// Waits that look at the screen often. `waitForExistence(timeout:)` and `XCTNSPredicateExpectation`
+/// evaluate their condition about once a second, so even a condition that holds at once costs
+/// a second. A wait here returns on the first look at which its condition holds, and gives up
+/// after the same budget.
+enum Poll {
+    /// The seconds between two looks.
+    static let interval: TimeInterval = 0.1
+
+    /// Whether `condition` holds before `timeout` seconds have passed. It is looked at once
+    /// first, so a condition that holds already costs no wait.
+    @MainActor
+    static func until(_ timeout: TimeInterval, _ condition: () -> Bool) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while true {
+            if condition() { return true }
+            if Date() >= deadline { return false }
+            RunLoop.current.run(until: Date().addingTimeInterval(interval))
+        }
+    }
+}
+
+@MainActor
+extension XCUIElement {
+    /// Like `waitForExistence(timeout:)`, with the looks of `Poll`.
+    func appears(within timeout: TimeInterval) -> Bool {
+        Poll.until(timeout) { exists }
+    }
+
+    /// Like `waitForNonExistence(timeout:)`, with the looks of `Poll`.
+    func disappears(within timeout: TimeInterval) -> Bool {
+        Poll.until(timeout) { !exists }
+    }
+}
+
 /// Launching the example, and the touches and checks the UI test classes share.
 @MainActor
 extension XCTestCase {
@@ -74,8 +108,7 @@ extension XCTestCase {
     }
 
     func wait(for predicate: NSPredicate, on element: XCUIElement, timeout: TimeInterval) -> Bool {
-        let matches = XCTNSPredicateExpectation(predicate: predicate, object: element)
-        return XCTWaiter().wait(for: [matches], timeout: timeout) == .completed
+        Poll.until(timeout) { predicate.evaluate(with: element) }
     }
 
     func assertIdleOverlayLetsTouchesReachContent(
@@ -85,7 +118,7 @@ extension XCTestCase {
     ) {
         let app = launchExample(launchArguments)
         let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown", file: file, line: line)
+        XCTAssertTrue(content.appears(within: Wait.launch), "the demo screen is shown", file: file, line: line)
 
         contentTouchPoints(in: app, content: content, file: file, line: line).forEach { $0.tap() }
 
@@ -108,13 +141,13 @@ extension XCTestCase {
     ) {
         let app = launchExample(launchArguments)
         let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown", file: file, line: line)
+        XCTAssertTrue(content.appears(within: Wait.launch), "the demo screen is shown", file: file, line: line)
         let touchPoints = contentTouchPoints(in: app, content: content, file: file, line: line)
 
         app.buttons[DemoIdentifier.showLoading].tap()
         let loadingText = app.staticTexts["Loading..."]
         XCTAssertTrue(
-            loadingText.waitForExistence(timeout: Wait.screenChange),
+            loadingText.appears(within: Wait.screenChange),
             "the loading HUD is shown",
             file: file,
             line: line
@@ -146,14 +179,14 @@ extension XCTestCase {
     ) {
         let app = launchExample(launchArguments)
         XCTAssertTrue(
-            app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: Wait.launch),
+            app.buttons[DemoIdentifier.showFailure].appears(within: Wait.launch),
             "the demo screen is shown",
             file: file,
             line: line
         )
         app.buttons[DemoIdentifier.showFailure].tap()
         let retry = app.buttons["Retry"]
-        XCTAssertTrue(retry.waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown", file: file, line: line)
+        XCTAssertTrue(retry.appears(within: Wait.screenChange), "the failure HUD is shown", file: file, line: line)
 
         retry.tap()
 
@@ -173,19 +206,19 @@ extension XCTestCase {
     ) {
         let app = launchExample(launchArguments)
         XCTAssertTrue(
-            app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: Wait.launch),
+            app.buttons[DemoIdentifier.showFailure].appears(within: Wait.launch),
             "the demo screen is shown",
             file: file,
             line: line
         )
         app.buttons[DemoIdentifier.showFailure].tap()
         let close = app.buttons["Close"]
-        XCTAssertTrue(close.waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown", file: file, line: line)
+        XCTAssertTrue(close.appears(within: Wait.screenChange), "the failure HUD is shown", file: file, line: line)
 
         close.tap()
 
         XCTAssertTrue(
-            close.waitForNonExistence(timeout: Wait.screenChange),
+            close.disappears(within: Wait.screenChange),
             "Close hides the failure HUD",
             file: file,
             line: line
@@ -207,7 +240,7 @@ extension XCTestCase {
         line: UInt = #line
     ) -> XCUICoordinate {
         let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(content.waitForExistence(timeout: Wait.launch), "the demo screen is shown", file: file, line: line)
+        XCTAssertTrue(content.appears(within: Wait.launch), "the demo screen is shown", file: file, line: line)
         let origin = app.coordinate(withNormalizedOffset: .zero)
         guard let frame = settledContentFrame(of: content, covering: centreOfScreen(of: app), file: file, line: line) else {
             return origin

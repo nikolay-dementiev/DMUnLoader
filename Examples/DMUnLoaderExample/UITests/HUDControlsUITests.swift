@@ -38,12 +38,12 @@ final class HUDControlsUITests: XCTestCase {
         let app = launchExample(Launch.swiftUI)
         let backdrop = backdropPoint(in: app)
         app.buttons[DemoIdentifier.showFailure].tap()
-        XCTAssertTrue(app.buttons["Close"].waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
+        XCTAssertTrue(app.buttons["Close"].appears(within: Wait.screenChange), "the failure HUD is shown")
 
         backdrop.tap()
 
         XCTAssertTrue(
-            app.buttons["Close"].waitForNonExistence(timeout: Wait.screenChange),
+            app.buttons["Close"].disappears(within: Wait.screenChange),
             "a tap on the backdrop hides the failure HUD"
         )
         assertContentCountedNoTouch(in: app)
@@ -54,11 +54,11 @@ final class HUDControlsUITests: XCTestCase {
         let backdrop = backdropPoint(in: app)
         app.buttons[DemoIdentifier.showSuccess].tap()
         let successText = app.staticTexts["Loaded"]
-        XCTAssertTrue(successText.waitForExistence(timeout: Wait.screenChange), "the success HUD is shown")
+        XCTAssertTrue(successText.appears(within: Wait.screenChange), "the success HUD is shown")
 
         backdrop.tap()
 
-        XCTAssertTrue(successText.waitForNonExistence(timeout: Wait.screenChange), "a tap on the backdrop hides the success HUD")
+        XCTAssertTrue(successText.disappears(within: Wait.screenChange), "a tap on the backdrop hides the success HUD")
         assertContentCountedNoTouch(in: app)
     }
 
@@ -78,28 +78,28 @@ final class HUDControlsUITests: XCTestCase {
 
     func test_successHUD_swiftUI_cardTap_hidesTheHUDOnly() {
         let app = launchExample(Launch.swiftUI)
-        XCTAssertTrue(app.buttons[DemoIdentifier.showSuccess].waitForExistence(timeout: Wait.launch), "the demo screen is shown")
+        XCTAssertTrue(app.buttons[DemoIdentifier.showSuccess].appears(within: Wait.launch), "the demo screen is shown")
         app.buttons[DemoIdentifier.showSuccess].tap()
         let message = app.staticTexts["Loaded"]
-        XCTAssertTrue(message.waitForExistence(timeout: Wait.screenChange), "the success HUD is shown")
+        XCTAssertTrue(message.appears(within: Wait.screenChange), "the success HUD is shown")
 
         message.tap()
 
-        XCTAssertTrue(message.waitForNonExistence(timeout: Wait.screenChange), "a tap on the card hides the success HUD")
+        XCTAssertTrue(message.disappears(within: Wait.screenChange), "a tap on the card hides the success HUD")
         assertContentCountedNoTouch(in: app)
     }
 
     func test_failureHUD_swiftUI_cardTap_hidesTheHUDOnly() {
         let app = launchExample(Launch.swiftUI)
-        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: Wait.launch), "the demo screen is shown")
+        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].appears(within: Wait.launch), "the demo screen is shown")
         app.buttons[DemoIdentifier.showFailure].tap()
         let message = app.staticTexts["The server did not answer."]
-        XCTAssertTrue(message.waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
+        XCTAssertTrue(message.appears(within: Wait.screenChange), "the failure HUD is shown")
 
         message.tap()
 
         XCTAssertTrue(
-            app.buttons["Close"].waitForNonExistence(timeout: Wait.screenChange),
+            app.buttons["Close"].disappears(within: Wait.screenChange),
             "a tap on the card, off its buttons, hides the failure HUD"
         )
         assertContentCountedNoTouch(in: app)
@@ -107,10 +107,10 @@ final class HUDControlsUITests: XCTestCase {
 
     func test_failureHUD_swiftUI_retry_keepsTheFailureShown() {
         let app = launchExample(Launch.swiftUI + ["--retry-counts-only"])
-        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: Wait.launch), "the demo screen is shown")
+        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].appears(within: Wait.launch), "the demo screen is shown")
         app.buttons[DemoIdentifier.showFailure].tap()
         let retry = app.buttons["Retry"]
-        XCTAssertTrue(retry.waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
+        XCTAssertTrue(retry.appears(within: Wait.screenChange), "the failure HUD is shown")
 
         retry.tap()
 
@@ -119,7 +119,7 @@ final class HUDControlsUITests: XCTestCase {
             "Retry runs the retry action"
         )
         XCTAssertFalse(
-            app.buttons["Close"].waitForNonExistence(timeout: Wait.noEffect),
+            app.buttons["Close"].disappears(within: Wait.noEffect),
             "Retry leaves the failure on screen: a tap on a button of the card is not a tap on the card"
         )
         assertContentCountedNoTouch(in: app)
@@ -127,10 +127,10 @@ final class HUDControlsUITests: XCTestCase {
 
     func test_failureHUD_swiftUI_retryTappedBesideItsTitle_runsTheRetryActionOnly() {
         let app = launchExample(Launch.swiftUI + ["--retry-counts-only"])
-        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: Wait.launch), "the demo screen is shown")
+        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].appears(within: Wait.launch), "the demo screen is shown")
         app.buttons[DemoIdentifier.showFailure].tap()
         let retry = app.buttons["Retry"]
-        XCTAssertTrue(retry.waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
+        XCTAssertTrue(retry.appears(within: Wait.screenChange), "the failure HUD is shown")
 
         // Inside the capsule of the button, away from its centred title.
         retry.coordinate(withNormalizedOffset: CGVector(dx: 0.12, dy: 0.5)).tap()
@@ -140,7 +140,7 @@ final class HUDControlsUITests: XCTestCase {
             "a tap inside the capsule of Retry, beside its title, runs the retry action"
         )
         XCTAssertFalse(
-            app.buttons["Close"].waitForNonExistence(timeout: Wait.noEffect),
+            app.buttons["Close"].disappears(within: Wait.noEffect),
             "that tap is not a tap on the card, so the failure stays on screen"
         )
     }
@@ -149,15 +149,15 @@ final class HUDControlsUITests: XCTestCase {
 
     func test_failureHUD_retryRuleCardOff_cardTapKeepsTheHUD() {
         let app = launchExample(Launch.swiftUI + ["--failure-with-retry-waits"])
-        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].waitForExistence(timeout: Wait.launch), "the demo screen is shown")
+        XCTAssertTrue(app.buttons[DemoIdentifier.showFailure].appears(within: Wait.launch), "the demo screen is shown")
         app.buttons[DemoIdentifier.showFailure].tap()
         let message = app.staticTexts["The server did not answer."]
-        XCTAssertTrue(message.waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
+        XCTAssertTrue(message.appears(within: Wait.screenChange), "the failure HUD is shown")
 
         message.tap()
 
         XCTAssertFalse(
-            app.buttons["Close"].waitForNonExistence(timeout: Wait.noEffect),
+            app.buttons["Close"].disappears(within: Wait.noEffect),
             "a tap on the card keeps a failure with Retry whose rule says so"
         )
         assertContentCountedNoTouch(in: app)
@@ -167,12 +167,12 @@ final class HUDControlsUITests: XCTestCase {
         let app = launchExample(Launch.swiftUI + ["--failure-with-retry-waits"])
         let backdrop = backdropPoint(in: app)
         app.buttons[DemoIdentifier.showFailure].tap()
-        XCTAssertTrue(app.buttons["Close"].waitForExistence(timeout: Wait.screenChange), "the failure HUD is shown")
+        XCTAssertTrue(app.buttons["Close"].appears(within: Wait.screenChange), "the failure HUD is shown")
 
         backdrop.tap()
 
         XCTAssertTrue(
-            app.buttons["Close"].waitForNonExistence(timeout: Wait.screenChange),
+            app.buttons["Close"].disappears(within: Wait.screenChange),
             "a tap outside the card still hides the failure"
         )
         assertContentCountedNoTouch(in: app)
@@ -187,11 +187,11 @@ final class HUDControlsUITests: XCTestCase {
         let backdrop = backdropPoint(in: app)
         app.buttons[DemoIdentifier.showFailure].tap()
         XCTAssertTrue(
-            app.buttons["Close"].waitForExistence(timeout: Wait.screenChange),
+            app.buttons["Close"].appears(within: Wait.screenChange),
             "the failure HUD is shown before the test acts"
         )
         XCTAssertTrue(
-            app.buttons[DemoIdentifier.cover].waitForExistence(timeout: Wait.screenChange),
+            app.buttons[DemoIdentifier.cover].appears(within: Wait.screenChange),
             "the host shows its cover after the HUD"
         )
 
@@ -208,18 +208,18 @@ final class HUDControlsUITests: XCTestCase {
         let backdrop = backdropPoint(in: app)
         app.buttons[DemoIdentifier.showFailure].tap()
         XCTAssertTrue(
-            app.buttons["Close"].waitForExistence(timeout: Wait.screenChange),
+            app.buttons["Close"].appears(within: Wait.screenChange),
             "the failure HUD is shown before the test acts"
         )
         XCTAssertTrue(
-            app.buttons[DemoIdentifier.cover].waitForExistence(timeout: Wait.screenChange),
+            app.buttons[DemoIdentifier.cover].appears(within: Wait.screenChange),
             "the host shows its cover after the HUD"
         )
 
         backdrop.tap()
 
         XCTAssertTrue(
-            app.buttons["Close"].waitForNonExistence(timeout: Wait.screenChange),
+            app.buttons["Close"].disappears(within: Wait.screenChange),
             "above the normal level the HUD takes the tap and hides"
         )
         XCTAssertEqual(app.buttons[DemoIdentifier.cover].label, DemoText.coverTaps(0), "the cover under the HUD counts no tap")
@@ -234,12 +234,12 @@ final class HUDControlsUITests: XCTestCase {
     func test_failureHUD_swiftUI_secondPresentation_retryStillWorks() {
         let app = launchExample(Launch.swiftUI)
         app.buttons[DemoIdentifier.showFailure].tap()
-        XCTAssertTrue(app.buttons["Close"].waitForExistence(timeout: Wait.screenChange), "the first failure HUD is shown")
+        XCTAssertTrue(app.buttons["Close"].appears(within: Wait.screenChange), "the first failure HUD is shown")
         app.buttons["Close"].tap()
-        XCTAssertTrue(app.buttons["Close"].waitForNonExistence(timeout: Wait.screenChange), "Close hides the first failure HUD")
+        XCTAssertTrue(app.buttons["Close"].disappears(within: Wait.screenChange), "Close hides the first failure HUD")
 
         app.buttons[DemoIdentifier.showFailure].tap()
-        XCTAssertTrue(app.buttons["Retry"].waitForExistence(timeout: Wait.screenChange), "the second failure HUD is shown")
+        XCTAssertTrue(app.buttons["Retry"].appears(within: Wait.screenChange), "the second failure HUD is shown")
         app.buttons["Retry"].tap()
 
         XCTAssertTrue(
@@ -253,12 +253,12 @@ final class HUDControlsUITests: XCTestCase {
         // The manager holds a failure before the HUD window is created and shown.
         let app = launchExample(Launch.swiftUI + ["--initial-failure"])
         let content = app.buttons[DemoIdentifier.content]
-        XCTAssertTrue(app.buttons["Close"].waitForExistence(timeout: Wait.launch), "the HUD of the initial failure is shown")
+        XCTAssertTrue(app.buttons["Close"].appears(within: Wait.launch), "the HUD of the initial failure is shown")
 
         app.buttons["Close"].tap()
 
         XCTAssertTrue(
-            app.buttons["Close"].waitForNonExistence(timeout: Wait.screenChange),
+            app.buttons["Close"].disappears(within: Wait.screenChange),
             "Close hides the HUD of the initial failure"
         )
         assertContentCountedNoTouch(in: app)
@@ -286,7 +286,7 @@ final class HUDControlsUITests: XCTestCase {
         let backdrop = backdropPoint(in: app)
         app.buttons[DemoIdentifier.showFailure].tap()
         XCTAssertTrue(
-            app.buttons["Close"].waitForExistence(timeout: Wait.screenChange),
+            app.buttons["Close"].appears(within: Wait.screenChange),
             "the failure HUD is shown",
             file: file,
             line: line
@@ -295,7 +295,7 @@ final class HUDControlsUITests: XCTestCase {
         backdrop.tap()
 
         XCTAssertTrue(
-            app.buttons["Close"].waitForNonExistence(timeout: Wait.screenChange),
+            app.buttons["Close"].disappears(within: Wait.screenChange),
             "a tap outside the card hides the HUD with nothing drawn there",
             file: file,
             line: line
