@@ -9,8 +9,7 @@ import ViewInspector
 import XCTest
 import DMUnLoader
 
-/// The card of a shown HUD holds the view of the state as it is, not wrapped in an `AnyView`, so that
-/// SwiftUI sees the type of that view and keeps its identity from one update to the next.
+/// The card of a shown HUD holds the view of the state as it is, not wrapped in an `AnyView`.
 @MainActor
 final class HUDCardContentTests: XCTestCase {
 
