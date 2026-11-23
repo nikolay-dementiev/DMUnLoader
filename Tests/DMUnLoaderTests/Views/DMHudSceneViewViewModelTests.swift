@@ -26,7 +26,8 @@ final class DMHudSceneViewViewModelTests: XCTestCase {
     func test_tapOnTheCard_reachesTheViewModelThatWasGiven() throws {
         let fixture = makeSUT()
 
-        try fixture.sut.inspect().find(HUDCard.self).callOnTapGesture()
+        // The search ignores the card's content type: only the card's tap is used.
+        try fixture.sut.inspect().find(HUDCard<EmptyView>.self).callOnTapGesture()
 
         XCTAssertEqual(fixture.viewModel.calls, [.cardTapped], "a tap on the card reaches the view model that was given")
         XCTAssertNotEqual(fixture.manager.loadableState, .none, "a view model of the scene view's own would have hidden it")

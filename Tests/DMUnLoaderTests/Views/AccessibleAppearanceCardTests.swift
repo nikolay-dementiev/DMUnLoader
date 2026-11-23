@@ -42,16 +42,16 @@ final class AccessibleAppearanceCardTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeCard(_ appearance: DMHUDAppearance, contentHeight: CGFloat) -> HUDCard {
+    private func makeCard(_ appearance: DMHUDAppearance, contentHeight: CGFloat) -> some View {
         HUDCard(
             appearance: appearance,
             isShown: true,
-            content: AnyView(Color.red.frame(width: 200, height: contentHeight))
+            content: Color.red.frame(width: 200, height: contentHeight)
         )
     }
 
     /// The height the card takes when the screen offers it a phone width and a phone height.
-    private func fittedHeight(of card: HUDCard) -> CGFloat {
+    private func fittedHeight(of card: some View) -> CGFloat {
         UIHostingController(rootView: card).sizeThatFits(in: Self.screen).height
     }
 }

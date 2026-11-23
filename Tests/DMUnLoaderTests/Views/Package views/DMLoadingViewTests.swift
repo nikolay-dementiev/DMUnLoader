@@ -246,14 +246,15 @@ final class DMLoadingViewTests: XCTestCase {
             makeCloseCommand: { DMButtonAction(viewModel.closeTapped) }
         )
 
-        XCTAssertEqual(
-            try cardOf(accessible).actualView().appearance,
-            .accessible,
+        // Only the accessible card lays its content out in a `ViewThatFits`.
+        XCTAssertNoThrow(
+            try cardOf(accessible).find(ViewType.ViewThatFits.self),
             "a state of a provider that opts in gets the accessible card"
         )
-        XCTAssertEqual(
-            try cardOf(standard).actualView().appearance,
-            .standard,
+        // The card is found before the search inside it, so that a card that is not found cannot pass as a card without one.
+        let standardCard = try cardOf(standard)
+        XCTAssertThrowsError(
+            try standardCard.find(ViewType.ViewThatFits.self),
             "a state of any other provider keeps the released card"
         )
     }
@@ -433,8 +434,11 @@ final class DMLoadingViewTests: XCTestCase {
     }
     
     /// The card of the shown HUD: the one `HUDCard` of the view, which carries the card's tap.
-    private func cardOf<LM: DMLoadingManager>(_ sut: DMLoadingView<LM>) throws -> InspectableView<ViewType.View<HUDCard>> {
-        try sut.inspect().find(HUDCard.self)
+    private func cardOf<LM: DMLoadingManager>(
+        _ sut: DMLoadingView<LM>
+    ) throws -> InspectableView<ViewType.View<HUDCard<EmptyView>>> {
+        // The search ignores the card's content type: only the card itself is used.
+        try sut.inspect().find(HUDCard<EmptyView>.self)
     }
     
     /// The layer outside the card that takes the backdrop's tap: the one clear colour of the view.
